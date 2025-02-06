@@ -47,9 +47,9 @@ main {
 /* Positioning Thistle */
 .thistle-container {
     position: absolute;
-    left: 10px; /* Adjusted to be more left-aligned */
-    top: 20px;
-    width: 50px; /* Reduced size */
+    left: 2vw; /* Aligns further left */
+    top: 100px; /* Places it below the banner */
+    width: 10vw; /* Flower takes only 10% of the viewport width */
 }
 
 /* Base Style - Initially Hidden */
