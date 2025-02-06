@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/public/index.html"
+    },
+    {
+      "source": "/tutors",
+      "destination": "/public/tutors.html"
+    },
+    {
+      "source": "/tutor/:id",
+      "destination": "/public/tutor.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/public/about.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/public/login.html"
+    }
+  ]
+}

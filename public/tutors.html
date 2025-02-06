@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tutor Scotland - Find Your Tutor</title>
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="/style.css">
+    <!-- Page-specific styles for tutors page -->
+    <style>
+        .pricing-key {
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: inline-block;
+        }
+
+        .tutor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .tutor-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+            .tutor-card img {
+                max-width: 100%;
+                border-radius: 4px;
+            }
+
+            .tutor-card h3 {
+                margin: 10px 0;
+            }
+
+            .tutor-card p {
+                margin: 5px 0;
+            }
+
+            .tutor-card ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            .tutor-card li::before {
+                content: "? ";
+                color: green;
+                margin-right: 5px;
+            }
+    </style>
+</head>
+<body>
+    <!-- Blue Banner -->
+    <header>
+        <h1>Tutor Scotland</h1>
+        <nav>
+            <a href="/about">About Us</a>
+            <a href="/login">Login</a>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- Thistle Image Container -->
+        <div class="thistle-container">
+            <img src="thistle.png" alt="Scottish Thistle" style="width:100%;">
+        </div>
+
+        <div class="content-wrapper">
+            <!-- Tagline -->
+            <div class="tagline">
+                <h2>Helping <span class="lilac">all</span> children grow</h2>
+            </div>
+
+            <!-- Pricing Key -->
+            <div class="pricing-key">
+                <p>£ : £15-20 &nbsp;&nbsp; ££ : £20-25 &nbsp;&nbsp; £££ : £25-30 &nbsp;&nbsp; ££££ : £30-35 &nbsp;&nbsp; £££££ : £35+</p>
+            </div>
+
+            <!-- Tutor Grid -->
+            <div class="tutor-grid">
+                <!-- Sample Tutor Card 1 -->
+                <div class="tutor-card">
+                    <a href="/tutor/1"><img src="tutor1.jpg" alt="Tutor John Doe"></a>
+                    <h3>John Doe</h3>
+                    <p>Subjects: Mathematics</p>
+                    <p>Cost: ££</p>
+                    <ul>
+                        <li>PVG Registered</li>
+                        <li>Fully Qualified Teacher</li>
+                        <li>Safeguarding Passed</li>
+                    </ul>
+                </div>
+                <!-- Sample Tutor Card 2 -->
+                <div class="tutor-card">
+                    <a href="/tutor/2"><img src="tutor2.jpg" alt="Tutor Jane Smith"></a>
+                    <h3>Jane Smith</h3>
+                    <p>Subjects: English, Mathematics</p>
+                    <p>Cost: £££</p>
+                    <ul>
+                        <li>PVG Registered</li>
+                        <li>Safeguarding Passed</li>
+                    </ul>
+                </div>
+                <!-- Sample Tutor Card 3 -->
+                <div class="tutor-card">
+                    <a href="/tutor/3"><img src="tutor3.jpg" alt="Tutor Robert Brown"></a>
+                    <h3>Robert Brown</h3>
+                    <p>Subjects: English</p>
+                    <p>Cost: £</p>
+                    <ul>
+                        <li>Fully Qualified Teacher</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

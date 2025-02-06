@@ -1,0 +1,9 @@
+{
+  "name": "tutor-scotland",
+  "version": "0.0.0",
+  "description": "tutorScotland",
+  "main": "server.js",
+  "author": {
+    "name": ""
+  }
+}

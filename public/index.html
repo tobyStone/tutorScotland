@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tutor Scotland - Helping all children grow</title>
+    <!-- Link to external CSS -->
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-- Blue Banner -->
+    <header>
+        <h1>Tutor Scotland</h1>
+        <nav>
+            <a href="/about">About Us</a>
+            <a href="/login">Login</a>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- Thistle Image Container -->
+        <div class="thistle-container">
+            <img src="thistle.png" alt="Scottish Thistle" style="width:100%;">
+        </div>
+
+        <div class="content-wrapper">
+            <!-- Tagline -->
+            <div class="tagline">
+                <h2>Helping <span class="lilac">all</span> children grow</h2>
+            </div>
+
+            <!-- Tutor Finder Form -->
+            <div class="form-container">
+                <h3>Tutor Finder</h3>
+                <form id="tutorFinderForm" action="/tutors" method="GET">
+                    <!-- Subject Dropdown -->
+                    <label for="subject">Subject</label>
+                    <select name="subject" id="subject">
+                        <option value="mathematics">Mathematics</option>
+                        <option value="english">English</option>
+                    </select>
+
+                    <!-- Mode Dropdown -->
+                    <label for="mode">Mode</label>
+                    <select name="mode" id="mode">
+                        <option value="online">Online</option>
+                        <option value="in-person">In Person</option>
+                    </select>
+
+                    <!-- Postcode (conditionally shown) -->
+                    <div id="postcodeContainer" style="display: none;">
+                        <label for="postcode">Postcode</label>
+                        <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
+                    </div>
+
+                    <button type="submit">Find Tutors</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript for Conditional Display -->
+    <script>
+    // Show postcode input only when "In Person" is selected
+    document.getElementById('mode').addEventListener('change', function() {
+      const postcodeContainer = document.getElementById('postcodeContainer');
+      postcodeContainer.style.display = this.value === 'in-person' ? 'block' : 'none';
+    });
+    </script>
+</body>
+</html>
