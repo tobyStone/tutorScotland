@@ -11,7 +11,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>78bc1803-971f-43f1-8b00-906d5a04f472</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>server.js</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -28,9 +29,60 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="server.js" />
+    <Content Include=".env">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include=".gitignore">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="api\connectToDatabase.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\images\englishTutor.PNG" />
+    <Content Include="public\images\geographyTutor.PNG" />
+    <Content Include="public\images\mathsTutor.PNG" />
+    <Content Include="public\images\thistle-center.png" />
+    <Content Include="public\images\thistle-flower.png" />
+    <Content Include="public\images\thistle-leaf.png" />
+    <Content Include="public\images\thistle-stem.png" />
+    <Content Include="public\index.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="index\config.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\about-us.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\login.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\style.css">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\tutor.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\tutors.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="seedDatabase.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="updateDatabase.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="vercel.json">
+      <SubType>Code</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="index\" />
+    <Folder Include="api\" />
+    <Folder Include="public\" />
+    <Folder Include="public\images\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>

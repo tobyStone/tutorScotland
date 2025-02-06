@@ -20,7 +20,18 @@
     <main>
         <!-- Thistle Image Container -->
         <div class="thistle-container">
-            <img src="thistle.png" alt="Scottish Thistle" style="width:100%;">
+            <div class="thistle-center">
+                <img src="./images/thistle-center.png" alt="Thistle Center">
+            </div>
+            <div class="thistle-flower">
+                <img src="./images/thistle-flower.png" alt="Thistle Flower">
+            </div>
+            <div class="thistle-leaf">
+                <img src="./images/thistle-leaf.png" alt="Thistle Leaf">
+            </div>
+            <div class="thistle-stem">
+                <img src="./images/thistle-stem.png" alt="Thistle Stem">
+            </div>
         </div>
 
         <div class="content-wrapper">
@@ -61,11 +72,11 @@
 
     <!-- JavaScript for Conditional Display -->
     <script>
-    // Show postcode input only when "In Person" is selected
-    document.getElementById('mode').addEventListener('change', function() {
-      const postcodeContainer = document.getElementById('postcodeContainer');
-      postcodeContainer.style.display = this.value === 'in-person' ? 'block' : 'none';
-    });
+        // Show postcode input only when "In Person" is selected
+        document.getElementById('mode').addEventListener('change', function () {
+            const postcodeContainer = document.getElementById('postcodeContainer');
+            postcodeContainer.style.display = this.value === 'in-person' ? 'block' : 'none';
+        });
     </script>
 </body>
 </html>

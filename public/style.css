@@ -16,16 +16,17 @@ body {
 
 /* Blue Banner */
 header {
-    background-color: #0057B7; /* Blue */
+    background-color: #0057B7;
     color: #fff;
-    padding: 20px;
+    padding: 40px; /* Increased height */
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
     header h1 {
-        font-size: 1.8em;
+        font-size: 2.5em; /* Increased size */
+        font-weight: bold;
     }
 
 nav a {
@@ -43,38 +44,83 @@ main {
 }
 
 /* Thistle Animation Container */
+/* Positioning Thistle */
 .thistle-container {
     position: absolute;
-    left: 20px;
-    top: 40px;
-    width: 300px;
-    opacity: 0;
-    transform: scale(0.5);
-    animation: revealThistle 1s forwards;
-    animation-delay: 1s;
+    left: 10px; /* Adjusted to be more left-aligned */
+    top: 20px;
+    width: 50px; /* Reduced size */
 }
 
-@keyframes revealThistle {
+/* Base Style - Initially Hidden */
+.thistle-center,
+.thistle-flower,
+.thistle-leaf,
+.thistle-stem {
+    position: absolute;
+    opacity: 0;
+}
+
+/* Center Appears Instantly */
+.thistle-center {
+    opacity: 1; /* Instantly visible */
+}
+
+/* Flower Grows Up - Starts from Base */
+@keyframes revealFlower {
     0% {
         opacity: 0;
-        transform: scale(0.5);
-        clip-path: inset(50% 50% 50% 50%); /* Start from center */
-    }
-
-    30% {
-        clip-path: inset(30% 30% 30% 30%); /* Expand outward */
-    }
-
-    60% {
-        clip-path: inset(10% 10% 10% 10%); /* Expand more */
+        transform: translateY(50px) scaleY(0.3); /* Start from base */
     }
 
     100% {
         opacity: 1;
-        transform: scale(1);
-        clip-path: inset(0 0 0 0); /* Fully revealed */
+        transform: translateY(0) scaleY(1); /* Grow upwards */
     }
 }
+
+.thistle-flower {
+    animation: revealFlower 1.2s forwards ease-in-out;
+    animation-delay: 0.3s;
+}
+
+/* Leaf Grows Right - Expanding from Stem */
+@keyframes revealLeaf {
+    0% {
+        opacity: 0;
+        transform: translateX(-40px) scaleX(0.3); /* Start from center */
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) scaleX(1); /* Grow rightward */
+    }
+}
+
+.thistle-leaf {
+    animation: revealLeaf 1.5s forwards ease-in-out;
+    animation-delay: 0.5s;
+}
+
+/* Stem Grows Down - Extending from Base */
+@keyframes revealStem {
+    0% {
+        opacity: 0;
+        transform: translateY(-40px) scaleY(0.2); /* Start at base */
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scaleY(1); /* Grow downward */
+    }
+}
+
+.thistle-stem {
+    animation: revealStem 1.8s forwards ease-in-out;
+    animation-delay: 0.7s;
+}
+
+
 /* Tagline and Form */
 .content-wrapper {
     margin-left: 340px; /* space for the thistle image */
@@ -82,13 +128,15 @@ main {
 
 .tagline {
     position: absolute;
-    left: 350px; /* Position next to thistle */
-    top: 150px; /* Adjust based on the leaf */
-    font-size: 2em;
-    color: #0057B7; /* Scottish blue */
+    left: 55%; /* Keep it aligned with the form */
+    top: 70%; /* Adjust placement */
+    transform: translateX(-50%);
+    font-size: 3em; /* Bigger text */
+    color: #0057B7;
+    font-weight: bold;
     opacity: 0;
     animation: revealTagline 1.5s forwards ease-in-out;
-    animation-delay: 1s; /* Delayed until thistle starts appearing */
+    animation-delay: 1.2s;
 }
 
 @keyframes revealTagline {
@@ -101,6 +149,11 @@ main {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.tagline .lilac {
+    color: #C8A2C8; /* Lilac color */
+    font-weight: bold;
 }
 
 .tagline .lilac {
@@ -117,7 +170,12 @@ main {
     color: #C8A2C8; /* lilac color for emphasis */
 }
 
+
 .form-container {
+    position: absolute;
+    left: 55%; /* Moves further right */
+    top: 50%; /* Moves further down */
+    transform: translate(-50%, -50%);
     border: 1px solid #ddd;
     padding: 20px;
     max-width: 350px;
