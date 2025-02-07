@@ -38,12 +38,17 @@
     <Content Include="api\connectToDatabase.js">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="api\getTutors.js">
+    <Content Include="api\tutor.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\images\englishTutor.PNG" />
-    <Content Include="public\images\geographyTutor.PNG" />
+    <Content Include="public\images\englishTutor2.PNG" />
+    <Content Include="public\images\englishTutor3.PNG" />
+    <Content Include="public\images\favicon2.png" />
+    <Content Include="public\images\flag.PNG" />
     <Content Include="public\images\mathsTutor.PNG" />
+    <Content Include="public\images\mathsTutor3.PNG" />
+    <Content Include="public\images\mathsTutor4.PNG" />
     <Content Include="public\images\thistle-center-flipped.png" />
     <Content Include="public\images\thistle-center.png" />
     <Content Include="public\images\thistle-leaf-flipped.png" />
@@ -63,10 +68,7 @@
     <Content Include="public\style.css">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="public\tutor.html">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="public\tutors.html">
+    <Content Include="api\tutors.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="seedDatabase.js">

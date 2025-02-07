@@ -6,12 +6,12 @@
       "destination": "/public/index.html"
     },
     {
-      "source": "/tutors",
-      "destination": "/public/tutors.html"
+      "source": "/tutors/:slug*",
+      "destination": "/api/tutors.js?slug=:slug"
     },
     {
       "source": "/tutor/:id",
-      "destination": "/public/tutor.html"
+      "destination": "/api/tutor.js?slug=:id"
     },
     {
       "source": "/about",

@@ -286,6 +286,59 @@ main {
             color: #fff;
         }
 
+
+
+/* Tutor Grid */
+.tutor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.tutor-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+    .tutor-card img {
+        max-width: 100%;
+        border-radius: 4px;
+    }
+
+    .tutor-card::before {
+        content: "";
+        background: url('/images/flag.PNG') no-repeat center center;
+        background-size: cover;
+        opacity: 0.3;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+    }
+
+/* Purple Pound Symbols */
+.purple-pound {
+    color: #800080;
+    font-weight: bold;
+}
+
+/* Pricing Key */
+.pricing-key {
+    display: none;
+    opacity: 0;
+    transition: opacity 2s ease-in;
+    font-size: 1.2rem;
+    color: #800080;
+}
+
 /* About Text */
 /* Centered About Text Below Thistles */
 .about-content {

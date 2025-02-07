@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Tutor Scotland - Helping all children grow</title>
+    <title>Tutor Scotland - Helping all Scottish children grow</title>
     <!-- Favicon -->
-    <link rel="icon" href="/images/favicon.png" type="image/png">
+    <link rel="icon" href="/images/favicon2.png" type="image/png">
     <!-- Link to external CSS -->
     <link rel="stylesheet" href="/style.css">
 </head>
@@ -33,7 +33,7 @@
         <div class="content-wrapper">
             <!-- Tagline -->
             <div class="tagline">
-                <h2>Helping <span class="lilac">all</span> children grow</h2>
+                <h2>Helping <span class="lilac">all</span> Scottish children to grow</h2>
             </div>
 
             <!-- Tutor Finder Form -->
@@ -65,14 +65,26 @@
             </div>
         </div>
     </main>
-
-    <!-- JavaScript for Conditional Display -->
     <script>
-        // Show postcode input only when "In Person" is selected
-        document.getElementById('mode').addEventListener('change', function () {
-            const postcodeContainer = document.getElementById('postcodeContainer');
-            postcodeContainer.style.display = this.value === 'in-person' ? 'block' : 'none';
+        document.getElementById('tutorFinderForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Collect form values
+            const subject = document.getElementById('subject').value;
+            const mode = document.getElementById('mode').value;
+            const postcode = document.getElementById('postcode').value;
+
+            // Construct query parameters
+            let queryParams = `?subject=${encodeURIComponent(subject)}&mode=${encodeURIComponent(mode)}`;
+            if (mode === "in-person" && postcode.trim() !== "") {
+                queryParams += `&postcode=${encodeURIComponent(postcode)}`;
+            }
+
+            // Redirect to tutors page with filters applied
+            window.location.href = `/tutors${queryParams}`;
         });
     </script>
+
+
 </body>
 </html>
