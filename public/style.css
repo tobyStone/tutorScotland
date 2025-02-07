@@ -48,97 +48,141 @@ main {
 .thistle-container {
     position: absolute;
     left: 2vw; /* Aligns further left */
-    top: 100px; /* Places it below the banner */
-    width: 10vw; /* Flower takes only 10% of the viewport width */
+    top: 10vh; /* Places it below the banner */
+    width: 35vw; /* Flower takes only 10% of the viewport width */
+    height: auto;
 }
 
+/* Right-Side Flipped Thistle */
+.thistle-container-right {
+    position: absolute;
+    left: 50vw;
+    top: 10vh; /* Matches left thistle position */
+    width: 35vw;
+    height: auto;
+}
+
+
+
+/* Resize Each Component Specifically */
+.thistle-center img {
+    width: 50vw; /* Ensure it's no larger than 10% of viewport width */
+}
+
+.thistle-center-flipped img {
+    width: 50vw; /* Ensure it's no larger than 10% of viewport width */
+}
+
+
+.thistle-leaf img {
+    width: 50vw; /* Leaf takes up to 50% of viewport width */
+    height: auto;
+
+}
+
+
+.thistle-leaf-flipped img {
+    width: 50vw; /* Leaf takes up to 50% of viewport width */
+    height: auto;
+}
+
+
+
 /* Base Style - Initially Hidden */
-.thistle-center,
-.thistle-flower,
-.thistle-leaf,
-.thistle-stem {
+.thistle-center
+{
     position: absolute;
     opacity: 0;
 }
 
-/* Center Appears Instantly */
-.thistle-center {
-    opacity: 1; /* Instantly visible */
-}
 
-/* Flower Grows Up - Starts from Base */
+/* Flower and Leaf Grow Simultaneously */
 @keyframes revealFlower {
     0% {
         opacity: 0;
-        transform: translateY(50px) scaleY(0.3); /* Start from base */
+        transform: scale(0.3);
     }
 
     100% {
         opacity: 1;
-        transform: translateY(0) scaleY(1); /* Grow upwards */
+        transform: scale(1);
     }
 }
 
-.thistle-flower {
-    animation: revealFlower 1.2s forwards ease-in-out;
-    animation-delay: 0.3s;
+.thistle-center {
+    animation: revealFlower 1.5s forwards ease-in-out;
+    animation-delay: 0.5s; /* Same delay as the leaf */
 }
+
+/* Right-Side Flipped Flower Grows Simultaneously */
+@keyframes revealFlowerFlipped {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.thistle-center-flipped {
+    animation: revealFlower 1.5s forwards ease-in-out;
+    animation-delay: 0.5s; /* Same delay as the leaf */
+}
+
+
 
 /* Leaf Grows Right - Expanding from Stem */
 @keyframes revealLeaf {
     0% {
         opacity: 0;
-        transform: translateX(-40px) scaleX(0.3); /* Start from center */
+        transform: translateX(-40px) translateY(23vh) scaleX(0.3); /* Start from center */
     }
 
     100% {
         opacity: 1;
-        transform: translateX(0) scaleX(1); /* Grow rightward */
+        transform: translateX(0) translateY(0) scaleX(1); /* Grow rightward */
     }
 }
 
 .thistle-leaf {
     animation: revealLeaf 1.5s forwards ease-in-out;
-    animation-delay: 0.5s;
-}
-
-/* Stem Grows Down - Extending from Base */
-@keyframes revealStem {
-    0% {
-        opacity: 0;
-        transform: translateY(-40px) scaleY(0.2); /* Start at base */
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0) scaleY(1); /* Grow downward */
-    }
-}
-
-.thistle-stem {
-    animation: revealStem 1.8s forwards ease-in-out;
     animation-delay: 0.7s;
 }
 
 
+/* Right-Side Flipped Leaf Grows Leftward */
+@keyframes revealLeafFlipped {
+    0% {
+        opacity: 0;
+        transform: translateX(40px) translateY(23vh) scaleX(0.3);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) translateY(0) scaleX(1);
+    }
+}
+
+
+.thistle-leaf-flipped {
+    position: absolute;
+    top: 5vh; /* Aligns it to the same vertical position as the left leaf */
+    animation: revealLeafFlipped 1.5s forwards ease-in-out;
+    animation-delay: 0.7s;
+}
+
+
+
 /* Tagline and Form */
 .content-wrapper {
-    margin-left: 340px; /* space for the thistle image */
+    margin-left: 70vw; /* space for the thistle image */
 }
 
-.tagline {
-    position: absolute;
-    left: 55%; /* Keep it aligned with the form */
-    top: 70%; /* Adjust placement */
-    transform: translateX(-50%);
-    font-size: 3em; /* Bigger text */
-    color: #0057B7;
-    font-weight: bold;
-    opacity: 0;
-    animation: revealTagline 1.5s forwards ease-in-out;
-    animation-delay: 1.2s;
-}
 
+/* Tagline Appears at End of Leaf Growth */
 @keyframes revealTagline {
     from {
         opacity: 0;
@@ -149,6 +193,18 @@ main {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.tagline {
+    position: absolute;
+    left: 47vw; /* Move it toward the end of the leaf */
+    top: 27vh; /* Adjust placement */
+    font-size: 2em;
+    color: #0057B7;
+    font-weight: bold;
+    opacity: 0;
+    animation: revealTagline 1s forwards ease-in-out;
+    animation-delay: 1.8s; /* Happens AFTER leaf growth */
 }
 
 .tagline .lilac {
@@ -173,14 +229,21 @@ main {
 
 .form-container {
     position: absolute;
-    left: 55%; /* Moves further right */
-    top: 50%; /* Moves further down */
+    left: 37%; /* Moves it more central */
+    top: 60vh; /* Moves it further down */
     transform: translate(-50%, -50%);
     border: 1px solid #ddd;
     padding: 20px;
     max-width: 350px;
+    color: #333;
     background-color: #f9f9f9;
 }
+
+    /* Add Lilac Shadow on Hover */
+    .form-container:hover {
+        box-shadow: 0px 0px 10px #C8A2C8;
+    }
+
 
     .form-container h3 {
         margin-bottom: 15px;
@@ -202,15 +265,57 @@ main {
     }
 
     .form-container button {
-        background-color: #007BFF;
+        background-color: #0057B7;
         color: #fff;
         border: none;
         padding: 10px 15px;
         cursor: pointer;
         border-radius: 4px;
         font-size: 1em;
+        transition: all 0.3s ease-in-out;
     }
 
+        /* Add Lilac Shadow on Hover */
         .form-container button:hover {
-            background-color: #0056b3;
+            box-shadow: 0px 0px 10px #C8A2C8;
         }
+
+        /* Change Background to Lilac When Pressed */
+        .form-container button:active {
+            background-color: #C8A2C8;
+            color: #fff;
+        }
+
+/* About Text */
+/* Centered About Text Below Thistles */
+.about-content {
+    position: absolute;
+    left: 31%;
+    top: 40vh;
+    transform: translateX(-50%);
+    width: 40vw;
+    color: #0057B7; /* Matches banner color */
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+    opacity: 0;
+    animation: revealAboutText 1.5s forwards ease-in-out;
+    animation-delay: 1.8s;
+}
+
+
+
+@keyframes revealAboutText {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+

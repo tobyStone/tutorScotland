@@ -38,13 +38,16 @@
     <Content Include="api\connectToDatabase.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\getTutors.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="public\images\englishTutor.PNG" />
     <Content Include="public\images\geographyTutor.PNG" />
     <Content Include="public\images\mathsTutor.PNG" />
+    <Content Include="public\images\thistle-center-flipped.png" />
     <Content Include="public\images\thistle-center.png" />
-    <Content Include="public\images\thistle-flower.png" />
+    <Content Include="public\images\thistle-leaf-flipped.png" />
     <Content Include="public\images\thistle-leaf.png" />
-    <Content Include="public\images\thistle-stem.png" />
     <Content Include="public\index.html">
       <SubType>Code</SubType>
     </Content>

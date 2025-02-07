@@ -3,55 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <title>About Tutor Scotland</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #fff;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        header {
-            background-color: #007BFF;
-            color: #fff;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-            header h1 {
-                font-size: 1.8em;
-            }
-
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            margin-left: 20px;
-        }
-
-        main {
-            padding: 40px 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <h1>Tutor Scotland</h1>
         <nav>
-            <a href="/">Home</a>
-            <a href="/login">Login</a>
+            <a href="index.html">Home</a>
+            <a href="login.html">Login</a>
         </nav>
     </header>
+
     <main>
-        <h2>About Tutor Scotland</h2>
-        <p>We are dedicated to helping all children grow through personalised tutoring and innovative learning experiences.</p>
+        <!-- Left-Side Thistle -->
+        <div class="thistle-container">
+            <div class="thistle-center">
+                <img src="./images/thistle-center.png" alt="Thistle Center">
+            </div>
+            <div class="thistle-leaf">
+                <img src="./images/thistle-leaf.png" alt="Thistle Leaf">
+            </div>
+        </div>
+
+        <!-- Right-Side Flipped Thistle -->
+        <div class="thistle-container-right">
+            <div class="thistle-center-flipped">
+                <img src="./images/thistle-center-flipped.png" alt="Thistle Center Flipped">
+            </div>
+            <div class="thistle-leaf-flipped">
+                <img src="./images/thistle-leaf-flipped.png" alt="Thistle Leaf Flipped">
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- About Us Content -->
+            <div class="about-content">
+                <h2>About Tutor Scotland</h2>
+                <p>We are dedicated to helping all children grow through personalised tutoring and innovative learning experiences.</p>
+                <p>Our mission is to provide quality education and support for students no matter their background or circumstance.</p>
+            </div>
+        </div>
     </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelector(".thistle-center").style.opacity = "1";
+            document.querySelector(".thistle-leaf").style.opacity = "1";
+            document.querySelector(".thistle-center-flipped").style.opacity = "1";
+            document.querySelector(".thistle-leaf-flipped").style.opacity = "1";
+        });
+    </script>
 </body>
 </html>

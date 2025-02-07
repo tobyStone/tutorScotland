@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Tutor Scotland - Find Your Tutor</title>
-    <!-- Link to external CSS -->
+    <link rel="icon" href="/images/favicon.png" type="image/png">
     <link rel="stylesheet" href="/style.css">
-    <!-- Page-specific styles for tutors page -->
     <style>
         .pricing-key {
             margin-bottom: 20px;
@@ -55,7 +54,6 @@
     </style>
 </head>
 <body>
-    <!-- Blue Banner -->
     <header>
         <h1>Tutor Scotland</h1>
         <nav>
@@ -64,61 +62,54 @@
         </nav>
     </header>
 
-    <!-- Main Content Area -->
     <main>
-        <!-- Thistle Image Container -->
         <div class="thistle-container">
             <img src="thistle.png" alt="Scottish Thistle" style="width:100%;">
         </div>
 
         <div class="content-wrapper">
-            <!-- Tagline -->
             <div class="tagline">
                 <h2>Helping <span class="lilac">all</span> children grow</h2>
             </div>
 
-            <!-- Pricing Key -->
             <div class="pricing-key">
                 <p>£ : £15-20 &nbsp;&nbsp; ££ : £20-25 &nbsp;&nbsp; £££ : £25-30 &nbsp;&nbsp; ££££ : £30-35 &nbsp;&nbsp; £££££ : £35+</p>
             </div>
 
-            <!-- Tutor Grid -->
-            <div class="tutor-grid">
-                <!-- Sample Tutor Card 1 -->
-                <div class="tutor-card">
-                    <a href="/tutor/1"><img src="tutor1.jpg" alt="Tutor John Doe"></a>
-                    <h3>John Doe</h3>
-                    <p>Subjects: Mathematics</p>
-                    <p>Cost: ££</p>
-                    <ul>
-                        <li>PVG Registered</li>
-                        <li>Fully Qualified Teacher</li>
-                        <li>Safeguarding Passed</li>
-                    </ul>
-                </div>
-                <!-- Sample Tutor Card 2 -->
-                <div class="tutor-card">
-                    <a href="/tutor/2"><img src="tutor2.jpg" alt="Tutor Jane Smith"></a>
-                    <h3>Jane Smith</h3>
-                    <p>Subjects: English, Mathematics</p>
-                    <p>Cost: £££</p>
-                    <ul>
-                        <li>PVG Registered</li>
-                        <li>Safeguarding Passed</li>
-                    </ul>
-                </div>
-                <!-- Sample Tutor Card 3 -->
-                <div class="tutor-card">
-                    <a href="/tutor/3"><img src="tutor3.jpg" alt="Tutor Robert Brown"></a>
-                    <h3>Robert Brown</h3>
-                    <p>Subjects: English</p>
-                    <p>Cost: £</p>
-                    <ul>
-                        <li>Fully Qualified Teacher</li>
-                    </ul>
-                </div>
-            </div>
+            <!-- Dynamic Tutor Grid -->
+            <div class="tutor-grid" id="tutorGrid"></div>
         </div>
     </main>
+
+    <script>
+        async function fetchTutors() {
+            try {
+                const response = await fetch('/api/getTutors');
+                const tutors = await response.json();
+                const tutorGrid = document.getElementById('tutorGrid');
+
+                tutorGrid.innerHTML = tutors.map(tutor => `
+                    <div class="tutor-card">
+                        <a href="/tutor/${tutor._id}">
+                            <img src="${tutor.imagePath}" alt="Tutor ${tutor.name}">
+                        </a>
+                        <h3>${tutor.name}</h3>
+                        <p>Subjects: ${tutor.subjects.join(', ')}</p>
+                        <p>Cost: ${tutor.costRange}</p>
+                        <ul>
+                            ${tutor.badges.map(badge => `<li>${badge}</li>`).join('')}
+                        </ul>
+                        <p><strong>Available in:</strong> ${tutor.postcodes.join(', ')}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error("Error fetching tutors:", error);
+                document.getElementById('tutorGrid').innerHTML = "<p>Failed to load tutors.</p>";
+            }
+        }
+
+        // Load tutors on page load
+        window.onload = fetchTutors;
+    </script>
 </body>
 </html>
