@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
                 </a>
                 <h3>${tutor.name}</h3>
                 <p>Subjects: ${tutor.subjects.join(', ')}</p>
-                <p>Cost: <span class="purple-pound">${tutor.costRange} per hour</span></p>
+                <p>Cost: <span class="purple-pound">${tutor.costRange.replace(/__P__/g, '&pound')} per hour</span></p>
                 <ul>
                     ${tutor.badges.map(badge => `<li>${badge}</li>`).join('')}
                 </ul>
@@ -87,14 +87,32 @@ module.exports = async (req, res) => {
                         </div>
                         <div class="pricing-key">
                             <p>
-                                <span class="purple-pound">£</span> : £15-20 per hour &nbsp;&nbsp;
-                                <span class="purple-pound">££</span> : £20-25 per hour &nbsp;&nbsp;
-                                <span class="purple-pound">£££</span> : £25-30 per hour &nbsp;&nbsp;
-                                <span class="purple-pound">££££</span> : £30-35 per hour &nbsp;&nbsp;
-                                <span class="purple-pound">£££££</span> : £35+ per hour
+                                <span class="purple-pound">&pound</span> : &pound15-20 per hour &nbsp;&nbsp;
+                                <span class="purple-pound">&pound&pound</span> : &pound20-25 per hour &nbsp;&nbsp;
+                                <span class="purple-pound">&pound&pound&pound</span> : &pound25-30 per hour &nbsp;&nbsp;
+                                <span class="purple-pound">&pound&pound&pound&pound</span> : &pound30-35 per hour &nbsp;&nbsp;
+                                <span class="purple-pound">&pound&pound&pound&pound&pound</span> : &pound35+ per hour
                             </p>
-                    </div>
+                        </div>
                     <div class="tutor-grid">${tutorsHtml}</div>
+                    <script>
+                        document.querySelector('.thistle-leaf img').addEventListener('animationend', function() {
+                            const tutorCards = document.querySelectorAll('.tutor-card');
+                            tutorCards.forEach((card, index) => {
+                                setTimeout(() => {
+                                    card.classList.add('show');
+                                }, index * 300);  // Delay each card by 300ms
+                            });
+                            const tutorgrids = document.querySelectorAll('.tutor-grid');
+                            tutorgrids.forEach((grid, index) => {
+                                setTimeout(() => {
+                                    grid.classList.add('show');
+                                }, index * 300);  // Delay each card by 300ms
+                            });
+
+                            document.querySelector('.pricing-key').classList.add('show');
+                        });
+                    </script>
                 </main>
             </body>
             </html>

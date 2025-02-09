@@ -48,17 +48,22 @@ main {
 .thistle-container {
     position: absolute;
     left: 2vw; /* Aligns further left */
-    top: 10vh; /* Places it below the banner */
-    width: 35vw; /* Flower takes only 10% of the viewport width */
+    top: 7vh; /* Places it below the banner */
     height: auto;
+}
+
+/* Thistle & Tutor Section */
+.tutor-section {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 10vh;
 }
 
 /* Right-Side Flipped Thistle */
 .thistle-container-right {
     position: absolute;
-    left: 50vw;
-    top: 10vh; /* Matches left thistle position */
-    width: 35vw;
+    left: 57vw;
+    top: 7vh; /* Matches left thistle position */
     height: auto;
 }
 
@@ -66,23 +71,23 @@ main {
 
 /* Resize Each Component Specifically */
 .thistle-center img {
-    width: 50vw; /* Ensure it's no larger than 10% of viewport width */
+    width: 42vw; /* Ensure it's no larger than 10% of viewport width */
 }
 
 .thistle-center-flipped img {
-    width: 50vw; /* Ensure it's no larger than 10% of viewport width */
+    width: 42vw; /* Ensure it's no larger than 10% of viewport width */
 }
 
 
 .thistle-leaf img {
-    width: 50vw; /* Leaf takes up to 50% of viewport width */
+    width: 42vw; /* Leaf takes up to 50% of viewport width */
     height: auto;
 
 }
 
 
 .thistle-leaf-flipped img {
-    width: 50vw; /* Leaf takes up to 50% of viewport width */
+    width: 42vw; /* Leaf takes up to 50% of viewport width */
     height: auto;
 }
 
@@ -197,8 +202,8 @@ main {
 
 .tagline {
     position: absolute;
-    left: 47vw; /* Move it toward the end of the leaf */
-    top: 27vh; /* Adjust placement */
+    left: 43vw; /* Move it toward the end of the leaf */
+    top: 17vh; /* Adjust placement */
     font-size: 2em;
     color: #0057B7;
     font-weight: bold;
@@ -229,8 +234,8 @@ main {
 
 .form-container {
     position: absolute;
-    left: 37%; /* Moves it more central */
-    top: 60vh; /* Moves it further down */
+    left: 33%; /* Moves it more central */
+    top: 52vh; /* Moves it further down */
     transform: translate(-50%, -50%);
     border: 1px solid #ddd;
     padding: 20px;
@@ -292,30 +297,44 @@ main {
 .tutor-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    gap: 0px;
     padding: 20px;
+    margin-left: 5vw;
+    margin-top: 23vh; /* Push the grid further down */
+    margin-left: 21vw; /* Shift the grid to the right */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 1s ease-in-out;
 }
 
+/* Tutor Cards */
 .tutor-card {
+    width: 100%;
+    height: 100%;
     border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.9);
+    padding: 0px;
+    border-radius: 0;
+    background-color: rgba(255, 255, 255, 1);
     text-align: center;
     position: relative;
     overflow: hidden;
-}
+    opacity: 0; /* Initially hidden */
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+ }
+
 
     .tutor-card img {
         max-width: 100%;
-        border-radius: 4px;
+        height: 37vh;
+        object-fit: cover;
+        border-radius: 1px;
     }
 
     .tutor-card::before {
         content: "";
         background: url('/images/flag.PNG') no-repeat center center;
-        background-size: cover;
-        opacity: 0.3;
+        opacity: 0.4; /* Increase opacity to show more blue */
+        background-blend-mode: overlay; /* Blend mode to enhance blue visibility */
         position: absolute;
         top: 0;
         left: 0;
@@ -332,19 +351,74 @@ main {
 
 /* Pricing Key */
 .pricing-key {
-    display: none;
-    opacity: 0;
-    transition: opacity 2s ease-in;
     font-size: 1.2rem;
     color: #800080;
+    margin-left: 49vw;
+    text-align: right;
+    position: absolute;
+    top: 17vh;
+    right: 12vw;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 1s ease-in-out;
 }
+
+/* Show tutor cards and pricing key after animation */
+.show {
+    opacity: 1;
+}
+
+/* Center the tutor-profile section */
+.tutor-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 auto;
+    max-width: 600px;
+    position: relative;
+    top: 14vh;
+    background-color: transparent;
+}
+
+    .tutor-profile h1 {
+        font-size: 2em;
+        margin-bottom: 5px;
+        color: #0057B7;
+        text-align: center;
+    }
+
+    .tutor-profile p {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+        color: #333;
+        text-align: center;
+    }
+
+    .tutor-profile img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .tutor-profile ul {
+        font-size: 1.1em;
+        list-style: none;
+        padding: 0;
+        text-align: center;
+    }
+
+    .tutor-profile li {
+        margin-bottom: 5px;
+    }
+
 
 /* About Text */
 /* Centered About Text Below Thistles */
 .about-content {
     position: absolute;
-    left: 31%;
-    top: 40vh;
+    left: 29%;
+    top: 27vh;
     transform: translateX(-50%);
     width: 40vw;
     color: #0057B7; /* Matches banner color */
@@ -355,7 +429,6 @@ main {
     animation: revealAboutText 1.5s forwards ease-in-out;
     animation-delay: 1.8s;
 }
-
 
 
 @keyframes revealAboutText {

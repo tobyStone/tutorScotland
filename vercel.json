@@ -15,7 +15,7 @@
     },
     {
       "source": "/about",
-      "destination": "/public/about.html"
+      "destination": "/public/about-us.html"
     },
     {
       "source": "/login",

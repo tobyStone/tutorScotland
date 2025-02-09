@@ -66,6 +66,15 @@
         </div>
     </main>
     <script>
+        document.getElementById('mode').addEventListener('change', function () {
+            const postcodeContainer = document.getElementById('postcodeContainer');
+            if (this.value === 'in-person') {
+                postcodeContainer.style.display = 'block';
+            } else {
+                postcodeContainer.style.display = 'none';
+            }
+        });
+
         document.getElementById('tutorFinderForm').addEventListener('submit', function (event) {
             event.preventDefault();
 

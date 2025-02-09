@@ -6,7 +6,7 @@ const connectToDatabase = require('./api/connectToDatabase');
 const tutorSchema = new mongoose.Schema({
     name: String,
     subjects: [String],
-    costRange: String, // e.g. £, ££, £££ etc.
+    costRange: String, // Placeholder will be used here (e.g., __P__, __P____P__, etc.)
     badges: [String],
     imageUrl: String,
     imagePath: String,
@@ -30,6 +30,11 @@ function getRandomPostcodes() {
     return highlandPostcodes.sort(() => 0.5 - Math.random()).slice(0, 3);
 }
 
+// Helper function to convert cost range to placeholder format
+function convertCostRange(costRange) {
+    return costRange.replace(/£/g, '__P__'); // Replace each £ with __P__
+}
+
 async function seedDatabase() {
     try {
         await connectToDatabase();
@@ -40,7 +45,7 @@ async function seedDatabase() {
             {
                 name: 'John Doe',
                 subjects: ['Mathematics'],
-                costRange: "££",
+                costRange: convertCostRange("££"),
                 badges: ['PVG Registered', 'Fully Qualified Teacher', 'Safeguarding Passed'],
                 imageUrl: './public/images/mathsTutor.PNG',
                 imagePath: '/images/mathsTutor.PNG',
@@ -50,7 +55,7 @@ async function seedDatabase() {
             {
                 name: 'Jane Smith',
                 subjects: ['English', 'Mathematics'],
-                costRange: "£££",
+                costRange: convertCostRange("£££"),
                 badges: ['PVG Registered', 'Safeguarding Passed'],
                 imageUrl: './public/images/englishTutor.PNG',
                 imagePath: '/images/englishTutor.PNG',
@@ -60,7 +65,7 @@ async function seedDatabase() {
             {
                 name: 'Robert Brown',
                 subjects: ['Mathematics'],
-                costRange: "£",
+                costRange: convertCostRange("£"),
                 badges: ['Fully Qualified Teacher'],
                 imageUrl: './public/images/mathsTutor2.PNG',
                 imagePath: '/images/mathsTutor2.PNG',
@@ -70,7 +75,7 @@ async function seedDatabase() {
             {
                 name: 'Emily White',
                 subjects: ['English'],
-                costRange: "££",
+                costRange: convertCostRange("££"),
                 badges: ['PVG Registered', 'Safeguarding Passed'],
                 imageUrl: './public/images/englishTutor.PNG',
                 imagePath: '/images/englishTutor2.PNG',
@@ -78,9 +83,9 @@ async function seedDatabase() {
                 postcodes: ["Online"]
             },
             {
-                name: 'James Wilson',
+                name: 'Gloria Wilson',
                 subjects: ['Mathematics'],
-                costRange: "£££",
+                costRange: convertCostRange("£££"),
                 badges: ['Fully Qualified Teacher', 'Tutoring for 15+ years'],
                 imageUrl: './public/images/mathsTutor.PNG',
                 imagePath: '/images/mathsTutor3.PNG',
@@ -88,9 +93,9 @@ async function seedDatabase() {
                 postcodes: ["Online", ...getRandomPostcodes()]
             },
             {
-                name: 'Sarah Green',
+                name: 'Red Green',
                 subjects: ['English', 'Mathematics'],
-                costRange: "££££",
+                costRange: convertCostRange("££££"),
                 badges: ['PVG Registered', 'Certified Exam Marker'],
                 imageUrl: './public/images/englishTutor.PNG',
                 imagePath: '/images/englishTutor3.PNG',
@@ -100,7 +105,7 @@ async function seedDatabase() {
             {
                 name: 'Michael Clarke',
                 subjects: ['Mathematics'],
-                costRange: "££",
+                costRange: convertCostRange("££"),
                 badges: ['Fully Qualified Teacher', 'Former University Lecturer'],
                 imageUrl: './public/images/mathsTutor4.PNG',
                 imagePath: '/images/mathsTutor2.PNG',
