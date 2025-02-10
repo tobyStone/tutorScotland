@@ -154,6 +154,7 @@ main {
 
 .thistle-leaf {
     animation: revealLeaf 1.5s forwards ease-in-out;
+    opacity: 0;
     animation-delay: 0.7s;
 }
 
@@ -176,6 +177,7 @@ main {
     position: absolute;
     top: 5vh; /* Aligns it to the same vertical position as the left leaf */
     animation: revealLeafFlipped 1.5s forwards ease-in-out;
+    opacity: 0;
     animation-delay: 0.7s;
 }
 

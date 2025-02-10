@@ -50,7 +50,8 @@ async function seedDatabase() {
                 imageUrl: './public/images/mathsTutor.PNG',
                 imagePath: '/images/mathsTutor.PNG',
                 description: "An experienced mathematics teacher with over 10 years of experience in tutoring students at all levels.",
-                postcodes: ["Online", ...getRandomPostcodes()]
+                postcodes: ["Online", "IV1", "IV2", "IV3", "IV4", "IV5", "IV6", "IV7", "IV8", "IV9", "IV10",
+                    "IV11", "IV12", "IV13", "IV14", "IV15", "IV16", "IV17", "IV18", "IV19"]
             },
             {
                 name: 'Jane Smith',
@@ -70,7 +71,8 @@ async function seedDatabase() {
                 imageUrl: './public/images/mathsTutor2.PNG',
                 imagePath: '/images/mathsTutor2.PNG',
                 description: "A retired maths professor who enjoys helping students build confidence in problem-solving.",
-                postcodes: ["Online", ...getRandomPostcodes()]
+                postcodes: ["Online", "IV11", "IV12", "IV13", "IV14", "IV15", "IV16", "IV17", "IV18", "IV19",
+                    "IV20", "IV21", "IV22", "IV23", "IV24", "IV25", "IV26", "IV27", "IV28"]
             },
             {
                 name: 'Emily White',
@@ -89,7 +91,7 @@ async function seedDatabase() {
                 badges: ['Fully Qualified Teacher', 'Tutoring for 15+ years'],
                 imageUrl: './public/images/mathsTutor.PNG',
                 imagePath: '/images/mathsTutor3.PNG',
-                description: "Specializing in advanced mathematics, James has helped students ace their exams for over a decade.",
+                description: "Specializing in advanced mathematics, Gloria has helped students ace their exams for over a decade.",
                 postcodes: ["Online", ...getRandomPostcodes()]
             },
             {
@@ -99,7 +101,7 @@ async function seedDatabase() {
                 badges: ['PVG Registered', 'Certified Exam Marker'],
                 imageUrl: './public/images/englishTutor.PNG',
                 imagePath: '/images/englishTutor3.PNG',
-                description: "A passionate educator, Sarah specializes in exam preparation and academic writing.",
+                description: "A passionate educator, Red specialises in exam preparation and academic writing.",
                 postcodes: ["Online"]
             },
             {
@@ -110,7 +112,8 @@ async function seedDatabase() {
                 imageUrl: './public/images/mathsTutor4.PNG',
                 imagePath: '/images/mathsTutor2.PNG',
                 description: "With a background in academia, Michael provides in-depth lessons tailored for university-level students.",
-                postcodes: ["Online", ...getRandomPostcodes()]
+                postcodes: ["Online", "IV29", "IV30", "IV31", "IV32", "IV36", "PH19", "PH20", "PH21", "PH22",
+                    "PH23", "PH24", "PH25", "PH26"]
             }
         ];
 
