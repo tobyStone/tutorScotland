@@ -466,27 +466,45 @@ main {
 /* For very small screens (iPhone SE, etc.) */
 @media screen and (max-width: 750px) and (orientation: portrait) {
     .tagline {
-        left: 20vw; /* Adjust for better alignment */
-        top: 3vh; /* Lower to give space */
-        font-size: 1em; /* Reduce font size */
+        left: 10vw; /* Center it more */
+        top: 2vh; /* Lower to give space */
+        font-size: 0.9em; /* Reduce font size for better fit */
         text-align: center;
     }
 
     .form-container {
         position: absolute;
         left: 50%;
-        top: 80vh; /* Lower the form slightly */
+        top: 75vh; /* Lower the form slightly */
         transform: translate(-50%, -50%);
-        width: 85%; /* Reduce width to fit the screen better */
-        padding: 15px; /* Decrease padding to save space */
-        font-size: 0.9em; /* Slightly smaller font size for the form */
+        width: 75%; /* Reduce width for smaller screens */
+        padding: 10px; /* Decrease padding to save space */
+        font-size: 0.8em; /* Reduce form font size */
+        line-height: 1.2; /* Compact line spacing */
     }
 
+        .form-container h3 {
+            font-size: 1em; /* Smaller header */
+            margin-bottom: 10px;
+        }
+
+        .form-container label {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .form-container select,
+        .form-container input {
+            font-size: 0.85em;
+            padding: 5px;
+        }
+
         .form-container button {
-            font-size: 1em;
-            padding: 10px 15px;
+            font-size: 0.9em; /* Smaller button text */
+            padding: 8px 12px; /* Compact button size */
         }
 }
+
 
 /* Style for vertical small screens (portrait mode) */
 @media screen and (max-width: 900px) and (orientation: portrait) {
