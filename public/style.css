@@ -483,7 +483,7 @@ main {
     .form-container {
         position: absolute;
         left: 50%;
-        top: 57vh; /* Move it even higher */
+        top: 63vh; 
         transform: translate(-50%, -50%);
         width: 90%; /* Full width with a little padding */
         padding: 25px; /* More padding for a larger look */
@@ -576,7 +576,7 @@ main {
     .form-container {
         position: absolute;
         left: 60%;
-        top: 67vh; /* Move it down and to the right */
+        top: 73vh; /* Move it down and to the right */
         transform: translate(-50%, -50%);
         width: 77%; /* Adjust the form size */
     }
