@@ -71,6 +71,7 @@ module.exports = async (req, res) => {
                 <title>Tutor Scotland - Find Your Tutor</title>
                 <link rel="icon" href="/images/favicon2.png" type="image/png">
                 <link rel="stylesheet" href="/style.css">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
             </head>
             <body>
                 <header>

@@ -460,21 +460,106 @@ main {
     }
 }
 
-
 /* Style for vertical small screens (portrait mode) */
 @media screen and (max-width: 900px) and (orientation: portrait) {
+
+    .thistle-container {
+        top: 2vh; /* Move it closer to the banner */
+    }
+
+    .thistle-container-right {
+        display: none;
+    }
+
     .tagline {
-        left: 37vw; /* Move it more to the left */
-        top: 7vh; /* Move it up under the leaf */
-        font-size: 1.5em;
+        left: 30vw; /* Adjust for a more central position */
+        top: 5vh; /* Move it higher */
+        font-size: 1.2em; /* Slightly larger for better visibility */
+        text-align: center;
     }
 
     .form-container {
         position: absolute;
         left: 50%;
-        top: 20vh; /* Move it further up */
+        top: 47vh; /* Move it even higher */
         transform: translate(-50%, -50%);
-        width: 95%; /* Make the form wider */
+        width: 90%; /* Full width with a little padding */
+        padding: 25px; /* More padding for a larger look */
+        font-size: 1.1em; /* Increase font size for better readability */
+    }
+
+        .form-container button {
+            font-size: 1.2em; /* Larger button text */
+            padding: 15px 20px; /* Increase button padding */
+        }
+
+    .tutor-grid {
+        display: grid;
+        grid-template-columns: 1fr; /* Single column */
+        gap: 20px; /* Space between the tutor cards */
+        padding: 10px;
+        margin-top: 10vh; 
+    }
+
+    .tutor-card {
+        width: 100%;
+        min-height: 100%; /* Ensure it extends to the full height */
+        position: relative;
+        background: none; /* Remove background here, as we'll use ::before for full control */
+        overflow: hidden; /* Ensure content doesn't exceed the card size */
+    }
+
+        .tutor-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('/images/flag.PNG') no-repeat center center;
+            background-size: cover;
+            opacity: 0.3; /* Adjust to make it more translucent */
+            z-index: -1; /* Ensure it stays behind the content */
+        }
+
+    .pricing-key {
+        position: relative;
+        top: 7vh;
+        left: 10vw;
+        margin: 0 10px;
+        font-size: 0.9rem;
+        text-align: left;
+        max-width: 80vw; /* Ensures it stays within the viewport */
+        white-space: normal; /* Allows text to wrap onto the next line */
+        word-wrap: break-word; /* Ensure wrapping */
+    }
+
+    /* Adjust the tutor card to move up */
+    .tutor-profile {
+        top: 5vh; /* Move it up closer to the thistle */
+    }
+
+        .tutor-profile h1 {
+            margin-top: -10px; /* Reduce the margin above the name */
+            font-size: 2.2em; /* Slightly larger for better emphasis */
+        }
+
+    .about-content {
+        font-size: 1.5em; /* Increase font size for larger writing */
+        line-height: 1.5; /* Add more line height for readability */
+        text-align: center;
+        top: 7vh;
+    }
+
+        .about-content h2 {
+            margin-bottom: 20px; /* Increase spacing below the heading */
+        }
+
+    .about-paragraph {
+        max-width: 100%; /* Wider than the h2 */
+        margin: 0 auto;
+        font-size: 0.7em;
+        line-height: 1.5;
     }
 }
 
