@@ -465,10 +465,18 @@ main {
 
 /* For very small screens (iPhone SE, etc.) */
 @media screen and (max-width: 750px) and (orientation: portrait) {
+
+    .tagline {
+        left: 30vw; /* Adjust for a more central position */
+        top: 1vh; /* Move it higher */
+        font-size: 1.2em; /* Slightly larger for better visibility */
+        text-align: center;
+    }
+
     .form-container {
         position: absolute;
         left: 50%;
-        top: 107vh; /* Lower for very small screens */
+        top: 117vh; /* Lower for very small screens */
         transform: translate(-50%, -50%);
         width: 90%;
         padding: 25px;
