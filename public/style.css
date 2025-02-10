@@ -478,7 +478,7 @@ main {
         left: 50%;
         top: 117vh; /* Lower for very small screens */
         transform: translate(-50%, -50%);
-        width: 90%;
+        width: 80%;
         padding: 25px;
         font-size: 1.1em;
     }
