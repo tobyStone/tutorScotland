@@ -465,23 +465,27 @@ main {
 
 /* For very small screens (iPhone SE, etc.) */
 @media screen and (max-width: 750px) and (orientation: portrait) {
-
     .tagline {
-        left: 30vw; /* Adjust for a more central position */
-        top: 1vh; /* Move it higher */
-        font-size: 1.2em; /* Slightly larger for better visibility */
+        left: 20vw; /* Adjust for better alignment */
+        top: 3vh; /* Lower to give space */
+        font-size: 1em; /* Reduce font size */
         text-align: center;
     }
 
     .form-container {
         position: absolute;
         left: 50%;
-        top: 117vh; /* Lower for very small screens */
+        top: 80vh; /* Lower the form slightly */
         transform: translate(-50%, -50%);
-        width: 80%;
-        padding: 25px;
-        font-size: 1.1em;
+        width: 85%; /* Reduce width to fit the screen better */
+        padding: 15px; /* Decrease padding to save space */
+        font-size: 0.9em; /* Slightly smaller font size for the form */
     }
+
+        .form-container button {
+            font-size: 1em;
+            padding: 10px 15px;
+        }
 }
 
 /* Style for vertical small screens (portrait mode) */
