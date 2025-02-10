@@ -52,8 +52,12 @@ module.exports = async (req, res) => {
                 <h3>${tutor.name}</h3>
                 <p>Subjects: ${tutor.subjects.join(', ')}</p>
                 <p>Cost: <span class="purple-pound">${tutor.costRange.replace(/__P__/g, '&pound')} per hour</span></p>
-                <ul>
-                    ${tutor.badges.map(badge => `<li>${badge}</li>`).join('')}
+                  <ul>
+                    ${tutor.badges.map(badge => `
+                        <li class="badge-item">
+                            ${badge} <span class="badge-tick">&#10004;</span>
+                        </li>
+                    `).join('')}
                 </ul>
                 <p><strong>Available in:</strong> ${tutor.postcodes.join(', ')}</p>
             </section>

@@ -304,6 +304,7 @@ main {
     margin-left: 21vw; /* Shift the grid to the right */
     opacity: 0; /* Initially hidden */
     transition: opacity 1s ease-in-out;
+    row-gap: 20px; /* Adds vertical space between the rows */
 }
 
 /* Tutor Cards */
@@ -320,7 +321,9 @@ main {
     opacity: 0; /* Initially hidden */
     transform: translateY(20px);
     transition: opacity 0.8s ease, transform 0.8s ease;
- }
+    border-bottom: 2px solid #ddd; /* Light gray bottom border */
+    margin-bottom: 10px; /* Add some spacing between rows */
+}
 
 
     .tutor-card img {
@@ -342,6 +345,20 @@ main {
         bottom: 0;
         z-index: -1;
     }
+
+.badge-item {
+    list-style: none;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.badge-tick {
+    color: #800080;
+    font-size: 1.2em;
+    margin-left: 5px; /* Small spacing between the badge description and the tick */
+}
+
+
 
 /* Purple Pound Symbols */
 .purple-pound {
@@ -444,4 +461,37 @@ main {
 }
 
 
+/* Style for vertical small screens (portrait mode) */
+@media screen and (max-width: 900px) and (orientation: portrait) {
+    .tagline {
+        left: 37vw; /* Move it more to the left */
+        top: 7vh; /* Move it up under the leaf */
+        font-size: 1.5em;
+    }
+
+    .form-container {
+        position: absolute;
+        left: 50%;
+        top: 20vh; /* Move it further up */
+        transform: translate(-50%, -50%);
+        width: 95%; /* Make the form wider */
+    }
+}
+
+/* Style for horizontal small screens (landscape mode) */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+    .tagline {
+        left: 45vw; /* Adjust position for horizontal */
+        top: 5vh;
+        font-size: 1em; /* Reduce tagline font size */
+    }
+
+    .form-container {
+        position: absolute;
+        left: 60%;
+        top: 60vh; /* Move it down and to the right */
+        transform: translate(-50%, -50%);
+        width: 77%; /* Adjust the form size */
+    }
+}
 

@@ -1,72 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Login - Tutor Scotland</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background-color: #fff; color: #333; line-height: 1.6; }
-    header { background-color: #007BFF; color: #fff; padding: 20px;
-             display: flex; justify-content: space-between; align-items: center; }
-    header h1 { font-size: 1.8em; }
-    nav a { color: #fff; text-decoration: none; margin-left: 20px; }
-    main { padding: 40px 20px; }
-    .login-form {
-      max-width: 350px;
-      margin: 20px auto;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      background-color: #f9f9f9;
-    }
-    .login-form label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-    .login-form input {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    .login-form button {
-      background-color: #007BFF;
-      color: #fff;
-      border: none;
-      padding: 10px 15px;
-      cursor: pointer;
-      border-radius: 4px;
-      width: 100%;
-      font-size: 1em;
-    }
-    .login-form button:hover {
-      background-color: #0056b3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Login - Tutor Scotland</title>
+    <!-- Favicon -->
+    <link rel="icon" href="/images/favicon2.png" type="image/png">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        main {
+            padding: 40px 20px;
+            min-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .redirect-container {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+            .redirect-container h2 {
+                font-size: 1.8em;
+                color: #0057B7;
+                margin-bottom: 15px;
+            }
+
+            .redirect-container a {
+                display: inline-block;
+                background-color: #0057B7;
+                color: #fff;
+                padding: 10px 15px;
+                text-decoration: none;
+                border-radius: 4px;
+                font-size: 1em;
+                transition: background-color 0.3s ease;
+            }
+
+                .redirect-container a:hover {
+                    background-color: #0046a5;
+                    box-shadow: 0px 0px 10px #C8A2C8;
+                }
+
+                .redirect-container a:active {
+                    background-color: #C8A2C8;
+                }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Tutor Scotland</h1>
-    <nav>
-      <a href="/">Home</a>
-      <a href="/about">About Us</a>
-    </nav>
-  </header>
-  <main>
-    <div class="login-form">
-      <h2>Login</h2>
-      <form action="/login" method="POST">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
+    <!-- Blue Banner -->
+    <header>
+        <h1>Tutor Scotland</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/about-us.html">About Us</a>
+        </nav>
+    </header>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
-
-        <button type="submit">Log In</button>
-      </form>
-    </div>
-  </main>
+    <main>
+        <div class="redirect-container">
+            <h2>You are already logged in!</h2>
+            <a href="/">Go Back to the Landing Page</a>
+        </div>
+    </main>
 </body>
 </html>
