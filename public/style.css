@@ -468,7 +468,7 @@ main {
     .form-container {
         position: absolute;
         left: 50%;
-        top: 97vh; /* Lower for very small screens */
+        top: 107vh; /* Lower for very small screens */
         transform: translate(-50%, -50%);
         width: 90%;
         padding: 25px;
