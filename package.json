@@ -2,12 +2,19 @@
   "name": "tutor-scotland",
   "version": "0.0.0",
   "description": "tutorScotland",
-  "main": "server.js",
-  "author": {
-    "name": ""
+  "main": "index.html",
+  "scripts": {
+    "start": "vercel dev"
   },
-  "dependencies": {
-    "dotenv": "^16.4.7",
-    "mongoose": "^8.10.0"
+    "author": {
+      "name": "Toby Stone"
+    },
+    "dependencies": {
+      "dotenv": "^16.4.7",
+      "mongoose": "^8.10.0"
+    },
+    "engines": {
+      "bun": ">=0.1.0"
+    },
+    "license": "MIT"
   }
-}
