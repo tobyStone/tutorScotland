@@ -555,6 +555,12 @@ main {
         overflow: hidden; /* Ensure content doesn't exceed the card size */
     }
 
+        .tutor-card p strong {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
         .tutor-card p.available-in {
             max-width: 80%; /* Restrict the width to 80% of the card */
             margin: 0 auto; /* Center the text within the card */
