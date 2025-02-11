@@ -39,7 +39,6 @@ module.exports = async (req, res) => {
         }
 
         console.log("MongoDB Query:", JSON.stringify(query, null, 2));
-
         const tutors = await Tutor.find(query, '-description')
             .sort({ costRange: 1 }); // Ascending order: cheapest to most expensive
 
@@ -51,9 +50,9 @@ module.exports = async (req, res) => {
                     <img src="${tutor.imagePath}" alt="Tutor ${tutor.name}">
                 </a>
                 <h3>${tutor.name}</h3>
-                <p>Subjects: ${tutor.subjects.join(', ')}</p>
-                <p>Cost: <span class="purple-pound">${tutor.costRange.replace(/__P__/g, '&pound')} per hour</span></p>
-                <ul>
+                    <p>Subjects: ${tutor.subjects.join(', ')}</p>
+                    <p>Cost: <span class="purple-pound">${tutor.costRange.replace(/__P__/g, '&pound')} per hour</span></p>
+                  <ul>
                     ${tutor.badges.map(badge => `
                         <li class="badge-item">
                             ${badge} <span class="badge-tick">&#10004;</span>
@@ -83,51 +82,40 @@ module.exports = async (req, res) => {
                     </nav>
                 </header>
                 <main>
-                    <div class="thistle-container">
-                        <div class="thistle-center">
-                            <img class="thistle-center" src="/images/thistle-center.png" alt="Scottish Thistle">
+                        <div class="thistle-container">
+                            <div class="thistle-center">
+                                <img class="thistle-center" src="/images/thistle-center.png" alt="Scottish Thistle">
+                            </div>
+                            <div class="thistle-leaf">
+                                <img class="thistle-leaf" src="/images/thistle-leaf.png" alt="Thistle Leaf">
+                            </div>
                         </div>
-                        <div class="thistle-leaf">
-                            <img class="thistle-leaf" src="/images/thistle-leaf.png" alt="Thistle Leaf">
+                        <div class="pricing-key">
+                            <p>
+                                <span class="purple-pound">&pound</span> : &pound15-20 per hour &nbsp;&nbsp;
+                                <span class="purple-pound">&pound&pound</span> : &pound20-25 per hour &nbsp;&nbsp;
+                                <span class="purple-pound">&pound&pound&pound</span> : &pound25-30 per hour &nbsp;&nbsp;
+                                <span class="purple-pound">&pound&pound&pound&pound</span> : &pound30-35 per hour &nbsp;&nbsp;
+                                <span class="purple-pound">&pound&pound&pound&pound&pound</span> : &pound35+ per hour
+                            </p>
                         </div>
-                    </div>
-                    <div class="pricing-key">
-                        <p>
-                            <span class="purple-pound">&pound</span> : &pound15-20 per hour &nbsp;&nbsp;
-                            <span class="purple-pound">&pound&pound</span> : &pound20-25 per hour &nbsp;&nbsp;
-                            <span class="purple-pound">&pound&pound&pound</span> : &pound25-30 per hour &nbsp;&nbsp;
-                            <span class="purple-pound">&pound&pound&pound&pound</span> : &pound30-35 per hour &nbsp;&nbsp;
-                            <span class="purple-pound">&pound&pound&pound&pound&pound</span> : &pound35+ per hour
-                        </p>
-                    </div>
                     <div class="tutor-grid">${tutorsHtml}</div>
-                    <a id="backToTutors">Back to Tutors</a>
                     <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            // Retrieve search parameters from sessionStorage and reapply them to the URL if missing
-                            const searchParams = JSON.parse(sessionStorage.getItem('searchParams'));
-                            if (searchParams && !window.location.search) {
-                                const queryString = new URLSearchParams(searchParams).toString();
-                                window.location.replace(\`\${window.location.pathname}?\${queryString}\`);
-                            }
-
-                            // Update "Back to Tutors" link with stored search parameters
-                            if (searchParams) {
-                                const queryString = new URLSearchParams(searchParams).toString();
-                                document.getElementById('backToTutors').setAttribute('href', \`/tutors?\${queryString}\`);
-                            }
-
-                            // Animation for showing tutor cards and pricing key
-                            document.querySelector('.thistle-leaf img').addEventListener('animationend', function() {
-                                const tutorCards = document.querySelectorAll('.tutor-card');
-                                tutorCards.forEach((card, index) => {
-                                    setTimeout(() => {
-                                        card.classList.add('show');
-                                    }, index * 300);
-                                });
-
-                                document.querySelector('.pricing-key').classList.add('show');
+                        document.querySelector('.thistle-leaf img').addEventListener('animationend', function() {
+                            const tutorCards = document.querySelectorAll('.tutor-card');
+                            tutorCards.forEach((card, index) => {
+                                setTimeout(() => {
+                                    card.classList.add('show');
+                                }, index * 300);  // Delay each card by 300ms
                             });
+                            const tutorgrids = document.querySelectorAll('.tutor-grid');
+                            tutorgrids.forEach((grid, index) => {
+                                setTimeout(() => {
+                                    grid.classList.add('show');
+                                }, index * 300);  // Delay each card by 300ms
+                            });
+
+                            document.querySelector('.pricing-key').classList.add('show');
                         });
                     </script>
                 </main>
