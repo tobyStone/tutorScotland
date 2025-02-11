@@ -102,6 +102,17 @@ module.exports = async (req, res) => {
                         </div>
                     <div class="tutor-grid">${tutorsHtml}</div>
                     <script>
+                      // Store search parameters in sessionStorage when the form is submitted
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const form = document.getElementById('tutorFinderForm');
+                            if (form) {
+                                form.addEventListener('submit', function () {
+                                    const subject = document.getElementById('subject').value;
+                                    const mode = document.getElementById('mode').value;
+                                    const postcode = document.getElementById('postcode').value;
+                                    sessionStorage.setItem('searchParams', JSON.stringify({ subject, mode, postcode }));
+                                });
+                            }
                         document.querySelector('.thistle-leaf img').addEventListener('animationend', function() {
                             const tutorCards = document.querySelectorAll('.tutor-card');
                             tutorCards.forEach((card, index) => {
