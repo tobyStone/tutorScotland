@@ -331,7 +331,7 @@ main {
         display: block;
         max-width: 70%; /* Restricts the width to 70% of the card */
         margin: 0 auto; /* Centers the content horizontally */
-        font-size: 0.7em; /* Reduces the font size for better fit */
+        font-size: 0.9em; /* Reduces the font size for better fit */
         text-align: center; /* Center-aligns the text */
         white-space: normal; /* Allows text to wrap onto multiple lines */
         word-wrap: break-word; /* Ensures long words break to fit */
