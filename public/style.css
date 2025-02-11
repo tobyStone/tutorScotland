@@ -627,8 +627,8 @@ main {
 }
 
 /* Style for screens between 1024px and 1350px width */
-@media screen and (min-width: 1024px) and (max-width: 1350px) {
+@media screen and (min-width: 1023px) and (max-width: 1350px) {
     .tagline {
-        top: 22vh; /* Lower the tagline by 5vh */
+        top: 27vh; /* Lower the tagline by 5vh */
     }
 }
