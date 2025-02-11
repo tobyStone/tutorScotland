@@ -113,17 +113,6 @@ module.exports = async (req, res) => {
                 document.querySelector(".thistle-leaf-flipped").style.opacity = "1";
             });
 
-              // Retrieve search parameters from sessionStorage
-                const searchParams = JSON.parse(sessionStorage.getItem('searchParams'));
-                if (searchParams) {
-                    const { subject, mode, postcode } = searchParams;
-                    let queryParams = new URLSearchParams();
-                    if (subject) queryParams.append('subject', subject);
-                    if (mode) queryParams.append('mode', mode);
-                    if (postcode) queryParams.append('postcode', postcode);
-
-                    // Set the "Back to Tutors" link with query parameters
-                    document.getElementById('backToTutors').href = '/tutors?' + queryParams.toString();
 
         </script>
     </body>
