@@ -82,7 +82,12 @@
             // Collect form values
             const subject = document.getElementById('subject').value;
             const mode = document.getElementById('mode').value;
-            const postcode = document.getElementById('postcode').value;
+            let postcode = document.getElementById('postcode').value;
+
+            // Convert postcode to uppercase for consistency
+            if (postcode) {
+                postcode = postcode.toUpperCase();
+            }
 
             // Construct query parameters
             let queryParams = `?subject=${encodeURIComponent(subject)}&mode=${encodeURIComponent(mode)}`;
