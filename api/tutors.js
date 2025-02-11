@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
                         </li>
                     `).join('')}
                 </ul>
-                <p><strong>Available in:</strong> ${tutor.postcodes.join(', ')}</p>
+                <p class="available-in"><strong>Available in:</strong> ${tutor.postcodes.join(', ')}</p>
             </section>
         `).join('');
 
@@ -78,7 +78,7 @@ module.exports = async (req, res) => {
                     <h1>Tutor Scotland</h1>
                     <nav>
                         <a href="about-us.html">About Us</a>
-                        <a href="login.html">Login</a>
+                        <a href="index.html">Home</a>
                     </nav>
                 </header>
                 <main>
