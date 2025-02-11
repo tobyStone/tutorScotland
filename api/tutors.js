@@ -40,7 +40,8 @@ module.exports = async (req, res) => {
 
         console.log("MongoDB Query:", JSON.stringify(query, null, 2));
 
-        const tutors = await Tutor.find(query, '-description');
+        const tutors = await Tutor.find(query, '-description')
+            .sort({ costRange: 1 }); // Ascending order: cheapest to most expensive
 
         console.log("Tutors found:", tutors.length > 0 ? tutors : "No tutors found");
 
