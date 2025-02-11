@@ -562,12 +562,12 @@ main {
         }
 
         .tutor-card p.available-in {
-            max-width: 80%; /* Restrict the width to 80% of the card */
+            max-width: 70%; /* Restrict the width to 80% of the card */
             margin: 0 auto; /* Center the text within the card */
             white-space: normal; /* Allow wrapping */
             word-wrap: break-word; /* Ensure long words break to fit */
             text-align: center; /* Center-align the text */
-            font-size: 0.9em; /* Adjust font size for better fit */
+            font-size: 0.7em; /* Adjust font size for better fit */
             line-height: 1.4; /* Increase line spacing for readability */
         }
 
