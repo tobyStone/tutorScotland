@@ -59,8 +59,10 @@ module.exports = async (req, res) => {
                         </li>
                     `).join('')}
                 </ul>
-                <p class="available-in"><strong>Available in:</strong> ${tutor.postcodes.join(', ')}</p>
-            </section>
+              <p class="available-in custom-style">
+                <strong>Available in:</strong> ${tutor.postcodes.join(', ')}
+              </p>
+          </section>
         `).join('');
 
         const html = `
