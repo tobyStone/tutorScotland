@@ -64,7 +64,7 @@ module.exports = async (req, res) => {
             <h1>Tutor Scotland</h1>
             <nav>
                 <a href="/about">About Us</a>
-                <a href="index.html">Home</a>
+                <a href="/">Home</a>
             </nav>
         </header>
         <main>
