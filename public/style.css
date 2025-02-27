@@ -16,15 +16,15 @@ body {
 
 header {
     /* Two layered backgrounds: shield on top, tartan behind */
-    background: url('/images/bannerShield2.png') no-repeat left top, url('/images/bannerBackground.PNG') repeat left top;
-    /*
-     * The first value (e.g., 80px auto) is for the shield;
-     * the second value (e.g., 50px auto) is for the tartan tile.
-     * Adjust as needed to get the sizes you want.
-     */
-    background-size: 80px auto, /* shield width, height auto */
-    50px auto; /* tartan tile width, height auto */
-    /* Increase the padding from 40px to, say, 80px for a taller banner */
+    background-image: url('/images/bannerShield2.png'), url('/images/bannerBackground.PNG');
+    background-repeat: no-repeat, repeat;
+    /* Position the shield 20px from the left & top, 
+       while the tartan repeats from the top-left. */
+    background-position: 20px 20px, left top;
+    /* Scale the shield to 100px wide, 
+       the tartan tiles to 50px wide. */
+    background-size: 100px auto, 50px auto;
+    /* Banner padding (height) */
     padding: 40px;
     color: #fff;
     display: flex;
@@ -33,13 +33,22 @@ header {
     position: relative;
 }
 
-    /* Move the heading to the right so it starts after the shield ends */
+    /* Move and resize the heading */
     header h1 {
-        font-size: 2.5em;
+        /* Slightly bigger heading */
+        font-size: 2.8em;
         font-weight: bold;
-        /* Nudge it over, so it doesn’t overlap the shield */
-        margin-left: 90px; /* Adjust to taste */
+        /* Nudge it so it starts after the shield area */
+        margin-left: 100px; /* Adjust to taste */
     }
+
+/* Make nav links (About Us, Login) bigger */
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 1.2em; /* Increased from 1em */
+}
 
 
 

@@ -70,16 +70,17 @@ module.exports = async (req, res) => {
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
-                <title>Tutor Scotland - Find Your Tutor</title>
+                <title>Scottish Tutors Association - Find Your Tutor</title>
                 <link rel="icon" href="/images/favicon2.png" type="image/png">
                 <link rel="stylesheet" href="/style.css">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
             </head>
             <body>
                 <header>
-                    <h1>Tutor Scotland</h1>
+                    <h1>Scottish Tutors Association</h1>
                     <nav>
                         <a href="about-us.html">About Us</a>
+                        <a href="login.html">Admin Login</a>
                         <a href="/">Home</a>
                     </nav>
                 </header>
