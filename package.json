@@ -6,15 +6,17 @@
   "scripts": {
     "start": "vercel dev"
   },
-    "author": {
-      "name": "Toby Stone"
-    },
-    "dependencies": {
-      "dotenv": "^16.4.7",
-      "mongoose": "^8.10.0"
-    },
-    "engines": {
-      "bun": ">=0.1.0"
-    },
-    "license": "MIT"
-  }
+  "author": {
+    "name": "Toby Stone"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "mongoose": "^8.10.0",
+    "openai": "^4.85.0"
+  },
+  "engines": {
+    "bun": ">=0.1.0"
+  },
+  "license": "MIT"
+}
