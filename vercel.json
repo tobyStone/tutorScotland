@@ -6,7 +6,6 @@
       "destination": "/public/landing.html"
     },
     {
-      // Parents zone – after successful parent login
       "source": "/parents",
       "destination": "/public/index.html"
     },
@@ -15,7 +14,6 @@
       "destination": "/public/tutorszone.html"
     },
     {
-      // Admin zone – for adding new tutors
       "source": "/admin",
       "destination": "/public/admin.html"
     },
