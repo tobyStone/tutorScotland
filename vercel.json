@@ -3,11 +3,11 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/public/landing.html"
+      "destination": "/public/index.html"
     },
     {
       "source": "/parents",
-      "destination": "/public/index.html"
+      "destination": "/public/parents.html"
     },
     {
       "source": "/tutorszone",

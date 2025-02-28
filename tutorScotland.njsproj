@@ -65,7 +65,7 @@
     <Content Include="public\images\thistle-center.png" />
     <Content Include="public\images\thistle-leaf-flipped.png" />
     <Content Include="public\images\thistle-leaf.png" />
-    <Content Include="public\index.html">
+    <Content Include="public\parents.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="index\config.js">
@@ -74,7 +74,7 @@
     <Content Include="public\about-us.html">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="public\landing.html">
+    <Content Include="public\index.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\login.html">
