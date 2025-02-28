@@ -2,7 +2,6 @@
   "version": 2,
   "rewrites": [
     {
-      // Root now goes to the landing (or login) page
       "source": "/",
       "destination": "/public/landing.html"
     },
@@ -12,7 +11,6 @@
       "destination": "/public/index.html"
     },
     {
-      // Tutors zone – (if you add it later)
       "source": "/tutorszone",
       "destination": "/public/tutorszone.html"
     },
