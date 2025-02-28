@@ -76,6 +76,14 @@
         </div>
     </main>
     <script>
+        // Minimal token check
+        const token = localStorage.getItem('authToken');
+        if (!token || !token.includes("PARENT")) {
+            alert("You are not logged in as a Parent. Redirecting...");
+            window.location.href = '/landing';
+        }
+    </script>
+    <script>
         document.getElementById('mode').addEventListener('change', function () {
             const postcodeContainer = document.getElementById('postcodeContainer');
             if (this.value === 'in-person') {

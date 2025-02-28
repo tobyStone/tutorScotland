@@ -59,6 +59,159 @@ main {
     min-height: 80vh;
 }
 
+
+
+/**********************************************
+  LANDING PAGE ANIMATIONS
+**********************************************/
+
+.landing-container {
+    position: relative;
+    min-height: 80vh;
+    overflow: hidden;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.landing-img {
+    position: absolute;
+    opacity: 0;
+    transform-origin: center center;
+}
+
+/* Center images start at 50% scale */
+.center-img {
+    left: 50%;
+    transform: translateX(-50%) scale(0.5);
+}
+
+/* Adjust top positions & animation delays as needed */
+#imageShield {
+    top: 20%;
+    animation: growCenter 2s forwards ease-in-out;
+    animation-delay: 0.5s;
+}
+
+#imageBanner {
+    top: 40%;
+    animation: growCenter 2s forwards ease-in-out;
+    animation-delay: 1.5s;
+}
+
+@keyframes growCenter {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+/* Left arrow starts off-screen left, grows to 2x */
+.left-img {
+    left: 0;
+    top: 30%;
+    transform: translateX(-100%) scale(1);
+}
+
+#imageLeft {
+    animation: growLeft 2s forwards ease-in-out;
+    animation-delay: 1s;
+}
+
+@keyframes growLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%) scale(1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(2);
+    }
+}
+
+/* Right arrow starts off-screen right, grows to 2x */
+.right-img {
+    right: 0;
+    top: 30%;
+    transform: translateX(100%) scale(1);
+}
+
+#imageRight {
+    animation: growRight 2s forwards ease-in-out;
+    animation-delay: 1s;
+}
+
+@keyframes growRight {
+    0% {
+        opacity: 0;
+        transform: translateX(100%) scale(1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(2);
+    }
+}
+
+/* Landing headings (Parent’s / Tutor’s) fade in after images */
+.landing-heading {
+    position: absolute;
+    opacity: 0;
+    color: #0057B7;
+}
+
+.left-heading {
+    left: 10%;
+    top: 70%;
+    text-align: left;
+}
+
+.right-heading {
+    right: 10%;
+    top: 70%;
+    text-align: right;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+#parentsZoneHeading {
+    animation: fadeIn 1s forwards;
+    animation-delay: 3s;
+}
+
+#tutorsZoneHeading {
+    animation: fadeIn 1s forwards;
+    animation-delay: 3s;
+}
+
+/* About Us at bottom */
+.about-us-landing {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+    animation-delay: 5s;
+}
+
+
 /* Thistle Animation Container */
 /* Positioning Thistle */
 .thistle-container {
@@ -252,8 +405,8 @@ main {
 
 .parents-zone {
     position: absolute;
-    left: 43vw;
-    top: 18vh; /* Just below the tagline; adjust to taste */
+    left: 50vw;
+    top: 25vh; /* Just below the tagline; adjust to taste */
     opacity: 0;
     animation: revealTagline 1s forwards ease-in-out;
     animation-delay: 2.8s; /* Waits 1s after tagline finishes */
@@ -278,7 +431,7 @@ main {
     position: absolute;
     left: 31%; /* Moves it more central */
     top: 55vh; /* Moves it further down */
-    transform: translate(-50%, -50%) scale(1.25);
+    transform: translate(-50%, -50%) scale(1.5);
     border: 1px solid #ddd;
     padding: 20px;
     max-width: 350px;

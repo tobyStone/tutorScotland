@@ -35,10 +35,22 @@
     <Content Include=".gitignore">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\addTutor.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="api\auth.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="api\connectToDatabase.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\login.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="api\tutor.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\admin.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\images\englishTutor.PNG" />
@@ -62,6 +74,9 @@
     <Content Include="public\about-us.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\landing.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="public\login.html">
       <SubType>Code</SubType>
     </Content>
@@ -71,11 +86,17 @@
     <Content Include="api\tutors.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\tutorszone.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="seedDatabase.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="seedUsers.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="updateDatabase.js">
       <SubType>Code</SubType>
     </Content>

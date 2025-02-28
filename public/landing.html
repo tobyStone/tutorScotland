@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scottish Tutors Association - Landing</title>
+    <link rel="icon" href="/images/favicon2.png" type="image/png">
+    <link rel="stylesheet" href="/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <!-- Shared banner/header -->
+    <header>
+        <h1>Scottish Tutors Association</h1>
+        <nav>
+            <a href="about-us.html">About Us</a>
+            <a href="login.html">Admin Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="landing-container">
+            <!-- Example images (adapt to your file names) -->
+            <img src="/images/STAshield.png"
+                 alt="Large STA Shield"
+                 class="landing-img center-img"
+                 id="imageShield">
+            <img src="/images/STA-banner-ribbon.png"
+                 alt="Banner Ribbon"
+                 class="landing-img center-img"
+                 id="imageBanner">
+            <img src="/images/STA-arrow-left.png"
+                 alt="Left Ribbon"
+                 class="landing-img left-img"
+                 id="imageLeft">
+            <img src="/images/STA-arrow-right.png"
+                 alt="Right Ribbon"
+                 class="landing-img right-img"
+                 id="imageRight">
+
+            <!-- Parent's Zone heading -->
+            <div class="landing-heading left-heading" id="parentsZoneHeading">
+                <h2>Parent's Zone</h2>
+                <p>An area for parents to find a fully qualified tutor.</p>
+                <button onclick="loginAsParent()">Login as Parent</button>
+            </div>
+
+            <!-- Tutor's Zone heading -->
+            <div class="landing-heading right-heading" id="tutorsZoneHeading">
+                <h2>Tutor's Zone</h2>
+                <p>An area for tutors to send in their details and connect with parents of students.</p>
+                <button onclick="loginAsTutor()">Login as Tutor</button>
+            </div>
+
+            <!-- About Us at the bottom -->
+            <div class="about-us-landing" id="aboutUsLanding">
+                <h2>About Us</h2>
+                <p>We are committed to helping all children grow through personalised tutoring and innovative learning experiences.</p>
+                <p>Our mission is to provide quality education and support for students no matter their background or circumstance.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+    // Minimal example: We'll fetch tokens from a hypothetical API endpoint,
+    // or we can store them in localStorage. For real security, consider HTTP-only cookies.
+
+    async function loginAsParent() {
+      try {
+        // Fake call to a server endpoint that returns a JWT
+        const token = await mockGenerateJWT("parent");
+        // Store token in localStorage for demonstration
+        localStorage.setItem('authToken', token);
+        // Redirect
+        window.location.href = '/parents';
+      } catch (err) {
+        console.error("Parent login failed:", err);
+      }
+    }
+
+    async function loginAsTutor() {
+      try {
+        const token = await mockGenerateJWT("tutor");
+        localStorage.setItem('authToken', token);
+        window.location.href = '/tutorszone';
+      } catch (err) {
+        console.error("Tutor login failed:", err);
+      }
+    }
+
+    // Example function that "mocks" an API call returning a JWT
+    function mockGenerateJWT(userRole) {
+      // In a real app, you'd do: return fetch('/api/login', { method: 'POST', body: ... })
+      return new Promise((resolve) => {
+        // For demonstration, return a simple string with user role
+        // Real JWT example might be: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        setTimeout(() => {
+          resolve(`FAKE_JWT_FOR_${userRole.toUpperCase()}`);
+        }, 500);
+      });
+    }
+    </script>
+</body>
+</html>

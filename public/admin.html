@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <h1>Scottish Tutors Association - Admin</h1>
+        <nav>
+            <a href="/landing">Home</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Welcome, Admin!</h2>
+        <p>Add new tutors to the database below.</p>
+
+        <form id="adminAddTutorForm" class="admin-tutor-form">
+            <label for="tutorName">Tutor Name:</label>
+            <input type="text" id="tutorName" name="tutorName" required>
+
+            <label for="subjects">Subjects (comma-separated):</label>
+            <input type="text" id="subjects" name="subjects" required>
+
+            <label for="costRange">Cost Range (e.g. £, ££, £££):</label>
+            <input type="text" id="costRange" name="costRange">
+
+            <label for="badges">Badges (comma-separated):</label>
+            <input type="text" id="badges" name="badges">
+
+            <label for="imageUrl">Image URL:</label>
+            <input type="text" id="imageUrl" name="imageUrl">
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description"></textarea>
+
+            <label for="postcodes">Postcodes (comma-separated):</label>
+            <input type="text" id="postcodes" name="postcodes">
+
+            <button type="submit">Add Tutor</button>
+        </form>
+    </main>
+
+    <script>
+    // Check for admin token
+    const token = localStorage.getItem('authToken');
+    if (!token || !token.includes("ADMIN")) {
+      alert("You are not logged in as Admin. Redirecting...");
+      window.location.href = '/landing';
+    }
+
+    document.getElementById('adminAddTutorForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newTutor = {
+        name: document.getElementById('tutorName').value,
+        subjects: document.getElementById('subjects').value.split(',').map(s => s.trim()),
+        costRange: document.getElementById('costRange').value,
+        badges: document.getElementById('badges').value.split(',').map(b => b.trim()),
+        imageUrl: document.getElementById('imageUrl').value,
+        description: document.getElementById('description').value,
+        postcodes: document.getElementById('postcodes').value.split(',').map(p => p.trim())
+      };
+
+      try {
+        // Real request example:
+        // const response = await fetch('/api/addTutor', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        //   body: JSON.stringify(newTutor)
+        // });
+        // const data = await response.json();
+        // if (!response.ok) throw new Error(data.message);
+
+        console.log("New Tutor Data:", newTutor);
+        alert("Tutor added successfully!");
+      } catch (err) {
+        console.error("Error adding tutor:", err);
+        alert("Failed to add tutor. Please try again.");
+      }
+    });
+    </script>
+</body>
+</html>

@@ -2,8 +2,24 @@
   "version": 2,
   "rewrites": [
     {
+      // Root now goes to the landing (or login) page
       "source": "/",
+      "destination": "/public/landing.html"
+    },
+    {
+      // Parents zone – after successful parent login
+      "source": "/parents",
       "destination": "/public/index.html"
+    },
+    {
+      // Tutors zone – (if you add it later)
+      "source": "/tutorszone",
+      "destination": "/public/tutorszone.html"
+    },
+    {
+      // Admin zone – for adding new tutors
+      "source": "/admin",
+      "destination": "/public/admin.html"
     },
     {
       "source": "/tutors/:slug*",

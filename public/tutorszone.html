@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tutor's Zone</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <h1>Scottish Tutors Association - Tutor's Zone</h1>
+        <nav>
+            <a href="/landing">Home</a>
+            <a href="login.html">Admin Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Welcome, Tutors!</h2>
+        <p>Send in your details and connect with parents of students.</p>
+
+        <!-- Tutor Submission Form -->
+        <form id="tutorSubmissionForm" class="tutor-submission-form">
+            <label for="tutorName">Full Name:</label>
+            <input type="text" id="tutorName" name="tutorName" required>
+
+            <label for="contactEmail">Contact Email:</label>
+            <input type="email" id="contactEmail" name="contactEmail" required>
+
+            <label for="subjectTaught">Subject(s) Taught:</label>
+            <input type="text" id="subjectTaught" name="subjectTaught" required>
+
+            <label for="qualification">Qualification Level:</label>
+            <select id="qualification" name="qualification" required>
+                <option value="Undergraduate">Undergraduate</option>
+                <option value="Postgraduate">Postgraduate</option>
+                <option value="PhD">PhD</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="safeguarding">Safeguarding (PVG Registered?):</label>
+            <select id="safeguarding" name="safeguarding" required>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+    </main>
+
+    <script>
+    // Basic token check
+    const token = localStorage.getItem('authToken');
+    if (!token || !token.includes("TUTOR")) {
+      alert("You are not logged in as a Tutor. Redirecting...");
+      window.location.href = '/landing';
+    }
+
+    // Form submission handler
+    document.getElementById('tutorSubmissionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = {
+        name: document.getElementById('tutorName').value,
+        email: document.getElementById('contactEmail').value,
+        subjects: document.getElementById('subjectTaught').value.split(',').map(s => s.trim()),
+        qualification: document.getElementById('qualification').value,
+        safeguarding: document.getElementById('safeguarding').value
+      };
+
+      try {
+        // In a real app, you’d POST this to your server:
+        // const response = await fetch('/api/tutor-submission', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        //   body: JSON.stringify(formData)
+        // });
+        // const data = await response.json();
+        // if (!response.ok) throw new Error(data.message);
+
+        console.log("Tutor Submission:", formData);
+        alert("Thank you for your submission!");
+      } catch (err) {
+        console.error("Error submitting tutor info:", err);
+        alert("Submission failed. Please try again.");
+      }
+    });
+    </script>
+</body>
+</html>
