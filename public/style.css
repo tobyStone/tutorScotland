@@ -47,18 +47,10 @@ nav a {
     color: #fff;
     text-decoration: none;
     margin-left: 20px;
-    font-size: 1.2em; /* Increased from 1em */
+    font-size: 1.5em; /* Increased from 1em */
 }
 
 
-
-
-nav a {
-    color: #fff;
-    text-decoration: none;
-    margin-left: 20px;
-    font-size: 1em;
-}
 
 /* Main Content */
 main {
@@ -229,7 +221,7 @@ main {
 .tagline {
     position: absolute;
     left: 43vw; /* Move it toward the end of the leaf */
-    top: 17vh; /* Adjust placement */
+    top: 12vh; /* Adjust placement */
     font-size: 2em;
     color: #0057B7;
     font-weight: bold;
@@ -258,11 +250,35 @@ main {
 }
 
 
+.parents-zone {
+    position: absolute;
+    left: 43vw;
+    top: 18vh; /* Just below the tagline; adjust to taste */
+    opacity: 0;
+    animation: revealTagline 1s forwards ease-in-out;
+    animation-delay: 2.8s; /* Waits 1s after tagline finishes */
+}
+
+    /* Make the heading the same size & color as the tagline */
+    .parents-zone h2 {
+        font-size: 2em;
+        color: #0057B7;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    /* Paragraph smaller but same color */
+    .parents-zone p {
+        font-size: 1em; /* Adjust if you want it a bit bigger or smaller */
+        color: #0057B7;
+        max-width: 400px; /* Optional: limit line length */
+    }
+
 .form-container {
     position: absolute;
-    left: 33%; /* Moves it more central */
-    top: 52vh; /* Moves it further down */
-    transform: translate(-50%, -50%);
+    left: 31%; /* Moves it more central */
+    top: 55vh; /* Moves it further down */
+    transform: translate(-50%, -50%) scale(1.25);
     border: 1px solid #ddd;
     padding: 20px;
     max-width: 350px;
