@@ -53,11 +53,16 @@
     <Content Include="public\admin.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\images\bannerBackground.PNG" />
+    <Content Include="public\images\bannerShield.png" />
+    <Content Include="public\images\bannerShield2.png" />
+    <Content Include="public\images\centralShield.png" />
     <Content Include="public\images\englishTutor.PNG" />
     <Content Include="public\images\englishTutor2.PNG" />
     <Content Include="public\images\englishTutor3.PNG" />
     <Content Include="public\images\favicon2.png" />
     <Content Include="public\images\flag.PNG" />
+    <Content Include="public\images\mainMaxim.png" />
     <Content Include="public\images\mathsTutor.PNG" />
     <Content Include="public\images\mathsTutor3.PNG" />
     <Content Include="public\images\mathsTutor4.PNG" />
@@ -65,6 +70,8 @@
     <Content Include="public\images\thistle-center.png" />
     <Content Include="public\images\thistle-leaf-flipped.png" />
     <Content Include="public\images\thistle-leaf.png" />
+    <Content Include="public\images\unfoldMaximLeft.png" />
+    <Content Include="public\images\unfoldMaximRight.png" />
     <Content Include="public\parents.html">
       <SubType>Code</SubType>
     </Content>
