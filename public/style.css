@@ -11,7 +11,8 @@ body {
     font-family: Arial, sans-serif;
     background-color: #fff;
     color: #333;
-    line-height: 1.6;
+    line-height: 1.8;
+    font-size: 18px;
 }
 
 header {
@@ -33,21 +34,27 @@ header {
     position: relative;
 }
 
-    /* Move and resize the heading */
-    header h1 {
-        /* Slightly bigger heading */
-        font-size: 2.8em;
-        font-weight: bold;
-        /* Nudge it so it starts after the shield area */
-        margin-left: 100px; /* Adjust to taste */
-    }
+/* Move and resize the heading */
+header h1 {
+    /* Slightly bigger heading */
+    font-size: 3.3em;
+    font-weight: bold;
+    /* Nudge it so it starts after the shield area */
+    margin-left: 100px;
+    line-height: 1.2;
+}
+
+p, li, label, a, span {
+    font-size: 1.1em; /* Slightly larger paragraphs, labels, etc. */
+}
+
 
 /* Make nav links (About Us, Login) bigger */
 nav a {
     color: #fff;
     text-decoration: none;
     margin-left: 20px;
-    font-size: 1.5em; /* Increased from 1em */
+    font-size: 1.7em; /* Increased from 1em */
 }
 
 
@@ -112,12 +119,12 @@ main {
 
 /* Left arrow starts off-screen left, grows to 2x */
 .left-img {
-    left: 0;
-    top: 30%;
-    transform: translateX(-100%) scale(1);
+    transform: translateX(-200%) scale(1.5);
 }
 
 #imageLeft {
+    top: 38%; 
+    left: 48%; 
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1s;
 }
@@ -136,12 +143,12 @@ main {
 
 /* Right arrow starts off-screen right, grows to 2x */
 .right-img {
-    right: 0;
-    top: 30%;
-    transform: translateX(100%) scale(1);
+    transform: translateX(200%) scale(1.5);
 }
 
 #imageRight {
+    top: 38%;
+    left: 52%; 
     animation: growRight 2s forwards ease-in-out;
     animation-delay: 1s;
 }
