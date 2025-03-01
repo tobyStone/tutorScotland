@@ -89,7 +89,7 @@ main {
 /* Center images start at 50% scale */
 .center-img {
     left: 50%;
-    transform: translateX(-50%) scale(0.67);
+    transform: translateX(-50%) scale(0.77);
 }
 
 /* Adjust top positions & animation delays as needed */
@@ -100,7 +100,7 @@ main {
 }
 
 #imageBanner {
-    top: 37%;
+    top: 43%;
     animation: growCenter 2s forwards ease-in-out;
     animation-delay: 1.5s;
 }
@@ -124,7 +124,7 @@ main {
 
 #imageLeft {
     top: 38%; 
-    left: 33%; 
+    left: 35%; 
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1s;
 }
@@ -148,7 +148,7 @@ main {
 
 #imageRight {
     top: 38%;
-    left: 53%; 
+    left: 55%; 
     animation: growRight 2s forwards ease-in-out;
     animation-delay: 1s;
 }
