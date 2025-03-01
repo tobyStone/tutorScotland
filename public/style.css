@@ -89,7 +89,7 @@ main {
 /* Center images start at 50% scale */
 .center-img {
     left: 50%;
-    transform: translateX(-50%) scale(0.77);
+    transform: translateX(-50%) scale(0.97);
 }
 
 /* Adjust top positions & animation delays as needed */
@@ -119,12 +119,12 @@ main {
 
 /* Left arrow starts off-screen left, grows to 2x */
 .left-img {
-    transform: translateX(-200%) scale(1.5);
+    transform: translateX(-200%) scale(1.2);
 }
 
 #imageLeft {
     top: 38%; 
-    left: 35%; 
+    left: 39%; 
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1s;
 }
@@ -143,7 +143,7 @@ main {
 
 /* Right arrow starts off-screen right, grows to 2x */
 .right-img {
-    transform: translateX(200%) scale(1.5);
+    transform: translateX(200%) scale(1.2);
 }
 
 #imageRight {
