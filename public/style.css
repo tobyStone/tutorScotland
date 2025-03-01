@@ -124,7 +124,7 @@ main {
 
 #imageLeft {
     top: 38%; 
-    left: 39%; 
+    left: 37%; 
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1s;
 }
