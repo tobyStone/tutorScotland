@@ -42,7 +42,7 @@ header {
         /* Nudge it so it starts after the shield area */
         margin-left: 100px;
         line-height: 1.2;
-        text-shadow: 2px 2px 4px #0057B7;
+        text-shadow: 5px 5px 10px #0057B7;
     }
 
 p, li, label, a, span {
@@ -55,7 +55,8 @@ nav a {
     color: #fff;
     text-decoration: none;
     margin-left: 20px;
-    font-size: 1.7em; /* Increased from 1em */
+    font-size: 1.7em; 
+    text-shadow: 5px 5px 10px #0057B7;
 }
 
 
@@ -200,6 +201,14 @@ main {
     animation-delay: 3s;
 }
 
+#parentsZoneHeading h2 {
+    font-size: 4em;
+}
+
+#parentsZoneHeading p {
+    font-size: 2em;
+}
+
 #tutorsZoneHeading {
     animation: fadeIn 1s forwards;
     animation-delay: 3s;
@@ -216,7 +225,7 @@ main {
 /* About Us at bottom */
 .about-us-landing {
     position: absolute;
-    bottom: 20%;
+    top: 52%;
     left: 50%;
     transform: translateX(-50%);
     width: 80%;
@@ -229,11 +238,11 @@ main {
 }
 
     .about-us-landing h2 {
-        font-size: 4em;
+        font-size: 3em;
     }
 
     .about-us-landing p {
-        font-size: 2em;
+        font-size: 1.5em;
     }
 
 /* Thistle Animation Container */
