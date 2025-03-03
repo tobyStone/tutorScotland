@@ -1,23 +1,5 @@
 /* style.css */
 
-/* Root Variables for Consistency */
-:root {
-    /* Colors */
-    --primary-color: #0057B7;
-    --secondary-color: #C8A2C8;
-    --background-color: #f9f9f9;
-    --text-color: #333;
-    /* Sizes */
-    --header-padding: 40px;
-    --image-scale: 1.57;
-    --animation-duration: 2s;
-    --form-width: 350px;
-    --text-size: 1.1em;
-    /* Layout */
-    --left-offset: 2vw;
-    --top-offset: 7vh;
-}
-
 /* Reset */
 * {
     margin: 0;
@@ -28,17 +10,23 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #fff;
-    color: var(--text-color);
+    color: #333;
     line-height: 1.8;
     font-size: 18px;
 }
 
 header {
+    /* Two layered backgrounds: shield on top, tartan behind */
     background-image: url('/images/bannerShield2.png'), url('/images/bannerBackground.PNG');
     background-repeat: no-repeat, repeat;
+    /* Position the shield 20px from the left & top, 
+       while the tartan repeats from the top-left. */
     background-position: 20px 20px, left top;
+    /* Scale the shield to 100px wide, 
+       the tartan tiles to 50px wide. */
     background-size: 100px auto, 50px auto;
-    padding: var(--header-padding);
+    /* Banner padding (height) */
+    padding: 40px;
     color: #fff;
     display: flex;
     justify-content: space-between;
@@ -46,23 +34,30 @@ header {
     position: relative;
 }
 
-    header h1 {
-        font-size: 3.3em;
-        font-weight: bold;
-        margin-left: 100px;
-        line-height: 1.2;
-    }
-
-p, li, label, a, span {
-    font-size: var(--text-size);
+/* Move and resize the heading */
+header h1 {
+    /* Slightly bigger heading */
+    font-size: 3.3em;
+    font-weight: bold;
+    /* Nudge it so it starts after the shield area */
+    margin-left: 100px;
+    line-height: 1.2;
 }
 
+p, li, label, a, span {
+    font-size: 1.1em; /* Slightly larger paragraphs, labels, etc. */
+}
+
+
+/* Make nav links (About Us, Login) bigger */
 nav a {
     color: #fff;
     text-decoration: none;
     margin-left: 20px;
-    font-size: 1.7em;
+    font-size: 1.7em; /* Increased from 1em */
 }
+
+
 
 /* Main Content */
 main {
@@ -70,6 +65,8 @@ main {
     padding: 40px 20px;
     min-height: 80vh;
 }
+
+
 
 /**********************************************
   LANDING PAGE ANIMATIONS
@@ -89,16 +86,203 @@ main {
     transform-origin: center center;
 }
 
+/* Center images start at 50% scale */
 .center-img {
     left: 50%;
-    transform: translateX(-50%) scale(var(--image-scale));
+    transform: translateX(-50%) scale(1.57);
 }
 
-/* Reusable Animation Class */
-@keyframes fadeInScale {
+/* Adjust top positions & animation delays as needed */
+#imageShield {
+    top: 7%;
+    animation: growCenter 2s forwards ease-in-out;
+    animation-delay: 0.5s;
+}
+
+#imageBanner {
+    top: 43%;
+    animation: growCenter 2s forwards ease-in-out;
+    animation-delay: 1.5s;
+}
+
+@keyframes growCenter {
     0% {
         opacity: 0;
-        transform: scale(0.5);
+        transform: translateX(-50%) scale(0.5);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+/* Left arrow starts off-screen left, grows to 2x */
+.left-img {
+    transform: translateX(-200%) scale(1.1);
+}
+
+#imageLeft {
+    top: 38%; 
+    left: 37.5%; 
+    animation: growLeft 2s forwards ease-in-out;
+    animation-delay: 1s;
+}
+
+@keyframes growLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%) scale(1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(2);
+    }
+}
+
+/* Right arrow starts off-screen right, grows to 2x */
+.right-img {
+    transform: translateX(200%) scale(1.1);
+}
+
+#imageRight {
+    top: 38%;
+    left: 55%; 
+    animation: growRight 2s forwards ease-in-out;
+    animation-delay: 1s;
+}
+
+@keyframes growRight {
+    0% {
+        opacity: 0;
+        transform: translateX(100%) scale(1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(2);
+    }
+}
+
+/* Landing headings (Parent’s / Tutor’s) fade in after images */
+.landing-heading {
+    position: absolute;
+    opacity: 0;
+    color: #0057B7;
+}
+
+.left-heading {
+    left: 10%;
+    top: 70%;
+    text-align: left;
+}
+
+.right-heading {
+    right: 10%;
+    top: 70%;
+    text-align: right;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+#parentsZoneHeading {
+    animation: fadeIn 1s forwards;
+    animation-delay: 3s;
+}
+
+#tutorsZoneHeading {
+    animation: fadeIn 1s forwards;
+    animation-delay: 3s;
+}
+
+/* About Us at bottom */
+.about-us-landing {
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+    animation-delay: 5s;
+    color: #0057B7;
+}
+
+
+/* Thistle Animation Container */
+/* Positioning Thistle */
+.thistle-container {
+    position: absolute;
+    left: 2vw; /* Aligns further left */
+    top: 7vh; /* Places it below the banner */
+    height: auto;
+}
+
+/* Thistle & Tutor Section */
+.tutor-section {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 10vh;
+}
+
+/* Right-Side Flipped Thistle */
+.thistle-container-right {
+    position: absolute;
+    left: 57vw;
+    top: 7vh; /* Matches left thistle position */
+    height: auto;
+}
+
+
+
+/* Resize Each Component Specifically */
+.thistle-center img {
+    width: 42vw; /* Ensure it's no larger than 10% of viewport width */
+}
+
+.thistle-center-flipped img {
+    width: 42vw; /* Ensure it's no larger than 10% of viewport width */
+}
+
+
+.thistle-leaf img {
+    width: 42vw; /* Leaf takes up to 50% of viewport width */
+    height: auto;
+
+}
+
+
+.thistle-leaf-flipped img {
+    width: 42vw; /* Leaf takes up to 50% of viewport width */
+    height: auto;
+}
+
+
+
+/* Base Style - Initially Hidden */
+.thistle-center
+{
+    position: absolute;
+    opacity: 0;
+}
+
+
+/* Flower and Leaf Grow Simultaneously */
+@keyframes revealFlower {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
     }
 
     100% {
@@ -107,86 +291,558 @@ main {
     }
 }
 
-.fade-in-scale {
-    animation: fadeInScale var(--animation-duration) forwards ease-in-out;
+.thistle-center {
+    animation: revealFlower 1.5s forwards ease-in-out;
+    animation-delay: 0.5s; /* Same delay as the leaf */
 }
 
-#imageShield {
-    top: 7%;
-    animation-delay: 0.5s;
+/* Right-Side Flipped Flower Grows Simultaneously */
+@keyframes revealFlowerFlipped {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
-#imageBanner {
-    top: 43%;
-    animation-delay: 1.5s;
+.thistle-center-flipped {
+    animation: revealFlower 1.5s forwards ease-in-out;
+    animation-delay: 0.5s; /* Same delay as the leaf */
 }
 
-/* Layout Fixes */
-.thistle-container {
+
+
+/* Leaf Grows Right - Expanding from Stem */
+@keyframes revealLeaf {
+    0% {
+        opacity: 0;
+        transform: translateX(-40px) translateY(23vh) scaleX(0.3); /* Start from center */
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) translateY(0) scaleX(1); /* Grow rightward */
+    }
+}
+
+.thistle-leaf {
+    animation: revealLeaf 1.5s forwards ease-in-out;
+    opacity: 0;
+    animation-delay: 0.7s;
+}
+
+
+/* Right-Side Flipped Leaf Grows Leftward */
+@keyframes revealLeafFlipped {
+    0% {
+        opacity: 0;
+        transform: translateX(40px) translateY(23vh) scaleX(0.3);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) translateY(0) scaleX(1);
+    }
+}
+
+
+.thistle-leaf-flipped {
     position: absolute;
-    left: var(--left-offset);
-    top: var(--top-offset);
-    height: auto;
+    top: 5vh; /* Aligns it to the same vertical position as the left leaf */
+    animation: revealLeafFlipped 1.5s forwards ease-in-out;
+    opacity: 0;
+    animation-delay: 0.7s;
+}
+
+
+
+/* Tagline and Form */
+.content-wrapper {
+    margin-left: 70vw; /* space for the thistle image */
+}
+
+
+/* Tagline Appears at End of Leaf Growth */
+@keyframes revealTagline {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .tagline {
     position: absolute;
-    left: 43vw;
-    top: 12vh;
+    left: 43vw; /* Move it toward the end of the leaf */
+    top: 12vh; /* Adjust placement */
     font-size: 2em;
-    color: var(--primary-color);
+    color: #0057B7;
     font-weight: bold;
     opacity: 0;
-    animation: fadeInScale 1s forwards ease-in-out;
-    animation-delay: 1.8s;
+    animation: revealTagline 1s forwards ease-in-out;
+    animation-delay: 1.8s; /* Happens AFTER leaf growth */
 }
+
+.tagline .lilac {
+    color: #C8A2C8; /* Lilac color */
+    font-weight: bold;
+}
+
+.tagline .lilac {
+    color: #C8A2C8; /* Lilac color for 'all' */
+    font-weight: bold;
+}
+
+
+.tagline h2 {
+    font-size: 2em;
+}
+
+.tagline .lilac {
+    color: #C8A2C8; /* lilac color for emphasis */
+}
+
+
+.parents-zone {
+    position: absolute;
+    left: 50vw;
+    top: 25vh; /* Just below the tagline; adjust to taste */
+    opacity: 0;
+    animation: revealTagline 1s forwards ease-in-out;
+    animation-delay: 2.8s; /* Waits 1s after tagline finishes */
+}
+
+    /* Make the heading the same size & color as the tagline */
+    .parents-zone h2 {
+        font-size: 2em;
+        color: #0057B7;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    /* Paragraph smaller but same color */
+    .parents-zone p {
+        font-size: 1em; /* Adjust if you want it a bit bigger or smaller */
+        color: #0057B7;
+        max-width: 400px; /* Optional: limit line length */
+    }
 
 .form-container {
     position: absolute;
-    left: 31%;
-    top: 55vh;
+    left: 31%; /* Moves it more central */
+    top: 55vh; /* Moves it further down */
     transform: translate(-50%, -50%) scale(1.5);
     border: 1px solid #ddd;
     padding: 20px;
-    max-width: var(--form-width);
-    background-color: var(--background-color);
+    max-width: 350px;
+    color: #333;
+    background-color: #f9f9f9;
 }
 
-/* Responsive Design Improvements */
-@media screen and (max-width: 750px) {
+    /* Add Lilac Shadow on Hover */
+    .form-container:hover {
+        box-shadow: 0px 0px 10px #C8A2C8;
+    }
+
+
+    .form-container h3 {
+        margin-bottom: 15px;
+    }
+
+    .form-container label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .form-container select,
+    .form-container input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .form-container button {
+        background-color: #0057B7;
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 1em;
+        transition: all 0.3s ease-in-out;
+    }
+
+        /* Add Lilac Shadow on Hover */
+        .form-container button:hover {
+            box-shadow: 0px 0px 10px #C8A2C8;
+        }
+
+        /* Change Background to Lilac When Pressed */
+        .form-container button:active {
+            background-color: #C8A2C8;
+            color: #fff;
+        }
+
+
+
+/* Tutor Grid */
+.tutor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0px;
+    padding: 20px;
+    margin-left: 5vw;
+    margin-top: 23vh; /* Push the grid further down */
+    margin-left: 21vw; /* Shift the grid to the right */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 1s ease-in-out;
+    row-gap: 20px; /* Adds vertical space between the rows */
+}
+
+/* Tutor Cards */
+.tutor-card {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #ddd;
+    padding: 0px;
+    border-radius: 0;
+    background-color: rgba(255, 255, 255, 1);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    opacity: 0; /* Initially hidden */
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+    border-bottom: 2px solid #ddd; /* Light gray bottom border */
+    margin-bottom: 10px; /* Add some spacing between rows */
+}
+
+    .tutor-card p.available-in.custom-style {
+        display: block;
+        max-width: 70%; /* Restricts the width to 70% of the card */
+        margin: 0 auto; /* Centers the content horizontally */
+        font-size: 0.9em; /* Reduces the font size for better fit */
+        text-align: center; /* Center-aligns the text */
+        white-space: normal; /* Allows text to wrap onto multiple lines */
+        word-wrap: break-word; /* Ensures long words break to fit */
+        line-height: 1.3; /* Adjusts the line spacing for readability */
+        color: #555; /* Makes the color a bit softer */
+    }
+
+    .tutor-card img {
+        max-width: 100%;
+        height: 37vh;
+        object-fit: cover;
+        border-radius: 1px;
+    }
+
+    .tutor-card::before {
+        content: "";
+        background: url('/images/flag.PNG') no-repeat center center;
+        opacity: 0.4; /* Increase opacity to show more blue */
+        background-blend-mode: overlay; /* Blend mode to enhance blue visibility */
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+    }
+
+.badge-item {
+    list-style: none;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.badge-tick {
+    color: #800080;
+    font-size: 1.2em;
+    margin-left: 5px; /* Small spacing between the badge description and the tick */
+}
+
+
+
+/* Purple Pound Symbols */
+.purple-pound {
+    color: #800080;
+    font-weight: bold;
+}
+
+/* Pricing Key */
+.pricing-key {
+    font-size: 1.2rem;
+    color: #800080;
+    margin-left: 49vw;
+    text-align: right;
+    position: absolute;
+    top: 17vh;
+    right: 12vw;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 1s ease-in-out;
+}
+
+/* Show tutor cards and pricing key after animation */
+.show {
+    opacity: 1;
+}
+
+/* Center the tutor-profile section */
+.tutor-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 auto;
+    max-width: 600px;
+    position: relative;
+    top: 14vh;
+    background-color: transparent;
+}
+
+    .tutor-profile h1 {
+        font-size: 2em;
+        margin-bottom: 5px;
+        color: #0057B7;
+        text-align: center;
+    }
+
+    .tutor-profile p {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+        color: #333;
+        text-align: center;
+    }
+
+    .tutor-profile img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .tutor-profile ul {
+        font-size: 1.1em;
+        list-style: none;
+        padding: 0;
+        text-align: center;
+    }
+
+    .tutor-profile li {
+        margin-bottom: 5px;
+    }
+
+
+/* About Text */
+/* Centered About Text Below Thistles */
+.about-content {
+    position: absolute;
+    left: 29%;
+    top: 27vh;
+    transform: translateX(-50%);
+    width: 40vw;
+    color: #0057B7; /* Matches banner color */
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+    opacity: 0;
+    animation: revealAboutText 1.5s forwards ease-in-out;
+    animation-delay: 1.8s;
+}
+
+
+@keyframes revealAboutText {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* For very small screens (iPhone SE, etc.) */
+@media screen and (max-width: 750px) and (orientation: portrait) {
     .tagline {
-        left: 10vw;
-        top: 2vh;
-        font-size: 0.9em;
+        left: 10vw; /* Center it more */
+        top: 2vh; /* Lower to give space */
+        font-size: 0.9em; /* Reduce font size for better fit */
         text-align: center;
     }
 
     .form-container {
+        position: absolute;
         left: 50%;
-        top: 75vh;
-        width: 75%;
-        padding: 10px;
-        font-size: 0.8em;
+        top: 75vh; /* Lower the form slightly */
+        transform: translate(-50%, -50%);
+        width: 75%; /* Reduce width for smaller screens */
+        padding: 10px; /* Decrease padding to save space */
+        font-size: 0.8em; /* Reduce form font size */
+        line-height: 1.2; /* Compact line spacing */
     }
+
+        .form-container h3 {
+            font-size: 1em; /* Smaller header */
+            margin-bottom: 10px;
+        }
+
+        .form-container label {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .form-container select,
+        .form-container input {
+            font-size: 0.85em;
+            padding: 5px;
+        }
+
+        .form-container button {
+            font-size: 0.9em; /* Smaller button text */
+            padding: 8px 12px; /* Compact button size */
+        }
 }
 
-@media screen and (max-width: 900px) {
+
+/* Style for vertical small screens (portrait mode) */
+@media screen and (max-width: 900px) and (orientation: portrait) {
+
     .thistle-container {
-        top: 2vh;
+        top: 2vh; /* Move it closer to the banner */
+    }
+
+    .thistle-container-right {
+        display: none;
     }
 
     .tagline {
-        left: 30vw;
-        top: 5vh;
-        font-size: 1.2em;
+        left: 30vw; /* Adjust for a more central position */
+        top: 5vh; /* Move it higher */
+        font-size: 1.2em; /* Slightly larger for better visibility */
         text-align: center;
     }
+
+    .form-container {
+        position: absolute;
+        left: 50%;
+        top: 57vh; 
+        transform: translate(-50%, -50%);
+        width: 90%; /* Full width with a little padding */
+        padding: 25px; /* More padding for a larger look */
+        font-size: 1.1em; /* Increase font size for better readability */
+    }
+
+        .form-container button {
+            font-size: 1.2em; /* Larger button text */
+            padding: 15px 20px; /* Increase button padding */
+        }
+
+    .tutor-grid {
+        display: grid;
+        grid-template-columns: 1fr; /* Single column */
+        gap: 20px; /* Space between the tutor cards */
+        padding: 10px;
+        margin-top: 10vh; 
+    }
+
+    .tutor-card {
+        width: 100%;
+        min-height: 100%; /* Ensure it extends to the full height */
+        position: relative;
+        background: none; /* Remove background here, as we'll use ::before for full control */
+        overflow: hidden; /* Ensure content doesn't exceed the card size */
+    }
+
+ 
+
+        .tutor-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('/images/flag.PNG') no-repeat center center;
+            background-size: cover;
+            opacity: 0.3; /* Adjust to make it more translucent */
+            z-index: -1; /* Ensure it stays behind the content */
+        }
+
+    .pricing-key {
+        position: relative;
+        top: 7vh;
+        left: 10vw;
+        margin: 0 10px;
+        font-size: 0.9rem;
+        text-align: left;
+        max-width: 80vw; /* Ensures it stays within the viewport */
+        white-space: normal; /* Allows text to wrap onto the next line */
+        word-wrap: break-word; /* Ensure wrapping */
+    }
+
+    /* Adjust the tutor card to move up */
+    .tutor-profile {
+        top: 5vh; /* Move it up closer to the thistle */
+    }
+
+        .tutor-profile h1 {
+            margin-top: -10px; /* Reduce the margin above the name */
+            font-size: 2.2em; /* Slightly larger for better emphasis */
+        }
+
+    .about-content {
+        font-size: 1.5em; /* Increase font size for larger writing */
+        line-height: 1.5; /* Add more line height for readability */
+        text-align: center;
+        top: 7vh;
+    }
+
+        .about-content h2 {
+            margin-bottom: 20px; /* Increase spacing below the heading */
+        }
+
+    .about-paragraph {
+        max-width: 100%; /* Wider than the h2 */
+        margin: 0 auto;
+        font-size: 0.7em;
+        line-height: 1.5;
+    }
 }
 
-@media screen and (max-width: 1024px) {
+/* Style for horizontal small screens (landscape mode) */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
     .tagline {
-        left: 45vw;
+        left: 45vw; /* Adjust position for horizontal */
         top: 5vh;
-        font-size: 1em;
+        font-size: 1em; /* Reduce tagline font size */
+    }
+
+    .form-container {
+        position: absolute;
+        left: 60%;
+        top: 57vh; /* Move it down and to the right */
+        transform: translate(-50%, -50%);
+        width: 77%; /* Adjust the form size */
+    }
+}
+
+/* Style for screens between 1024px and 1350px width */
+@media screen and (min-width: 1023px) and (max-width: 1350px) {
+    .tagline {
+        top: 17vh; /* Lower the tagline by 5vh */
     }
 }
