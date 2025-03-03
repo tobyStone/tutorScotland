@@ -236,10 +236,11 @@ main {
     background-color: #0057B7; /* same as your tutor search button */
     color: #fff;
     border: none;
-    padding: 23px 33px; /* 3× bigger than typical 10px 15px */
+    padding: 23px 33px; 
     cursor: pointer;
     border-radius: 4px;
-    font-size: 2.3em; /* 3× bigger than
+    font-size: 2.3em; 
+    }
 
 
 /* About Us at bottom */
