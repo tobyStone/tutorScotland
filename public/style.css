@@ -181,14 +181,14 @@ main {
 .left-heading {
     left: 5%;
     top: 50%;
-    width: 25vw;
+    width: 23vw;
     text-align: left;
 }
 
 .right-heading {
     right: 5%;
     top: 50%;
-    width: 25vw;
+    width: 23vw;
     text-align: right;
 }
 
@@ -236,10 +236,10 @@ main {
     background-color: #0057B7; /* same as your tutor search button */
     color: #fff;
     border: none;
-    padding: 30px 45px; /* 3× bigger than typical 10px 15px */
+    padding: 23px 33px; /* 3× bigger than typical 10px 15px */
     cursor: pointer;
     border-radius: 4px;
-    font-size: 3em; /* 3× bigger than
+    font-size: 2.3em; /* 3× bigger than
 
 
 /* About Us at bottom */
