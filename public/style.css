@@ -35,14 +35,15 @@ header {
 }
 
 /* Move and resize the heading */
-header h1 {
-    /* Slightly bigger heading */
-    font-size: 3.3em;
-    font-weight: bold;
-    /* Nudge it so it starts after the shield area */
-    margin-left: 100px;
-    line-height: 1.2;
-}
+    header h1 {
+        /* Slightly bigger heading */
+        font-size: 3.3em;
+        font-weight: bold;
+        /* Nudge it so it starts after the shield area */
+        margin-left: 100px;
+        line-height: 1.2;
+        text-shadow: 2px 2px 4px #0057B7;
+    }
 
 p, li, label, a, span {
     font-size: 1.1em; /* Slightly larger paragraphs, labels, etc. */
@@ -113,7 +114,7 @@ main {
 
     100% {
         opacity: 1;
-        transform: translateX(-50%) scale(1);
+        transform: translateX(-50%) scale(1.3);
     }
 }
 
@@ -123,21 +124,21 @@ main {
 }
 
 #imageLeft {
-    top: 38%; 
-    left: 37.5%; 
-    animation: growLeft 2s forwards ease-in-out;
+    top: 38%;
+    left: 37.5%;
+    animation: outwardLeft 2s forwards ease-in-out;
     animation-delay: 1s;
 }
 
-@keyframes growLeft {
+@keyframes outwardLeft {
     0% {
         opacity: 0;
-        transform: translateX(-100%) scale(1);
+        transform: translateX(0) scale(1);
     }
 
     100% {
         opacity: 1;
-        transform: translateX(0) scale(2);
+        transform: translateX(-40%) scale(2);
     }
 }
 
@@ -148,20 +149,20 @@ main {
 
 #imageRight {
     top: 38%;
-    left: 55%; 
-    animation: growRight 2s forwards ease-in-out;
+    left: 55%;
+    animation: outwardRight 2s forwards ease-in-out;
     animation-delay: 1s;
 }
 
-@keyframes growRight {
+@keyframes outwardRight {
     0% {
         opacity: 0;
-        transform: translateX(100%) scale(1);
+        transform: translateX(0) scale(1);
     }
 
     100% {
         opacity: 1;
-        transform: translateX(0) scale(2);
+        transform: translateX(40%) scale(2);
     }
 }
 
@@ -174,13 +175,13 @@ main {
 
 .left-heading {
     left: 10%;
-    top: 70%;
+    top: 50%;
     text-align: left;
 }
 
 .right-heading {
     right: 10%;
-    top: 70%;
+    top: 50%;
     text-align: right;
 }
 
@@ -204,10 +205,18 @@ main {
     animation-delay: 3s;
 }
 
+    #tutorsZoneHeading h2 {
+        font-size: 4em;
+    }
+
+    #tutorsZoneHeading p {
+        font-size: 2em;
+    }
+
 /* About Us at bottom */
 .about-us-landing {
     position: absolute;
-    bottom: 5%;
+    bottom: 20%;
     left: 50%;
     transform: translateX(-50%);
     width: 80%;
@@ -219,6 +228,13 @@ main {
     color: #0057B7;
 }
 
+    .about-us-landing h2 {
+        font-size: 4em;
+    }
+
+    .about-us-landing p {
+        font-size: 2em;
+    }
 
 /* Thistle Animation Container */
 /* Positioning Thistle */
@@ -422,7 +438,7 @@ main {
 
     /* Make the heading the same size & color as the tagline */
     .parents-zone h2 {
-        font-size: 2em;
+        font-size: 4em;
         color: #0057B7;
         font-weight: bold;
         margin-bottom: 10px;
@@ -430,7 +446,7 @@ main {
 
     /* Paragraph smaller but same color */
     .parents-zone p {
-        font-size: 1em; /* Adjust if you want it a bit bigger or smaller */
+        font-size: 2em; /* Adjust if you want it a bit bigger or smaller */
         color: #0057B7;
         max-width: 400px; /* Optional: limit line length */
     }
