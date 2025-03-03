@@ -90,6 +90,7 @@ main {
     position: absolute;
     opacity: 0;
     transform-origin: center center;
+    z-index: 1;
 }
 
 /* Center images start at 50% scale */
@@ -103,12 +104,14 @@ main {
     top: 7%;
     animation: growCenter 2s forwards ease-in-out;
     animation-delay: 0.5s;
+    z-index: 2;
 }
 
 #imageBanner {
     top: 43%;
     animation: growCenter 2s forwards ease-in-out;
     animation-delay: 1.5s;
+    z-index: 2;
 }
 
 @keyframes growCenter {
@@ -133,6 +136,7 @@ main {
     left: 37.5%;
     animation: outwardLeft 2s forwards ease-in-out;
     animation-delay: 2s;
+    z-index: 1;
 }
 
 @keyframes outwardLeft {
@@ -157,6 +161,7 @@ main {
     left: 55%;
     animation: outwardRight 2s forwards ease-in-out;
     animation-delay: 2s;
+    z-index: 1;
 }
 
 @keyframes outwardRight {
@@ -180,14 +185,14 @@ main {
 
 .left-heading {
     left: 5%;
-    top: 50%;
+    top: 17%;
     width: 23vw;
     text-align: left;
 }
 
 .right-heading {
     right: 5%;
-    top: 50%;
+    top: 17%;
     width: 23vw;
     text-align: right;
 }
@@ -246,7 +251,7 @@ main {
 /* About Us at bottom */
     .about-us-landing {
     position: absolute;
-    top: 52%;
+    top: 55%;
     left: 50%;
     transform: translateX(-50%);
     width: 80%;
