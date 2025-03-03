@@ -43,6 +43,8 @@ header {
         margin-left: 100px;
         line-height: 1.2;
         text-shadow: 5px 5px 10px #0057B7;
+        border: 3px solid #0057B7; /* box outline in dark blue */
+        padding: 10px;
     }
 
 p, li, label, a, span {
@@ -55,8 +57,10 @@ nav a {
     color: #fff;
     text-decoration: none;
     margin-left: 20px;
-    font-size: 1.7em; 
+    font-size: 1.7em;
     text-shadow: 5px 5px 10px #0057B7;
+    border: 3px solid #0057B7; /* box outline in dark blue */
+    padding: 10px;
 }
 
 
@@ -128,7 +132,7 @@ main {
     top: 38%;
     left: 37.5%;
     animation: outwardLeft 2s forwards ease-in-out;
-    animation-delay: 1s;
+    animation-delay: 2s;
 }
 
 @keyframes outwardLeft {
@@ -152,7 +156,7 @@ main {
     top: 38%;
     left: 55%;
     animation: outwardRight 2s forwards ease-in-out;
-    animation-delay: 1s;
+    animation-delay: 2s;
 }
 
 @keyframes outwardRight {
@@ -175,14 +179,16 @@ main {
 }
 
 .left-heading {
-    left: 10%;
+    left: 5%;
     top: 50%;
+    width: 25vw;
     text-align: left;
 }
 
 .right-heading {
-    right: 10%;
+    right: 5%;
     top: 50%;
+    width: 25vw;
     text-align: right;
 }
 
@@ -222,8 +228,22 @@ main {
         font-size: 2em;
     }
 
+/* 
+   Example: styling for the parent/tutor login buttons
+   so they're 3× bigger and match the tutor search style
+*/
+.zone-login-btn {
+    background-color: #0057B7; /* same as your tutor search button */
+    color: #fff;
+    border: none;
+    padding: 30px 45px; /* 3× bigger than typical 10px 15px */
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 3em; /* 3× bigger than
+
+
 /* About Us at bottom */
-.about-us-landing {
+    .about-us-landing {
     position: absolute;
     top: 52%;
     left: 50%;
