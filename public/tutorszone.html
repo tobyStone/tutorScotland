@@ -47,43 +47,45 @@
         </form>
     </main>
 
+    <!-- SERVER-SIDE CHECK: ensure the user can access /api/tutorszone -->
     <script>
-    // Basic token check
-    const token = localStorage.getItem('authToken');
-    if (!token || !token.includes("TUTOR")) {
-      alert("You are not logged in as a Tutor. Redirecting...");
-      window.location.href = '/landing';
-    }
+        (async function () {
+            try {
+                const response = await fetch('/api/tutorszone');
+                if (!response.ok) {
+                    alert('You do not have access to the Tutor Zone');
+                    window.location.href = '/landing';
+                }
+            } catch (err) {
+                console.error('Error verifying tutor zone access:', err);
+                alert('Error verifying access. Redirecting...');
+                window.location.href = '/landing';
+            }
+        })();
+    </script>
 
-    // Form submission handler
-    document.getElementById('tutorSubmissionForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+    <script>
+        document.getElementById('tutorSubmissionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-      const formData = {
-        name: document.getElementById('tutorName').value,
-        email: document.getElementById('contactEmail').value,
-        subjects: document.getElementById('subjectTaught').value.split(',').map(s => s.trim()),
-        qualification: document.getElementById('qualification').value,
-        safeguarding: document.getElementById('safeguarding').value
-      };
+            const formData = {
+                name: document.getElementById('tutorName').value,
+                email: document.getElementById('contactEmail').value,
+                subjects: document.getElementById('subjectTaught').value.split(',').map(s => s.trim()),
+                qualification: document.getElementById('qualification').value,
+                safeguarding: document.getElementById('safeguarding').value
+            };
 
-      try {
-        // In a real app, you�d POST this to your server:
-        // const response = await fetch('/api/tutor-submission', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        //   body: JSON.stringify(formData)
-        // });
-        // const data = await response.json();
-        // if (!response.ok) throw new Error(data.message);
-
-        console.log("Tutor Submission:", formData);
-        alert("Thank you for your submission!");
-      } catch (err) {
-        console.error("Error submitting tutor info:", err);
-        alert("Submission failed. Please try again.");
-      }
-    });
+            try {
+                // In a real app, you’d POST this to your server route, e.g. /api/tutor-submission
+                // with your HTTP-only cookie automatically included in fetch.
+                console.log("Tutor Submission:", formData);
+                alert("Thank you for your submission!");
+            } catch (err) {
+                console.error("Error submitting tutor info:", err);
+                alert("Submission failed. Please try again.");
+            }
+        });
     </script>
 </body>
 </html>

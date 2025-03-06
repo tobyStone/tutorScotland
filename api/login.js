@@ -1,7 +1,7 @@
 // api/login.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/userModel'); // Ensure this model includes { email, password, role, name, ... }
+const User = require('../models/User'); // Ensure this model includes { email, password, role, name, ... }
 const connectToDatabase = require('./connectToDatabase');
 
 module.exports = async (req, res) => {

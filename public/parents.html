@@ -3,14 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Scottish Tutors Association - Helping all Scottish children grow</title>
-    <!-- Favicon -->
     <link rel="icon" href="/images/favicon2.png" type="image/png">
-    <!-- Link to external CSS -->
     <link rel="stylesheet" href="/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <!-- Blue Banner -->
     <header>
         <h1>Scottish Tutors Association</h1>
         <nav>
@@ -19,9 +16,7 @@
         </nav>
     </header>
 
-    <!-- Main Content Area -->
     <main>
-        <!-- Thistle Image Container -->
         <div class="thistle-container">
             <div class="thistle-center">
                 <img src="./images/thistle-center.png" alt="Thistle Center">
@@ -32,7 +27,6 @@
         </div>
 
         <div class="content-wrapper">
-            <!-- Tagline -->
             <div class="tagline">
                 <h2>Helping <span class="lilac">all</span> Scottish children grow</h2>
             </div>
@@ -46,25 +40,21 @@
                 </p>
             </div>
 
-            <!-- Tutor Finder Form -->
             <div class="form-container">
                 <h3>Tutor Finder</h3>
                 <form id="tutorFinderForm" action="/tutors" method="GET">
-                    <!-- Subject Dropdown -->
                     <label for="subject">Subject</label>
                     <select name="subject" id="subject">
                         <option value="mathematics">Mathematics</option>
                         <option value="english">English</option>
                     </select>
 
-                    <!-- Mode Dropdown -->
                     <label for="mode">Location</label>
                     <select name="mode" id="mode">
                         <option value="online">Online</option>
                         <option value="in-person">In Person</option>
                     </select>
 
-                    <!-- Postcode (conditionally shown) -->
                     <div id="postcodeContainer" style="display: none;">
                         <label for="postcode">Postcode</label>
                         <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
@@ -75,14 +65,25 @@
             </div>
         </div>
     </main>
+
+    <!-- SERVER-SIDE CHECK: ensure the user can access /api/parents -->
     <script>
-        // Minimal token check
-        const token = localStorage.getItem('authToken');
-        if (!token || !token.includes("PARENT")) {
-            alert("You are not logged in as a Parent. Redirecting...");
-            window.location.href = '/landing';
-        }
+        (async function () {
+            try {
+                const response = await fetch('/api/parents');
+                if (!response.ok) {
+                    alert('You do not have access');
+                    window.location.href = '/landing';
+                }
+                // If 200 OK, do nothing and allow the page to load
+            } catch (err) {
+                console.error('Error verifying parent zone access:', err);
+                alert('Error verifying access. Redirecting...');
+                window.location.href = '/landing';
+            }
+        })();
     </script>
+
     <script>
         document.getElementById('mode').addEventListener('change', function () {
             const postcodeContainer = document.getElementById('postcodeContainer');
@@ -96,27 +97,21 @@
         document.getElementById('tutorFinderForm').addEventListener('submit', function (event) {
             event.preventDefault();
 
-            // Collect form values
             const subject = document.getElementById('subject').value;
             const mode = document.getElementById('mode').value;
             let postcode = document.getElementById('postcode').value;
 
-            // Convert postcode to uppercase for consistency
             if (postcode) {
                 postcode = postcode.toUpperCase();
             }
 
-            // Construct query parameters
             let queryParams = `?subject=${encodeURIComponent(subject)}&mode=${encodeURIComponent(mode)}`;
             if (mode === "in-person" && postcode.trim() !== "") {
                 queryParams += `&postcode=${encodeURIComponent(postcode)}`;
             }
 
-            // Redirect to tutors page with filters applied
             window.location.href = `/tutors${queryParams}`;
         });
     </script>
-
-
 </body>
 </html>

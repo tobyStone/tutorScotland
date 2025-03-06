@@ -255,7 +255,7 @@ main {
     text-align: center;
     opacity: 0;
     animation: fadeIn 1s forwards;
-    animation-delay: 5s;
+    animation-delay: 3s;
     color: #0057B7;
 }
 

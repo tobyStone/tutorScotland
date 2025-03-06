@@ -47,7 +47,19 @@
     <Content Include="api\login.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\parents.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="api\tutor.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="api\tutorzone.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="models\Tutor.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="models\User.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\admin.html">
@@ -114,6 +126,7 @@
   <ItemGroup>
     <Folder Include="index\" />
     <Folder Include="api\" />
+    <Folder Include="models\" />
     <Folder Include="public\" />
     <Folder Include="public\images\" />
   </ItemGroup>

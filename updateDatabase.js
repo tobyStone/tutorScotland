@@ -1,5 +1,3 @@
-// updateDatabase.js
-const mongoose = require('mongoose');
 const connectToDatabase = require('./api/connectToDatabase');
 const Tutor = require('./models/Tutor'); // Assuming you export your Tutor model from a separate file
 
