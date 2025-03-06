@@ -2,26 +2,25 @@
 const mongoose = require('mongoose');
 const connectToDatabase = require('./connectToDatabase');
 const { verifyToken } = require('./auth');
-const Tutor = require('../models/tutorModel'); // Ensure you have a tutorModel similar to your seed script
+const Tutor = require('../models/Tutor'); // Must match your actual tutor model file name
 
 module.exports = async (req, res) => {
-    // We assume this endpoint only accepts POST requests
     if (req.method !== 'POST') {
         res.setHeader('Allow', ['POST']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 
-    // Use verifyToken middleware manually (or wrap in a server framework)
     verifyToken(req, res, async () => {
-        // Check that the user has an admin role
-        if (!req.user || req.user.role !== 'ADMIN') {
-            return res.status(403).json({ message: "Access denied: Admins only" });
+        // For case-insensitive check:
+        const userRole = (req.user.role || '').toLowerCase();
+        if (userRole !== 'admin') {
+            return res.status(403).json({ message: "Access denied: Admin only" });
         }
 
         try {
             await connectToDatabase();
 
-            // Read new tutor details from the request body
+            // Extract fields from request body
             const {
                 name,
                 subjects,
@@ -29,20 +28,22 @@ module.exports = async (req, res) => {
                 badges,
                 imageUrl,
                 imagePath,
+                contact,     
                 description,
                 postcodes
             } = req.body;
 
-            // Create a new Tutor document
+            // Create new Tutor
             const newTutor = new Tutor({
                 name,
-                subjects, // assume array is provided
+                subjects,    // array
                 costRange,
-                badges,   // assume array is provided
+                badges,      // array
                 imageUrl,
                 imagePath,
+                contact,     // store the contact field
                 description,
-                postcodes // assume array is provided
+                postcodes    // array
             });
 
             await newTutor.save();

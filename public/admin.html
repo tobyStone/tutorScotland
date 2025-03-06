@@ -4,11 +4,69 @@
     <meta charset="UTF-8">
     <title>Admin Page</title>
     <link rel="stylesheet" href="/style.css">
+    <style>
+        /* Inline or place in style.css: center the admin form, add lilac background, bigger fields */
+
+        .admin-form-container {
+            max-width: 700px; /* Wider form */
+            margin: 40px auto; /* Center horizontally, add top/bottom margin */
+            background-color: #C8A2C8; /* Lilac background */
+            padding: 20px 30px; /* Roomy padding */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+            .admin-form-container h3 {
+                margin-bottom: 20px;
+                color: #333;
+            }
+
+        .admin-tutor-form label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .admin-tutor-form input,
+        .admin-tutor-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .admin-tutor-form button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            background-color: #0057B7; /* Same as tutor search button */
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+            .admin-tutor-form button:hover {
+                background-color: #0046a5;
+                box-shadow: 0 0 10px #C8A2C8;
+            }
+
+            .admin-tutor-form button:active {
+                background-color: #C8A2C8;
+                color: #fff;
+            }
+    </style>
 </head>
 <body>
     <header>
         <h1>Scottish Tutors Association - Admin</h1>
         <nav>
+            <!-- Ensure /landing -> /public/landing.html is in vercel.json rewrites -->
             <a href="/landing">Home</a>
         </nav>
     </header>
@@ -17,30 +75,36 @@
         <h2>Welcome, Admin!</h2>
         <p>Add new tutors to the database below.</p>
 
-        <form id="adminAddTutorForm" class="admin-tutor-form">
-            <label for="tutorName">Tutor Name:</label>
-            <input type="text" id="tutorName" name="tutorName" required>
+        <div class="admin-form-container">
+            <h3>Add a Tutor</h3>
+            <form id="adminAddTutorForm" class="admin-tutor-form">
+                <label for="tutorName">Tutor Name:</label>
+                <input type="text" id="tutorName" name="tutorName" required>
 
-            <label for="subjects">Subjects (comma-separated):</label>
-            <input type="text" id="subjects" name="subjects" required>
+                <label for="subjects">Subjects (comma-separated):</label>
+                <input type="text" id="subjects" name="subjects" required>
 
-            <label for="costRange">Cost Range (e.g. £, ££, £££):</label>
-            <input type="text" id="costRange" name="costRange">
+                <label for="costRange">Cost Range (e.g. £, ££, £££):</label>
+                <input type="text" id="costRange" name="costRange">
 
-            <label for="badges">Badges (comma-separated):</label>
-            <input type="text" id="badges" name="badges">
+                <label for="badges">Badges (comma-separated):</label>
+                <input type="text" id="badges" name="badges">
 
-            <label for="imageUrl">Image URL:</label>
-            <input type="text" id="imageUrl" name="imageUrl">
+                <label for="imageUrl">Image URL:</label>
+                <input type="text" id="imageUrl" name="imageUrl">
 
-            <label for="description">Description:</label>
-            <textarea id="description" name="description"></textarea>
+                <label for="contact">Contact (email or website):</label>
+                <input type="text" id="contact" name="contact">
 
-            <label for="postcodes">Postcodes (comma-separated):</label>
-            <input type="text" id="postcodes" name="postcodes">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description"></textarea>
 
-            <button type="submit">Add Tutor</button>
-        </form>
+                <label for="postcodes">Postcodes (comma-separated):</label>
+                <input type="text" id="postcodes" name="postcodes">
+
+                <button type="submit">Add Tutor</button>
+            </form>
+        </div>
     </main>
 
     <!-- SERVER-SIDE CHECK: ensure the user is admin by calling /api/admin -->
@@ -64,26 +128,31 @@
         document.getElementById('adminAddTutorForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const newTutor = {
-                name: document.getElementById('tutorName').value,
+                name: document.getElementById('tutorName').value.trim(),
                 subjects: document.getElementById('subjects').value.split(',').map(s => s.trim()),
-                costRange: document.getElementById('costRange').value,
+                costRange: document.getElementById('costRange').value.trim(),
                 badges: document.getElementById('badges').value.split(',').map(b => b.trim()),
-                imageUrl: document.getElementById('imageUrl').value,
-                description: document.getElementById('description').value,
+                imageUrl: document.getElementById('imageUrl').value.trim(),
+                contact: document.getElementById('contact').value.trim(),
+                description: document.getElementById('description').value.trim(),
                 postcodes: document.getElementById('postcodes').value.split(',').map(p => p.trim())
             };
 
             try {
-                // Example POST request to /api/addTutor (if you have such an endpoint)
-                // const response = await fetch('/api/addTutor', {
-                //   method: 'POST',
-                //   headers: { 'Content-Type': 'application/json' },
-                //   body: JSON.stringify(newTutor)
-                // });
-                // if (!response.ok) throw new Error('Failed to add tutor');
+                // POST request to /api/addTutor
+                const response = await fetch('/api/addTutor', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newTutor)
+                });
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.message || 'Failed to add tutor');
+                }
 
-                console.log("New Tutor Data:", newTutor);
                 alert("Tutor added successfully!");
+                // Optionally clear the form
+                document.getElementById('adminAddTutorForm').reset();
             } catch (err) {
                 console.error("Error adding tutor:", err);
                 alert("Failed to add tutor. Please try again.");
