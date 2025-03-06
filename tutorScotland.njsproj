@@ -38,6 +38,9 @@
     <Content Include="api\addTutor.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\admin.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="api\auth.js">
       <SubType>Code</SubType>
     </Content>

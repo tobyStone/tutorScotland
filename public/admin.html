@@ -24,7 +24,7 @@
             <label for="subjects">Subjects (comma-separated):</label>
             <input type="text" id="subjects" name="subjects" required>
 
-            <label for="costRange">Cost Range (e.g. �, ��, ���):</label>
+            <label for="costRange">Cost Range (e.g. £, ££, £££):</label>
             <input type="text" id="costRange" name="costRange">
 
             <label for="badges">Badges (comma-separated):</label>
@@ -43,43 +43,52 @@
         </form>
     </main>
 
+    <!-- SERVER-SIDE CHECK: ensure the user is admin by calling /api/admin -->
     <script>
-    // Check for admin token
-    const token = localStorage.getItem('authToken');
-    if (!token || !token.includes("ADMIN")) {
-      alert("You are not logged in as Admin. Redirecting...");
-      window.location.href = '/landing';
-    }
+        (async function () {
+            try {
+                const response = await fetch('/api/admin');
+                if (!response.ok) {
+                    alert('Access denied. You must be an admin to view this page.');
+                    window.location.href = '/landing';
+                }
+            } catch (err) {
+                console.error('Error verifying admin access:', err);
+                alert('Error verifying access. Redirecting...');
+                window.location.href = '/landing';
+            }
+        })();
+    </script>
 
-    document.getElementById('adminAddTutorForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const newTutor = {
-        name: document.getElementById('tutorName').value,
-        subjects: document.getElementById('subjects').value.split(',').map(s => s.trim()),
-        costRange: document.getElementById('costRange').value,
-        badges: document.getElementById('badges').value.split(',').map(b => b.trim()),
-        imageUrl: document.getElementById('imageUrl').value,
-        description: document.getElementById('description').value,
-        postcodes: document.getElementById('postcodes').value.split(',').map(p => p.trim())
-      };
+    <script>
+        document.getElementById('adminAddTutorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newTutor = {
+                name: document.getElementById('tutorName').value,
+                subjects: document.getElementById('subjects').value.split(',').map(s => s.trim()),
+                costRange: document.getElementById('costRange').value,
+                badges: document.getElementById('badges').value.split(',').map(b => b.trim()),
+                imageUrl: document.getElementById('imageUrl').value,
+                description: document.getElementById('description').value,
+                postcodes: document.getElementById('postcodes').value.split(',').map(p => p.trim())
+            };
 
-      try {
-        // Real request example:
-        // const response = await fetch('/api/addTutor', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        //   body: JSON.stringify(newTutor)
-        // });
-        // const data = await response.json();
-        // if (!response.ok) throw new Error(data.message);
+            try {
+                // Example POST request to /api/addTutor (if you have such an endpoint)
+                // const response = await fetch('/api/addTutor', {
+                //   method: 'POST',
+                //   headers: { 'Content-Type': 'application/json' },
+                //   body: JSON.stringify(newTutor)
+                // });
+                // if (!response.ok) throw new Error('Failed to add tutor');
 
-        console.log("New Tutor Data:", newTutor);
-        alert("Tutor added successfully!");
-      } catch (err) {
-        console.error("Error adding tutor:", err);
-        alert("Failed to add tutor. Please try again.");
-      }
-    });
+                console.log("New Tutor Data:", newTutor);
+                alert("Tutor added successfully!");
+            } catch (err) {
+                console.error("Error adding tutor:", err);
+                alert("Failed to add tutor. Please try again.");
+            }
+        });
     </script>
 </body>
 </html>
