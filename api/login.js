@@ -49,13 +49,13 @@ module.exports = async (req, res) => {
         });
         res.setHeader('Set-Cookie', serializedCookie);
 
-        // Determine the redirect URL based on the user's role
-        let redirectUrl = '/parents';
+        let redirectUrl = '/parents.html';
         if (user.role === 'admin') {
-            redirectUrl = '/admin';
+            redirectUrl = '/admin.html';
         } else if (user.role === 'tutor') {
-            redirectUrl = '/tutorszone';
+            redirectUrl = '/tutorszone.html';
         }
+
 
         return res.status(200).json({
             user: { id: user._id, email: user.email, name: user.name, role: user.role },
