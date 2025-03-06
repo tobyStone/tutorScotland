@@ -18,6 +18,10 @@
       "destination": "/public/admin.html"
     },
     {
+      "source": "/login",
+      "destination": "/public/login.html"
+    },
+    {
       "source": "/tutors/:slug*",
       "destination": "/api/tutors.js?slug=:slug"
     },
@@ -26,8 +30,16 @@
       "destination": "/about-us.html"
     },
     {
-      "source": "/login",
-      "destination": "/public/login.html"
+      "source": "/api/login",
+      "destination": "/api/login.js"
+    },
+    {
+      "source": "/api/parents",
+      "destination": "/api/parents.js"
+    },
+    {
+      "source": "/api/tutorszone",
+      "destination": "/api/tutorszone.js"
     }
   ]
 }
