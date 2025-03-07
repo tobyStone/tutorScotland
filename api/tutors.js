@@ -28,8 +28,18 @@ module.exports = async (req, res) => {
 
         console.log("Received query parameters:", { subject, mode, postcode });
 
+        // A small dictionary for synonyms or partial matches
+        const subjectSynonyms = {
+            mathematics: 'math',   // so if user picks 'mathematics', we search 'math'
+            english: 'english'     // user picks 'english', we search 'english'
+            // add more synonyms if you want
+        };
+
         if (subject) {
-            query.subjects = { $regex: new RegExp(`^${subject}$`, 'i') };
+            // e.g. if user picks 'mathematics', synonyms[subject.toLowerCase()] is 'math'
+            const pattern = subjectSynonyms[subject.toLowerCase()] || subject;
+            // We'll do a partial match ignoring case
+            query.subjects = { $regex: pattern, $options: 'i' };
         }
 
         if (mode === "online") {
