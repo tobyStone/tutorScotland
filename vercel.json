@@ -40,6 +40,10 @@
     {
       "source": "/api/tutorszone",
       "destination": "/api/tutorszone.js"
+    },
+    {
+      "source": "/api/addTutor",
+      "destination": "/api/addTutor.js"
     }
   ]
 }
