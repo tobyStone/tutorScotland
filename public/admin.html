@@ -67,7 +67,7 @@
         <h1>Scottish Tutors Association - Admin</h1>
         <nav>
             <!-- Ensure /landing -> /public/landing.html is in vercel.json rewrites -->
-            <a href="/landing">Home</a>
+            <a href="/">Home</a>
         </nav>
     </header>
 
@@ -114,12 +114,12 @@
                 const response = await fetch('/api/admin');
                 if (!response.ok) {
                     alert('Access denied. You must be an admin to view this page.');
-                    window.location.href = '/landing';
+                    window.location.href = '/';
                 }
             } catch (err) {
                 console.error('Error verifying admin access:', err);
                 alert('Error verifying access. Redirecting...');
-                window.location.href = '/landing';
+                window.location.href = '/';
             }
         })();
     </script>
@@ -132,7 +132,7 @@
                 subjects: document.getElementById('subjects').value.split(',').map(s => s.trim()),
                 costRange: document.getElementById('costRange').value.trim(),
                 badges: document.getElementById('badges').value.split(',').map(b => b.trim()),
-                imageUrl: document.getElementById('imageUrl').value.trim(),
+                imageUrl: document.getElementById('imagePath').value.trim(),
                 contact: document.getElementById('contact').value.trim(),
                 description: document.getElementById('description').value.trim(),
                 postcodes: document.getElementById('postcodes').value.split(',').map(p => p.trim())

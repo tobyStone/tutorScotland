@@ -6,7 +6,6 @@ const tutorSchema = new mongoose.Schema({
     subjects: [String],
     costRange: String,   // e.g., __P__, __P____P__, etc.
     badges: [String],
-    imageUrl: String,
     imagePath: String,
     description: String,
     postcodes: [String], // e.g., "Online" or Highland postcodes

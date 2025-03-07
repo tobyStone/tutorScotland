@@ -26,7 +26,6 @@ module.exports = async (req, res) => {
                 subjects,
                 costRange,
                 badges,
-                imageUrl,
                 imagePath,
                 contact,     
                 description,
@@ -39,7 +38,6 @@ module.exports = async (req, res) => {
                 subjects,    // array
                 costRange,
                 badges,      // array
-                imageUrl,
                 imagePath,
                 contact,     // store the contact field
                 description,
