@@ -1,11 +1,12 @@
+// updateDatabase.js
 const connectToDatabase = require('./api/connectToDatabase');
-const Tutor = require('./models/Tutor'); // Assuming you export your Tutor model from a separate file
+const Tutor = require('./models/Tutor'); // references the new Tutor schema
 
 async function updateDatabase() {
     try {
         await connectToDatabase();
-        // Example: Update a tutor’s cost range
-        const result = await Tutor.updateOne({ name: 'John Doe' }, { costRange: 3 });
+        // Remove the imageUrl field from all Tutor documents
+        const result = await Tutor.updateMany({}, { $unset: { imageUrl: "" } });
         console.log('Update result:', result);
         process.exit(0);
     } catch (error) {
