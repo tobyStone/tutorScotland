@@ -56,9 +56,10 @@ module.exports = async (req, res) => {
 
         const tutorsHtml = tutors.map(tutor => `
             <section class="tutor-card">
-                <a href="/tutor/${tutor._id}">
-                    <img src="${tutor.imagePath}" alt="Tutor ${tutor.name}">
-                </a>
+        <!-- Remove or comment out the anchor tag -->
+        <!-- <a href="/tutor/${tutor._id}"> -->
+            <img src="${tutor.imagePath}" alt="Tutor ${tutor.name}">
+        <!-- </a> -->
                 <h3>${tutor.name}</h3>
                     <p>Subjects: ${tutor.subjects.join(', ')}</p>
                     <p>Cost: <span class="purple-pound">${tutor.costRange.replace(/__P__/g, '&pound')} per hour</span></p>

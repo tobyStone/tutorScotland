@@ -41,7 +41,10 @@
       "source": "/api/addTutor",
       "destination": "/api/addTutor.js"
     },
-
+    {
+      "source": "/api/tutorzone",
+      "destination": "/api/tutorzone.js"
+    },
     {
       "source": "/api/admin",
       "destination": "/api/admin.js"
