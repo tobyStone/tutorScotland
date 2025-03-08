@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Scottish Tutors Association - Helping all Scottish children grow</title>
-    <link rel="icon" href="/images/favicon2.png" type="image/png">
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
     <link rel="stylesheet" href="/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
@@ -66,23 +66,6 @@
         </div>
     </main>
 
-    <!-- SERVER-SIDE CHECK: ensure the user can access /api/parents -->
-    <script>
-        (async function () {
-            try {
-                const response = await fetch('/api/parents');
-                if (!response.ok) {
-                    alert('You do not have access');
-                    window.location.href = '/landing';
-                }
-                // If 200 OK, do nothing and allow the page to load
-            } catch (err) {
-                console.error('Error verifying parent zone access:', err);
-                alert('Error verifying access. Redirecting...');
-                window.location.href = '/landing';
-            }
-        })();
-    </script>
 
     <script>
         document.getElementById('mode').addEventListener('change', function () {

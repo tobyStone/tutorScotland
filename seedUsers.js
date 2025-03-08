@@ -2,15 +2,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const connectToDatabase = require('./api/connectToDatabase');
+const User = require('./models/User');
 
-const userSchema = new mongoose.Schema({
-    name: String,
-    email: { type: String, unique: true },
-    password: String,
-    role: { type: String, enum: ['parent', 'admin'], required: true }
-});
-
-const User = mongoose.model('User', userSchema);
 
 async function seedUsers() {
     try {
@@ -18,8 +11,10 @@ async function seedUsers() {
         await User.deleteMany({});
 
         const salt = await bcrypt.genSalt(10);
+        // Example admin
         const adminPassword = await bcrypt.hash("adminSecret", salt);
-        const parentPassword = await bcrypt.hash("parentSecret", salt);
+        // Example tutor
+        const tutorPassword = await bcrypt.hash("tutorSecret", salt);
 
         const users = [
             {
@@ -29,10 +24,10 @@ async function seedUsers() {
                 role: 'admin'
             },
             {
-                name: 'Peter Parent',
-                email: 'parent@example.com',
-                password: parentPassword,
-                role: 'parent'
+                name: 'Toby Tutor',
+                email: 'tutor@example.com',
+                password: tutorPassword,
+                role: 'tutor'
             }
         ];
 

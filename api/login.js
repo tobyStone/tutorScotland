@@ -49,11 +49,10 @@ module.exports = async (req, res) => {
         });
         res.setHeader('Set-Cookie', serializedCookie);
 
-        let redirectUrl = '/parents.html';
+        // If admin => /admin.html, else if tutor => /tutorszone.html
+        let redirectUrl = '/tutorszone.html';
         if (user.role === 'admin') {
             redirectUrl = '/admin.html';
-        } else if (user.role === 'tutor') {
-            redirectUrl = '/tutorszone.html';
         }
 
 
