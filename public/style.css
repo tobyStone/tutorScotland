@@ -479,7 +479,7 @@ main {
     .parents-zone p {
         font-size: 2em; /* Adjust if you want it a bit bigger or smaller */
         color: #0057B7;
-        max-width: 10vw; /* Optional: limit line length */
+        max-width: 35vw; /* Optional: limit line length */
     }
 
 .form-container {
