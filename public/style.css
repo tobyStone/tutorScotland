@@ -461,7 +461,7 @@ main {
 .parents-zone {
     position: absolute;
     left: 50vw;
-    top: 25vh; /* Just below the tagline; adjust to taste */
+    top: 30vh; /* Just below the tagline; adjust to taste */
     opacity: 0;
     animation: revealTagline 1s forwards ease-in-out;
     animation-delay: 2.8s; /* Waits 1s after tagline finishes */
@@ -472,14 +472,14 @@ main {
         font-size: 4em;
         color: #0057B7;
         font-weight: bold;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
     }
 
     /* Paragraph smaller but same color */
     .parents-zone p {
         font-size: 2em; /* Adjust if you want it a bit bigger or smaller */
         color: #0057B7;
-        max-width: 400px; /* Optional: limit line length */
+        max-width: 10vw; /* Optional: limit line length */
     }
 
 .form-container {
