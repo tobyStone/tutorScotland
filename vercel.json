@@ -22,8 +22,8 @@
       "destination": "/public/login.html"
     },
     {
-      "source": "/tutors/:slug*",
-      "destination": "/api/tutors.js?slug=:slug"
+      "source": "/tutors/search",
+      "destination": "/api/tutors.js"
     },
     {
       "source": "/about",
