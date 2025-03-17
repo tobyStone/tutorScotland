@@ -721,6 +721,10 @@ main {
     }
 }
 
+html {
+    overflow-y: scroll; /* Always show vertical scrollbar */
+}
+
 
 /* For very small screens (iPhone SE, etc.) */
 @media screen and (max-width: 750px) and (orientation: portrait) {
