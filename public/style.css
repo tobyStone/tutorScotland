@@ -77,7 +77,6 @@ main {
 .landing-container {
     position: relative;
     min-height: 80vh;
-    overflow: hidden;
     text-align: center;
     margin-top: 40px;
 }
