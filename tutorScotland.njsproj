@@ -68,6 +68,7 @@
     <Content Include="models\User.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="package-lock.json" />
     <Content Include="public\admin.html">
       <SubType>Code</SubType>
     </Content>

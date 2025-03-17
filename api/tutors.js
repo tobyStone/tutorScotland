@@ -90,8 +90,8 @@ module.exports = async (req, res) => {
                 <header>
                     <h1>Scottish Tutors Association</h1>
                     <nav>
-                        <a href="about-us.html">About Us</a>
-                        <a href="login.html">Login</a>
+                        <a href="/about-us.html">About Us</a>
+                        <a href="/login.html">Login</a>
                         <a href="/">Home</a>
                     </nav>
                 </header>
