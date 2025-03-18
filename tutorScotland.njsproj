@@ -44,6 +44,9 @@
     <Content Include="api\auth.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\blog-writer.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="api\connectToDatabase.js">
       <SubType>Code</SubType>
     </Content>
@@ -65,6 +68,9 @@
     <Content Include="api\tutorzone.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="models\Blog.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="models\Tutor.js">
       <SubType>Code</SubType>
     </Content>
@@ -75,9 +81,16 @@
     <Content Include="public\admin.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\blog.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\blogWriter.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="public\images\bannerBackground.PNG" />
     <Content Include="public\images\bannerShield.png" />
     <Content Include="public\images\bannerShield2.png" />
+    <Content Include="public\images\bannerWithRibbons.png" />
     <Content Include="public\images\centralShield.png" />
     <Content Include="public\images\englishTutor.PNG" />
     <Content Include="public\images\englishTutor2.PNG" />
@@ -92,8 +105,9 @@
     <Content Include="public\images\thistle-center.png" />
     <Content Include="public\images\thistle-leaf-flipped.png" />
     <Content Include="public\images\thistle-leaf.png" />
-    <Content Include="public\images\unfoldMaximLeft.png" />
-    <Content Include="public\images\unfoldMaximRight.png" />
+    <Content Include="public\images\tutor0.jpg" />
+    <Content Include="public\images\tutor1.jpg" />
+    <Content Include="public\images\tutor2.jpg" />
     <Content Include="public\parents.html">
       <SubType>Code</SubType>
     </Content>

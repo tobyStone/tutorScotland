@@ -113,7 +113,7 @@ main {
 .mission-statement {
     text-align: center;
     margin: 2rem auto;
-    color: #0057B7;
+    color: #C8A2C8;
 }
 
     .mission-statement h2 {
@@ -135,22 +135,19 @@ main {
     z-index: 1;
 }
 
-/* Center images start at 50% scale */
-.center-img {
-    left: 50%;
-    transform: translateX(-50%) scale(1);
-}
 
 /* Adjust top positions & animation delays as needed */
 #imageShield {
-    top: 7%;
+    top: 2%;
+    left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 0.5s;
     z-index: 2;
 }
 
 #imageBanner {
-    top: 37%;
+    top: 32%;
+    left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1.5s;
     z-index: 2;
@@ -759,6 +756,23 @@ main {
         transform: translateY(0);
     }
 }
+
+.blog-entry {
+    max-width: 600px;
+    margin: 2rem auto;
+    text-align: left;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    background-color: #fff;
+}
+
+.blog-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 1rem;
+}
+
 
 html {
     overflow-y: scroll; /* Always show vertical scrollbar */
