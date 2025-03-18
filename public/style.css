@@ -163,13 +163,14 @@ main {
 
 /* About Us*/
 .about-us-landing {
+    text-align: right;
     width: 80%;
     max-width: 600px;
     margin: 2rem auto; /* Center horizontally, spacing on top/bottom */
     text-align: center;
-    opacity: 0; 
+    opacity: 0;
     animation: fadeIn 1s forwards;
-    animation-delay: 3s; 
+    animation-delay: 3s;
     color: #0057B7;
 }
 
@@ -178,18 +179,21 @@ main {
     }
 
     .about-us-landing p {
-        font-size: 1.5em;
+        text-align: justify; /* “spread” text across each line */
+        margin: 1rem auto;
+        max-width: 90%; /* narrower paragraph so it doesn't span edge to edge */
     }
 
 
 #parentsZoneHeading {
     width: 80%;
     max-width: 600px;
-    margin: 2rem auto; /* Center it under About Us */
-    text-align: center;
+    margin: 2rem 2rem 2rem auto;
+    width: 40%; /* or 30%, etc. */
+    text-align: left;
     opacity: 0;
     animation: fadeIn 1s forwards;
-    animation-delay: 3.25s; 
+    animation-delay: 3.25s;
     color: #0057B7;
 }
 
@@ -204,11 +208,12 @@ main {
 #tutorsZoneHeading {
     width: 80%;
     max-width: 600px;
-    margin: 2rem auto; 
-    text-align: right; 
+    margin-top: 3rem;
+    margin: 2rem auto;
+    text-align: right;
     opacity: 0;
     animation: fadeIn 1s forwards;
-    animation-delay: 3.5s; 
+    animation-delay: 3.5s;
     color: #0057B7;
 }
 
@@ -693,6 +698,28 @@ main {
 html {
     overflow-y: scroll; /* Always show vertical scrollbar */
 }
+
+
+/*media for landing page*/
+@media screen and (max-width: 900px) and (orientation: portrait) {
+    /* Center the shield & banner */
+    #imageShield,
+    #imageBanner {
+        left: 50%;
+        transform: translateX(-50%) scale(1);
+    }
+
+    /* Stack About, Parents, and Tutors, each centered */
+    .about-us-landing,
+    #parentsZoneHeading,
+    #tutorsZoneHeading {
+        width: 80%;
+        margin: 2rem auto; /* center horizontally, with vertical spacing */
+        text-align: center; /* so headings & text are centered on mobile */
+    }
+
+}
+
 
 
 /* For very small screens (iPhone SE, etc.) */
