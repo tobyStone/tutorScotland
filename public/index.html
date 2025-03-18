@@ -15,10 +15,26 @@
             <a href="about-us.html">About Us</a>
             <!-- Admin goes to login.html, possibly with ?role=admin if you want to pass that context -->
             <a href="login.html?role=admin">Login</a>
+            <a href="tutorzone.html">Tutor Membership</a>
+            <a href="contact.html">Contact Us</a>
+            <a href="blog.html">Blog</a>
+            <a href="tutorDirectory.html">Tutor Directory</a>
         </nav>
     </header>
 
+
+    <!-- Rolling banner container -->
+    <div class="rolling-banner">
+        <div class="rolling-content" id="tutorBanner">
+            <!-- JS will populate tutor names/subjects here -->
+        </div>
+    </div>
+
+
     <main>
+        <div class="mission-statement">
+            <h2>Raising Standards, Shaping Futures</h2>
+        </div>
         <div class="landing-container">
             <!-- Example images (adapt to your file names) -->
             <img src="/images/centralShield.png"
@@ -32,10 +48,13 @@
 
             <!-- About Us at the bottom -->
             <div class="about-us-landing" id="aboutUsLanding">
-                <h2>About Us</h2>
                 <p>We are committed to helping all children grow through personalised tutoring and innovative learning experiences.</p>
                 <p>Our mission is to provide quality education and support for students no matter their background.</p>
             </div>
+            <div class="study-photos">
+                <img src="/images/students_studying.jpg" alt="Students Studying" class="large-study-img">
+            </div>
+
 
             <!-- Parent's Zone heading -->
             <div class="landing-heading left-heading" id="parentsZoneHeading">
@@ -47,19 +66,31 @@
 
             <!-- Tutor's Zone heading -->
             <div class="landing-heading right-heading" id="tutorsZoneHeading">
-                <h2>Tutor's Zone</h2>
-                <p>An area for tutors to connect with parents of students.</p>
-                <button class="zone-login-btn" onclick="goToLogin('tutor')">Login as Tutor</button>
+                <div class="tutor-images">
+                    <img src="/images/tutor_small_top.jpg" alt="Tutor teaching" class="small-tutor-img">
+                    <h2>Tutor's Zone</h2>
+                    <p>An area for tutors to connect with parents of students.</p>
+                    <button class="zone-login-btn" onclick="goToLogin('tutor')">Login as Tutor</button>
+                    <img src="/images/tutor_small_bottom.jpg" alt="Another tutor" class="small-tutor-img">
+                </div>
             </div>
-
         </div>
     </main>
 
     <script>
-        // Only navigate to login.html with the chosen role
         function goToLogin(role) {
             window.location.href = `login.html?role=${encodeURIComponent(role)}`;
         }
+
+        // Rolling banner fetch
+        fetch('/api/tutorList')
+            .then(res => res.json())
+            .then(tutors => {
+                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                document.getElementById('tutorBanner').innerText = text;
+            })
+            .catch(err => console.error('Error fetching tutors:', err));
     </script>
+
 </body>
 </html>

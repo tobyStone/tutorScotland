@@ -81,6 +81,46 @@ main {
   LANDING PAGE ANIMATIONS
 **********************************************/
 
+.rolling-banner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border: 3px solid #C8A2C8; /* Lilac outline */
+    background-color: #f9f9f9; /* If you want a background */
+    height: 2.5em; /* Enough height for the text */
+    display: flex;
+    align-items: center; /* vertically center the text */
+}
+
+.rolling-content {
+    white-space: nowrap;
+    display: inline-block;
+    animation: scrollBanner 15s linear infinite;
+}
+
+@keyframes scrollBanner {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+
+/***** Mission Statement *****/
+.mission-statement {
+    text-align: center;
+    margin: 2rem auto;
+    color: #0057B7;
+}
+
+    .mission-statement h2 {
+        font-size: 2.5em;
+        font-weight: bold;
+    }
+
 .landing-container {
     position: relative;
     min-height: 80vh;
@@ -110,7 +150,7 @@ main {
 }
 
 #imageBanner {
-    top: 43%;
+    top: 37%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1.5s;
     z-index: 2;
@@ -139,14 +179,14 @@ main {
 
 .left-heading {
     left: 5%;
-    top: 17%;
+    top: 52%;
     width: 23vw;
     text-align: left;
 }
 
 .right-heading {
     right: 5%;
-    top: 17%;
+    top: 37%;
     width: 23vw;
     text-align: right;
 }
@@ -239,6 +279,31 @@ main {
     font-size: 2.3em; 
     }
 
+/*Landing page photos*/
+
+.study-photos {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.large-study-img {
+    max-width: 50%;
+    height: auto;
+    border: 2px solid #C8A2C8; /* Lilac border, if you want it */
+}
+
+.tutor-images {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.small-tutor-img {
+    max-width: 30%;
+    margin: 1rem 0;
+    border: 2px solid #C8A2C8;
+}
 
 
 /* Thistle Animation Container */
