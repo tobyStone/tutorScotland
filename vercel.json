@@ -46,6 +46,14 @@
       "destination": "/api/tutorzone.js"
     },
     {
+      "source": "/blog-writer",
+      "destination": "/api/blog-writer.js"
+    },
+    {
+      "source": "/blog",
+      "destination": "/api/blog.js"
+    },
+    {
       "source": "/api/admin",
       "destination": "/api/admin.js"
     }

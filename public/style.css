@@ -184,9 +184,9 @@ main {
 }
 
 .right-heading {
-    right: 1%;
+    right: -3%;
     top: 37%;
-    width: 7vw;
+    width: 5vw;
     text-align: right;
 }
 
@@ -299,7 +299,7 @@ main {
 
 .small-tutor-img {
     position: absolute;
-    top: 20px; /* slightly below the mission statement heading */
+    top: 10vh; /* slightly below the mission statement heading */
     right: 0;
     width: 17%; 
     border: 2px solid #C8A2C8;
@@ -499,8 +499,8 @@ main {
 
 .parents-zone {
     position: absolute;
-    left: 50vw;
-    top: 30vh; /* Just below the tagline; adjust to taste */
+    left: 60vw;
+    top: 20vh; /* Just below the tagline; adjust to taste */
     opacity: 0;
     animation: revealTagline 1s forwards ease-in-out;
     animation-delay: 2.8s; /* Waits 1s after tagline finishes */
@@ -508,7 +508,7 @@ main {
 
     /* Make the heading the same size & color as the tagline */
     .parents-zone h2 {
-        font-size: 4em;
+        font-size: 3em;
         color: #0057B7;
         font-weight: bold;
         margin-bottom: 20px;
@@ -516,15 +516,15 @@ main {
 
     /* Paragraph smaller but same color */
     .parents-zone p {
-        font-size: 2em; /* Adjust if you want it a bit bigger or smaller */
+        font-size: 1.7em; /* Adjust if you want it a bit bigger or smaller */
         color: #0057B7;
-        max-width: 35vw; /* Optional: limit line length */
+        max-width: 27vw; /* Optional: limit line length */
     }
 
 .form-container {
     position: absolute;
-    left: 31%; /* Moves it more central */
-    top: 55vh; /* Moves it further down */
+    left: 37%; /* Moves it more central */
+    top: 59vh; /* Moves it further down */
     transform: translate(-50%, -50%) scale(1.5);
     border: 1px solid #ddd;
     padding: 20px;

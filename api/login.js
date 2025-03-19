@@ -53,6 +53,11 @@ module.exports = async (req, res) => {
         let redirectUrl = '/tutorszone.html';
         if (user.role === 'admin') {
             redirectUrl = '/admin.html';
+        } else if (user.role === 'blogwriter') {
+            // For example, go to /blogwriter.html or /blog-writer (your choice)
+            redirectUrl = '/blogWriter.html';
+        } else if (user.role === 'tutor') {
+            redirectUrl = '/tutorszone.html';
         }
 
 

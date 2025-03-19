@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, unique: true },
     password: String,
     // Now includes 'tutor' in the enum
-    role: { type: String, enum: ['parent', 'admin', 'tutor'], required: true }
+    role: { type: String, enum: ['parent', 'admin', 'tutor', 'blogwriter'], required: true }
 });
 
 module.exports = mongoose.model('User', userSchema);

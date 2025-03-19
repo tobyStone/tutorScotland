@@ -1,18 +1,31 @@
+<!-- blogwriter.html -->
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Blog Writer</title>
+    <title>Blog Writer Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <h1>New Blog Post</h1>
-    <form action="/blog-writer" method="POST" enctype="multipart/form-data">
-        <label>Title: <input type="text" name="title" required></label><br>
-        <label>
-            Content:<br>
-            <textarea name="content" rows="5" cols="50" required></textarea>
-        </label><br>
-        <label>Image: <input type="file" name="blogImage" accept="image/*"></label><br>
-        <button type="submit">Create Blog</button>
-    </form>
+    <header>
+        <h1>Scottish Tutors Association - Blog Writer</h1>
+        <nav>
+            <a href="about-us.html">About Us</a>
+            <a href="login.html?role=admin">Admin Login</a>
+            <a href="/">Home</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Create a New Blog Post</h2>
+        <form action="/blog-writer" method="POST" enctype="multipart/form-data">
+            <label>Title: <input type="text" name="title" required></label><br><br>
+            <label>
+                Content:<br>
+                <textarea name="content" rows="5" cols="50" required></textarea>
+            </label><br><br>
+            <label>Image: <input type="file" name="blogImage" accept="image/*"></label><br><br>
+            <button type="submit">Create Blog</button>
+        </form>
+    </main>
 </body>
 </html>

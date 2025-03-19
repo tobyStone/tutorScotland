@@ -47,6 +47,9 @@
     <Content Include="api\blog-writer.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\blog.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="api\connectToDatabase.js">
       <SubType>Code</SubType>
     </Content>
@@ -136,6 +139,9 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\tutorszone.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="seedBlogs.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="seedDatabase.js">

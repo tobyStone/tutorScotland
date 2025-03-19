@@ -1,3 +1,4 @@
+<!-- blog.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,39 +13,107 @@
             <a href="index.html">Home</a>
             <a href="about-us.html">About Us</a>
             <a href="login.html?role=blogwriter">Blog Writer Login</a>
+            <a href="/">Home</a>
         </nav>
     </header>
 
     <main>
-        <!-- Blog Entry 1 -->
-        <section class="blog-entry">
-            <img src="/images/blog1.jpg" alt="Blog 1" class="blog-image">
-            <h2>5 Tips for Effective Math Tutoring</h2>
-            <p>
-                Mathematics can be a tricky subject, but with the right approach...
-                (Write a short paragraph about math tutoring techniques.)
-            </p>
-        </section>
+        <!-- Container where existing blog posts will be dynamically inserted -->
+        <section id="blogContainer"></section>
 
-        <!-- Blog Entry 2 -->
-        <section class="blog-entry">
-            <img src="/images/blog2.jpg" alt="Blog 2" class="blog-image">
-            <h2>Improving Literacy Skills at Home</h2>
-            <p>
-                Encouraging reading and writing from a young age helps build strong literacy...
-                (Another short paragraph about English tutoring.)
-            </p>
-        </section>
+        <!-- A form to create a new blog post directly from this page -->
+        <section id="newBlogSection">
+            <h2>Create a New Blog Post</h2>
+            <form id="blogForm" enctype="multipart/form-data">
+                <label>
+                    Title:
+                    <input type="text" name="title" required>
+                </label>
+                <br><br>
 
-        <!-- Blog Entry 3 -->
-        <section class="blog-entry">
-            <img src="/images/blog3.jpg" alt="Blog 3" class="blog-image">
-            <h2>Online vs. In-Person Tutoring</h2>
-            <p>
-                In an ever-connected world, online tutoring has become a popular choice...
-                (Short paragraph discussing pros/cons of online vs in-person.)
-            </p>
+                <label>
+                    Content:<br>
+                    <textarea name="content" rows="5" cols="50" required></textarea>
+                </label>
+                <br><br>
+
+                <label>
+                    Image:
+                    <input type="file" name="blogImage" accept="image/*">
+                </label>
+                <br><br>
+
+                <button type="submit">Create Blog</button>
+            </form>
         </section>
     </main>
+
+    <script>
+    // 1) On page load, fetch existing blog posts from /api/blog and display them.
+    // 2) Intercept the form submission, POST to /blog-writer, then re-fetch posts.
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const blogContainer = document.getElementById('blogContainer');
+      const blogForm = document.getElementById('blogForm');
+
+      // Fetch existing blog posts from /api/blog
+      function fetchBlogs() {
+        fetch('/api/blog')    // you'll create an /api/blog route that returns JSON
+          .then(res => res.json())
+          .then(posts => {
+            // Clear the container
+            blogContainer.innerHTML = '';
+            // Build HTML for each post
+            posts.forEach(post => {
+              const section = document.createElement('section');
+              section.classList.add('blog-entry');
+
+              const img = document.createElement('img');
+              img.classList.add('blog-image');
+              img.src = post.imagePath || '/images/defaultBlog.png';
+              img.alt = 'Blog image';
+
+              const h2 = document.createElement('h2');
+              h2.textContent = post.title;
+
+              const p = document.createElement('p');
+              p.textContent = post.content;
+
+              section.appendChild(img);
+              section.appendChild(h2);
+              section.appendChild(p);
+
+              blogContainer.appendChild(section);
+            });
+          })
+          .catch(err => console.error('Error fetching blog posts:', err));
+      }
+
+      // Call fetchBlogs on load
+      fetchBlogs();
+
+      // Intercept the form submission to POST a new blog
+      blogForm.addEventListener('submit', e => {
+        e.preventDefault();
+
+        const formData = new FormData(blogForm);
+        // POST to /blog-writer
+        fetch('/blog-writer', {
+          method: 'POST',
+          body: formData
+        })
+        .then(res => res.text())
+        .then(responseText => {
+          alert(responseText);
+          blogForm.reset();     // Clear the form
+          fetchBlogs();         // Re-fetch to show the new blog
+        })
+        .catch(err => {
+          console.error('Error creating blog:', err);
+          alert('Error creating blog');
+        });
+      });
+    });
+    </script>
 </body>
 </html>
