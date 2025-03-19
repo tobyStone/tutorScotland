@@ -112,8 +112,10 @@ main {
 /***** Mission Statement *****/
 .mission-statement {
     text-align: center;
-    margin: 2rem auto;
-    color: #C8A2C8;
+    margin: 1rem auto;
+    color: #C8A2C8; 
+    padding: 1rem;
+    width: 80%;
 }
 
     .mission-statement h2 {
@@ -163,7 +165,7 @@ main {
     100% {
         opacity: 1;
         left: 15%;
-        transform: translateX(-50%) scale(1.1);
+        transform: translateX(-50%) scale(0.9);
     }
 }
 
@@ -284,7 +286,7 @@ main {
 }
 
 .large-study-img {
-    max-width: 50%;
+    max-width: 40%;
     height: auto;
     border: 2px solid #C8A2C8; /* Lilac border, if you want it */
 }
@@ -294,10 +296,13 @@ main {
     flex-direction: column;
     align-items: center;
     margin-top: 2rem;
+    position: relative;
 }
 
 .small-tutor-img {
     max-width: 30%;
+    top: -50px; 
+    right: 0;
     margin: 1rem 0;
     border: 2px solid #C8A2C8;
 }
