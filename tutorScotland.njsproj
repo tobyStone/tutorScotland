@@ -87,6 +87,9 @@
     <Content Include="public\blogWriter.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\contact.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="public\images\bannerBackground.PNG" />
     <Content Include="public\images\bannerShield.png" />
     <Content Include="public\images\bannerShield2.png" />

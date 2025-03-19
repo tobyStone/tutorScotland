@@ -184,9 +184,9 @@ main {
 }
 
 .right-heading {
-    right: 1%;
+    right: 7%;
     top: 37%;
-    width: 17vw;
+    width: 14vw;
     text-align: right;
 }
 
@@ -301,7 +301,7 @@ main {
     position: absolute;
     top: 20px; /* slightly below the mission statement heading */
     right: 0;
-    width: 25%; 
+    width: 17%; 
     border: 2px solid #C8A2C8;
 }
 
@@ -780,6 +780,28 @@ main {
 html {
     overflow-y: scroll; /* Always show vertical scrollbar */
 }
+
+.contact-info {
+    width: 80%;
+    max-width: 600px;
+    margin: 3rem auto;
+    text-align: center;
+    color: #0057B7;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+    animation-delay: 2s; /* or 1s, etc. */
+}
+
+    .contact-info h2 {
+        font-size: 2.5em;
+        margin-bottom: 1rem;
+    }
+
+    .contact-info p {
+        font-size: 1.2em;
+        line-height: 1.4;
+    }
+
 
 
 /*media for landing page*/
