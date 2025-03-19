@@ -112,7 +112,7 @@ main {
 /***** Mission Statement *****/
 .mission-statement {
     text-align: center;
-    margin: 1rem auto;
+    margin: 0.7rem auto;
     color: #C8A2C8; 
     padding: 1rem;
     width: 80%;
@@ -177,16 +177,16 @@ main {
 }
 
 .left-heading {
-    left: 5%;
+    left: 2%;
     top: 52%;
-    width: 23vw;
+    width: 21vw;
     text-align: left;
 }
 
 .right-heading {
-    right: 5%;
+    right: 2%;
     top: 37%;
-    width: 23vw;
+    width: 21vw;
     text-align: right;
 }
 
@@ -205,7 +205,7 @@ main {
     text-align: right;
     width: 80%;
     max-width: 600px;
-    margin: 2rem auto; /* Center horizontally, spacing on top/bottom */
+    margin: 1rem auto; /* Center horizontally, spacing on top/bottom */
     text-align: center;
     opacity: 0;
     animation: fadeIn 1s forwards;
@@ -237,11 +237,11 @@ main {
 }
 
 #parentsZoneHeading h2 {
-    font-size: 4em;
+    font-size: 3em;
 }
 
 #parentsZoneHeading p {
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 #tutorsZoneHeading {
@@ -257,11 +257,11 @@ main {
 }
 
     #tutorsZoneHeading h2 {
-        font-size: 4em;
+        font-size: 3em;
     }
 
     #tutorsZoneHeading p {
-        font-size: 2em;
+        font-size: 1.5em;
     }
 
 /* 
@@ -286,7 +286,7 @@ main {
 }
 
 .large-study-img {
-    max-width: 40%;
+    max-width: 33%;
     height: auto;
     border: 2px solid #C8A2C8; /* Lilac border, if you want it */
 }
@@ -301,9 +301,9 @@ main {
 
 .small-tutor-img {
     max-width: 30%;
-    top: -50px; 
+    top: -80px; 
     right: 0;
-    margin: 1rem 0;
+    margin: 0;
     border: 2px solid #C8A2C8;
 }
 
