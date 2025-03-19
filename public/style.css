@@ -299,7 +299,7 @@ main {
 
 .small-tutor-img {
     position: absolute;
-    top: 10vh; /* slightly below the mission statement heading */
+    top: 15vh; /* slightly below the mission statement heading */
     right: 0;
     width: 17%; 
     border: 2px solid #C8A2C8;
