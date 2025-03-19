@@ -1,0 +1,107 @@
+<!-- tutorDirectory.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scottish Tutors Association - Tutor Directory</title>
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
+    <link rel="stylesheet" href="/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <header>
+        <h1>Scottish Tutors Association</h1>
+        <nav>
+            <a href="about-us.html">About Us</a>
+            <a href="login.html">Login</a>
+            <a href="index.html">Home</a>
+            <!-- etc. -->
+        </nav>
+    </header>
+
+    <main>
+        <!-- You can keep your thistle images or remove them -->
+        <div class="thistle-container">
+            <div class="thistle-center">
+                <img src="./images/thistle-center.png" alt="Thistle Center">
+            </div>
+            <div class="thistle-leaf">
+                <img src="./images/thistle-leaf.png" alt="Thistle Leaf">
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- HEADINGS for the Tutor Directory -->
+            <div class="tagline">
+                <h2>Welcome to the Tutor Directory</h2>
+            </div>
+
+            <div class="parents-zone">
+                <h2>Find a Tutor</h2>
+                <p>
+                    Use this search form to find tutors by subject and location. All tutors are fully
+                    qualified teachers, covered by statutory safeguarding guidelines.
+                </p>
+            </div>
+
+            <!-- The same search form logic, but changed references from "Parent" to "Directory" -->
+            <div class="form-container">
+                <h3>Tutor Finder</h3>
+                <form id="tutorFinderForm" action="/tutors/search" method="GET">
+                    <label for="subject">Subject</label>
+                    <select name="subject" id="subject">
+                        <option value="mathematics">Mathematics</option>
+                        <option value="english">English</option>
+                    </select>
+
+                    <label for="mode">Location</label>
+                    <select name="mode" id="mode">
+                        <option value="online">Online</option>
+                        <option value="in-person">In Person</option>
+                    </select>
+
+                    <div id="postcodeContainer" style="display: none;">
+                        <label for="postcode">Postcode</label>
+                        <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
+                    </div>
+
+                    <button type="submit">Search Tutors</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Show/hide the postcode field if user chooses "in-person"
+        document.getElementById('mode').addEventListener('change', function () {
+            const postcodeContainer = document.getElementById('postcodeContainer');
+            if (this.value === 'in-person') {
+                postcodeContainer.style.display = 'block';
+            } else {
+                postcodeContainer.style.display = 'none';
+            }
+        });
+
+        // Intercept form submission to build the query string, then navigate
+        document.getElementById('tutorFinderForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const subject = document.getElementById('subject').value;
+            const mode = document.getElementById('mode').value;
+            let postcode = document.getElementById('postcode').value.trim();
+
+            if (postcode) {
+                postcode = postcode.toUpperCase();
+            }
+
+            let queryParams = `?subject=${encodeURIComponent(subject)}&mode=${encodeURIComponent(mode)}`;
+            if (mode === "in-person" && postcode !== "") {
+                queryParams += `&postcode=${encodeURIComponent(postcode)}`;
+            }
+
+            // Same route as parents.html used, e.g. /tutors/search
+            window.location.href = `/tutors/search${queryParams}`;
+        });
+    </script>
+</body>
+</html>
