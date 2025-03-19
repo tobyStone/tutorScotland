@@ -177,16 +177,16 @@ main {
 }
 
 .left-heading {
-    left: 2%;
+    left: 1%;
     top: 52%;
-    width: 21vw;
+    width: 17vw;
     text-align: left;
 }
 
 .right-heading {
-    right: 2%;
+    right: 1%;
     top: 37%;
-    width: 21vw;
+    width: 17vw;
     text-align: right;
 }
 
@@ -227,8 +227,7 @@ main {
 #parentsZoneHeading {
     width: 80%;
     max-width: 600px;
-    margin: 2rem 2rem 2rem auto;
-    width: 40%; /* or 30%, etc. */
+    margin: 2rem auto;
     text-align: left;
     opacity: 0;
     animation: fadeIn 1s forwards;
@@ -237,17 +236,16 @@ main {
 }
 
 #parentsZoneHeading h2 {
-    font-size: 3em;
+    font-size: 2.5em;
 }
 
 #parentsZoneHeading p {
-    font-size: 1.5em;
+    font-size: 1.3em;
 }
 
 #tutorsZoneHeading {
     width: 80%;
     max-width: 600px;
-    margin-top: 3rem;
     margin: 2rem auto;
     text-align: right;
     opacity: 0;
@@ -257,11 +255,11 @@ main {
 }
 
     #tutorsZoneHeading h2 {
-        font-size: 3em;
+        font-size: 2.5em;
     }
 
     #tutorsZoneHeading p {
-        font-size: 1.5em;
+        font-size: 1.3em;
     }
 
 /* 
@@ -286,7 +284,7 @@ main {
 }
 
 .large-study-img {
-    max-width: 33%;
+    max-width: 31%;
     height: auto;
     border: 2px solid #C8A2C8; /* Lilac border, if you want it */
 }
@@ -300,10 +298,10 @@ main {
 }
 
 .small-tutor-img {
-    max-width: 30%;
-    top: -80px; 
+    position: absolute;
+    top: 20px; /* slightly below the mission statement heading */
     right: 0;
-    margin: 0;
+    width: 25%; 
     border: 2px solid #C8A2C8;
 }
 
