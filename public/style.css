@@ -100,14 +100,15 @@ header {
     z-index: 99;
 }
 
+/* Show it when .dropdown has .open */
+.dropdown.open .dropdown-content {
+    display: block;
+}
+
     .dropdown-content li a {
         padding: 10px 15px;
     }
-/* Approach 1: Use :focus-within on the parent <li> or the link */
-.dropdown:focus-within .dropdown-content {
-    display: block;
-}
-/* If you don't want it to open on hover, remove .dropdown:hover .dropdown-content */
+
 
 .dropdown-toggle {
     cursor: pointer;
@@ -170,21 +171,37 @@ main {
 }
 
 
-/****Mission Section*/
-.mission-section {
-    display: flex;
-    flex-direction: column; /* or row if you want side by side */
-    align-items: flex-end; /* push text to the right */
-    padding: 40px;
+.mission-row {
+    display: flex; /* side-by-side columns */
+    justify-content: center; /* or space-between, etc. */
+    align-items: flex-start; /* top alignment, for instance */
+    gap: 2rem; /* space between columns */
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0 auto; /* center the row horizontally */
+    padding: 40px; /* optional padding around the row */
 }
+
+.left-col, .right-col {
+    flex: 1 1 0; /* each takes half the space, roughly */
+    display: flex;
+    flex-direction: column; /* stack items in each column top to bottom */
+    align-items: center; /* center them horizontally, optional */
+}
+
+/* If you want the shield & ribbons aligned left, 
+   you could remove 'align-items: center' in .left-col 
+   and do something else. Example: */
+.left-col {
+    align-items: flex-start;
+}
+
 
 /* Shield + Ribbons stacked in normal flow */
 .main-shield, .main-ribbons {
-    display: block;
-    margin: 0 auto; /* center them horizontally */
-    max-width: 300px; /* or adjust to taste */
+    max-width: 250px; /* or 300px, adjust to taste */
+    width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
 }
 
 /***** Mission Statement *****/
