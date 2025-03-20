@@ -24,7 +24,7 @@ header {
     background-position: 20px 20px, left top;
     /* Scale the shield to 100px wide, 
        the tartan tiles to 50px wide. */
-    background-size: 100px auto, 50px auto;
+    background-size: 100px auto, 100px auto;
     /* Banner padding (height) */
     padding: 40px;
     color: #fff;
@@ -33,6 +33,20 @@ header {
     align-items: center;
     position: relative;
 }
+
+.banner-login-link {
+    font-size: 1.2em;
+    color: #fff;
+    text-decoration: none;
+    background-color: #0057B7;
+    padding: 6px 12px;
+    border-radius: 4px;
+    width: fit-content;
+}
+
+    .banner-login-link:hover {
+        background-color: #003F8F;
+    }
 
 /* Move and resize the heading */
     header h1 {
@@ -50,23 +64,53 @@ p, li, label, a, span {
 }
 
 
-nav a {
-    color: #fff;
-    text-decoration: none;
-    margin-left: 20px;
-    font-size: 1.7em;
-    padding: 10px 15px; /* Make them look like clickable tabs */
-    border-right: 1px solid #ccc;
+
+.main-nav {
+    background-color: #001B44; /* a deep navy, or #003F8F, etc. */
 }
 
-    nav a:last-child {
-        border-right: none;
+    .main-nav ul {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        list-style: none;
     }
 
-    nav a:hover {
-        background-color: rgba(255,255,255,0.1); /* Slight highlight on hover */
-        transition: background-color 0.3s ease;
+        .main-nav ul li {
+            position: relative; /* for dropdowns */
+        }
+
+            .main-nav ul li a {
+                color: #fff;
+                text-decoration: none;
+                padding: 14px 20px;
+                display: block;
+                font-size: 1.1em;
+            }
+
+                .main-nav ul li a:hover {
+                    background-color: #003F8F; /* highlight on hover */
+                }
+
+/* Simple dropdown example */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%; /* below the parent li */
+    left: 0;
+    background-color: #003F8F;
+    min-width: 160px;
+    z-index: 99;
+}
+
+    .dropdown-content li a {
+        padding: 10px 15px;
     }
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
 
 /* Main Content */
 main {
@@ -108,21 +152,6 @@ main {
     }
 }
 
-
-/***** Mission Statement *****/
-.mission-statement {
-    text-align: center;
-    margin: 0.7rem auto;
-    color: #C8A2C8; 
-    padding: 1rem;
-    width: 80%;
-}
-
-    .mission-statement h2 {
-        font-size: 2.5em;
-        font-weight: bold;
-    }
-
 .landing-container {
     position: relative;
     min-height: 80vh;
@@ -136,6 +165,32 @@ main {
     transform-origin: center center;
     z-index: 1;
 }
+
+
+/****Mission Section*/
+.mission-section {
+    display: flex;
+    flex-direction: column; /* or row if you want side by side */
+    align-items: flex-end; /* push text to the right */
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+/***** Mission Statement *****/
+.mission-statement {
+    text-align: center;
+    margin: 0.7rem auto;
+    color: #C8A2C8;
+    padding: 1rem;
+    width: 80%;
+}
+
+    .mission-statement h2 {
+        font-size: 2.5em;
+        font-weight: bold;
+    }
 
 
 /* Adjust top positions & animation delays as needed */
@@ -169,36 +224,7 @@ main {
     }
 }
 
-/* Landing headings (Parent’s / Tutor’s) fade in after images */
-.landing-heading {
-    position: absolute;
-    opacity: 0;
-    color: #0057B7;
-}
 
-.left-heading {
-    left: 1%;
-    top: 52%;
-    width: 17vw;
-    text-align: left;
-}
-
-.right-heading {
-    right: -3%;
-    top: 37%;
-    width: 5vw;
-    text-align: right;
-}
-
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
 
 /* About Us*/
 .about-us-landing {
@@ -223,44 +249,60 @@ main {
         max-width: 90%; /* narrower paragraph so it doesn't span edge to edge */
     }
 
-
-#parentsZoneHeading {
-    width: 80%;
-    max-width: 600px;
-    margin: 2rem auto;
-    text-align: left;
-    opacity: 0;
-    animation: fadeIn 1s forwards;
-    animation-delay: 3.25s;
-    color: #0057B7;
+.parents-zone-section {
+    background-color: #E6F0FF; /* a very light blue */
+    padding: 60px 0;
 }
 
-#parentsZoneHeading h2 {
-    font-size: 2.5em;
+.parents-box {
+    background-color: #fff;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+    box-shadow: 0 0 15px rgba(0, 0, 139, 0.3); /* darker blue shadow */
+    text-align: center;
 }
 
-#parentsZoneHeading p {
-    font-size: 1.3em;
-}
-
-#tutorsZoneHeading {
-    width: 80%;
-    max-width: 600px;
-    margin: 2rem auto;
-    text-align: right;
-    opacity: 0;
-    animation: fadeIn 1s forwards;
-    animation-delay: 3.5s;
-    color: #0057B7;
-}
-
-    #tutorsZoneHeading h2 {
-        font-size: 2.5em;
+    .parents-box h2 {
+        font-size: 2em;
+        color: #0057B7;
+        margin-bottom: 1rem;
     }
 
-    #tutorsZoneHeading p {
-        font-size: 1.3em;
+    .parents-box p {
+        font-size: 1.2em;
+        color: #0057B7;
+        margin-bottom: 1rem;
     }
+
+.tutor-zone-section {
+    background-color: #fff;
+    padding: 60px 0;
+}
+
+.tutor-box {
+    background-color: #0057B7; /* darker blue box */
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+    box-shadow: 0 0 15px rgba(173, 216, 230, 0.3); /* lighter blue shadow, e.g. "powderblue" */
+    text-align: center;
+}
+
+    .tutor-box h2 {
+        font-size: 2em;
+        color: #fff;
+        margin-bottom: 1rem;
+    }
+
+    .tutor-box p {
+        font-size: 1.2em;
+        color: #fff;
+        margin-bottom: 1rem;
+    }
+
+
+
 
 /* 
    Example: styling for the parent/tutor login buttons

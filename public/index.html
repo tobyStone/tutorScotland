@@ -11,16 +11,30 @@
     <!-- Shared banner/header -->
     <header>
         <h1>Scottish Tutors Association</h1>
-        <nav>
-            <a href="about-us.html">About Us</a>
-            <!-- Admin goes to login.html, possibly with ?role=admin if you want to pass that context -->
+        <nav class="floating-nav">
+            <img src="/images/bannerShield2.png" alt="Shield Icon" class="floating-shield">
             <a href="login.html?role=admin">Login</a>
-            <a href="login.html?role=tutor">Tutor Membership</a>
-            <a href="contact.html">Contact Us</a>
-            <a href="/blog">Blog</a> 
-            <a href="tutorDirectory.html">Tutor Directory</a>
         </nav>
     </header>
+
+    <!-- Dark-blue nav below banner -->
+    <nav class="main-nav">
+        <ul>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="tutorzone.html">Tutor Membership</a></li>
+            <!-- Example of a dropdown link -->
+            <li class="dropdown">
+                <a href="#">Parents</a>
+                <ul class="dropdown-content">
+                    <li><a href="parents.html">Enter Parent's Zone</a></li>
+                    <li><a href="#">Another Parent Link</a></li>
+                </ul>
+            </li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+        </ul>
+    </nav>
 
 
     <!-- Rolling banner container -->
@@ -33,51 +47,57 @@
 
     <main>
         <div class="landing-container">
-            <div class="mission-statement">
-                <h2>Raising Standards, Shaping Futures</h2>
-            </div>
+            <section class="mission-section">
+                <div class="mission-statement">
+                    <h2>Raising Standards, Shaping Futures</h2>
+                </div>
 
-            <!-- Example images (adapt to your file names) -->
-            <img src="/images/centralShield.png"
-                 alt="Large STA Shield"
-                 class="landing-img center-img"
-                 id="imageShield">
-            <img src="/images/bannerWithRibbons.png"
-                 alt="Banner Ribbon"
-                 class="landing-img center-img"
-                 id="imageBanner">
+                <!-- Example images (adapt to your file names) -->
+                <img src="/images/centralShield.png"
+                     alt="Large STA Shield"
+                     class="landing-img center-img"
+                     id="imageShield">
+                <img src="/images/bannerWithRibbons.png"
+                     alt="Banner Ribbon"
+                     class="landing-img center-img"
+                     id="imageBanner">
 
-            <!-- About Us at the bottom -->
-            <div class="about-us-landing" id="aboutUsLanding">
-                <p>We are committed to helping all children grow through personalised tutoring and innovative learning experiences.</p>
-                <p>Our mission is to provide quality education and support for students no matter their background.</p>
-                <p class="cta-text">
-                    Want to learn more or discuss your needs?
-                    <a href="contact.html">Get in touch with us!</a>
-                </p>
-                <img src="/images/tutor1.jpg" alt="Tutor teaching" class="small-tutor-img">
-            </div>
-            <div class="study-photos">
-                <img src="/images/tutor0.jpg" alt="Students Studying" class="large-study-img">
-            </div>
+                <!-- About Us at the bottom -->
+                <div class="about-us-landing" id="aboutUsLanding">
+                    <p>We are committed to helping all children grow through personalised tutoring and innovative learning experiences.</p>
+                    <p>Our mission is to provide quality education and support for students no matter their background.</p>
+                    <p class="cta-text">
+                        Want to learn more or discuss your needs?
+                        <a href="contact.html">Get in touch with us!</a>
+                    </p>
+                </div>
+                <div class="study-photos">
+                    <img src="/images/tutor0.jpg" alt="Students Studying" class="large-study-img">
+                </div>
+            </section>
 
 
             <!-- Parent's Zone heading -->
-            <div class="landing-heading left-heading" id="parentsZoneHeading">
-                <h2>Parent's Zone</h2>
-                <p>An area for parents to find a fully qualified tutor.</p>
-                <!-- Instead of mock login, just go to login.html with a ?role=parent param -->
-                <button class="zone-login-btn" onclick="window.location.href='/parents.html'">Enter Parent's Zone</button>
-            </div>
+            <section class="parents-zone-section">
+                <div class="parents-box">
+                    <h2>Parent's Zone</h2>
+                    <img src="/images/tutor1.jpg" alt="Tutor teaching" class="small-tutor-img">
+                    <p>An area for parents to find a fully qualified tutor.</p>
+                    <!-- Instead of mock login, just go to login.html with a ?role=parent param -->
+                    <button class="zone-login-btn" onclick="window.location.href='/parents.html'">Enter Parent's Zone</button>
+                </div>
+            </section>
 
             <!-- Tutor's Zone heading -->
-            <div class="landing-heading right-heading" id="tutorsZoneHeading">
-                <div class="tutor-images">
-                    <h2>Tutor's Zone</h2>
-                    <p>An area for tutors to connect with parents of students.</p>
-                    <button class="zone-login-btn" onclick="goToLogin('tutor')">Login as Tutor</button>
+            <section class="tutor-zone-section">
+                <div class="tutor-box">
+                    <div class="tutor-images">
+                        <h2>Tutor's Zone</h2>
+                        <p>An area for tutors to connect with parents of students.</p>
+                        <button class="zone-login-btn" onclick="goToLogin('tutor')">Login as Tutor</button>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </main>
 
