@@ -11,10 +11,7 @@
     <!-- Shared banner/header -->
     <header>
         <h1>Scottish Tutors Association</h1>
-        <nav class="floating-nav">
-            <img src="/images/bannerShield2.png" alt="Shield Icon" class="floating-shield">
-            <a href="login.html?role=admin">Login</a>
-        </nav>
+        <a href="login.html?role=admin" class="banner-login-link lilac-box">Login</a>
     </header>
 
     <!-- Dark-blue nav below banner -->
@@ -24,7 +21,8 @@
             <li><a href="tutorzone.html">Tutor Membership</a></li>
             <!-- Example of a dropdown link -->
             <li class="dropdown">
-                <a href="#">Parents</a>
+                <!-- Add a data attribute or class for the toggle link -->
+                <a href="#" class="dropdown-toggle">Parents</a>
                 <ul class="dropdown-content">
                     <li><a href="parents.html">Enter Parent's Zone</a></li>
                     <li><a href="#">Another Parent Link</a></li>
@@ -35,6 +33,37 @@
             <li><a href="tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
+
+    <script>
+        // 1. Toggling the .open class on click
+        document.addEventListener('click', function (e) {
+            const dropdowns = document.querySelectorAll('.dropdown.open');
+
+            // If we clicked on a dropdown-toggle link
+            if (e.target.matches('.dropdown-toggle')) {
+                e.preventDefault(); // prevent link nav
+                e.stopPropagation(); // don't let it bubble up
+
+                // find the parent <li> with class="dropdown"
+                const parentLi = e.target.closest('.dropdown');
+
+                // close other open dropdowns first
+                dropdowns.forEach(d => {
+                    if (d !== parentLi) {
+                        d.classList.remove('open');
+                    }
+                });
+
+                // toggle this one
+                parentLi.classList.toggle('open');
+            } else {
+                // If we clicked anywhere else (not on a .dropdown-toggle),
+                // close all open dropdowns
+                dropdowns.forEach(d => d.classList.remove('open'));
+            }
+        });
+    </script>
+
 
 
     <!-- Rolling banner container -->
@@ -48,19 +77,11 @@
     <main>
         <div class="landing-container">
             <section class="mission-section">
+                <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield">
+                <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons">
                 <div class="mission-statement">
                     <h2>Raising Standards, Shaping Futures</h2>
                 </div>
-
-                <!-- Example images (adapt to your file names) -->
-                <img src="/images/centralShield.png"
-                     alt="Large STA Shield"
-                     class="landing-img center-img"
-                     id="imageShield">
-                <img src="/images/bannerWithRibbons.png"
-                     alt="Banner Ribbon"
-                     class="landing-img center-img"
-                     id="imageBanner">
 
                 <!-- About Us at the bottom -->
                 <div class="about-us-landing" id="aboutUsLanding">
@@ -78,7 +99,7 @@
 
 
             <!-- Parent's Zone heading -->
-            <section class="parents-zone-section">
+            <section class="parents-zone-section fade-in-on-scroll">
                 <div class="parents-box">
                     <h2>Parent's Zone</h2>
                     <img src="/images/tutor1.jpg" alt="Tutor teaching" class="small-tutor-img">
@@ -88,8 +109,9 @@
                 </div>
             </section>
 
+
             <!-- Tutor's Zone heading -->
-            <section class="tutor-zone-section">
+            <section class="tutor-zone-section fade-in-on-scroll">
                 <div class="tutor-box">
                     <div class="tutor-images">
                         <h2>Tutor's Zone</h2>
@@ -114,6 +136,35 @@
                 document.getElementById('tutorBanner').innerText = text;
             })
             .catch(err => console.error('Error fetching tutors:', err));
+        // 1. Grab all elements with fade-in-on-scroll
+        const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
+
+        // 2. Set initial styles (optional if you do them in CSS, but sometimes we do it here)
+        fadeEls.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+        });
+
+        // 3. Create the Intersection Observer
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Fade it in
+                    entry.target.style.transition = 'opacity 0.7s ease-out, transform 0.7s ease-out';
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+
+                    // Once triggered, stop observing so it doesn't re-animate if user scrolls away
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
+
+        // 4. Observe each fadeEl
+        fadeEls.forEach(el => observer.observe(el));
+
+
+
     </script>
 
 </body>

@@ -34,20 +34,6 @@ header {
     position: relative;
 }
 
-.banner-login-link {
-    font-size: 1.2em;
-    color: #fff;
-    text-decoration: none;
-    background-color: #0057B7;
-    padding: 6px 12px;
-    border-radius: 4px;
-    width: fit-content;
-}
-
-    .banner-login-link:hover {
-        background-color: #003F8F;
-    }
-
 /* Move and resize the heading */
     header h1 {
         /* Slightly bigger heading */
@@ -59,10 +45,19 @@ header {
         text-shadow: 5px 5px 10px #0057B7;
     }
 
-p, li, label, a, span {
-    font-size: 1.1em; /* Slightly larger paragraphs, labels, etc. */
+
+/* Lilac box for the login link in the banner */
+.lilac-box {
+    background-color: #C8A2C8; /* lilac */
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 4px;
+    text-decoration: none;
 }
 
+    .lilac-box:hover {
+        background-color: #b37cb3; /* a darker lilac on hover */
+    }
 
 
 .main-nav {
@@ -92,11 +87,13 @@ p, li, label, a, span {
                     background-color: #003F8F; /* highlight on hover */
                 }
 
-/* Simple dropdown example */
+
+
+/* Only show dropdown on click/focus, NOT hover */
 .dropdown-content {
     display: none;
     position: absolute;
-    top: 100%; /* below the parent li */
+    top: 100%;
     left: 0;
     background-color: #003F8F;
     min-width: 160px;
@@ -106,9 +103,15 @@ p, li, label, a, span {
     .dropdown-content li a {
         padding: 10px 15px;
     }
-
-.dropdown:hover .dropdown-content {
+/* Approach 1: Use :focus-within on the parent <li> or the link */
+.dropdown:focus-within .dropdown-content {
     display: block;
+}
+/* If you don't want it to open on hover, remove .dropdown:hover .dropdown-content */
+
+.dropdown-toggle {
+    cursor: pointer;
+    outline: none;
 }
 
 
@@ -177,6 +180,12 @@ main {
     margin: 0 auto;
 }
 
+/* Shield + Ribbons stacked in normal flow */
+.main-shield, .main-ribbons {
+    display: block;
+    margin: 0 auto; /* center them horizontally */
+    max-width: 300px; /* or adjust to taste */
+}
 
 /***** Mission Statement *****/
 .mission-statement {
@@ -191,6 +200,15 @@ main {
         font-size: 2.5em;
         font-weight: bold;
     }
+
+/* about-us-landing fully visible from the start (remove opacity: 0) */
+.about-us-landing {
+    text-align: center;
+    width: 80%;
+    max-width: 600px;
+    margin: 2rem auto;
+    color: #0057B7;
+}
 
 
 /* Adjust top positions & animation delays as needed */
@@ -225,29 +243,13 @@ main {
 }
 
 
-
-/* About Us*/
-.about-us-landing {
-    text-align: right;
-    width: 80%;
-    max-width: 600px;
-    margin: 1rem auto; /* Center horizontally, spacing on top/bottom */
-    text-align: center;
+/* By default, .fade-in-on-scroll elements start hidden. 
+   We'll remove these inline styles once they're observed. */
+.fade-in-on-scroll {
     opacity: 0;
-    animation: fadeIn 1s forwards;
-    animation-delay: 3s;
-    color: #0057B7;
+    transform: translateY(20px);
 }
 
-    .about-us-landing h2 {
-        font-size: 3em;
-    }
-
-    .about-us-landing p {
-        text-align: justify; /* “spread” text across each line */
-        margin: 1rem auto;
-        max-width: 90%; /* narrower paragraph so it doesn't span edge to edge */
-    }
 
 .parents-zone-section {
     background-color: #E6F0FF; /* a very light blue */
@@ -274,6 +276,13 @@ main {
         color: #0057B7;
         margin-bottom: 1rem;
     }
+
+.small-tutor-img {
+    max-width: 50%;
+    height: auto;
+    display: block;
+    margin: 1rem auto;
+}
 
 .tutor-zone-section {
     background-color: #fff;
