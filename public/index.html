@@ -34,37 +34,6 @@
         </ul>
     </nav>
 
-    <script>
-        // 1. Toggling the .open class on click
-        document.addEventListener('click', function (e) {
-            const dropdowns = document.querySelectorAll('.dropdown.open');
-
-            // If we clicked on a dropdown-toggle link
-            if (e.target.matches('.dropdown-toggle')) {
-                e.preventDefault(); // prevent link nav
-                e.stopPropagation(); // don't let it bubble up
-
-                // find the parent <li> with class="dropdown"
-                const parentLi = e.target.closest('.dropdown');
-
-                // close other open dropdowns first
-                dropdowns.forEach(d => {
-                    if (d !== parentLi) {
-                        d.classList.remove('open');
-                    }
-                });
-
-                // toggle this one
-                parentLi.classList.toggle('open');
-            } else {
-                // If we clicked anywhere else (not on a .dropdown-toggle),
-                // close all open dropdowns
-                dropdowns.forEach(d => d.classList.remove('open'));
-            }
-        });
-    </script>
-
-
 
     <!-- Rolling banner container -->
     <div class="rolling-banner">
@@ -143,6 +112,37 @@
                 document.getElementById('tutorBanner').innerText = text;
             })
             .catch(err => console.error('Error fetching tutors:', err));
+
+        // 1. Toggling the .open class on click
+        document.addEventListener('click', function (e) {
+            const dropdowns = document.querySelectorAll('.dropdown.open');
+
+            // If we clicked on a dropdown-toggle link
+            if (e.target.matches('.dropdown-toggle')) {
+                e.preventDefault(); // prevent link nav
+                e.stopPropagation(); // don't let it bubble up
+
+                // find the parent <li> with class="dropdown"
+                const parentLi = e.target.closest('.dropdown');
+
+                // close other open dropdowns first
+                dropdowns.forEach(d => {
+                    if (d !== parentLi) {
+                        d.classList.remove('open');
+                    }
+                });
+
+                // toggle this one
+                parentLi.classList.toggle('open');
+            } else {
+                // If we clicked anywhere else (not on a .dropdown-toggle),
+                // close all open dropdowns
+                dropdowns.forEach(d => d.classList.remove('open'));
+            }
+        });
+
+
+
         // 1. Grab all elements with fade-in-on-scroll
         const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
 

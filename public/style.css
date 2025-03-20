@@ -73,7 +73,11 @@ header {
 
         .main-nav ul li {
             position: relative; /* for dropdowns */
+            border-left: 1px solid #ADD8E6;
         }
+            .main-nav ul li:first-child {
+                border-left: none;
+            }
 
             .main-nav ul li a {
                 color: #fff;
@@ -88,6 +92,19 @@ header {
                 }
 
 
+/* Dropdown arrow on the parent link */
+.dropdown-toggle::after {
+    content: " \25BE"; /* downward arrow unicode */
+    margin-left: 0.4em;
+    font-size: 0.7em;
+    transition: transform 0.3s;
+    vertical-align: 0.1em; /* tweak so arrow lines up nicely */
+}
+
+/* Flip arrow when open */
+.dropdown.open .dropdown-toggle::after {
+    transform: rotate(180deg);
+}
 
 /* Only show dropdown on click/focus, NOT hover */
 .dropdown-content {
@@ -181,36 +198,43 @@ main {
     padding: 40px; /* optional padding around the row */
 }
 
-.left-col, .right-col {
-    flex: 1 1 0; /* each takes half the space, roughly */
-    display: flex;
-    flex-direction: column; /* stack items in each column top to bottom */
-    align-items: center; /* center them horizontally, optional */
-}
 
-/* If you want the shield & ribbons aligned left, 
-   you could remove 'align-items: center' in .left-col 
-   and do something else. Example: */
 .left-col {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
     align-items: flex-start;
+    position: relative; /* so we can absolutely position ribbons if needed */
 }
 
 
-/* Shield + Ribbons stacked in normal flow */
-.main-shield, .main-ribbons {
-    max-width: 250px; /* or 300px, adjust to taste */
+.main-shield {
+    max-width: 250px;
     width: 100%;
-    height: auto;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
+.main-ribbons {
+    max-width: 200px;
+    width: 100%;
+    margin-top: -35px; /* pull it up so it sits at the base of the shield */
+    margin-left: 0.5rem; /* shift horizontally if needed */
+}
+
+/* Right col: heading + about-us + photo */
+.right-col {
+    flex: 2 1 0; /* give it more space so the text is wider */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 /***** Mission Statement *****/
 .mission-statement {
     text-align: center;
     margin: 0.7rem auto;
     color: #C8A2C8;
     padding: 1rem;
-    width: 80%;
+    max-width: 70%;
 }
 
     .mission-statement h2 {
@@ -222,7 +246,7 @@ main {
 .about-us-landing {
     text-align: center;
     width: 80%;
-    max-width: 600px;
+    max-width: 700px;
     margin: 2rem auto;
     color: #0057B7;
 }
@@ -352,9 +376,9 @@ main {
 }
 
 .large-study-img {
-    max-width: 31%;
+    max-width: 60%;
     height: auto;
-    border: 2px solid #C8A2C8; /* Lilac border, if you want it */
+    border: 2px solid #C8A2C8;
 }
 
 .tutor-images {
