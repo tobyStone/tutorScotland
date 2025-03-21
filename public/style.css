@@ -386,7 +386,8 @@ main {
     background-color: transparent; /* darker blue box */
     max-width: 800px;
     margin: 0 auto;
-    box-shadow: 0 0 15px rgba(173, 216, 230, 0.3); /* lighter blue shadow, e.g. "powderblue" */
+    box-shadow: 0 0 15px rgba(200,162,200, 0.3);
+    border: 2px solid #C8A2C8;
     text-align: center;
 }
 
