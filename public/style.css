@@ -93,12 +93,6 @@ header {
 
 
 
-/* Main Content */
-main {
-    position: relative;
-    padding: 40px 20px;
-    min-height: 80vh;
-}
 
 
 
@@ -133,11 +127,19 @@ main {
     }
 }
 
+/* Main Content */
+main {
+    position: relative;
+    padding: 40px 20px;
+    min-height: 80vh;
+}
+
+
 .landing-container {
     position: relative;
     min-height: 80vh;
     text-align: center;
-    margin-top: 40px;
+    margin-top: 17px;
 }
 
 .landing-img {
@@ -185,10 +187,28 @@ main {
 .right-col {
     flex: 2 1 0; /* give it more space so the text is wider */
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    align-items: flex-start; /* align top edges */
+    justify-content: space-between; /* text on the left, image on the right */
 }
-/***** Mission Statement *****/
+
+/* The text portion on the left side of .right-col */
+.text-block {
+    flex: 1;
+    /* optional max-width if you want the text narrower than half the container */
+    max-width: 60%;
+    margin-right: 1rem; /* space between text and image */
+    text-align: left; /* if you prefer left-aligned text */
+}
+
+/* The image portion on the right side of .right-col */
+.image-block {
+    flex: 1;
+    display: flex;
+    justify-content: center; /* center the image horizontally if you like */
+    align-items: center; /* vertically center the image within this block */
+}
+
+
 .mission-statement {
     text-align: center;
     margin: 0.7rem auto;
@@ -242,6 +262,14 @@ main {
         transform: translateX(-50%) scale(0.9);
     }
 }
+
+
+.large-study-img {
+    max-width: 60%;
+    height: auto;
+    border: 2px solid #C8A2C8;
+}
+
 
 
 /* By default, .fade-in-on-scroll elements start hidden. 
@@ -328,18 +356,7 @@ main {
     font-size: 2.3em; 
     }
 
-/*Landing page photos*/
 
-.study-photos {
-    text-align: center;
-    margin: 2rem 0;
-}
-
-.large-study-img {
-    max-width: 60%;
-    height: auto;
-    border: 2px solid #C8A2C8;
-}
 
 .tutor-images {
     display: flex;
