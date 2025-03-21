@@ -139,7 +139,7 @@ main {
     position: relative;
     min-height: 80vh;
     text-align: center;
-    margin-top: 17px;
+    margin-top: 14px;
 }
 
 .landing-img {
@@ -167,6 +167,7 @@ main {
     flex-direction: column;
     align-items: flex-start;
     position: relative; /* so we can absolutely position ribbons if needed */
+    margin-left: -20px;
 }
 
 
@@ -180,7 +181,7 @@ main {
     max-width: 200px;
     width: 100%;
     margin-top: -35px; /* pull it up so it sits at the base of the shield */
-    margin-left: 0.5rem; /* shift horizontally if needed */
+    margin-left: 0.6rem; /* shift horizontally if needed */
 }
 
 /* Right col: heading + about-us + photo */
@@ -224,9 +225,9 @@ main {
 
 /* about-us-landing fully visible from the start (remove opacity: 0) */
 .about-us-landing {
-    text-align: center;
+    text-align: right;
+    max-width: 70vw;
     width: 80%;
-    max-width: 700px;
     margin: 2rem auto;
     color: #0057B7;
 }
