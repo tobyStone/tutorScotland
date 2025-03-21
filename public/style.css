@@ -263,7 +263,7 @@ main {
 .mission-statement {
     /* Hide initially & scale down a bit */
     opacity: 0;
-    transform: scale(0.8);
+    transform: scale(1.2);
     /* Animate in over 1.5s, appear fully at the end */
     animation: fadeGrow 1.5s forwards ease-in-out;
     /* Start slightly sooner so it appears before the shield */
@@ -276,7 +276,7 @@ main {
 }
 
 
-    .mission-statement h2 {
+    .mission-statement h1 {
         font-size: 2.5em;
         font-weight: bold;
     }
@@ -305,7 +305,7 @@ main {
     position: relative;
     background-color: #E6F0FF; /* a very light blue */
     padding: 60px 0;
-    margin-bottom: 100px;
+    margin-bottom: 237px;
     /* Put the background image behind a tinted overlay (option A: linear-gradient) */
     background: linear-gradient( rgba(255,255,255,0.7), /* White overlay at 70% opacity */
     rgba(255,255,255,0.7) ), url('/images/tutor2.jpg') no-repeat center center;
@@ -346,7 +346,7 @@ main {
     /* Tartan tile background, repeated. 
      Adjust background-size if you want bigger or smaller squares. */
     background: url('/images/bannerBackground.PNG') repeat left top;
-    background-size: 100px auto;
+    background-size: 150px auto;
     /* If you need a gap above or below, you can add margin here too */
 }
 
