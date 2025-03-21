@@ -139,7 +139,7 @@ main {
     position: relative;
     min-height: 80vh;
     text-align: center;
-    margin-top: 14px;
+    margin-top: 7px;
 }
 
 .landing-img {
@@ -186,11 +186,21 @@ main {
 
 /* Right col: heading + about-us + photo */
 .right-col {
-    width: 50vw;
+    width: 70vw;
     margin-left: auto; /* push it to the right half of the viewport */
     text-align: left; /* paragraphs left-aligned within this half */
     position: relative; /* optional if you want to position child elements absolutely */
 }
+
+/* about-us-landing fully visible from the start (remove opacity: 0) */
+.about-us-landing {
+    margin: 2rem auto; /* spacing around the block */
+    max-width: 900px; /* or 70vw, etc. to limit line length */
+    color: #0057B7;
+    text-align: left; /* keep text left-aligned */
+    line-height: 1.5; /* some comfortable line spacing */
+}
+
 
 /* Float the tutor0.jpg so text flows around/under it */
 .float-right {
@@ -202,22 +212,13 @@ main {
     border: 2px solid #C8A2C8; /* keep your lilac border if desired */
 }
 
-/* The text portion on the left side of .right-col */
-.text-block {
-    flex: 1;
-    /* optional max-width if you want the text narrower than half the container */
-    max-width: 60%;
-    margin-right: 1rem; /* space between text and image */
-    text-align: left; /* if you prefer left-aligned text */
-}
-
 
 .mission-statement {
     text-align: center;
     margin: 0.7rem auto;
     color: #C8A2C8;
     padding: 1rem;
-    max-width: 70%;
+    margin-bottom: 1rem; /* space below heading before the image/paragraphs */
 }
 
     .mission-statement h2 {
@@ -225,14 +226,6 @@ main {
         font-weight: bold;
     }
 
-/* about-us-landing fully visible from the start (remove opacity: 0) */
-.about-us-landing {
-    text-align: right;
-    max-width: 70vw;
-    width: 80%;
-    margin: 2rem auto;
-    color: #0057B7;
-}
 
 
 /* Adjust top positions & animation delays as needed */
