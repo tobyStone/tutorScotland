@@ -279,6 +279,7 @@ main {
     .mission-statement h2 {
         font-size: 5.7em;
         font-weight: bold;
+        margin-bottom: 1rem;
     }
 
 
@@ -290,6 +291,34 @@ main {
     height: auto;
     border: 2px solid #C8A2C8;
 }
+
+/* A quick fade/slide up (0.8s) with a short delay so it starts
+   once the heading has basically appeared. */
+@keyframes fadeUpQuick {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Initially hidden (like your fade-in-on-scroll approach, but simpler). */
+.fade-later {
+    opacity: 0;
+    transform: translateY(20px);
+    /* The keyframes below will override these once triggered. */
+}
+
+    /* We'll use forwards to retain final state, 
+   and set a short 0.8s duration + 1.5s or so delay 
+   (so it starts after the heading's done). */
+    .fade-later.fade-in {
+        animation: fadeUpQuick 0.8s 1.5s forwards ease-in-out;
+    }
 
 
 
@@ -363,13 +392,13 @@ main {
 
     .tutor-box h2 {
         font-size: 2em;
-        color: #fff;
+        color: #0057B7;
         margin-bottom: 1rem;
     }
 
     .tutor-box p {
         font-size: 1.2em;
-        color: #fff;
+        color: #0057B7;
         margin-bottom: 1rem;
     }
 

@@ -51,12 +51,12 @@
 
                         <img src="/images/tutor0.jpg"
                                 alt="Students Studying"
-                                class="large-study-img float-right">
+                                class="large-study-img float-right fade-later">
 
 
                         <p>We are committed to helping all children grow through personalised tutoring...</p>
                         <p>Our mission is to provide quality education and support for students no matter...</p>
-                        <p class="cta-text">
+                        <p class="cta-text fade-later">
                             Want to learn more or discuss your needs?
                             <a href="contact.html">Get in touch with us!</a>
                         </p>
@@ -103,6 +103,15 @@
             })
             .catch(err => console.error('Error fetching tutors:', err));
 
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // After the heading’s animation delay (say 1.5s) plus a little buffer:
+            setTimeout(() => {
+                document.querySelectorAll('.fade-later').forEach(el => {
+                    el.classList.add('fade-in');
+                });
+            }, 1500); // or 2000 if you want a bit more buffer
+        });
 
         //fade in logic
         // 1. Grab all elements with fade-in-on-scroll
