@@ -220,7 +220,7 @@ main {
 
 /* Right col: heading + about-us + photo */
 .right-col {
-    width: 67vw;
+    width: 62vw;
     margin-left: auto; /* push it to the right half of the viewport */
     text-align: left; /* paragraphs left-aligned within this half */
     position: relative; /* optional if you want to position child elements absolutely */
@@ -263,7 +263,7 @@ main {
 .mission-statement {
     /* Hide initially & scale down a bit */
     opacity: 0;
-    transform: scale(1.2);
+    transform: scale(1.5);
     /* Animate in over 1.5s, appear fully at the end */
     animation: fadeGrow 1.5s forwards ease-in-out;
     /* Start slightly sooner so it appears before the shield */
@@ -277,7 +277,7 @@ main {
 
 
     .mission-statement h1 {
-        font-size: 3.3em;
+        font-size: 3.7em;
         font-weight: bold;
     }
 
@@ -344,7 +344,7 @@ main {
     /* Tartan tile background, repeated. 
      Adjust background-size if you want bigger or smaller squares. */
     background: url('/images/bannerBackground.PNG') repeat left top;
-    background-size: 250px auto;
+    background-size: 350px auto;
     /* If you need a gap above or below, you can add margin here too */
 }
 
