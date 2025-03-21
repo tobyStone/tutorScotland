@@ -47,7 +47,7 @@ header {
 
 
 /* Lilac box for the login link in the banner */
-.lilac-box {
+.login-box {
     background-color: #0057B7; /* lilac */
     color: #fff;
     padding: 8px 15px;
@@ -55,7 +55,7 @@ header {
     text-decoration: none;
 }
 
-    .lilac-box:hover {
+    .login-box:hover {
         background-color: #b37cb3; /* a darker lilac on hover */
     }
 
@@ -181,7 +181,7 @@ main {
     max-width: 200px;
     width: 100%;
     margin-top: -35px; /* pull it up so it sits at the base of the shield */
-    margin-left: 0.5rem; /* shift horizontally if needed */
+    margin-left: 0.42rem; /* shift horizontally if needed */
 }
 
 /* Adjust top positions & animation delays as needed */
@@ -241,7 +241,7 @@ main {
     float: right; /* anchor to the right side */
     margin-left: 1rem; /* gap between image & text */
     margin-bottom: 1rem; /* space below image so text doesn't butt up */
-    max-width: 300px; /* or 40%, etc. to control image size */
+    max-width: 227px; /* or 40%, etc. to control image size */
     height: auto;
     border: 2px solid #C8A2C8; /* keep your lilac border if desired */
 }
@@ -277,7 +277,7 @@ main {
 
 
     .mission-statement h1 {
-        font-size: 3.7em;
+        font-size: 5.7em;
         font-weight: bold;
     }
 
@@ -304,6 +304,7 @@ main {
 .parents-zone-section {
     position: relative;
     background-color: #E6F0FF; /* a very light blue */
+    margin-top: 150px;
     padding: 60px 0;
     margin-bottom: 237px;
     /* Put the background image behind a tinted overlay (option A: linear-gradient) */
@@ -344,8 +345,10 @@ main {
     /* Tartan tile background, repeated. 
      Adjust background-size if you want bigger or smaller squares. */
     background: url('/images/bannerBackground.PNG') repeat left top;
-    background-size: 350px auto;
+    background-size: 377px auto;
     /* If you need a gap above or below, you can add margin here too */
+    margin: 0; /* remove default margins if any */
+    padding: 77px 0; /* keep padding for spacing inside the section */
 }
 
 .tutor-box {
