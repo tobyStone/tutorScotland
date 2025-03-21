@@ -72,7 +72,7 @@ header {
     }
 
         .main-nav ul li {
-            position: relative; /* for dropdowns */
+            position: relative; 
             border-left: 1px solid #ADD8E6;
         }
             .main-nav ul li:first-child {
@@ -91,46 +91,6 @@ header {
                     background-color: #003F8F; /* highlight on hover */
                 }
 
-
-/* Dropdown arrow on the parent link */
-.dropdown-toggle::after {
-    content: " \25BE"; /* downward arrow unicode */
-    margin-left: 0.4em;
-    font-size: 0.7em;
-    transition: transform 0.3s;
-    vertical-align: 0.1em; /* tweak so arrow lines up nicely */
-}
-
-/* Flip arrow when open */
-.dropdown.open .dropdown-toggle::after {
-    transform: rotate(180deg);
-}
-
-/* Only show dropdown on click/focus, NOT hover */
-.dropdown-content {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #003F8F;
-    min-width: 160px;
-    z-index: 99;
-}
-
-/* Show it when .dropdown has .open */
-.dropdown.open .dropdown-content {
-    display: block;
-}
-
-    .dropdown-content li a {
-        padding: 10px 15px;
-    }
-
-
-.dropdown-toggle {
-    cursor: pointer;
-    outline: none;
-}
 
 
 /* Main Content */
@@ -1051,7 +1011,7 @@ html {
         font-size: 1.5em; /* Increase font size for larger writing */
         line-height: 1.5; /* Add more line height for readability */
         text-align: center;
-        top: 7vh;
+        top: 7vh;.main-nav ul li 
     }
 
         .about-content h2 {

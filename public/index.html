@@ -19,15 +19,8 @@
         <ul>
             <li><a href="about-us.html">About Us</a></li>
             <li><a href="tutorzone.html">Tutor Membership</a></li>
-            <!-- Example of a dropdown link -->
-            <li class="dropdown">
-                <!-- Add a data attribute or class for the toggle link -->
-                <a href="#" class="dropdown-toggle">Parents</a>
-                <ul class="dropdown-content">
-                    <li><a href="parents.html">Enter Parent's Zone</a></li>
-                    <li><a href="#">Another Parent Link</a></li>
-                </ul>
-            </li>
+            <li><a href="parents.html">Enter Parent's Zone</a></li>
+            <li><a href="#">Another Parent Link</a></li>          
             <li><a href="contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
             <li><a href="tutorDirectory.html">Tutor Directory</a></li>
@@ -113,36 +106,8 @@
             })
             .catch(err => console.error('Error fetching tutors:', err));
 
-        // 1. Toggling the .open class on click
-        document.addEventListener('click', function (e) {
-            const dropdowns = document.querySelectorAll('.dropdown.open');
 
-            // If we clicked on a dropdown-toggle link
-            if (e.target.matches('.dropdown-toggle')) {
-                e.preventDefault(); // prevent link nav
-                e.stopPropagation(); // don't let it bubble up
-
-                // find the parent <li> with class="dropdown"
-                const parentLi = e.target.closest('.dropdown');
-
-                // close other open dropdowns first
-                dropdowns.forEach(d => {
-                    if (d !== parentLi) {
-                        d.classList.remove('open');
-                    }
-                });
-
-                // toggle this one
-                parentLi.classList.toggle('open');
-            } else {
-                // If we clicked anywhere else (not on a .dropdown-toggle),
-                // close all open dropdowns
-                dropdowns.forEach(d => d.classList.remove('open'));
-            }
-        });
-
-
-
+        //fade in logic
         // 1. Grab all elements with fade-in-on-scroll
         const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
 
