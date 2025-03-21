@@ -154,7 +154,7 @@ main {
     display: flex; /* side-by-side columns */
     justify-content: center; /* or space-between, etc. */
     align-items: flex-start; /* top alignment, for instance */
-    gap: 2rem; /* space between columns */
+    gap: 1rem; /* space between columns */
     max-width: 1200px;
     margin: 0 auto; /* center the row horizontally */
     padding: 40px; /* optional padding around the row */
@@ -220,7 +220,7 @@ main {
 
 /* Right col: heading + about-us + photo */
 .right-col {
-    width: 57vw;
+    width: 67vw;
     margin-left: auto; /* push it to the right half of the viewport */
     text-align: left; /* paragraphs left-aligned within this half */
     position: relative; /* optional if you want to position child elements absolutely */
@@ -277,7 +277,7 @@ main {
 
 
     .mission-statement h1 {
-        font-size: 2.5em;
+        font-size: 3.3em;
         font-weight: bold;
     }
 
@@ -341,12 +341,10 @@ main {
 }
 
 .tutor-zone-section {
-    /* Remove the plain white background: background-color: #fff; */
-    padding: 60px 0;
     /* Tartan tile background, repeated. 
      Adjust background-size if you want bigger or smaller squares. */
     background: url('/images/bannerBackground.PNG') repeat left top;
-    background-size: 150px auto;
+    background-size: 250px auto;
     /* If you need a gap above or below, you can add margin here too */
 }
 
@@ -354,7 +352,6 @@ main {
     background-color: transparent; /* darker blue box */
     max-width: 800px;
     margin: 0 auto;
-    padding: 40px;
     box-shadow: 0 0 15px rgba(173, 216, 230, 0.3); /* lighter blue shadow, e.g. "powderblue" */
     text-align: center;
 }
