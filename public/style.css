@@ -49,7 +49,7 @@ header {
 /* Lilac box for the login link in the banner */
 .lilac-box {
     background-color: #C8A2C8; /* lilac */
-    color: #fff;
+    color: #0057B7;
     padding: 8px 15px;
     border-radius: 4px;
     text-decoration: none;
@@ -184,9 +184,43 @@ main {
     margin-left: 0.6rem; /* shift horizontally if needed */
 }
 
+/* Adjust top positions & animation delays as needed */
+#imageShield {
+    top: 2%;
+    left: 2%;
+    animation: growLeft 2s forwards ease-in-out;
+    animation-delay: 1s; /* or 1s if you want it later */
+    z-index: 2;
+}
+
+#imageBanner {
+    top: 32%;
+    left: 2%;
+    animation: growLeft 2s forwards ease-in-out;
+    animation-delay: 1.5s; /* ribbons appear last */
+    z-index: 2;
+}
+
+@keyframes growLeft {
+    0% {
+        opacity: 0;
+        left: 15%;
+        transform: translateX(-50%) scale(0.5);
+    }
+
+    100% {
+        opacity: 1;
+        left: 15%;
+        transform: translateX(-50%) scale(0.9);
+    }
+}
+
+
+
+
 /* Right col: heading + about-us + photo */
 .right-col {
-    width: 70vw;
+    width: 57vw;
     margin-left: auto; /* push it to the right half of the viewport */
     text-align: left; /* paragraphs left-aligned within this half */
     position: relative; /* optional if you want to position child elements absolutely */
@@ -212,14 +246,35 @@ main {
     border: 2px solid #C8A2C8; /* keep your lilac border if desired */
 }
 
+/* A new keyframes for the heading’s fade & grow */
+@keyframes fadeGrow {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
 
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Apply it to .mission-statement */
 .mission-statement {
+    /* Hide initially & scale down a bit */
+    opacity: 0;
+    transform: scale(0.8);
+    /* Animate in over 1.5s, appear fully at the end */
+    animation: fadeGrow 1.5s forwards ease-in-out;
+    /* Start slightly sooner so it appears before the shield */
+    animation-delay: 0.3s;
     text-align: center;
-    margin: 0.7rem auto;
+    margin: 0.7rem auto 1rem auto; /* some spacing */
     color: #C8A2C8;
     padding: 1rem;
-    margin-bottom: 1rem; /* space below heading before the image/paragraphs */
+    margin-bottom: 1rem;
 }
+
 
     .mission-statement h2 {
         font-size: 2.5em;
@@ -228,36 +283,6 @@ main {
 
 
 
-/* Adjust top positions & animation delays as needed */
-#imageShield {
-    top: 2%;
-    left: 2%;
-    animation: growLeft 2s forwards ease-in-out;
-    animation-delay: 0.5s;
-    z-index: 2;
-}
-
-#imageBanner {
-    top: 32%;
-    left: 2%;
-    animation: growLeft 2s forwards ease-in-out;
-    animation-delay: 1.5s;
-    z-index: 2;
-}
-
-@keyframes growLeft {
-    0% {
-        opacity: 0;
-        left: 15%;
-        transform: translateX(-50%) scale(0.5);
-    }
-
-    100% {
-        opacity: 1;
-        left: 15%;
-        transform: translateX(-50%) scale(0.9);
-    }
-}
 
 
 .large-study-img {
