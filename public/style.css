@@ -255,7 +255,7 @@ main {
 
     100% {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1.7);
     }
 }
 
@@ -276,7 +276,7 @@ main {
 }
 
 
-    .mission-statement h1 {
+    .mission-statement h2 {
         font-size: 5.7em;
         font-weight: bold;
     }
@@ -342,13 +342,15 @@ main {
 }
 
 .tutor-zone-section {
-    /* Tartan tile background, repeated. 
-     Adjust background-size if you want bigger or smaller squares. */
-    background: url('/images/bannerBackground.PNG') repeat left top;
-    background-size: 377px auto;
-    /* If you need a gap above or below, you can add margin here too */
-    margin: 0; /* remove default margins if any */
-    padding: 77px 0; /* keep padding for spacing inside the section */
+    position: relative;
+    margin: 0;
+    padding: 77px 0;
+    background:
+    /* first the tinted overlay + tutor1.jpg */
+    linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url('/images/tutor1.jpg') no-repeat center center,
+    /* then behind that, the tartan repeated if you like */
+    url('/images/bannerBackground.PNG') repeat left top;
+    background-size: cover, cover, 377px auto;
 }
 
 .tutor-box {
