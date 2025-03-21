@@ -48,8 +48,8 @@ header {
 
 /* Lilac box for the login link in the banner */
 .lilac-box {
-    background-color: #C8A2C8; /* lilac */
-    color: #0057B7;
+    background-color: #0057B7; /* lilac */
+    color: #fff;
     padding: 8px 15px;
     border-radius: 4px;
     text-decoration: none;
@@ -130,7 +130,7 @@ header {
 /* Main Content */
 main {
     position: relative;
-    padding: 40px 20px;
+    padding: 20px 20px;
     min-height: 80vh;
 }
 
@@ -181,7 +181,7 @@ main {
     max-width: 200px;
     width: 100%;
     margin-top: -35px; /* pull it up so it sits at the base of the shield */
-    margin-left: 0.6rem; /* shift horizontally if needed */
+    margin-left: 0.5rem; /* shift horizontally if needed */
 }
 
 /* Adjust top positions & animation delays as needed */
@@ -302,8 +302,14 @@ main {
 
 
 .parents-zone-section {
+    position: relative;
     background-color: #E6F0FF; /* a very light blue */
     padding: 60px 0;
+    margin-bottom: 100px;
+    /* Put the background image behind a tinted overlay (option A: linear-gradient) */
+    background: linear-gradient( rgba(255,255,255,0.7), /* White overlay at 70% opacity */
+    rgba(255,255,255,0.7) ), url('/images/tutor2.jpg') no-repeat center center;
+    background-size: cover; /* Make sure it covers the entire parent zone */
 }
 
 .parents-box {
@@ -335,12 +341,17 @@ main {
 }
 
 .tutor-zone-section {
-    background-color: #fff;
+    /* Remove the plain white background: background-color: #fff; */
     padding: 60px 0;
+    /* Tartan tile background, repeated. 
+     Adjust background-size if you want bigger or smaller squares. */
+    background: url('/images/bannerBackground.PNG') repeat left top;
+    background-size: 100px auto;
+    /* If you need a gap above or below, you can add margin here too */
 }
 
 .tutor-box {
-    background-color: #0057B7; /* darker blue box */
+    background-color: transparent; /* darker blue box */
     max-width: 800px;
     margin: 0 auto;
     padding: 40px;
