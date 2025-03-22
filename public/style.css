@@ -581,7 +581,7 @@ main {
 
 /* Tagline and Form */
 .content-wrapper {
-    margin-left: 70vw; /* space for the thistle image */
+    margin-left: 77vw; /* space for the thistle image */
 }
 
 
@@ -600,7 +600,7 @@ main {
 
 .tagline {
     position: absolute;
-    left: 43vw; /* Move it toward the end of the leaf */
+    left: 57vw; /* Move it toward the end of the leaf */
     top: 12vh; /* Adjust placement */
     font-size: 2em;
     color: #0057B7;
@@ -632,8 +632,8 @@ main {
 
 .parents-zone {
     position: absolute;
-    left: 60vw;
-    top: 20vh; /* Just below the tagline; adjust to taste */
+    left: 67vw;
+    top: 37vh; /* Just below the tagline; adjust to taste */
     opacity: 0;
     animation: revealTagline 1s forwards ease-in-out;
     animation-delay: 2.8s; /* Waits 1s after tagline finishes */
@@ -868,7 +868,7 @@ main {
 .about-content {
     position: absolute;
     left: 29%;
-    top: 27vh;
+    top: 29vh;
     transform: translateX(-50%);
     width: 40vw;
     color: #0057B7; /* Matches banner color */
