@@ -335,7 +335,7 @@ main {
     background-color: #E6F0FF; /* a very light blue */
     margin-top: 127px;
     padding: 60px 0;
-    margin-bottom: 237px;
+    margin-bottom: 207px;
     /* Put the background image behind a tinted overlay (option A: linear-gradient) */
     background: linear-gradient( rgba(255,255,255,0.7), /* White overlay at 70% opacity */
     rgba(255,255,255,0.7) ), url('/images/tutor2.jpg') no-repeat center center;
