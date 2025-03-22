@@ -383,7 +383,7 @@ main {
 }
 
 .tutor-box {
-    background-color: transparent; /* darker blue box */
+    background-color: #fff;
     max-width: 800px;
     margin: 0 auto;
     box-shadow: 0 0 15px rgba(200,162,200, 0.3);
