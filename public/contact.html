@@ -10,24 +10,29 @@
 </head>
 <body>
 
+    <!-- Shared banner/header -->
     <header>
         <h1>Scottish Tutors Association</h1>
-        <nav>
-            <a href="about-us.html">About Us</a>
-            <a href="login.html?role=admin">Login</a>
-            <a href="tutorzone.html">Tutor Membership</a>
-            <a href="contact.html">Contact Us</a>
-            <a href="blog.html">Blog</a>
-            <a href="tutorDirectory.html">Tutor Directory</a>
-            <a href="/">Home</a>
-        </nav>
+        <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
     </header>
 
-    <!-- Same rolling banner if you want it -->
+    <!-- Dark-blue nav below banner -->
+    <nav class="main-nav">
+        <ul>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="parents.html">Enter Parent's Zone</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+        </ul>
+    </nav>
+
+
+    <!-- Rolling banner container -->
     <div class="rolling-banner">
-        <div class="rolling-content">
-            <!-- Optionally fetch tutors or just static text -->
-            <span>Get in touch with us today!</span>
+        <div class="rolling-content" id="tutorBanner">
+            <!-- JS will populate tutor names/subjects here -->
         </div>
     </div>
 
@@ -57,8 +62,8 @@
         </div>
     </main>
     <script>
-        // If you want the same fade-in or transitional animations, you can do so.
-        // Or keep it simple.
+            // If you want the same fade-in or transitional animations, you can do so.
+            // Or keep it simple.
     </script>
 
 </body>
