@@ -59,6 +59,23 @@ header {
         background-color: #b37cb3; /* a darker lilac on hover */
     }
 
+header {
+    /* existing properties */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    /* etc. */
+}
+
+/* This container holds both buttons side by side */
+.header-links {
+    display: flex;
+    /* A small gap for the space between them (adjust as needed) */
+    gap: 10px;
+}
+
+
 
 .main-nav {
     background-color: #001B44; /* a deep navy, or #003F8F, etc. */
