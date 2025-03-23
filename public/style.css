@@ -634,7 +634,7 @@ main {
 .parents-zone {
     position: absolute;
     left: 67vw;
-    top: 57vh; /* Just below the tagline; adjust to taste */
+    top: 37vh; /* Just below the tagline; adjust to taste */
     opacity: 0;
     animation: revealTagline 1s forwards ease-in-out;
     animation-delay: 2.8s; /* Waits 1s after tagline finishes */
@@ -935,6 +935,42 @@ html {
         font-size: 1.2em;
         line-height: 1.4;
     }
+
+.newsletter-section, .social-links {
+    margin: 2rem auto;
+    max-width: 700px;
+    text-align: center;
+}
+
+    .newsletter-section h2 {
+        margin-bottom: 0.5rem;
+    }
+
+.newsletter-button {
+    display: inline-block;
+    background-color: #0057B7; /* Same as your zone-login-btn color */
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+
+    .newsletter-button:hover {
+        background-color: #003F8F; /* Slightly darker on hover */
+    }
+
+.social-links a {
+    color: #0057B7;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+    .social-links a:hover {
+        text-decoration: underline;
+    }
+
 
 
 

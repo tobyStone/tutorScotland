@@ -87,14 +87,32 @@ module.exports = async (req, res) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
             </head>
             <body>
-                <header>
-                    <h1>Scottish Tutors Association</h1>
-                    <nav>
-                        <a href="/about-us.html">About Us</a>
-                        <a href="/login.html">Login</a>
-                        <a href="/">Home</a>
-                    </nav>
-                </header>
+               <!-- Shared banner/header -->
+    <header>
+        <h1>Scottish Tutors Association</h1>
+        <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+        <a href="index.html" class="banner-login-link login-box">Home</a>
+    </header>
+
+    <!-- Dark-blue nav below banner -->
+    <nav class="main-nav">
+        <ul>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="parents.html">Enter Parent's Zone</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+        </ul>
+    </nav>
+
+
+    <!-- Rolling banner container -->
+    <div class="rolling-banner">
+        <div class="rolling-content" id="tutorBanner">
+            <!-- JS will populate tutor names/subjects here -->
+        </div>
+    </div>
                 <main>
                         <div class="thistle-container">
                             <div class="thistle-center">

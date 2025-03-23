@@ -64,13 +64,33 @@
     </style>
 </head>
 <body>
+    <!-- Shared banner/header -->
     <header>
-        <h1>Scottish Tutors Association - Admin</h1>
-        <nav>
-            <!-- Ensure /landing -> /public/landing.html is in vercel.json rewrites -->
-            <a href="/">Home</a>
-        </nav>
+        <h1>Scottish Tutors Association</h1>
+        <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+        <a href="index.html" class="banner-login-link login-box">Home</a>
     </header>
+
+    <!-- Dark-blue nav below banner -->
+    <nav class="main-nav">
+        <ul>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="parents.html">Enter Parent's Zone</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+        </ul>
+    </nav>
+
+
+    <!-- Rolling banner container -->
+    <div class="rolling-banner">
+        <div class="rolling-content" id="tutorBanner">
+            <!-- JS will populate tutor names/subjects here -->
+        </div>
+    </div>
+
 
     <main>
         <h2>Welcome, Admin!</h2>
