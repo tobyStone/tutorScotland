@@ -5,27 +5,22 @@
     <title>STA Tutor Membership</title>
 
     <link rel="icon" href="/images/bannerShield2.png" type="image/png">
-    <!-- Link to your existing style.css -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- EXAMPLE: Load Mahalika from a hypothetical CDN.
-         If the font is not on Google Fonts or another well-known service,
-         you must either host the font yourself or use a custom link. -->
+    <!-- Hypothetical load of Mahalika font -->
     <link rel="stylesheet"
           href="https://example-cdn.com/mahalika/mahalika.css"
           type="text/css">
-
     <style>
         /* Override body font-family to use Mahalika site-wide. */
         body {
             font-family: 'Mahalika', Arial, sans-serif;
         }
-        /* If you want to tweak heading or paragraph styles specifically: */
+
         h1, h2, h3, h4, p, li, a {
             font-family: 'Mahalika', Arial, sans-serif;
         }
 
-        /* Example styling for the newsletter and social link sections */
         .newsletter-section, .social-links {
             margin: 2rem auto;
             max-width: 700px;
@@ -70,7 +65,7 @@
         <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
     </header>
 
-    <!-- Dark-blue nav below banner (same as index.html) -->
+    <!-- Dark-blue nav below banner -->
     <nav class="main-nav">
         <ul>
             <li><a href="about-us.html">About Us</a></li>
@@ -82,7 +77,7 @@
         </ul>
     </nav>
 
-    <!-- Rolling banner container (same as index.html) -->
+    <!-- Rolling banner container -->
     <div class="rolling-banner">
         <div class="rolling-content" id="tutorBanner">
             <!-- JS or server code can populate tutor names/subjects here -->
@@ -92,36 +87,69 @@
     <main>
         <div class="landing-container">
 
-            <!-- Example big heading or section heading -->
+            <!-- LEFT COLUMN: Shield + Ribbons with transitions -->
             <section class="mission-row">
-                <h1>Why Join the Scottish Tutors Association?</h1>
-                <p>
-                    As a member of the STA, you will gain access to exclusive benefits designed
-                    to elevate your tutoring career:<br><br>
-                    <!-- You can also break these into separate <p> tags if you prefer. -->
-                    ? Professional Development: Access tailored CPD opportunities,
-                    expert-led webinars and in-depth training to expand your tutoring knowledge and skills. <br>
-                    ? Certification Support: Stand out as a professional tutor with recognition that parents can know and trust.<br>
-                    ? Exclusive Networking: Gain access to exclusive networking opportunities to connect with other professional tutors in Scotland. <br>
-                    ? Tutor Hub: Gain access to resources and training specifically designed and created for tutors. <br>
-                    ? Increased Visibility: Feature in our online tutor directory, helping parents and schools connect with qualified tutors in their area in Scotland. <br>
-                    ? Advocacy & Support: Take advantage of our ongoing efforts to represent tutors within Scotland's education sector, ensuring your voice is heard and helping to shape the future of tuition in Scotland.
-                </p>
-                <p>Find out more about membership.</p>
+                <div class="left-col">
+                    <!-- Use the same IDs for transitions: -->
+                    <img src="/images/centralShield.png"
+                         alt="Large STA Shield"
+                         class="main-shield"
+                         id="imageShield">
+                    <img src="/images/bannerWithRibbons.png"
+                         alt="Banner Ribbon"
+                         class="main-ribbons"
+                         id="imageBanner">
+                </div>
+
+                <!-- RIGHT COLUMN: actual membership text -->
+                <div class="right-col">
+                    <h1>Why Join the Scottish Tutors Association?</h1>
+
+                    <p>
+                        As a member of the STA, you will gain access to exclusive benefits designed
+                        to elevate your tutoring career:
+                    </p>
+                    <p>
+                        <!-- Use actual Unicode emojis or HTML entities -->
+                        <span style="color: green;">&#x2705;</span> <strong>Professional Development:</strong>
+                        Access tailored CPD opportunities, expert-led webinars, and in-depth training to expand
+                        your tutoring knowledge and skills.<br><br>
+
+                        <span style="color: green;">&#x2705;</span> <strong>Certification Support:</strong>
+                        Stand out as a professional tutor with recognition that parents can know and trust.<br><br>
+
+                        <span style="color: green;">&#x2705;</span> <strong>Exclusive Networking:</strong>
+                        Gain access to exclusive networking opportunities to connect with other professional tutors
+                        in Scotland.<br><br>
+
+                        <span style="color: green;">&#x2705;</span> <strong>Tutor Hub:</strong>
+                        Gain access to resources and training specifically designed and created for tutors.<br><br>
+
+                        <span style="color: green;">&#x2705;</span> <strong>Increased Visibility:</strong>
+                        Feature in our online tutor directory, helping parents and schools connect with qualified
+                        tutors in their area in Scotland.<br><br>
+
+                        <span style="color: green;">&#x2705;</span> <strong>Advocacy &amp; Support:</strong>
+                        Take advantage of our ongoing efforts to represent tutors within Scotland's education sector,
+                        ensuring your voice is heard and helping to shape the future of tuition in Scotland.
+                    </p>
+                    <p><em>Find out more about membership.</em></p>
+                </div>
             </section>
 
             <!-- STRIVE Values -->
             <section class="mission-row">
                 <h2>Our STRIVE Values</h2>
                 <p>
-                    At the Scottish Tutors Association, we believe in our core values which underpin all that we do.<br><br>
-                    <strong>Support</strong> – Equipping tutors with resources, guidance, and mentorship.<br>
-                    <strong>Training</strong> – Providing access to CPD opportunities and tailored development.<br>
-                    <strong>Recognition</strong> – Promoting tutor excellence through accreditation and standards.<br>
-                    <strong>Inclusion</strong> – Creating an inclusive network that welcomes all tutors.<br>
-                    <strong>Visibility</strong> – Increasing tutor presence in communities and online.<br>
-                    <strong>Excellence</strong> – Encouraging high standards in tutoring practice to ensure impactful learning.<br><br>
-                    Are you a school, charity or educational organisation? Find out about becoming a trusted partner of the STA.
+                    At the Scottish Tutors Association, we believe in our core values which underpin all that we do.
+                    <br><br>
+                    <strong><span style="color: #C8A2C8;">S</span></strong>upport – Equipping tutors with resources, guidance, and mentorship.<br>
+                    <strong><span style="color: #C8A2C8;">T</span></strong>raining – Providing access to CPD opportunities and tailored development.<br>
+                    <strong><span style="color: #C8A2C8;">R</span></strong>ecognition – Promoting tutor excellence through accreditation and standards.<br>
+                    <strong><span style="color: #C8A2C8;">I</span></strong>nclusion – Creating an inclusive network that welcomes all tutors.<br>
+                    <strong><span style="color: #C8A2C8;">V</span></strong>isibility – Increasing tutor presence in communities and online.<br>
+                    <strong><span style="color: #C8A2C8;">E</span></strong>xcellence – Encouraging high standards in tutoring practice to ensure impactful learning.<br><br>
+                    Are you a school, charity, or educational organisation? Find out about becoming a trusted partner of the STA.
                 </p>
             </section>
 
@@ -142,8 +170,6 @@
         <h2>Stay Updated with Our Newsletter</h2>
         <p>Join our mailing list to receive the latest updates on CPD events, networking opportunities, and more!</p>
         <!-- MailerLite or any other signup link or embed code -->
-        <!-- If you have an embed code from MailerLite, paste it here.
-             Otherwise, use a simple link: -->
         <a href="https://www.mailerlite.com/...yourUniqueSignupLink..."
            target="_blank"
            class="newsletter-button">
@@ -158,15 +184,6 @@
             Scottish Tutors Association Facebook Page
         </a>
     </section>
-
-    // Rolling banner fetch
-    fetch('/api/tutorList')
-    .then(res => res.json())
-    .then(tutors => {
-    const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
-    document.getElementById('tutorBanner').innerText = text;
-    })
-    .catch(err => console.error('Error fetching tutors:', err));
 
     <script>
         // Example rolling banner fetch

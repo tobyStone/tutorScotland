@@ -24,7 +24,7 @@ header {
     background-position: 20px 20px, left top;
     /* Scale the shield to 100px wide, 
        the tartan tiles to 50px wide. */
-    background-size: 100px auto, 100px auto;
+    background-size: 100px auto, 150px auto;
     /* Banner padding (height) */
     padding: 40px;
     color: #fff;
