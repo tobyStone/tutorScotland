@@ -66,8 +66,29 @@
         </div>
     </main>
     <script>
-            // If you want the same fade-in or transitional animations, you can do so.
-            // Or keep it simple.
+        function goToLogin(role) {
+            window.location.href = `login.html?role=${encodeURIComponent(role)}`;
+        }
+
+        // Rolling banner fetch
+        fetch('/api/tutorList')
+            .then(res => res.json())
+            .then(tutors => {
+                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                document.getElementById('tutorBanner').innerText = text;
+            })
+            .catch(err => console.error('Error fetching tutors:', err));
+
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // After the heading’s animation delay (say 1.5s) plus a little buffer:
+            setTimeout(() => {
+                document.querySelectorAll('.fade-later').forEach(el => {
+                    el.classList.add('fade-in');
+                });
+            }, 1500); // or 2000 if you want a bit more buffer
+        });
+
     </script>
 
 </body>

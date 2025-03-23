@@ -72,6 +72,10 @@
 
     <script>
 
+        function goToLogin(role) {
+            window.location.href = `login.html?role=${encodeURIComponent(role)}`;
+        }
+
         // Rolling banner fetch
         fetch('/api/tutorList')
             .then(res => res.json())
@@ -90,9 +94,6 @@
                 });
             }, 1500); // or 2000 if you want a bit more buffer
         });
-
-
-
 
         // 1) On page load, fetch existing blog posts from /api/blog and display them.
         // 2) Intercept the form submission, POST to /blog-writer, then re-fetch posts.
