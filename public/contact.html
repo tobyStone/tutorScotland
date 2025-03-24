@@ -41,30 +41,25 @@
 
     <main>
         <div class="landing-container">
-            <!-- Move the shield & banner to the left just like your index page -->
-            <img src="/images/centralShield.png"
-                 alt="Large STA Shield"
-                 class="landing-img"
-                 id="imageShield">
-
-            <img src="/images/bannerWithRibbons.png"
-                 alt="Banner Ribbon"
-                 class="landing-img"
-                 id="imageBanner"
-                 style="margin-top: 20px;">
+            <div class="left-col">
+                <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
+                <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
+            </div>
 
             <!-- Contact Info Section -->
-            <div class="contact-info" id="contactInfo">
-                <h2>Contact Us</h2>
-                <p>
-                    Email:
-                    <a href="mailto:info@scottishtutors.org">info@scottishtutors.org</a><br>
-                    Phone (Office): 0123 456 789 (Fake)<br>
-                    Phone (Mobile): 07123 456789 (Fake)
-                </p>
+            <div class="right-col">
+                <div class="contact-info" id="contactInfo">
+                    <h2>Contact Us</h2>
+                    <p>
+                        Email:
+                        <a href="mailto:info@scottishtutors.org">info@scottishtutors.org</a><br>
+                        Phone (Office): 0123 456 789 (Fake)<br>
+                        Phone (Mobile): 07123 456789 (Fake)
+                    </p>
+                </div>
             </div>
         </div>
-    </main>
+</main>
     <script>
         function goToLogin(role) {
             window.location.href = `login.html?role=${encodeURIComponent(role)}`;
