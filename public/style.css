@@ -933,7 +933,6 @@ html {
 }
 
 .contact-info {
-    margin: 0; /* No extra top/bottom margin */
     text-align: left;
     color: #0057B7;
     opacity: 0;
