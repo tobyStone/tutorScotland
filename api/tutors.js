@@ -81,7 +81,7 @@ module.exports = async (req, res) => {
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
-                <title>Scottish Tutors Association - Find Your Tutor</title>
+                <title>Tutors Alliance Scotland - Find Your Tutor</title>
                 <link rel="icon" href="/images/bannerShield2.png" type="image/png">     
                 <link rel="stylesheet" href="/style.css">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -89,7 +89,7 @@ module.exports = async (req, res) => {
             <body>
                <!-- Shared banner/header -->
     <header>
-        <h1>Scottish Tutors Association</h1>
+        <h1>Tutors Alliance Scotland</h1>
             <div class="header-links">
             <a href="index.html" class="banner-login-link login-box">Home</a>
             <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
@@ -101,7 +101,7 @@ module.exports = async (req, res) => {
         <ul>
             <li><a href="about-us.html">About Us</a></li>
             <li><a href="tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="parents.html">Enter Parent's Zone</a></li>
+            <li><a href="parents.html">Enter Parent Zone</a></li>
             <li><a href="contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
             <li><a href="tutorDirectory.html">Tutor Directory</a></li>
@@ -116,23 +116,20 @@ module.exports = async (req, res) => {
         </div>
     </div>
                 <main>
-                        <div class="thistle-container">
-                            <div class="thistle-center">
-                                <img class="thistle-center" src="/images/thistle-center.png" alt="Scottish Thistle">
-                            </div>
-                            <div class="thistle-leaf">
-                                <img class="thistle-leaf" src="/images/thistle-leaf.png" alt="Thistle Leaf">
-                            </div>
-                        </div>
-                        <div class="pricing-key">
-                            <p>
-                                <span class="purple-pound">&pound</span> : &pound15-20 per hour &nbsp;&nbsp;
-                                <span class="purple-pound">&pound&pound</span> : &pound20-25 per hour &nbsp;&nbsp;
-                                <span class="purple-pound">&pound&pound&pound</span> : &pound25-30 per hour &nbsp;&nbsp;
-                                <span class="purple-pound">&pound&pound&pound&pound</span> : &pound30-35 per hour &nbsp;&nbsp;
-                                <span class="purple-pound">&pound&pound&pound&pound&pound</span> : &pound35+ per hour
-                            </p>
-                        </div>
+                     <div class="left-col">
+                        <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
+                        <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
+                    </div>
+
+                    <div class="pricing-key">
+                        <p>
+                            <span class="purple-pound">&pound</span> : &pound15-20 per hour &nbsp;&nbsp;
+                            <span class="purple-pound">&pound&pound</span> : &pound20-25 per hour &nbsp;&nbsp;
+                            <span class="purple-pound">&pound&pound&pound</span> : &pound25-30 per hour &nbsp;&nbsp;
+                            <span class="purple-pound">&pound&pound&pound&pound</span> : &pound30-35 per hour &nbsp;&nbsp;
+                            <span class="purple-pound">&pound&pound&pound&pound&pound</span> : &pound35+ per hour
+                        </p>
+                    </div>
                     <div class="tutor-grid">${tutorsHtml}</div>
                     <script>
                         document.querySelector('.thistle-leaf img').addEventListener('animationend', function() {

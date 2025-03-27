@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
       </head>
       <body>
           <header>
-              <h1>Scottish Tutors Association - Blog</h1>
+              <h1>Tutors Alliance Scotland - Blog</h1>
               <nav>
                   <a href="index.html">Home</a>
                   <a href="about-us.html">About Us</a>
