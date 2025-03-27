@@ -201,7 +201,7 @@ main {
 .main-ribbons {
     max-width: 200px;
     width: 100%;
-    margin-top: 35px; /* pull it up so it sits at the base of the shield */
+    margin-top: 0px; 
     margin-left: 0.42rem; /* shift horizontally if needed */
 }
 
@@ -217,7 +217,7 @@ main {
 
 #imageBanner {
     position: absolute;
-    top: 77%;
+    top: 97%;
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1.5s; /* ribbons appear last */
