@@ -153,7 +153,6 @@ main {
 
 
 .landing-container {
-    display: flex;
     position: relative;
     min-height: 80vh;
     text-align: center;
