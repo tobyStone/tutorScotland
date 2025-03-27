@@ -361,7 +361,7 @@ main {
    and set a short 0.8s duration + 1.5s or so delay 
    (so it starts after the heading's done). */
     .fade-later.fade-in {
-        animation: fadeUpQuick 0.8s 1.5s forwards ease-in-out;
+        animation: fadeUpQuick 0.5s 1.2s forwards ease-in-out;
     }
 
 
