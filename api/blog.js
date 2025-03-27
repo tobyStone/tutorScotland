@@ -24,7 +24,8 @@ module.exports = async (req, res) => {
       <html lang="en">
       <head>
           <meta charset="UTF-8">
-          <title>STA Blog</title>
+          <link rel="icon" href="/images/bannerShield2.png" type="image/png">
+          <title>Tutors Alliance Scotland Blog</title>
           <link rel="stylesheet" href="/style.css">
       </head>
       <body>

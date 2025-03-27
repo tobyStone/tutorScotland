@@ -221,13 +221,11 @@ main {
 @keyframes growLeft {
     0% {
         opacity: 0;
-        left: 15%;
         transform: translateX(-50%) scale(0.5);
     }
 
     100% {
         opacity: 1;
-        left: 15%;
         transform: translateX(-50%) scale(0.9);
     }
 }
