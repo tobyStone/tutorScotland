@@ -201,6 +201,7 @@ main {
 .main-ribbons {
     max-width: 200px;
     width: 100%;
+    margin-top: 35px; /* pull it up so it sits at the base of the shield */
     margin-left: 0.42rem; /* shift horizontally if needed */
 }
 
