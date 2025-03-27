@@ -675,7 +675,7 @@ main {
 .parents-zone {
     position: absolute;
     left: 67vw;
-    top: 37vh; /* Just below the tagline; adjust to taste */
+    top: 17vh; /* Just below the tagline; adjust to taste */
     opacity: 0;
     animation: revealTagline 1s forwards ease-in-out;
     animation-delay: 2.8s; /* Waits 1s after tagline finishes */
@@ -683,7 +683,6 @@ main {
 
     /* Make the heading the same size & color as the tagline */
     .parents-zone h2 {
-        margin-top: -30px;
         font-size: 3em;
         color: #0057B7;
         font-weight: bold;
@@ -703,8 +702,8 @@ main {
     top: 59vh; /* Moves it further down */
     transform: translate(-50%, -50%) scale(1.5);
     border: 1px solid #ddd;
-    padding: 20px;
-    max-width: 350px;
+    padding: 10px;
+    max-width: 250px;
     color: #333;
     background-color: #f9f9f9;
 }
