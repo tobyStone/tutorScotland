@@ -177,6 +177,11 @@ main {
     padding: 40px; /* optional padding around the row */
 }
 
+.content-flex-wrapper {
+    display: flex;
+    /* additional flex rules */
+}
+
 
 .left-col {
     flex: 0 0 23%;
