@@ -232,6 +232,33 @@ main {
     }
 }
 
+.about-page #imageShield {
+    left: 12% !important;
+}
+
+.about-page #imageBanner {
+    left: 12% !important;
+}
+
+
+.parents-page #imageShield {
+    left: 15% !important;
+}
+
+.parents-page #imageBanner {
+    left: 15% !important;
+}
+
+
+.contact-page #imageShield {
+    left: 15% !important;
+}
+
+.contact-page #imageBanner {
+    left: 15% !important;
+}
+
+
 
 
 
@@ -659,6 +686,7 @@ main {
 
     /* Make the heading the same size & color as the tagline */
     .parents-zone h2 {
+        margin-top: -30px;
         font-size: 3em;
         color: #0057B7;
         font-weight: bold;
@@ -991,6 +1019,7 @@ html {
 }
 
 .contact-info {
+    margin-top: -30px;
     text-align: left;
     color: #0057B7;
     opacity: 0;

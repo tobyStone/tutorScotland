@@ -31,6 +31,7 @@ module.exports = async (req, res) => {
            <!-- Shared banner/header -->
             <header>
                 <h1>Tutors Alliance Scotland</h1>
+                <a href="index.html" class="banner-login-link login-box">Home</a>
                 <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
             </header>
 

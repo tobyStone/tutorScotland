@@ -81,9 +81,6 @@
     <Content Include="public\admin.html">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="public\blog.html">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="public\blogWriter.html">
       <SubType>Code</SubType>
     </Content>
