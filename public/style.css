@@ -220,12 +220,12 @@ main {
 @keyframes growLeft {
     0% {
         opacity: 0;
-        transform: translateX(-37%) scale(0.5);
+        transform: scale(0.5);
     }
 
     100% {
         opacity: 1;
-        transform: translateX(-37%) scale(0.9);
+        transform: scale(0.9);
     }
 }
 
@@ -1014,7 +1014,7 @@ html {
 }
 
 .contact-info {
-    margin-top: -30px;
+    margin-top: -77px;
     text-align: left;
     color: #0057B7;
     opacity: 0;
