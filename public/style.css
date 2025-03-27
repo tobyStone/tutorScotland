@@ -217,7 +217,7 @@ main {
 
 #imageBanner {
     position: absolute;
-    top: 32%;
+    top: 57%;
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1.5s; /* ribbons appear last */
