@@ -207,6 +207,7 @@ main {
 
 /* Adjust top positions & animation delays as needed */
 #imageShield {
+    position: absolute;
     top: 2%;
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
@@ -215,6 +216,7 @@ main {
 }
 
 #imageBanner {
+    position: absolute;
     top: 32%;
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
