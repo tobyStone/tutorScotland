@@ -217,7 +217,7 @@ main {
 
 #imageBanner {
     position: absolute;
-    top: 57%;
+    top: 77%;
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1.5s; /* ribbons appear last */
@@ -484,145 +484,6 @@ main {
     right: 0;
     width: 17%; 
     border: 2px solid #C8A2C8;
-}
-
-
-/* Thistle Animation Container */
-/* Positioning Thistle */
-.thistle-container {
-    position: absolute;
-    left: 2vw; /* Aligns further left */
-    top: 7vh; /* Places it below the banner */
-    height: auto;
-}
-
-/* Thistle & Tutor Section */
-.tutor-section {
-    display: flex;
-    align-items: flex-start;
-    margin-top: 10vh;
-}
-
-/* Right-Side Flipped Thistle */
-.thistle-container-right {
-    position: absolute;
-    left: 57vw;
-    top: 7vh; /* Matches left thistle position */
-    height: auto;
-}
-
-
-
-/* Resize Each Component Specifically */
-.thistle-center img {
-    width: 42vw; /* Ensure it's no larger than 10% of viewport width */
-}
-
-.thistle-center-flipped img {
-    width: 42vw; /* Ensure it's no larger than 10% of viewport width */
-}
-
-
-.thistle-leaf img {
-    width: 42vw; /* Leaf takes up to 50% of viewport width */
-    height: auto;
-
-}
-
-
-.thistle-leaf-flipped img {
-    width: 42vw; /* Leaf takes up to 50% of viewport width */
-    height: auto;
-}
-
-
-
-/* Base Style - Initially Hidden */
-.thistle-center
-{
-    position: absolute;
-    opacity: 0;
-}
-
-
-/* Flower and Leaf Grow Simultaneously */
-@keyframes revealFlower {
-    0% {
-        opacity: 0;
-        transform: scale(0.3);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.thistle-center {
-    animation: revealFlower 1.5s forwards ease-in-out;
-    animation-delay: 0.5s; /* Same delay as the leaf */
-}
-
-/* Right-Side Flipped Flower Grows Simultaneously */
-@keyframes revealFlowerFlipped {
-    0% {
-        opacity: 0;
-        transform: scale(0.3);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.thistle-center-flipped {
-    animation: revealFlower 1.5s forwards ease-in-out;
-    animation-delay: 0.5s; /* Same delay as the leaf */
-}
-
-
-
-/* Leaf Grows Right - Expanding from Stem */
-@keyframes revealLeaf {
-    0% {
-        opacity: 0;
-        transform: translateX(-40px) translateY(23vh) scaleX(0.3); /* Start from center */
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateX(0) translateY(0) scaleX(1); /* Grow rightward */
-    }
-}
-
-.thistle-leaf {
-    animation: revealLeaf 1.5s forwards ease-in-out;
-    opacity: 0;
-    animation-delay: 0.7s;
-}
-
-
-/* Right-Side Flipped Leaf Grows Leftward */
-@keyframes revealLeafFlipped {
-    0% {
-        opacity: 0;
-        transform: translateX(40px) translateY(23vh) scaleX(0.3);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateX(0) translateY(0) scaleX(1);
-    }
-}
-
-
-.thistle-leaf-flipped {
-    position: absolute;
-    top: 5vh; /* Aligns it to the same vertical position as the left leaf */
-    animation: revealLeafFlipped 1.5s forwards ease-in-out;
-    opacity: 0;
-    animation-delay: 0.7s;
 }
 
 
@@ -913,7 +774,6 @@ main {
 
 
 /* About Text */
-/* Centered About Text Below Thistles */
 .about-content {
     position: absolute;
     left: 29%;
@@ -1144,14 +1004,7 @@ html {
 /* Style for vertical small screens (portrait mode) */
 @media screen and (max-width: 900px) and (orientation: portrait) {
 
-    .thistle-container {
-        top: 2vh; /* Move it closer to the banner */
-    }
-
-    .thistle-container-right {
-        display: none;
-    }
-
+  
     .tagline {
         left: 30vw; /* Adjust for a more central position */
         top: 5vh; /* Move it higher */
@@ -1219,7 +1072,7 @@ html {
 
     /* Adjust the tutor card to move up */
     .tutor-profile {
-        top: 5vh; /* Move it up closer to the thistle */
+        top: 5vh; 
     }
 
         .tutor-profile h1 {
