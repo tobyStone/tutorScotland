@@ -1,11 +1,16 @@
-<!-- blog.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>STA Blog Writing</title>
+    <title>Tutors Alliance Scotland - Blog Writer</title>
     <link rel="icon" href="/images/bannerShield2.png" type="image/png">
     <link rel="stylesheet" href="/style.css">
+
+    <!--
+      1) A placeholder script block for JSON-LD microdata.
+         We'll populate this dynamically based on the user’s form input.
+    -->
+    <script id="blogMicrodata" type="application/ld+json"></script>
 </head>
 <body>
     <!-- Shared banner/header -->
@@ -29,40 +34,49 @@
         </ul>
     </nav>
 
-
     <!-- Rolling banner container -->
     <div class="rolling-banner">
         <div class="rolling-content" id="tutorBanner">
-            <!-- JS will populate tutor names/subjects here -->
+            <!-- JS can populate tutor names/subjects here -->
         </div>
     </div>
 
-
     <main>
-        <!-- Container where existing blog posts will be dynamically inserted -->
-        <section id="blogContainer"></section>
-
-        <!-- A form to create a new blog post directly from this page -->
+        <!-- A single form to create a new blog post, with extra fields for microdata -->
         <section id="newBlogSection">
             <h2>Create a New Blog Post</h2>
             <form id="blogForm" enctype="multipart/form-data">
-                <label>
-                    Title:
-                    <input type="text" name="title" required>
-                </label>
-                <br><br>
 
                 <label>
-                    Content:<br>
-                    <textarea name="content" rows="5" cols="50" required></textarea>
+                    Title:
+                    <input type="text" id="titleField" name="title" required>
                 </label>
-                <br><br>
+
+                <label>
+                    Author:
+                    <input type="text" id="authorField" name="author" placeholder="e.g. John Smith" required>
+                </label>
+
+                <label>
+                    Excerpt (short summary):
+                    <textarea id="excerptField" name="excerpt" rows="2" maxlength="200"
+                              placeholder="A short teaser or summary of the post."></textarea>
+                </label>
+
+                <label>
+                    Publish Date/Time:
+                    <input type="datetime-local" id="publishDateField" name="publishDate">
+                </label>
+
+                <label>
+                    Content:
+                    <textarea id="contentField" name="content" rows="5" cols="50" required></textarea>
+                </label>
 
                 <label>
                     Image:
-                    <input type="file" name="blogImage" accept="image/*">
+                    <input type="file" id="imageField" name="blogImage" accept="image/*">
                 </label>
-                <br><br>
 
                 <button type="submit">Create Blog</button>
             </form>
@@ -70,72 +84,85 @@
     </main>
 
     <script>
-        // 1) On page load, fetch existing blog posts from /api/blog and display them.
-        // 2) Intercept the form submission, POST to /blog-writer, then re-fetch posts.
+        //
+        // On form submission:
+        // 1) Build JSON-LD microdata from user input and populate #blogMicrodata <script>.
+        // 2) Submit the form data to /blog-writer (server side).
+        //
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const blogContainer = document.getElementById('blogContainer');
-            const blogForm = document.getElementById('blogForm');
+        const blogForm = document.getElementById('blogForm');
+        const blogMicrodata = document.getElementById('blogMicrodata');
 
-            // Fetch existing blog posts from /api/blog
-            function fetchBlogs() {
-                fetch('/api/blog')    // you'll create an /api/blog route that returns JSON
-                    .then(res => res.json())
-                    .then(posts => {
-                        // Clear the container
-                        blogContainer.innerHTML = '';
-                        // Build HTML for each post
-                        posts.forEach(post => {
-                            const section = document.createElement('section');
-                            section.classList.add('blog-entry');
+        blogForm.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-                            const img = document.createElement('img');
-                            img.classList.add('blog-image');
-                            img.src = post.imagePath || '/images/defaultBlog.png';
-                            img.alt = 'Blog image';
+            // 1) Gather user input
+            const title = document.getElementById('titleField').value.trim();
+            const author = document.getElementById('authorField').value.trim();
+            const excerpt = document.getElementById('excerptField').value.trim();
+            const publishDate = document.getElementById('publishDateField').value; // e.g. "2025-03-29T10:30"
+            const content = document.getElementById('contentField').value.trim();
+            // For the image, we only have a file object in the browser; we won't know the final URL yet.
+            // Typically, your server will store the file and give you a final path.
 
-                            const h2 = document.createElement('h2');
-                            h2.textContent = post.title;
+            // 2) Build JSON-LD object
+            // Domain references: https://tutorsalliancescotland.co.uk
+            const domain = 'https://tutorsalliancescotland.co.uk';
+            // If you have server logic to handle the file, you might eventually get an image URL like:
+            // domain + '/uploads/myImage.jpg'
+            // For now, let's just store a placeholder or the original file name in "description".
 
-                            const p = document.createElement('p');
-                            p.textContent = post.content;
+            const nowISO = new Date().toISOString(); // fallback for dateModified
 
-                            section.appendChild(img);
-                            section.appendChild(h2);
-                            section.appendChild(p);
+            const jsonLdObj = {
+                "@context": "https://schema.org",
+                "@type": "BlogPosting",
+                "mainEntityOfPage": {
+                    "@type": "WebPage",
+                    "@id": `${domain}/blog`
+                },
+                "headline": title,
+                "author": {
+                    "@type": "Person",
+                    "name": author || "Tutors Alliance Scotland"
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Tutors Alliance Scotland",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": `${domain}/images/bannerShield2.png`
+                    }
+                },
+                "datePublished": publishDate ? new Date(publishDate).toISOString() : nowISO,
+                "dateModified": nowISO,
+                "description": excerpt || (content.slice(0, 160) + '...'), // fallback excerpt
+                // If you already have a stored image path, you'd set "image" to that full URL:
+                "image": `${domain}/images/defaultBlog.png`, // placeholder
+            };
 
-                            blogContainer.appendChild(section);
-                        });
-                    })
-                    .catch(err => console.error('Error fetching blog posts:', err));
-            }
+            // 3) Insert JSON-LD into #blogMicrodata <script>
+            blogMicrodata.textContent = JSON.stringify(jsonLdObj, null, 2);
 
-            // Call fetchBlogs on load
-            fetchBlogs();
+            // 4) Now proceed with the form submission to /blog-writer
+            const formData = new FormData(blogForm);
 
-            // Intercept the form submission to POST a new blog
-            blogForm.addEventListener('submit', e => {
-                e.preventDefault();
-
-                const formData = new FormData(blogForm);
-                // POST to /blog-writer
-                fetch('/blog-writer', {
-                    method: 'POST',
-                    body: formData
+            fetch('/blog-writer', {
+                method: 'POST',
+                body: formData
+            })
+                .then(res => res.text())
+                .then(responseText => {
+                    alert(responseText);
+                    blogForm.reset();
+                    // Optionally clear or update the microdata script:
+                    blogMicrodata.textContent = '';
                 })
-                    .then(res => res.text())
-                    .then(responseText => {
-                        alert(responseText);
-                        blogForm.reset();     // Clear the form
-                        fetchBlogs();         // Re-fetch to show the new blog
-                    })
-                    .catch(err => {
-                        console.error('Error creating blog:', err);
-                        alert('Error creating blog');
-                    });
-            });
+                .catch(err => {
+                    console.error('Error creating blog:', err);
+                    alert('Error creating blog');
+                });
         });
     </script>
 </body>
 </html>
-

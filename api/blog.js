@@ -28,15 +28,31 @@ module.exports = async (req, res) => {
           <link rel="stylesheet" href="/style.css">
       </head>
       <body>
-          <header>
-              <h1>Tutors Alliance Scotland - Blog</h1>
-              <nav>
-                  <a href="index.html">Home</a>
-                  <a href="about-us.html">About Us</a>
-                  <a href="login.html?role=blogwriter">Blog Writer Login</a>
-                  <a href="/">Home</a>
-              </nav>
-          </header>
+           <!-- Shared banner/header -->
+            <header>
+                <h1>Tutors Alliance Scotland</h1>
+                <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+            </header>
+
+            <!-- Dark-blue nav below banner -->
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="about-us.html">About Us</a></li>
+                    <li><a href="tutorMembership.html">Tutor Membership</a></li>
+                    <li><a href="parents.html">Enter Parent Zone</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+                </ul>
+            </nav>
+
+
+            <!-- Rolling banner container -->
+            <div class="rolling-banner">
+                <div class="rolling-content" id="tutorBanner">
+                    <!-- JS will populate tutor names/subjects here -->
+                </div>
+            </div>
 
           <main>
             ${postsHtml}
