@@ -179,7 +179,7 @@ main {
 
 .content-flex-wrapper {
     display: flex;
-    /* additional flex rules */
+    position: relative;
 }
 
 
@@ -1019,7 +1019,6 @@ html {
 }
 
 .contact-info {
-    margin-top: -77px;
     text-align: left;
     color: #0057B7;
     opacity: 0;
