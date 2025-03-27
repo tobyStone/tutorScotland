@@ -220,12 +220,12 @@ main {
 @keyframes growLeft {
     0% {
         opacity: 0;
-        transform: translateX(-50%) scale(0.5);
+        transform: translateX(-37%) scale(0.5);
     }
 
     100% {
         opacity: 1;
-        transform: translateX(-50%) scale(0.9);
+        transform: translateX(-37%) scale(0.9);
     }
 }
 
@@ -911,7 +911,6 @@ main {
     position: absolute;
     left: 29%;
     top: 29vh;
-    transform: translateX(-50%);
     width: 40vw;
     color: #0057B7; /* Matches banner color */
     font-size: 1.2em;
