@@ -61,6 +61,16 @@ module.exports = async (req, res) => {
           <main>
             ${postsHtml}
           </main>
+       <script>
+         // Same logic as in index.html to fetch tutors for the rolling banner
+         fetch('/api/tutorList')
+           .then(res => res.json())
+           .then(tutors => {
+             const text = tutors.map(t => \`\${t.name} (\${t.subjects.join(', ')})\`).join(' | ');
+             document.getElementById('tutorBanner').innerText = text;
+           })
+           .catch(err => console.error('Error fetching tutors:', err));
+       </script>
       </body>
       </html>
     `;
