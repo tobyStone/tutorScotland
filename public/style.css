@@ -544,7 +544,7 @@ main {
 
 .parents-zone {
     position: absolute;
-    left: 63vw;
+    left: 53vw;
     top: 14vh; /* Just below the tagline; adjust to taste */
     opacity: 0;
     animation: revealTagline 1s forwards ease-in-out;
