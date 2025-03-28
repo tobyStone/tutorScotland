@@ -411,6 +411,16 @@ main {
         margin-bottom: 1rem;
     }
 
+/* Parents page specifically */
+.parents-page .content-wrapper {
+    position: absolute;
+    left: 50vw; /* move left from 67vw to 50vw */
+    top: 10vh; /* move up from 17vh to 10vh */
+    transform: translateX(-50%);
+    /* optionally add margin, etc. if you want more fine-grained control */
+}
+
+
 .small-tutor-img {
     max-width: 50%;
     height: auto;
@@ -777,7 +787,7 @@ main {
 .about-content {
     position: absolute;
     left: 29%;
-    top: 29vh;
+    top: 21vh;
     width: 40vw;
     color: #0057B7; /* Matches banner color */
     font-size: 1.2em;
@@ -787,6 +797,11 @@ main {
     animation: revealAboutText 1.5s forwards ease-in-out;
     animation-delay: 1.8s;
 }
+
+    .about-content h2 {
+        margin-bottom: 1.5rem; /* or 2rem for a bigger gap */
+    }
+
 
 
 @keyframes revealAboutText {
