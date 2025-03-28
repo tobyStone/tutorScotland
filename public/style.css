@@ -411,16 +411,6 @@ main {
         margin-bottom: 1rem;
     }
 
-/* Parents page specifically */
-.parents-page .content-wrapper {
-    position: absolute;
-    left: 50vw; /* move left from 67vw to 50vw */
-    top: 10vh; /* move up from 17vh to 10vh */
-    transform: translateX(-50%);
-    /* optionally add margin, etc. if you want more fine-grained control */
-}
-
-
 .small-tutor-img {
     max-width: 50%;
     height: auto;
