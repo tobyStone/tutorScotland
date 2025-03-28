@@ -46,7 +46,6 @@
         <section id="newBlogSection">
             <h2>Create a New Blog Post</h2>
             <form id="blogForm" enctype="multipart/form-data">
-
                 <label>
                     Title:
                     <input type="text" id="titleField" name="title" required>
@@ -55,6 +54,16 @@
                 <label>
                     Author:
                     <input type="text" id="authorField" name="author" placeholder="e.g. John Smith" required>
+                </label>
+
+                <!-- New Category Field -->
+                <label>
+                    Category:
+                    <select id="categoryField" name="category">
+                        <option value="general">General</option>
+                        <option value="secondary">Secondary</option>
+                        <option value="primary">Primary</option>
+                    </select>
                 </label>
 
                 <label>
@@ -80,6 +89,7 @@
 
                 <button type="submit">Create Blog</button>
             </form>
+
         </section>
     </main>
 
