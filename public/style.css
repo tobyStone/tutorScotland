@@ -207,6 +207,7 @@ main {
 
 /* Adjust top positions & animation delays as needed */
 #imageShield {
+    opacity: 0;
     position: absolute;
     top: 2%;
     left: 2%;
@@ -216,6 +217,7 @@ main {
 }
 
 #imageBanner {
+    opacity: 0;
     position: absolute;
     top: 97%;
     left: 2%;
@@ -490,7 +492,7 @@ main {
 
 /* Tagline and Form */
 .content-wrapper {
-    left: 67vw;
+    left: 63vw;
     top: 17vh;
 }
 
