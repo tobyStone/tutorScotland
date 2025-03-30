@@ -332,6 +332,11 @@ main {
         margin-bottom: 1rem;
     }
 
+/* Increase font size for the CTA paragraph */
+.cta-text {
+    font-size: 1.1em; /* or 1.2em, or 20px, etc. */
+    line-height: 1.6; /* optional: a bit more spacing for readability */
+}
 
 
 
