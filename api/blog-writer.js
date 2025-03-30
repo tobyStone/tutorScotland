@@ -33,6 +33,11 @@ module.exports = async (req, res) => {
                 content
             } = req.body;
 
+
+            // Convert category to an array if it isn't already one.
+            // (This way, if the form returns a string, we store [string] in the DB.)
+            const categories = Array.isArray(category) ? category : [category];
+
             // If publishDate is provided, parse it. If not, default to now or omit.
             let publishDateObj;
             if (publishDate) {
