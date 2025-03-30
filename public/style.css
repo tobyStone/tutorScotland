@@ -914,6 +914,16 @@ main {
             color: #fff;
         }
 
+    /* Make the Category select bigger & styled in lilac */
+    #newBlogSection form select#categoryField {
+        font-size: 1.2em; /* Larger font */
+        padding: 12px; /* Extra padding for a bigger click area */
+        border: 2px solid #C8A2C8; /* Lilac border to match your theme */
+        border-radius: 4px; /* Nicely rounded corners */
+        margin-bottom: 1rem; /* Some spacing below */
+        /* You can optionally set a fixed width if you want it wide, e.g. width: 100%; */
+    }
+
 
 
 html {
