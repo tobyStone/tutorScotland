@@ -101,10 +101,6 @@
     <Content Include="public\images\mathsTutor.PNG" />
     <Content Include="public\images\mathsTutor3.PNG" />
     <Content Include="public\images\mathsTutor4.PNG" />
-    <Content Include="public\images\thistle-center-flipped.png" />
-    <Content Include="public\images\thistle-center.png" />
-    <Content Include="public\images\thistle-leaf-flipped.png" />
-    <Content Include="public\images\thistle-leaf.png" />
     <Content Include="public\images\tutor0.jpg" />
     <Content Include="public\images\tutor1.jpg" />
     <Content Include="public\images\tutor2.jpg" />
