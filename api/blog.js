@@ -9,14 +9,13 @@ module.exports = async (req, res) => {
         // Grab ?category= from the query string (e.g. /blog?category=secondary)
         const { category } = req.query;
 
-        // Build a query object
+        // Build a query object. If category is not provided or equals 'all', query remains empty.
         let query = {};
-        // If user selected a specific category (not "all" and not empty), filter
         if (category && category !== 'all') {
             query.category = category;
         }
 
-        // Fetch posts from DB with optional filter
+        // Fetch posts from DB with the optional filter, sorted by newest first
         const posts = await Blog.find(query).sort({ createdAt: -1 });
 
         // Build HTML for each post
@@ -28,7 +27,7 @@ module.exports = async (req, res) => {
       </section>
     `).join('');
 
-        // We'll add a small "Filter" form above the posts
+        // Create the full HTML page with the filter form
         const html = `
       <!DOCTYPE html>
       <html lang="en">
@@ -87,7 +86,7 @@ module.exports = async (req, res) => {
           </main>
 
           <script>
-            // Rolling banner logic (same as index.html)
+            // Fetch tutors for the rolling banner (same as index.html)
             fetch('/api/tutorList')
               .then(res => res.json())
               .then(tutors => {
@@ -96,18 +95,18 @@ module.exports = async (req, res) => {
               })
               .catch(err => console.error('Error fetching tutors:', err));
 
-            // Make sure the dropdown is set to the currently selected category
+            // Set the dropdown to the current category (defaults to "all")
             const currentCategory = '${category || 'all'}';
             const catSelect = document.getElementById('categorySelect');
             if (catSelect) {
-              catSelect.value = currentCategory || 'all';
+              catSelect.value = currentCategory;
             }
 
-            // When user submits the filter form, reload page with ?category=...
+            // When the filter form is submitted, reload the page with ?category=...
             document.getElementById('blogFilterForm').addEventListener('submit', function(e) {
               e.preventDefault();
               const selectedCat = catSelect.value;
-              let newUrl = '/blog'; 
+              let newUrl = '/blog';
               if (selectedCat !== 'all') {
                 newUrl += '?category=' + encodeURIComponent(selectedCat);
               }
@@ -120,7 +119,6 @@ module.exports = async (req, res) => {
 
         res.setHeader('Content-Type', 'text/html');
         return res.status(200).send(html);
-
     } catch (err) {
         console.error('Error in blog route:', err);
         return res.status(500).send('<p>Server Error</p>');
