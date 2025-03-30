@@ -828,11 +828,17 @@ main {
     max-width: 600px;
     margin: 2rem auto;
     text-align: center;
+    border: 2px solid #C8A2C8; /* lilac border */
+    padding: 1em;
+    border-radius: 4px;
+    background-color: #f9f9f9;
 }
 
     .blog-filter select {
         font-size: 1em;
-        padding: 0.3em;
+        padding: 0.5em;
+        border: 1px solid #C8A2C8;
+        border-radius: 4px;
         margin-right: 0.5em;
     }
 
@@ -843,6 +849,7 @@ main {
         padding: 0.5em 1em;
         border-radius: 4px;
         cursor: pointer;
+        font-size: 1em;
     }
 
         .blog-filter button:hover {
