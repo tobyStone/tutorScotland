@@ -34,9 +34,15 @@ module.exports = async (req, res) => {
             } = req.body;
 
 
-            // Convert category to an array if it isn't already one.
-            // (This way, if the form returns a string, we store [string] in the DB.)
-            const categories = Array.isArray(category) ? category : [category];
+            //  Convert category from string => array
+            //    If user chose "general", store BOTH "primary" and "secondary"
+            let categoryArray = [];
+            if (category === 'general') {
+                categoryArray = ['primary', 'secondary'];
+            } else {
+                // user picked 'primary' or 'secondary' => single-element array
+                categoryArray = [category];
+            }
 
             // If publishDate is provided, parse it. If not, default to now or omit.
             let publishDateObj;

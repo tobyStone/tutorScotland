@@ -9,10 +9,17 @@ module.exports = async (req, res) => {
         // Grab ?category= from the query string (e.g. /blog?category=secondary)
         const { category } = req.query;
 
-        // Build a query object. If category is not provided or equals 'all', query remains empty.
+        // Build a query object:
         let query = {};
+
         if (category && category !== 'all') {
-            query.category = category;
+            if (category === 'general') {
+                // "General" means posts that have BOTH "primary" and "secondary" in the category array.
+                query.category = { $all: ['primary', 'secondary'] };
+            } else {
+                // Otherwise, filter by the specific category.
+                query.category = category;
+            }
         }
 
         // Fetch posts from DB with the optional filter, sorted by newest first
@@ -72,7 +79,7 @@ module.exports = async (req, res) => {
               <form id="blogFilterForm">
                 <label for="categorySelect"><strong>Filter by:</strong></label>
                 <select id="categorySelect" name="category">
-                  <option value="all">All</option>
+                  <option value="">(None)</option>
                   <option value="general">General</option>
                   <option value="secondary">Secondary</option>
                   <option value="primary">Primary</option>
@@ -86,7 +93,7 @@ module.exports = async (req, res) => {
           </main>
 
           <script>
-            // Fetch tutors for the rolling banner (same as index.html)
+            // Fetch tutors for the rolling banner
             fetch('/api/tutorList')
               .then(res => res.json())
               .then(tutors => {
@@ -95,8 +102,8 @@ module.exports = async (req, res) => {
               })
               .catch(err => console.error('Error fetching tutors:', err));
 
-            // Set the dropdown to the current category (defaults to "all")
-            const currentCategory = '${category || 'all'}';
+            // Set the dropdown to the current category (if any)
+            const currentCategory = '${category || ''}';
             const catSelect = document.getElementById('categorySelect');
             if (catSelect) {
               catSelect.value = currentCategory;
@@ -107,7 +114,7 @@ module.exports = async (req, res) => {
               e.preventDefault();
               const selectedCat = catSelect.value;
               let newUrl = '/blog';
-              if (selectedCat !== 'all') {
+              if (selectedCat) {
                 newUrl += '?category=' + encodeURIComponent(selectedCat);
               }
               window.location.href = newUrl;
