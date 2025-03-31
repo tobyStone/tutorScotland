@@ -125,6 +125,9 @@
     <Content Include="api\tutors.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\tutorConnect.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="public\tutorDirectory.html">
       <SubType>Code</SubType>
     </Content>

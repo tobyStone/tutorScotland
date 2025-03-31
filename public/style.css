@@ -457,6 +457,10 @@ main {
     margin: 1rem auto;
 }
 
+.tutor-zone-page h2 {
+    color: #C8A2C8; /* Lilac */
+}
+
 .tutor-zone-section {
     position: relative;
     margin: 0;
@@ -489,6 +493,53 @@ main {
         color: #0057B7;
         margin-bottom: 1rem;
     }
+
+/* Extra Tutor Zone styles */
+.tutorzone-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.tutorzone-section {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+    .tutorzone-section h2 {
+        color: #0057B7;
+        font-size: 2em;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+/* Example calendar placeholder */
+.calendar {
+    margin: 1rem auto;
+    max-width: 600px;
+    padding: 1rem;
+    border: 1px solid #C8A2C8;
+    border-radius: 4px;
+    background-color: #fff;
+    text-align: center;
+}
+/* Facebook link styling */
+.facebook-link {
+    text-align: center;
+    margin: 1rem auto;
+    font-size: 1.1em;
+}
+/* Tutor Highlight Banner styling */
+.tutor-highlight-banner {
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #C8A2C8;
+    color: #fff;
+    text-align: center;
+    border-radius: 4px;
+}
 
 
 

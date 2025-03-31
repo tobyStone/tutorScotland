@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>STA Tutor Connection</title>
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* You can keep your existing .tutor-form-container styles, or move them into style.css */
+        .tutor-form-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background-color: #C8A2C8; /* Lilac background */
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+            .tutor-form-container h3 {
+                margin-bottom: 20px;
+                color: #333;
+            }
+
+        .tutor-submission-form label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .tutor-submission-form input,
+        .tutor-submission-form select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .tutor-submission-form button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            background-color: #0057B7;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+            .tutor-submission-form button:hover {
+                background-color: #0046a5;
+                box-shadow: 0 0 10px #C8A2C8;
+            }
+
+            .tutor-submission-form button:active {
+                background-color: #C8A2C8;
+                color: #fff;
+            }
+    </style>
+</head>
+<body>
+    <!-- Shared banner/header -->
+    <header>
+        <h1>Tutors Alliance Scotland</h1>
+        <div class="header-links">
+            <a href="index.html" class="banner-login-link login-box">Home</a>
+            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+        </div>
+    </header>
+
+    <!-- Dark-blue nav below banner -->
+    <nav class="main-nav">
+        <ul>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="parents.html">Enter Parent Zone</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+        </ul>
+    </nav>
+
+    <!-- Rolling banner container -->
+    <div class="rolling-banner">
+        <div class="rolling-content" id="tutorBanner">
+            <!-- JS will populate tutor names/subjects here -->
+        </div>
+    </div>
+
+    <main>
+        <h2>Interested in Joining?</h2>
+        <p>
+            Fill out your details below to learn more about membership, or to connect with parents
+            and schools looking for qualified tutors.
+        </p>
+
+        <div class="tutor-form-container">
+            <h3>Tutor Connection Form</h3>
+            <form id="tutorSubmissionForm" class="tutor-submission-form">
+                <label for="tutorName">Full Name:</label>
+                <input type="text" id="tutorName" name="tutorName" required>
+
+                <label for="contactEmail">Contact Email:</label>
+                <input type="email" id="contactEmail" name="contactEmail" required>
+
+                <label for="subjectTaught">Subject(s) Taught:</label>
+                <input type="text" id="subjectTaught" name="subjectTaught" placeholder="e.g. Math, English" required>
+
+                <label for="qualification">Qualification Level:</label>
+                <select id="qualification" name="qualification" required>
+                    <option value="Undergraduate">Undergraduate</option>
+                    <option value="Postgraduate">Postgraduate</option>
+                    <option value="PhD">PhD</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <label for="safeguarding">Safeguarding (PVG Registered?):</label>
+                <select id="safeguarding" name="safeguarding" required>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Rolling banner fetch
+        fetch('/api/tutorList')
+            .then(res => res.json())
+            .then(tutors => {
+                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                document.getElementById('tutorBanner').innerText = text;
+            })
+            .catch(err => console.error('Error fetching tutors:', err));
+
+        // Remove any role-based or user checks, since this is public now
+        document.getElementById('tutorSubmissionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                name: document.getElementById('tutorName').value.trim(),
+                email: document.getElementById('contactEmail').value.trim(),
+                subjects: document.getElementById('subjectTaught').value.split(',').map(s => s.trim()),
+                qualification: document.getElementById('qualification').value.trim(),
+                safeguarding: document.getElementById('safeguarding').value.trim()
+            };
+
+            try {
+                // POST to /api/tutorConnection
+                const response = await fetch('/api/tutorConnection', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.message || 'Failed to send tutor connection');
+                }
+
+                alert("Thank you for your submission! We will be in touch soon.");
+                document.getElementById('tutorSubmissionForm').reset();
+            } catch (err) {
+                console.error("Error submitting tutor info:", err);
+                alert("Submission failed. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>
