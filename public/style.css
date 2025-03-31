@@ -654,6 +654,18 @@ main {
         max-width: 27vw; /* Optional: limit line length */
     }
 
+/* OVERRIDE the absolute positioning for the parents page */
+.parents-page .content-wrapper,
+.parents-page .parents-zone {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    /* optional: if you want them to fade in, do an animation that doesn't use absolute */
+    opacity: 1;
+    animation: none;
+}
+
+
 .form-container {
     position: absolute;
     left: 37%; /* Moves it more central */
