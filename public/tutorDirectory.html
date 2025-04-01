@@ -46,43 +46,45 @@
                 <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
             </div>
 
+            <!-- RIGHT COLUMN: heading + about-us text -->
+            <div class="right-col">
+                <div class="content-wrapper">
 
-            <div class="content-wrapper">
+                    <div class="parents-zone">
+                        <h2>Find a Tutor</h2>
+                        <p>
+                            Use this search form to find tutors by subject and location. All tutors are fully
+                            qualified teachers, covered by statutory safeguarding guidelines.
+                        </p>
+                    </div>
 
-                <div class="parents-zone">
-                    <h2>Find a Tutor</h2>
-                    <p>
-                        Use this search form to find tutors by subject and location. All tutors are fully
-                        qualified teachers, covered by statutory safeguarding guidelines.
-                    </p>
-                </div>
+                    <div class="form-container">
+                        <h3>Tutor Finder</h3>
+                        <form id="tutorFinderForm" action="/tutors" method="GET">
+                            <label for="subject">Subject</label>
+                            <select name="subject" id="subject">
+                                <option value="mathematics">Mathematics</option>
+                                <option value="english">English</option>
+                            </select>
 
-                <div class="form-container">
-                    <h3>Tutor Finder</h3>
-                    <form id="tutorFinderForm" action="/tutors" method="GET">
-                        <label for="subject">Subject</label>
-                        <select name="subject" id="subject">
-                            <option value="mathematics">Mathematics</option>
-                            <option value="english">English</option>
-                        </select>
+                            <label for="mode">Location</label>
+                            <select name="mode" id="mode">
+                                <option value="online">Online</option>
+                                <option value="in-person">In Person</option>
+                            </select>
 
-                        <label for="mode">Location</label>
-                        <select name="mode" id="mode">
-                            <option value="online">Online</option>
-                            <option value="in-person">In Person</option>
-                        </select>
+                            <div id="postcodeContainer" style="display: none;">
+                                <label for="postcode">Postcode</label>
+                                <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
+                            </div>
 
-                        <div id="postcodeContainer" style="display: none;">
-                            <label for="postcode">Postcode</label>
-                            <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
-                        </div>
-
-                        <button type="submit">Find Tutors</button>
-                    </form>
+                            <button type="submit">Find Tutors</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
+            </div>
+</main>
 
 
     <script>
