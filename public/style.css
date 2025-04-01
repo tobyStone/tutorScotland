@@ -178,24 +178,19 @@ main {
 }
 
 .content-flex-wrapper {
-    display: flex; /* ensure left-col & right-col go side by side */
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 2rem; /* horizontal gap between columns */
-    max-width: 1200px; /* optional: center them on wide screens */
-    margin: 0 auto;
+    display: flex;
+    position: relative;
 }
 
 
 .left-col {
     flex: 0 0 23%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
 }
 
-/* Right col: heading + about-us + photo */
-.right-col {
-    flex: 1;
-    margin-top: 0; /* optional if you want to position child elements absolutely */
-}
 
 .main-shield {
     max-width: 250px;
@@ -273,7 +268,13 @@ main {
 
 
 
-
+/* Right col: heading + about-us + photo */
+.right-col {
+    width: 62vw;
+    margin-left: auto; /* push it to the right half of the viewport */
+    text-align: left; /* paragraphs left-aligned within this half */
+    position: relative; /* optional if you want to position child elements absolutely */
+}
 
 /* about-us-landing fully visible from the start (remove opacity: 0) */
 .about-us-landing {
@@ -659,6 +660,7 @@ main {
     position: static !important;
     left: auto !important;
     top: auto !important;
+    /* optional: if you want them to fade in, do an animation that doesn't use absolute */
     opacity: 1;
     animation: none;
 }
