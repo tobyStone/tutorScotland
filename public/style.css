@@ -472,6 +472,31 @@ main {
     animation: none;
 }
 
+/* =============== PARENTS PAGE ONLY =============== */
+.parents-page .content-flex-wrapper {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 2rem; /* horizontal space between left & right columns */
+    max-width: 1200px;
+    margin: 0 auto; /* center the entire flex wrapper */
+}
+
+.parents-page .left-col {
+    /* Let the left column auto-size to the shield & ribbons */
+    position: static; /* remove absolute */
+    flex: 0 0 auto; /* no forced width, or specify e.g. 250px */
+    margin: 0; /* remove any old margins if needed */
+}
+
+.parents-page .right-col,
+.parents-page .content-wrapper {
+    position: static !important;
+    flex: 1; /* fill remaining space */
+    margin-top: 0; /* remove any old offsets */
+}
+
+
 
 .small-tutor-img {
     max-width: 50%;
