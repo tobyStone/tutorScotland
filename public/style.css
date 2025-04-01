@@ -15,6 +15,11 @@ body {
     font-size: 18px;
 }
 
+
+html {
+    overflow-y: scroll; /* Always show vertical scrollbar */
+}
+
 header {
     /* Two layered backgrounds: shield on top, tartan behind */
     background-image: url('/images/bannerShield2.png'), url('/images/bannerBackground.PNG');
@@ -246,16 +251,6 @@ main {
     left: 73% !important;
 }
 
-
-.parents-page #imageShield {
-    left: 73% !important;
-}
-
-.parents-page #imageBanner {
-    left: 73% !important;
-}
-
-
 .contact-page #imageShield {
     left: 73% !important;
 }
@@ -449,6 +444,50 @@ main {
             margin-bottom: 0.5rem;
         }
 
+.parents-page #imageShield {
+    left: 73% !important;
+}
+
+.parents-page #imageBanner {
+    left: 73% !important;
+}
+
+
+.parents-zone {
+    position: absolute;
+    left: 53vw;
+    top: 14vh; /* Just below the tagline; adjust to taste */
+    opacity: 0;
+    animation: revealTagline 1s forwards ease-in-out;
+    animation-delay: 2.8s; /* Waits 1s after tagline finishes */
+}
+
+    /* Make the heading the same size & color as the tagline */
+    .parents-zone h2 {
+        font-size: 3em;
+        color: #0057B7;
+        font-weight: bold;
+        margin-bottom: 27px;
+    }
+
+    /* Paragraph smaller but same color */
+    .parents-zone p {
+        font-size: 1.7em; /* Adjust if you want it a bit bigger or smaller */
+        color: #0057B7;
+        max-width: 27vw; /* Optional: limit line length */
+    }
+
+/* OVERRIDE the absolute positioning for the parents page */
+.parents-page .content-wrapper,
+.parents-page .parents-zone {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    /* optional: if you want them to fade in, do an animation that doesn't use absolute */
+    opacity: 1;
+    animation: none;
+}
+
 
 .small-tutor-img {
     max-width: 50%;
@@ -629,41 +668,6 @@ main {
     color: #C8A2C8; /* lilac color for emphasis */
 }
 
-
-.parents-zone {
-    position: absolute;
-    left: 53vw;
-    top: 14vh; /* Just below the tagline; adjust to taste */
-    opacity: 0;
-    animation: revealTagline 1s forwards ease-in-out;
-    animation-delay: 2.8s; /* Waits 1s after tagline finishes */
-}
-
-    /* Make the heading the same size & color as the tagline */
-    .parents-zone h2 {
-        font-size: 3em;
-        color: #0057B7;
-        font-weight: bold;
-        margin-bottom: 27px;
-    }
-
-    /* Paragraph smaller but same color */
-    .parents-zone p {
-        font-size: 1.7em; /* Adjust if you want it a bit bigger or smaller */
-        color: #0057B7;
-        max-width: 27vw; /* Optional: limit line length */
-    }
-
-/* OVERRIDE the absolute positioning for the parents page */
-.parents-page .content-wrapper,
-.parents-page .parents-zone {
-    position: static !important;
-    left: auto !important;
-    top: auto !important;
-    /* optional: if you want them to fade in, do an animation that doesn't use absolute */
-    opacity: 1;
-    animation: none;
-}
 
 
 .form-container {
@@ -1026,9 +1030,6 @@ main {
 
 
 
-html {
-    overflow-y: scroll; /* Always show vertical scrollbar */
-}
 
 .contact-info {
     text-align: left;
