@@ -505,6 +505,9 @@ main {
     width: 240px;
 }
 
+.parents-extra-sections {
+    margin-top: 2em; /* or whatever spacing you like */
+}
 
 
 

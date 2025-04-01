@@ -49,43 +49,44 @@
         <!-- RIGHT COL: heading + text + (float-right) form -->
         <div class="right-col">
           <!-- Parent zone content, similar to your about-us-landing on the landing page -->
-          <div class="about-us-landing" id="aboutUsLanding">
-            <!-- Faded-in heading (like .mission-statement) -->
-            <h2 class="mission-statement">Parent Zone</h2>
+            <div class="about-us-landing" id="aboutUsLanding">
+                <!-- Faded-in heading (like .mission-statement) -->
+                <h2 class="mission-statement">Parent Zone</h2>
+                <!-- Paragraph flows around the float-right form above -->
+                <p class="cta-text fade-later">
+                    An area for the parents of students in Scotland. Here you can find a tutor
+                    that suits your needs by using our tutor searcher. All our tutors are fully
+                    qualified teachers covered by statutory safeguarding guidelines.<br /><br />
+                    <a href="contact.html">Get in touch with us!</a>
+                </p>
 
-            <!-- Float the form on the right, so text flows around it -->
-            <div class="form-container float-right fade-later">
-              <h3>Tutor Finder</h3>
-              <form id="tutorFinderForm" action="/tutors" method="GET">
-                <label for="subject">Subject</label>
-                <select name="subject" id="subject">
-                  <option value="mathematics">Mathematics</option>
-                  <option value="english">English</option>
-                </select>
 
-                <label for="mode">Location</label>
-                <select name="mode" id="mode">
-                  <option value="online">Online</option>
-                  <option value="in-person">In Person</option>
-                </select>
+                <!-- Float the form on the right, so text flows around it -->
+                <div class="form-container fade-later">
+                    <h3>Tutor Finder</h3>
+                    <form id="tutorFinderForm" action="/tutors" method="GET">
+                        <label for="subject">Subject</label>
+                        <select name="subject" id="subject">
+                            <option value="mathematics">Mathematics</option>
+                            <option value="english">English</option>
+                        </select>
 
-                <div id="postcodeContainer" style="display: none;">
-                  <label for="postcode">Postcode</label>
-                  <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
+                        <label for="mode">Location</label>
+                        <select name="mode" id="mode">
+                            <option value="online">Online</option>
+                            <option value="in-person">In Person</option>
+                        </select>
+
+                        <div id="postcodeContainer" style="display: none;">
+                            <label for="postcode">Postcode</label>
+                            <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
+                        </div>
+
+                        <button type="submit">Find Tutors</button>
+                    </form>
                 </div>
 
-                <button type="submit">Find Tutors</button>
-              </form>
             </div>
-
-            <!-- Paragraph flows around the float-right form above -->
-            <p class="cta-text fade-later">
-              An area for the parents of students in Scotland. Here you can find a tutor
-              that suits your needs by using our tutor searcher. All our tutors are fully
-              qualified teachers covered by statutory safeguarding guidelines.<br /><br />
-              <a href="contact.html">Get in touch with us!</a>
-            </p>
-          </div>
         </div>
       </section>
 
