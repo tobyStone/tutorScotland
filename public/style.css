@@ -380,11 +380,42 @@ main {
 }
 
 
+.parents-zone-section {
+    position: relative;
+    background-color: #E6F0FF; /* a very light blue */
+    margin-top: 127px;
+    padding: 60px 0;
+    margin-bottom: 207px;
+    /* Put the background image behind a tinted overlay (option A: linear-gradient) */
+    background: linear-gradient( rgba(255,255,255,0.7), /* White overlay at 70% opacity */
+    rgba(255,255,255,0.7) ), url('/images/tutor2.jpg') no-repeat center center;
+    background-size: cover; /* Make sure it covers the entire parent zone */
+}
+
+.parents-box {
+    background-color: #fff;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px;
+    box-shadow: 0 0 15px rgba(0, 0, 139, 0.3); /* darker blue shadow */
+    text-align: center;
+}
+
+    .parents-box h2 {
+        font-size: 2em;
+        color: #0057B7;
+        margin-bottom: 1rem;
+    }
+
+    .parents-box p {
+        font-size: 1.2em;
+        color: #0057B7;
+        margin-bottom: 1rem;
+    }
 
 .parents-extra-sections {
     margin-top: 12em; /* or whatever spacing you like */
 }
-
 
 
 
