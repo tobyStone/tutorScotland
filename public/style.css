@@ -496,21 +496,16 @@ main {
     margin-top: 0; /* remove any old offsets */
 }
 
-/* parents-page override for the form container */
 .parents-page .form-container {
     position: static !important;
     transform: none !important;
-    margin-top: 1rem; /* some spacing above */
-    /* optionally set a width if you want it narrower, e.g. width: 280px */
+    float: right; /* if not done inline */
+    margin: 0 0 1rem 1rem; /* or whatever spacing you like */
+    /* optionally set width if you want a narrower form */
+    width: 240px;
 }
 
-.parents-page #imageShield,
-.parents-page #imageBanner {
-    position: static !important;
-    opacity: 1 !important;
-    animation: none !important;
-    /* Or you can keep a different animation if you prefer. */
-}
+
 
 
 
