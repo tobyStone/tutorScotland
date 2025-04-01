@@ -444,23 +444,7 @@ main {
             margin-bottom: 0.5rem;
         }
 
-.parents-page #imageShield {
-    left: 73% !important;
-}
 
-.parents-page #imageBanner {
-    left: 73% !important;
-}
-
-
-.parents-zone {
-    position: absolute;
-    left: 53vw;
-    top: 14vh; /* Just below the tagline; adjust to taste */
-    opacity: 0;
-    animation: revealTagline 1s forwards ease-in-out;
-    animation-delay: 2.8s; /* Waits 1s after tagline finishes */
-}
 
     /* Make the heading the same size & color as the tagline */
     .parents-zone h2 {
