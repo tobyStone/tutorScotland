@@ -429,6 +429,12 @@ main {
     height: auto;
     display: block;
     margin: 1rem auto;
+    position: absolute;
+    top: 15vh; /* slightly below the mission statement heading */
+    right: 0;
+    width: 17%;
+    border: 2px solid #C8A2C8;
+}
 }
 
 .tutor-zone-page h2 {
@@ -542,15 +548,6 @@ main {
     position: relative;
 }
 
-.small-tutor-img {
-    position: absolute;
-    top: 15vh; /* slightly below the mission statement heading */
-    right: 0;
-    width: 17%; 
-    border: 2px solid #C8A2C8;
-}
-
-
 
 /* Tagline and Form */
 .content-wrapper {
@@ -589,18 +586,10 @@ main {
     font-weight: bold;
 }
 
-.tagline .lilac {
-    color: #C8A2C8; /* Lilac color for 'all' */
-    font-weight: bold;
-}
 
 
 .tagline h2 {
     font-size: 2em;
-}
-
-.tagline .lilac {
-    color: #C8A2C8; /* lilac color for emphasis */
 }
 
 
