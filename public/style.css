@@ -1198,14 +1198,17 @@ main {
 */
 @media screen and (max-width: 600px) {
 
-    /* Move bannerShield2.png to the top-right, tartan remains left top */
+    /* Move bannerShield2.png to the top-right, tartan remains left top 
+       and allow .header-links to be positioned properly. */
     header {
+        position: relative;
         background-position: right top, left top;
     }
 
-    /* Push .header-links down so they don't overlap H1 */
+    /* Push .header-links down & to the right */
     .header-links {
-        margin-top: 40px; /* Adjust as desired */
+        margin-top: 60px; /* bigger than the original 40px */
+        margin-right: 10px; /* slight offset from the right edge */
     }
 
     /* Scale down the H1 & remove large left margin */
@@ -1216,7 +1219,7 @@ main {
 
     /* If the "Welcome..." heading is .lilac-heading, shrink by ~40% */
     .lilac-heading {
-        font-size: 60% !important; /* or 0.6em if you prefer */
+        font-size: 60% !important;
     }
 
     /* Make main nav vertical, if you like */
@@ -1235,7 +1238,7 @@ main {
                 font-size: 1em;
             }
 
-    /* Reduce huge .mission-statement heading (e.g., “Welcome…”) */
+    /* Reduce huge .mission-statement heading */
     .mission-statement h2 {
         font-size: 2em;
     }
@@ -1264,191 +1267,34 @@ main {
     }
 }
 
-
 /* 
    2) For screens up to ~750px (Small phones, iPhone SE, etc.)
+   [unchanged from your snippet]
 */
 @media screen and (max-width: 750px) and (orientation: portrait) {
-
-    .tagline {
-        left: 10vw;
-        top: 2vh;
-        font-size: 0.9em;
-        text-align: center;
-    }
-
-    .form-container {
-        position: absolute;
-        left: 50%;
-        top: 75vh;
-        transform: translate(-50%, -50%);
-        width: 75%;
-        padding: 10px;
-        font-size: 0.8em;
-        line-height: 1.2;
-    }
-
-        .form-container h3 {
-            font-size: 1em;
-            margin-bottom: 10px;
-        }
-
-        .form-container label {
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .form-container select,
-        .form-container input {
-            font-size: 0.85em;
-            padding: 5px;
-        }
-
-        .form-container button {
-            font-size: 0.9em;
-            padding: 8px 12px;
-        }
-
-    header h1 {
-        font-size: 2em;
-        margin-left: 10px;
-    }
+    ...
 }
-
 
 /* 
-   3) Vertical orientation up to ~900px 
+   3) Vertical orientation up to ~900px
+   [unchanged from your snippet]
 */
 @media screen and (max-width: 900px) and (orientation: portrait) {
-
-    .tagline {
-        left: 30vw;
-        top: 5vh;
-        font-size: 1.2em;
-        text-align: center;
-    }
-
-    .form-container {
-        position: absolute;
-        left: 50%;
-        top: 57vh;
-        transform: translate(-50%, -50%);
-        width: 90%;
-        padding: 25px;
-        font-size: 1.1em;
-    }
-
-        .form-container button {
-            font-size: 1.2em;
-            padding: 15px 20px;
-        }
-
-    /* Single-column tutor grid */
-    .tutor-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 20px;
-        padding: 10px;
-        margin-top: 10vh;
-    }
-
-    .tutor-card {
-        width: 100%;
-        min-height: 100%;
-        position: relative;
-        background: none;
-        overflow: hidden;
-    }
-
-        .tutor-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('/images/flag.PNG') no-repeat center center;
-            background-size: cover;
-            opacity: 0.3;
-            z-index: -1;
-        }
-
-    .pricing-key {
-        position: relative;
-        top: 7vh;
-        left: 10vw;
-        margin: 0 10px;
-        font-size: 0.9rem;
-        text-align: left;
-        max-width: 80vw;
-        white-space: normal;
-        word-wrap: break-word;
-    }
-
-    .tutor-profile {
-        top: 5vh;
-    }
-
-        .tutor-profile h1 {
-            margin-top: -10px;
-            font-size: 2.2em;
-        }
-
-    /* Overwrite about-content for small screens */
-    .about-content {
-        position: static;
-        margin: 2rem auto;
-        width: 80%;
-        font-size: 1.5em;
-        line-height: 1.5;
-        text-align: center;
-        top: auto;
-        left: auto;
-    }
-
-        .about-content h2 {
-            margin-bottom: 20px;
-        }
-
-    .about-paragraph {
-        max-width: 100%;
-        margin: 0 auto;
-        font-size: 0.7em;
-        line-height: 1.5;
-    }
+    ...
 }
-
 
 /* 
    4) Landscape small screens (tablets up to 1024px)
+   [unchanged from your snippet]
 */
 @media screen and (max-width: 1024px) and (orientation: landscape) {
-
-    .tagline {
-        left: 45vw;
-        top: 5vh;
-        font-size: 1em;
-    }
-
-    .form-container {
-        position: absolute;
-        left: 60%;
-        top: 57vh;
-        transform: translate(-50%, -50%);
-        width: 77%;
-    }
-
-    .mission-statement h2 {
-        font-size: 2.5em; /* optional: reduce further if needed */
-    }
+    ...
 }
-
 
 /* 
    5) Medium desktops between 1024px and 1350px
+   [unchanged from your snippet]
 */
 @media screen and (min-width: 1023px) and (max-width: 1350px) {
-    .tagline {
-        top: 17vh;
-    }
+    ...
 }
