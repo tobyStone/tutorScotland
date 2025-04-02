@@ -505,12 +505,7 @@ main {
     background-color: #fff;
     text-align: center;
 }
-/* Facebook link styling */
-.facebook-link {
-    text-align: center;
-    margin: 1rem auto;
-    font-size: 1.1em;
-}
+
 /* Tutor Highlight Banner styling */
 .tutor-highlight-banner {
     margin: 2rem auto;
