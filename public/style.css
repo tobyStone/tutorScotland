@@ -1208,8 +1208,9 @@ main {
 
     /* Push .header-links down & to the right */
     .header-links {
-        margin-top: 60px; /* bigger than the original 40px */
-        margin-right: 10px; /* slight offset from the right edge */
+        margin-top: 77px; /* bigger than the original 40px */
+        margin-right: 11px; /* slight offset from the right edge */
+        gap: 9px;
     }
 
     /* Scale down the H1 & remove large left margin */
@@ -1241,12 +1242,12 @@ main {
 
     /* Reduce huge .mission-statement heading (e.g., “Welcome…”) */
     .mission-statement h2 {
-        font-size: 2em;
+        font-size: 1.3em;
     }
 
     /* Widen the .mission-statement paragraph to fill the viewport */
     .mission-statement p {
-        max-width: 90%;
+        max-width: 97%;
         margin: 0 auto;
         text-align: left; /* or center, your preference */
     }
@@ -1261,7 +1262,7 @@ main {
     /* Let about-content flow normally instead of absolute */
     .about-content {
         position: static;
-        margin: 1.5rem auto;
+        margin: 1.1rem auto;
         width: 80%;
         top: auto;
         left: auto;
