@@ -1208,7 +1208,7 @@ main {
 
     /* Push .header-links down & to the right */
     .header-links {
-        margin-top: 77px; /* bigger than the original 40px */
+        margin-top: 97px; /* bigger than the original 40px */
         margin-right: 11px; /* slight offset from the right edge */
         gap: 9px;
     }
