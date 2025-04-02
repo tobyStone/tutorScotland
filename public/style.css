@@ -1185,26 +1185,256 @@ main {
     }
 }
 
-/* Style for horizontal small screens (landscape mode) */
-@media screen and (max-width: 1024px) and (orientation: landscape) {
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   MOBILE & RESPONSIVE ADJUSTMENTS
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+/* 
+   1) Very narrow screens, ~600px or below 
+   - Shrink header font size
+   - Possibly stack the nav vertically
+   - Reduce large heading sizes
+   - Make about-content flow normally instead of absolutely positioned
+*/
+@media screen and (max-width: 600px) {
+
+    /* Scale down the H1 and remove large left margin */
+    header h1 {
+        font-size: 2em;
+        margin-left: 10px;
+    }
+
+    /* Make main nav vertical, if you like */
+    .main-nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+        .main-nav ul li {
+            border-left: none;
+            border-bottom: 1px solid #ADD8E6;
+        }
+
+            .main-nav ul li a {
+                padding: 10px 15px;
+                font-size: 1em;
+            }
+
+    /* Reduce the very large mission-statement heading */
+    .mission-statement h2 {
+        font-size: 2em; /* instead of 5.7em */
+    }
+
+    /* Tame big margins in parents-zone-section, etc. */
+    .parents-zone-section {
+        margin-top: 60px;
+        margin-bottom: 80px;
+        padding: 30px 0;
+    }
+
+    /* Let about-content flow normally instead of absolute */
+    .about-content {
+        position: static;
+        margin: 1.5rem auto;
+        width: 80%;
+        top: auto;
+        left: auto;
+    }
+    /* (Adjust as needed if it conflicts with images) */
+}
+
+
+/* 
+   2) For screens up to ~750px (Small phones, iPhone SE, etc.) 
+   - Incorporates your existing rules, plus any further adjustments 
+*/
+@media screen and (max-width: 750px) and (orientation: portrait) {
+
     .tagline {
-        left: 45vw; /* Adjust position for horizontal */
+        left: 10vw;
+        top: 2vh;
+        font-size: 0.9em;
+        text-align: center;
+    }
+
+    /* Example: shrink form-container a bit more */
+    .form-container {
+        position: absolute;
+        left: 50%;
+        top: 75vh;
+        transform: translate(-50%, -50%);
+        width: 75%;
+        padding: 10px;
+        font-size: 0.8em;
+        line-height: 1.2;
+    }
+
+        .form-container h3 {
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .form-container label {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .form-container select,
+        .form-container input {
+            font-size: 0.85em;
+            padding: 5px;
+        }
+
+        .form-container button {
+            font-size: 0.9em;
+            padding: 8px 12px;
+        }
+
+    /* If you need to further reduce nav heading, do it here too */
+    header h1 {
+        font-size: 2em;
+        margin-left: 10px;
+    }
+}
+
+
+/* 
+   3) Vertical orientation up to ~900px 
+   - Stacks certain elements, shrinks big images, etc.
+   - This merges your existing rules plus recommended adjustments
+*/
+@media screen and (max-width: 900px) and (orientation: portrait) {
+
+    .tagline {
+        left: 30vw;
         top: 5vh;
-        font-size: 1em; /* Reduce tagline font size */
+        font-size: 1.2em;
+        text-align: center;
+    }
+
+    .form-container {
+        position: absolute;
+        left: 50%;
+        top: 57vh;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        padding: 25px;
+        font-size: 1.1em;
+    }
+
+        .form-container button {
+            font-size: 1.2em;
+            padding: 15px 20px;
+        }
+
+    /* Make the tutor grid single-column */
+    .tutor-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 10px;
+        margin-top: 10vh;
+    }
+
+    .tutor-card {
+        width: 100%;
+        min-height: 100%;
+        position: relative;
+        background: none;
+        overflow: hidden;
+    }
+
+        .tutor-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('/images/flag.PNG') no-repeat center center;
+            background-size: cover;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+    .pricing-key {
+        position: relative;
+        top: 7vh;
+        left: 10vw;
+        margin: 0 10px;
+        font-size: 0.9rem;
+        text-align: left;
+        max-width: 80vw;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    .tutor-profile {
+        top: 5vh;
+    }
+
+        .tutor-profile h1 {
+            margin-top: -10px;
+            font-size: 2.2em;
+        }
+
+    /* Increase about-content text a bit */
+    .about-content {
+        position: static; /* Overwrite absolute for small screens */
+        margin: 2rem auto;
+        width: 80%;
+        font-size: 1.5em;
+        line-height: 1.5;
+        text-align: center;
+        top: auto;
+        left: auto;
+    }
+
+        .about-content h2 {
+            margin-bottom: 20px;
+        }
+
+    .about-paragraph {
+        max-width: 100%;
+        margin: 0 auto;
+        font-size: 0.7em;
+        line-height: 1.5;
+    }
+}
+
+
+/* 
+   4) Landscape small screens (e.g., tablets up to 1024px)
+*/
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+
+    .tagline {
+        left: 45vw;
+        top: 5vh;
+        font-size: 1em;
     }
 
     .form-container {
         position: absolute;
         left: 60%;
-        top: 57vh; /* Move it down and to the right */
+        top: 57vh;
         transform: translate(-50%, -50%);
-        width: 77%; /* Adjust the form size */
+        width: 77%;
+    }
+
+    /* Optional: reduce enormous headings or big margins again */
+    .mission-statement h2 {
+        font-size: 2.5em;
     }
 }
 
-/* Style for screens between 1024px and 1350px width */
+
+/* 
+   5) Medium desktops between 1024px and 1350px 
+   - Already in your file, just keep it
+*/
 @media screen and (min-width: 1023px) and (max-width: 1350px) {
     .tagline {
-        top: 17vh; /* Lower the tagline by 5vh */
+        top: 17vh;
     }
 }
