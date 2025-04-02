@@ -802,7 +802,7 @@ main {
 .about-content {
     position: absolute;
     left: 29%;
-    top: 21vh;
+    top: 17vh;
     width: 40vw;
     color: #0057B7; /* Matches banner color */
     font-size: 1.2em;
@@ -814,7 +814,7 @@ main {
 }
 
     .about-content h2 {
-        margin-bottom: 1.5rem; /* or 2rem for a bigger gap */
+        margin-bottom: 2.3rem; /* or 2rem for a bigger gap */
     }
 
 
