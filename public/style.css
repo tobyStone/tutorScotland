@@ -1191,17 +1191,32 @@ main {
 
 /* 
    1) Very narrow screens, ~600px or below 
-   - Shrink header font size
-   - Possibly stack the nav vertically
-   - Reduce large heading sizes
-   - Make about-content flow normally instead of absolutely positioned
+   - Move shield top-right
+   - Shift .header-links down
+   - Reduce heading sizes further
+   - Make about-content flow normally 
 */
 @media screen and (max-width: 600px) {
 
-    /* Scale down the H1 and remove large left margin */
+    /* Move bannerShield2.png to the top-right, tartan remains left top */
+    header {
+        background-position: right top, left top;
+    }
+
+    /* Push .header-links down so they don't overlap H1 */
+    .header-links {
+        margin-top: 40px; /* Adjust as desired */
+    }
+
+    /* Scale down the H1 & remove large left margin */
     header h1 {
         font-size: 2em;
         margin-left: 10px;
+    }
+
+    /* If the "Welcome..." heading is .lilac-heading, shrink by ~40% */
+    .lilac-heading {
+        font-size: 60% !important; /* or 0.6em if you prefer */
     }
 
     /* Make main nav vertical, if you like */
@@ -1220,9 +1235,16 @@ main {
                 font-size: 1em;
             }
 
-    /* Reduce the very large mission-statement heading */
+    /* Reduce huge .mission-statement heading (e.g., “Welcome…”) */
     .mission-statement h2 {
-        font-size: 2em; /* instead of 5.7em */
+        font-size: 2em;
+    }
+
+    /* Widen the .mission-statement paragraph to fill the viewport */
+    .mission-statement p {
+        max-width: 90%;
+        margin: 0 auto;
+        text-align: left; /* or center, up to you */
     }
 
     /* Tame big margins in parents-zone-section, etc. */
@@ -1240,13 +1262,11 @@ main {
         top: auto;
         left: auto;
     }
-    /* (Adjust as needed if it conflicts with images) */
 }
 
 
 /* 
-   2) For screens up to ~750px (Small phones, iPhone SE, etc.) 
-   - Incorporates your existing rules, plus any further adjustments 
+   2) For screens up to ~750px (Small phones, iPhone SE, etc.)
 */
 @media screen and (max-width: 750px) and (orientation: portrait) {
 
@@ -1257,7 +1277,6 @@ main {
         text-align: center;
     }
 
-    /* Example: shrink form-container a bit more */
     .form-container {
         position: absolute;
         left: 50%;
@@ -1290,7 +1309,6 @@ main {
             padding: 8px 12px;
         }
 
-    /* If you need to further reduce nav heading, do it here too */
     header h1 {
         font-size: 2em;
         margin-left: 10px;
@@ -1300,8 +1318,6 @@ main {
 
 /* 
    3) Vertical orientation up to ~900px 
-   - Stacks certain elements, shrinks big images, etc.
-   - This merges your existing rules plus recommended adjustments
 */
 @media screen and (max-width: 900px) and (orientation: portrait) {
 
@@ -1327,7 +1343,7 @@ main {
             padding: 15px 20px;
         }
 
-    /* Make the tutor grid single-column */
+    /* Single-column tutor grid */
     .tutor-grid {
         display: grid;
         grid-template-columns: 1fr;
@@ -1378,9 +1394,9 @@ main {
             font-size: 2.2em;
         }
 
-    /* Increase about-content text a bit */
+    /* Overwrite about-content for small screens */
     .about-content {
-        position: static; /* Overwrite absolute for small screens */
+        position: static;
         margin: 2rem auto;
         width: 80%;
         font-size: 1.5em;
@@ -1404,7 +1420,7 @@ main {
 
 
 /* 
-   4) Landscape small screens (e.g., tablets up to 1024px)
+   4) Landscape small screens (tablets up to 1024px)
 */
 @media screen and (max-width: 1024px) and (orientation: landscape) {
 
@@ -1422,16 +1438,14 @@ main {
         width: 77%;
     }
 
-    /* Optional: reduce enormous headings or big margins again */
     .mission-statement h2 {
-        font-size: 2.5em;
+        font-size: 2.5em; /* optional: reduce further if needed */
     }
 }
 
 
 /* 
-   5) Medium desktops between 1024px and 1350px 
-   - Already in your file, just keep it
+   5) Medium desktops between 1024px and 1350px
 */
 @media screen and (min-width: 1023px) and (max-width: 1350px) {
     .tagline {
