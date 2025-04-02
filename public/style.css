@@ -20,6 +20,11 @@ html {
     overflow-y: scroll; /* Always show vertical scrollbar */
 }
 
+.lilac-heading {
+    color: #C8A2C8;
+}
+
+
 header {
     /* Two layered backgrounds: shield on top, tartan behind */
     background-image: url('/images/bannerShield2.png'), url('/images/bannerBackground.PNG');
