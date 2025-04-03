@@ -1038,18 +1038,37 @@ main {
         position: relative !important;
     }
 
-    /* Header Links Fix */
+    /* Header Adjustments */
+    header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        min-height: auto;
+    }
+
+        header h1 {
+            font-size: 1.8em;
+            margin: 0;
+            padding: 5px;
+            flex: 1;
+        }
+
     .header-links {
         position: static;
-        width: 100%;
-        text-align: right;
-        padding: 10px;
-        box-sizing: border-box;
+        width: auto;
+        padding: 5px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
     }
 
     .banner-login-link {
         display: inline-block;
-        margin: 5px;
+        margin: 0 5px;
+        padding: 5px 10px;
+        white-space: nowrap;
     }
 
     /* Column Layouts */
@@ -1084,58 +1103,62 @@ main {
 }
 
 @media screen and (max-width: 900px) and (orientation: portrait) {
-    /* Header Adjustments */
+    /* Header Refinements */
     header {
-        position: relative;
-        padding-bottom: 10px;
+        padding: 5px;
+        height: auto;
     }
+
+        header h1 {
+            font-size: 1.4em;
+            max-width: 60%;
+        }
 
     .header-links {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        width: auto;
+        max-width: 40%;
     }
 
-    /* Split Navigation Layout */
+    /* Compact Navigation */
     .main-nav {
         width: 100%;
-        padding: 10px 0;
-        margin-bottom: 0; /* Reduce space before rolling banner */
+        padding: 5px 0;
+        margin: 0;
+        height: auto;
+        max-height: 77vh;
     }
 
         .main-nav ul {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+            padding: 5px;
             margin: 0;
             width: 100%;
-            max-width: 100%;
         }
 
         .main-nav li {
-            width: 50%; /* Two items per row */
-            margin: 5px 0;
-            box-sizing: border-box;
-            padding: 0 10px;
+            margin: 2px 0;
+            padding: 3px 5px;
+            font-size: 0.9em;
         }
 
             /* Left aligned links */
             .main-nav li:nth-child(odd) {
                 text-align: left;
+                padding-left: 15px;
             }
 
             /* Right aligned links */
             .main-nav li:nth-child(even) {
                 text-align: right;
+                padding-right: 15px;
             }
 
     /* Rolling Banner - Closer to Nav */
     .rolling-banner {
         margin-top: 0;
+        padding-top: 5px;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
-        padding-top: 10px;
     }
 
     /* Shield and Ribbon adjustments */
@@ -1195,41 +1218,119 @@ main {
     }
 }
 
-@media screen and (max-width: 576px) {
-    /* Header Links for very small screens */
-    .header-links {
-        position: relative;
-        top: 0;
-        right: 0;
-        text-align: center;
+@media screen and (max-width: 768px) {
+    /* Typography */
+    body {
+        font-size: 16px;
+    }
+
+    /* Banner Areas */
+    .rolling-banner {
+        height: auto;
         padding: 10px 0;
     }
 
-    .banner-login-link {
-        display: inline-block;
-        margin: 5px;
-        font-size: 0.9em;
+    /* Headings */
+    .mission-statement,
+    .lilac-heading {
+        font-size: 20px;
+        text-align: center;
     }
 
-    /* Navigation for very small screens */
-    .main-nav li {
-        width: 50%; /* Maintain two items per row */
+    /* Text Alignment */
+    .cta-text,
+    .facebook-link {
+        text-align: center;
+    }
+
+    /* Social Links */
+    .social-links {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* Newsletter */
+    .newsletter-section {
+        padding: 20px 10px;
+    }
+
+    .newsletter-button {
+        width: 100%;
+        margin: 10px 0;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    /* Header Elements */
+    header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
         padding: 5px;
     }
 
-    /* Form container adjustments */
+        header h1 {
+            font-size: 1.2em;
+            max-width: 100%;
+            margin-bottom: 5px;
+        }
+
+    .header-links {
+        max-width: 100%;
+        justify-content: center;
+        margin-top: 5px;
+    }
+
+    .banner-login-link {
+        padding: 3px 8px;
+        font-size: 0.85em;
+    }
+
+    /* Navigation Adjustments */
+    .main-nav {
+        max-height: 77vh;
+    }
+
+        .main-nav li {
+            font-size: 0.85em;
+        }
+
+    /* Form Elements */
     .form-container {
         width: 95%;
         padding: 15px;
         margin: 30px auto;
     }
 
-    /* Increase spacing between elements */
-    .main-shield,
-    .main-ribbons,
-    .form-container,
-    .section {
-        margin: 30px auto;
+        .form-container input,
+        .form-container select,
+        .form-container button {
+            min-height: 44px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+    /* Buttons */
+    .zone-login-btn,
+    .newsletter-button {
+        width: 100%;
+        margin: 10px 0;
+    }
+}
+
+/* Additional breakpoint for very narrow screens */
+@media screen and (max-width: 360px) {
+    header h1 {
+        font-size: 1.1em;
+    }
+
+    .banner-login-link {
+        padding: 2px 6px;
+        font-size: 0.8em;
+    }
+
+    .main-nav li {
+        font-size: 0.8em;
     }
 }
 
