@@ -1203,13 +1203,13 @@ main {
        and allow .header-links to be positioned properly. */
     header {
         position: relative;
-        background-position: right top, left top;
+        background-position: 97% 37px right top, left top;
     }
 
     /* Push .header-links down & to the right */
     .header-links {
-        margin-top: 97px; /* bigger than the original 40px */
-        margin-right: 11px; /* slight offset from the right edge */
+        margin-top: 127px; /* bigger than the original 40px */
+        margin-right: 27px; /* slight offset from the right edge */
         gap: 9px;
     }
 
