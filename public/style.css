@@ -1124,7 +1124,7 @@ main {
         padding: 5px 0;
         margin: 0;
         height: auto;
-        max-height: 77vh;
+        max-height: 53vh;
     }
 
         .main-nav ul {
@@ -1288,7 +1288,7 @@ main {
 
     /* Navigation Adjustments */
     .main-nav {
-        max-height: 77vh;
+        max-height: 53vh;
     }
 
         .main-nav li {
