@@ -1020,7 +1020,6 @@ main {
     left: 60% !important;
 }
 
-
 /* Comprehensive Responsive Design Media Queries */
 @media screen and (max-width: 1200px) {
     /* Global Container Styles */
@@ -1066,7 +1065,6 @@ main {
     /* Navigation adjustments */
     .main-nav {
         text-align: left;
-        font-size: 0.63em;
     }
 
         .main-nav ul {
@@ -1176,19 +1174,42 @@ main {
 }
 
 @media screen and (max-width: 900px) and (orientation: portrait) {
-    /* Shield and Ribbon Sizing */
+    /* Updated Navigation for Portrait Mode - reduced section size only */
+    .main-nav {
+        text-align: left;
+        width: 63%; /* 37% reduction in container size */
+        margin-left: 0;
+        padding-left: 10px;
+        transform: scale(0.63); /* Reduces the entire section by 37% */
+        transform-origin: left top; /* Ensures scaling from left side */
+    }
+
+        .main-nav ul {
+            flex-direction: column;
+            align-items: flex-start;
+            padding-left: 0;
+            width: 158.73%; /* Compensates for scale to maintain clickable area (100/0.63) */
+        }
+
+        .main-nav li {
+            margin: 5px 0;
+            text-align: left;
+            width: 100%;
+        }
+
+    /* Further reduced shield and ribbon (33% + 17% reduction) */
     .main-shield {
-        width: 67%;
+        width: 50%; /* Original 67% - additional 17% */
         margin: 0 auto;
         display: block;
     }
 
     .main-ribbons {
-        width: 67%;
+        width: 50%; /* Original 67% - additional 17% */
         position: relative;
         left: 50%;
         transform: translateX(-50%);
-        margin-top: -5%;
+        margin-top: -10%; /* Increased negative margin to move up */
     }
 
     /* Enhanced Form Styling */
@@ -1215,16 +1236,6 @@ main {
 
     header h1 {
         font-size: 24px;
-    }
-
-    /* Navigation */
-    .main-nav ul {
-        flex-direction: column;
-        padding: 0;
-    }
-
-    .main-nav li {
-        margin: 5px 0;
     }
 
     /* Banner Areas */
