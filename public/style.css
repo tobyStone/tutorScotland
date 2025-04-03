@@ -1048,273 +1048,146 @@ main {
         width: 100%;
     }
 
-    /* Shield and Ribbon Images */
-    .main-shield, .main-ribbons {
-        position: relative;
-        margin: 10px auto;
-        display: block;
-    }
-
-    /* Header banner shield adjustment */
-    header img[src*="bannerShield2"] {
-        transform: translateY(-10%);
-        max-width: 100%;
-        height: auto;
-    }
-
-    /* Navigation adjustments */
-    .main-nav {
-        text-align: left;
-    }
-
-        .main-nav ul {
-            justify-content: flex-start;
-            padding-left: 15px;
-        }
-
-    /* Form padding */
-    .form-container {
-        padding: 20px;
-        margin: 15px;
-        box-sizing: border-box;
-    }
-
-    /* Center shield and banner container */
-    .left-col {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        position: relative;
-    }
-
-    /* Tutor Directory Specific */
-    .tutor-directory-page .content-wrapper {
-        padding: 20px;
-    }
-}
-
-@media screen and (max-width: 992px) {
-    /* Section Padding */
-    .mission-row,
-    .tutorzone-section,
-    .newsletter-section {
-        padding: 20px;
-    }
-
-    /* Image Handling */
-    .large-study-img,
-    .float-right {
-        float: none !important;
-        display: block;
-        margin: 20px auto;
-        max-width: 90%;
-    }
-
-    /* Parent Zone */
-    .parents-zone-section,
-    .parents-zone {
-        padding: 30px 15px;
-    }
-
-    .parents-box {
-        width: 90%;
-        margin: 0 auto;
-    }
-
-    /* Tutor Zone Specific */
-    .tutorzone-section {
-        margin-bottom: 30px;
-    }
-
-    .calendar {
-        width: 100%;
-        overflow-x: auto;
-    }
-}
-
-@media screen and (max-width: 900px) and (orientation: landscape) {
-    /* Reduce shield and ribbon size by 33% */
+    /* Shield and Ribbon spacing */
     .main-shield {
-        width: 67%;
-        margin: 0 auto;
-        display: block;
+        margin: 30px auto;
+        clear: both;
     }
 
     .main-ribbons {
-        width: 67%;
-        position: relative;
-        left: 50%;
-        transform: translateX(-50%);
-        margin-top: -5%;
+        margin: 30px auto;
+        clear: both;
     }
 
-    /* Column Layout in Landscape */
-    .mission-row,
-    .content-flex-wrapper {
-        flex-direction: row;
-    }
-
-    .left-col {
-        width: 30%;
-    }
-
-    .right-col {
-        width: 70%;
-    }
-
-    /* Tutor Zone Specific */
-    .tutorzone-section {
-        margin-bottom: 20px;
-    }
-
-    /* Hero Section Height */
-    .hero-section {
-        min-height: 120vh;
+    /* Form container spacing */
+    .form-container {
+        margin: 30px auto;
+        clear: both;
+        padding: 25px;
+        background-color: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 }
 
 @media screen and (max-width: 900px) and (orientation: portrait) {
-    /* Updated Navigation for Portrait Mode - reduced section size only */
+    /* Split Navigation Layout */
     .main-nav {
-        text-align: left;
-        width: 63%; /* 37% reduction in container size */
-        margin-left: 0;
-        padding-left: 10px;
-        transform: scale(0.63); /* Reduces the entire section by 37% */
-        transform-origin: left top; /* Ensures scaling from left side */
+        width: 100%;
+        padding: 10px 0;
+        transform: none; /* Remove previous transform */
     }
 
         .main-nav ul {
-            flex-direction: column;
-            align-items: flex-start;
-            padding-left: 0;
-            width: 158.73%; /* Compensates for scale to maintain clickable area (100/0.63) */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 0;
+            margin: 0;
+            width: 100%;
         }
 
         .main-nav li {
+            width: 48%; /* Split into two columns */
             margin: 5px 0;
-            text-align: left;
-            width: 100%;
         }
 
-    /* Further reduced shield and ribbon (33% + 17% reduction) */
+            /* Left column links */
+            .main-nav li:nth-child(odd) {
+                text-align: left;
+                padding-left: 2%;
+            }
+
+            /* Right column links */
+            .main-nav li:nth-child(even) {
+                text-align: center;
+                padding-right: 2%;
+            }
+
+    /* Adjust rolling banner position */
+    .rolling-banner {
+        margin-top: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    /* Shield and Ribbon adjustments */
     .main-shield {
-        width: 50%; /* Original 67% - additional 17% */
-        margin: 0 auto;
+        width: 50%;
+        margin: 40px auto 20px;
         display: block;
+        clear: both;
     }
 
     .main-ribbons {
-        width: 50%; /* Original 67% - additional 17% */
+        width: 50%;
         position: relative;
         left: 50%;
         transform: translateX(-50%);
-        margin-top: -10%; /* Increased negative margin to move up */
+        margin: 20px auto 40px;
+        clear: both;
     }
 
-    /* Enhanced Form Styling */
+    /* Form container specific adjustments */
     .form-container {
-        padding: 25px;
-        margin: 20px;
-    }
-
-        .form-container input,
-        .form-container select,
-        .form-container textarea {
-            margin-bottom: 15px;
-            padding: 10px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-}
-
-@media screen and (max-width: 768px) {
-    /* Typography */
-    body {
-        font-size: 16px;
-    }
-
-    header h1 {
-        font-size: 24px;
-    }
-
-    /* Banner Areas */
-    .rolling-banner {
-        height: auto;
-        padding: 10px 0;
-    }
-
-    /* Headings */
-    .mission-statement,
-    .lilac-heading {
-        font-size: 20px;
-        text-align: center;
-    }
-
-    /* Text Alignment */
-    .cta-text,
-    .facebook-link {
-        text-align: center;
-    }
-
-    /* Social Links */
-    .social-links {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    /* Newsletter */
-    .newsletter-section {
-        padding: 20px 10px;
-    }
-
-    .newsletter-button {
-        width: 100%;
-        margin: 10px 0;
-    }
-}
-
-@media screen and (max-width: 576px) {
-    /* Header Elements */
-    .header-links {
-        position: static;
-        text-align: center;
-        margin: 10px 0;
-    }
-
-    .banner-login-link,
-    .login-box {
-        display: inline-block;
-        margin: 5px auto;
         width: 90%;
-        text-align: center;
+        margin: 40px auto;
+        padding: 25px;
+        clear: both;
+        position: relative;
+        z-index: 1;
     }
 
-    /* Shield and Ribbon */
-    .main-shield,
-    .main-ribbons {
-        width: 80%;
-    }
-
-    /* Form Elements */
-    .form-container {
-        padding: 15px;
-        margin: 10px;
-    }
-
-        .form-container input,
-        .form-container select,
-        .form-container button {
-            min-height: 44px;
-            width: 100%;
-            margin-bottom: 10px;
+        /* Ensure headings and paragraphs don't overlap with forms */
+        .form-container + h1,
+        .form-container + h2,
+        .form-container + h3,
+        .form-container + p,
+        h1 + .form-container,
+        h2 + .form-container,
+        h3 + .form-container,
+        p + .form-container {
+            margin-top: 40px;
         }
 
-    /* Buttons */
-    .zone-login-btn,
-    .newsletter-button {
-        width: 100%;
-        margin: 10px 0;
+    /* Specific adjustments for tutor directory and parents pages */
+    .tutor-directory-page .form-container,
+    .parents-zone .form-container {
+        margin: 40px auto;
+        clear: both;
+        background-color: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Remove any floating styles on restricted viewports */
+    .float-right,
+    .float-left {
+        float: none !important;
+        display: block;
+        margin: 20px auto;
+    }
+}
+
+/* Additional specific adjustments for very narrow screens */
+@media screen and (max-width: 576px) {
+    /* Adjust navigation for very small screens */
+    .main-nav li {
+        width: 100%; /* Stack all nav items on very small screens */
+        text-align: left;
+        padding-left: 5%;
+    }
+
+    /* Form container adjustments */
+    .form-container {
+        width: 95%;
+        padding: 15px;
+        margin: 30px auto;
+    }
+
+    /* Increase spacing between elements */
+    .main-shield,
+    .main-ribbons,
+    .form-container,
+    .section {
+        margin: 30px auto;
     }
 }
 
