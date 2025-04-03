@@ -43,6 +43,7 @@ module.exports = async (req, res) => {
           <link rel="icon" href="/images/bannerShield2.png" type="image/png">
           <title>Tutors Alliance Scotland Blog</title>
           <link rel="stylesheet" href="/style.css">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
       </head>
       <body>
           <!-- Shared banner/header -->
