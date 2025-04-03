@@ -1102,21 +1102,29 @@ main {
     }
 }
 
+
 @media screen and (max-width: 900px) and (orientation: portrait) {
     /* Header Refinements */
     header {
         padding: 5px;
-        height: auto;
+        height: 23vh; /* Increased height to take up more viewport space */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
         header h1 {
             font-size: 1.4em;
             max-width: 60%;
+            margin: 10px 0;
         }
 
     .header-links {
         max-width: 40%;
+        margin-top: 10px;
     }
+}
 
     /* Compact Navigation */
     .main-nav {
