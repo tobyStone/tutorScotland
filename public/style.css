@@ -1038,6 +1038,20 @@ main {
         position: relative !important;
     }
 
+    /* Header Links Fix */
+    .header-links {
+        position: static;
+        width: 100%;
+        text-align: right;
+        padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .banner-login-link {
+        display: inline-block;
+        margin: 5px;
+    }
+
     /* Column Layouts */
     .mission-row,
     .content-flex-wrapper {
@@ -1070,11 +1084,24 @@ main {
 }
 
 @media screen and (max-width: 900px) and (orientation: portrait) {
+    /* Header Adjustments */
+    header {
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    .header-links {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: auto;
+    }
+
     /* Split Navigation Layout */
     .main-nav {
         width: 100%;
         padding: 10px 0;
-        transform: none; /* Remove previous transform */
+        margin-bottom: 0; /* Reduce space before rolling banner */
     }
 
         .main-nav ul {
@@ -1084,29 +1111,31 @@ main {
             padding: 0;
             margin: 0;
             width: 100%;
+            max-width: 100%;
         }
 
         .main-nav li {
-            width: 48%; /* Split into two columns */
+            width: 50%; /* Two items per row */
             margin: 5px 0;
+            box-sizing: border-box;
+            padding: 0 10px;
         }
 
-            /* Left column links */
+            /* Left aligned links */
             .main-nav li:nth-child(odd) {
                 text-align: left;
-                padding-left: 2%;
             }
 
-            /* Right column links */
+            /* Right aligned links */
             .main-nav li:nth-child(even) {
-                text-align: center;
-                padding-right: 2%;
+                text-align: right;
             }
 
-    /* Adjust rolling banner position */
+    /* Rolling Banner - Closer to Nav */
     .rolling-banner {
         margin-top: 0;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
+        padding-top: 10px;
     }
 
     /* Shield and Ribbon adjustments */
@@ -1136,7 +1165,7 @@ main {
         z-index: 1;
     }
 
-        /* Ensure headings and paragraphs don't overlap with forms */
+        /* Spacing between elements */
         .form-container + h1,
         .form-container + h2,
         .form-container + h3,
@@ -1166,13 +1195,26 @@ main {
     }
 }
 
-/* Additional specific adjustments for very narrow screens */
 @media screen and (max-width: 576px) {
-    /* Adjust navigation for very small screens */
+    /* Header Links for very small screens */
+    .header-links {
+        position: relative;
+        top: 0;
+        right: 0;
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .banner-login-link {
+        display: inline-block;
+        margin: 5px;
+        font-size: 0.9em;
+    }
+
+    /* Navigation for very small screens */
     .main-nav li {
-        width: 100%; /* Stack all nav items on very small screens */
-        text-align: left;
-        padding-left: 5%;
+        width: 50%; /* Maintain two items per row */
+        padding: 5px;
     }
 
     /* Form container adjustments */
