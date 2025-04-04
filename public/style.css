@@ -285,6 +285,18 @@ main {
     line-height: 1.5; /* some comfortable line spacing */
 }
 
+/* Adjust spacing in restricted viewports */
+@media screen and (max-width: 1200px) {
+    .about-us-landing {
+        margin: 0.5rem auto 1rem auto; /* reduced top margin to bring it closer to rolling news */
+    }
+
+    /* Ensure paragraph has proper spacing */
+    .about-us-landing .cta-text {
+        margin-top: 2rem; /* Add space between h2 and paragraph */
+    }
+}
+
 
 /* Float the tutor0.jpg so text flows around/under it */
 .float-right {
@@ -1178,7 +1190,7 @@ main {
     /* Center mission statement */
     .mission-statement {
         text-align: center;
-        margin: 10px auto 30px auto;
+        margin: 5px auto 40px auto; /* Reduced top margin, increased bottom margin */
     }
 
     /* Specific adjustment for parent zone heading */
