@@ -29,10 +29,10 @@ header {
     /* Two layered backgrounds: shield on top, tartan behind */
     background-image: url('/images/bannerShield2.png'), url('/images/bannerBackground.PNG');
     background-repeat: no-repeat, repeat;
-    /* Position the shield 20px from the left & top, 
+    /* Position the shield 20px from the left & top,
        while the tartan repeats from the top-left. */
     background-position: 20px 20px, left top;
-    /* Scale the shield to 100px wide, 
+    /* Scale the shield to 100px wide,
        the tartan tiles to 50px wide. */
     background-size: 100px auto, 150px auto;
     /* Banner padding (height) */
@@ -99,7 +99,7 @@ header {
     }
 
         .main-nav ul li {
-            position: relative; 
+            position: relative;
             border-left: 1px solid #ADD8E6;
         }
             .main-nav ul li:first-child {
@@ -211,7 +211,7 @@ main {
 .main-ribbons {
     max-width: 200px;
     width: 100%;
-    margin-top: 257px; 
+    margin-top: 257px;
     margin-left: 0.42rem; /* shift horizontally if needed */
 }
 
@@ -296,7 +296,7 @@ main {
     border: 2px solid #C8A2C8; /* keep your lilac border if desired */
 }
 
-/* A new keyframes for the heading’s fade & grow */
+/* A new keyframes for the headingï¿½s fade & grow */
 @keyframes fadeGrow {
     0% {
         opacity: 0;
@@ -368,8 +368,8 @@ main {
     /* The keyframes below will override these once triggered. */
 }
 
-    /* We'll use forwards to retain final state, 
-   and set a short 0.8s duration + 1.5s or so delay 
+    /* We'll use forwards to retain final state,
+   and set a short 0.8s duration + 1.5s or so delay
    (so it starts after the heading's done). */
     .fade-later.fade-in {
         animation: fadeUpQuick 0.5s 1.2s forwards ease-in-out;
@@ -377,7 +377,7 @@ main {
 
 
 
-/* By default, .fade-in-on-scroll elements start hidden. 
+/* By default, .fade-in-on-scroll elements start hidden.
    We'll remove these inline styles once they're observed. */
 .fade-in-on-scroll {
     opacity: 0;
@@ -519,18 +519,18 @@ main {
 
 
 
-/* 
+/*
    Example: styling for the parent/tutor login buttons
-   so they're 3× bigger and match the tutor search style
+   so they're 3ï¿½ bigger and match the tutor search style
 */
 .zone-login-btn {
     background-color: #0057B7; /* same as your tutor search button */
     color: #fff;
     border: none;
-    padding: 23px 33px; 
+    padding: 23px 33px;
     cursor: pointer;
     border-radius: 4px;
-    font-size: 2.3em; 
+    font-size: 2.3em;
     }
 
 
@@ -1160,21 +1160,21 @@ main {
         border-top: 1px solid rgba(0, 0, 0, 0.1);
     }
 
-    /* Shield and Ribbon adjustments */
-    .main-shield {
-        width: 50%;
-        margin: 40px auto 20px;
-        display: block;
-        clear: both;
+    /* Hide Shield and Ribbons on portrait orientation */
+    .left-col {
+        display: none;
     }
 
-    .main-ribbons {
-        width: 50%;
-        position: relative;
-        left: 50%;
-        transform: translateX(-50%);
-        margin: 20px auto 40px;
-        clear: both;
+    /* Adjust right column to take full width */
+    .right-col {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    /* Center mission statement */
+    .mission-statement {
+        text-align: center;
+        margin: 20px auto;
     }
 
     /* Form container specific adjustments */
@@ -1214,6 +1214,12 @@ main {
         float: none !important;
         display: block;
         margin: 20px auto;
+    }
+
+    /* Adjust mission row to account for missing left column */
+    .mission-row {
+        flex-direction: column;
+        align-items: center;
     }
 }
 
@@ -1256,6 +1262,23 @@ main {
     .newsletter-button {
         width: 100%;
         margin: 10px 0;
+    }
+
+    /* Ensure shield and ribbons remain hidden in portrait orientation */
+    @media (orientation: portrait) {
+        .left-col {
+            display: none;
+        }
+
+        .right-col {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        .mission-row {
+            flex-direction: column;
+            align-items: center;
+        }
     }
 }
 
@@ -1315,6 +1338,28 @@ main {
         width: 100%;
         margin: 10px 0;
     }
+
+    /* Ensure shield and ribbons remain hidden in portrait orientation */
+    @media (orientation: portrait) {
+        .left-col {
+            display: none;
+        }
+
+        .right-col {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        .mission-row {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Improve spacing for content without shield/ribbons */
+        .about-us-landing {
+            margin: 10px auto;
+        }
+    }
 }
 
 /* Additional breakpoint for very narrow screens */
@@ -1330,6 +1375,30 @@ main {
 
     .main-nav li {
         font-size: 0.8em;
+    }
+
+    /* Ensure shield and ribbons remain hidden in portrait orientation */
+    @media (orientation: portrait) {
+        .left-col {
+            display: none;
+        }
+
+        .right-col {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        /* Further reduce spacing for very small screens */
+        .about-us-landing {
+            margin: 5px auto;
+        }
+
+        /* Reduce mission statement size */
+        .mission-statement {
+            font-size: 18px;
+            margin: 10px auto;
+            padding: 5px;
+        }
     }
 }
 

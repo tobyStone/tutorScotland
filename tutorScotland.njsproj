@@ -119,6 +119,7 @@
     <Content Include="public\login.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\responsive-helper.js" />
     <Content Include="public\style.css">
       <SubType>Code</SubType>
     </Content>
