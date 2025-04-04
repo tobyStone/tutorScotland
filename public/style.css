@@ -289,11 +289,17 @@ main {
 /* Float the tutor0.jpg so text flows around/under it */
 .float-right {
     float: right; /* anchor to the right side */
-    margin-left: 1rem; /* gap between image & text */
-    margin-bottom: 1rem; /* space below image so text doesn't butt up */
+    margin-left: 1.5rem; /* gap between image & text */
+    margin-bottom: 1.5rem; /* space below image so text doesn't butt up */
+    margin-top: 0.5rem; /* space above image */
     max-width: 227px; /* or 40%, etc. to control image size */
     height: auto;
     border: 2px solid #C8A2C8; /* keep your lilac border if desired */
+}
+
+/* Specific styling for the main landing page image */
+.large-study-img {
+    max-width: 265px; /* Base size (227px * 1.17) */
 }
 
 /* Add extra padding in restricted viewports */
@@ -307,8 +313,11 @@ main {
 
     /* Specific adjustment for the main landing page image */
     .large-study-img.float-right {
-        max-width: 50%; /* Even larger for the main image */
+        max-width: 58.5%; /* 17% larger (50% * 1.17) */
         border-width: 3px; /* Thicker border */
+        margin-left: 2.5rem; /* Increased left margin */
+        margin-bottom: 2.5rem; /* Increased bottom margin */
+        margin-top: 1.5rem; /* Increased top margin */
     }
 }
 
@@ -627,8 +636,10 @@ main {
 
 /* Specific styling for parents.html form */
 .right-col .form-container {
-    float: right;
-    margin: 0 0 20px 20px;
+    float: none;
+    margin: 30px auto;
+    clear: both;
+    max-width: 350px; /* Slightly wider form */
 }
 
 /* Specific styling for tutorDirectory.html form */
@@ -645,6 +656,18 @@ main {
         margin: 30px auto;
         clear: both;
     }
+}
+
+/* Parents page extra sections styling */
+.parents-extra-sections {
+    clear: both;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.parents-section {
+    margin-bottom: 30px;
 }
 
     /* Add Lilac Shadow on Hover */
