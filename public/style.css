@@ -1043,12 +1043,12 @@ main {
         flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        padding: 10px;
-        min-height: auto;
+        padding: 20px;
+        min-height: 100px; /* Increased height for header */
     }
 
         header h1 {
-            font-size: 1.8em;
+            font-size: 2em;
             margin: 0;
             padding: 5px;
             flex: 1;
@@ -1080,15 +1080,27 @@ main {
         width: 100%;
     }
 
-    /* Shield and Ribbon spacing */
-    .main-shield {
-        margin: 30px auto;
-        clear: both;
+    /* Hide Shield and Ribbons under 1200px in both orientations */
+    .left-col {
+        display: none;
     }
 
-    .main-ribbons {
-        margin: 30px auto;
-        clear: both;
+    /* Adjust right column to take full width */
+    .right-col {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    /* Center mission statement */
+    .mission-statement {
+        text-align: center;
+        margin: 20px auto;
+    }
+
+    /* Adjust mission row to account for missing left column */
+    .mission-row {
+        flex-direction: column;
+        align-items: center;
     }
 
     /* Form container spacing */
@@ -1160,21 +1172,12 @@ main {
         border-top: 1px solid rgba(0, 0, 0, 0.1);
     }
 
-    /* Hide Shield and Ribbons on portrait orientation */
-    .left-col {
-        display: none;
-    }
+    /* Portrait-specific adjustments */
+    /* Note: Shield and Ribbons are already hidden for all orientations under 1200px */
 
-    /* Adjust right column to take full width */
-    .right-col {
-        width: 100%;
-        margin-left: 0;
-    }
-
-    /* Center mission statement */
-    .mission-statement {
-        text-align: center;
-        margin: 20px auto;
+    /* Additional portrait-specific spacing adjustments */
+    .about-us-landing {
+        margin: 15px auto;
     }
 
     /* Form container specific adjustments */
@@ -1264,15 +1267,11 @@ main {
         margin: 10px 0;
     }
 
-    /* Ensure shield and ribbons remain hidden in portrait orientation */
+    /* Additional adjustments for smaller screens */
     @media (orientation: portrait) {
-        .left-col {
-            display: none;
-        }
-
-        .right-col {
-            width: 100%;
-            margin-left: 0;
+        /* Portrait-specific adjustments for smaller screens */
+        .about-us-landing {
+            margin: 10px auto;
         }
 
         .mission-row {
@@ -1379,15 +1378,6 @@ main {
 
     /* Ensure shield and ribbons remain hidden in portrait orientation */
     @media (orientation: portrait) {
-        .left-col {
-            display: none;
-        }
-
-        .right-col {
-            width: 100%;
-            margin-left: 0;
-        }
-
         /* Further reduce spacing for very small screens */
         .about-us-landing {
             margin: 5px auto;
@@ -1399,6 +1389,25 @@ main {
             margin: 10px auto;
             padding: 5px;
         }
+    }
+}
+
+/* Landscape-specific adjustments under 1200px */
+@media screen and (max-width: 1200px) and (orientation: landscape) {
+    /* Ensure proper spacing in landscape mode */
+    .about-us-landing {
+        margin: 20px auto;
+    }
+
+    /* Adjust mission statement for landscape */
+    .mission-statement {
+        font-size: 1.5em;
+        margin: 15px auto;
+    }
+
+    /* Improve content flow in landscape */
+    main {
+        padding: 15px;
     }
 }
 
