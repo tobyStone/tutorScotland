@@ -668,6 +668,46 @@ main {
         margin: 30px auto;
         clear: both;
     }
+
+    /* Specific adjustments for portrait orientation */
+    @media (orientation: portrait) {
+        /* Ensure proper spacing after paragraph */
+        .right-col .cta-text {
+            margin-bottom: 30px;
+        }
+
+        .right-col .form-container {
+            margin: 20px auto 40px auto;
+            max-width: 90%;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            transform: scale(1.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Make form elements larger and more touch-friendly */
+        .right-col .form-container select,
+        .right-col .form-container input,
+        .right-col .form-container button {
+            padding: 12px;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .right-col .form-container button {
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .right-col .form-container h3 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    }
 }
 
 /* Parents page extra sections styling */
@@ -676,6 +716,29 @@ main {
     margin-top: 40px;
     padding-top: 20px;
     border-top: 1px solid #eee;
+}
+
+/* Adjust spacing in portrait orientation */
+@media screen and (max-width: 1200px) and (orientation: portrait) {
+    .parents-extra-sections {
+        margin-top: 20px;
+        padding-top: 30px;
+        border-top: 2px solid #eee;
+    }
+}
+
+/* Further adjustments for smaller screens */
+@media screen and (max-width: 576px) and (orientation: portrait) {
+    .right-col .form-container {
+        margin: 15px auto 30px auto;
+        padding: 15px;
+        transform: scale(1);
+    }
+
+    .parents-extra-sections {
+        margin-top: 10px;
+        padding-top: 20px;
+    }
 }
 
 .parents-section {
@@ -1493,7 +1556,12 @@ main {
     @media (orientation: portrait) {
         /* Further reduce spacing for very small screens */
         .about-us-landing {
-            margin: 5px auto;
+            margin: 0 auto 5px auto;
+        }
+
+        /* Maintain space between h2 and paragraph */
+        .about-us-landing .cta-text {
+            margin-top: 1.5rem; /* Slightly reduced but still maintains separation */
         }
 
         /* Reduce mission statement size */
