@@ -700,11 +700,15 @@ main {
 }
 
 /* Specific styling for parents.html form */
-.right-col .form-container {
+#parentFormContainer {
     float: none;
     margin: 30px auto;
     clear: both;
-    max-width: 350px;
+    max-width: 400px; /* Wider form */
+    position: relative;
+    z-index: 2;
+    background-color: #f9f9f9;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
 /* Responsive adjustments for forms */
