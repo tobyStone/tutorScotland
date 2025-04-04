@@ -305,6 +305,29 @@ main {
     max-width: 350px;
 }
 
+/* A general lilac button style (similar to .login-box). */
+.lilac-button {
+    display: inline-block;
+    background-color: #C8A2C8; /* or your chosen lilac color */
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+    margin-top: 10px; /* spacing around if needed */
+}
+
+    /* Hover/active states, etc. */
+    .lilac-button:hover {
+        background-color: #b37cb3; /* slightly darker lilac on hover */
+    }
+
+    .lilac-button:active {
+        background-color: #9e4da0; /* tapped/active color, optional */
+    }
+
+
 /* Responsive adjustments for forms */
 @media screen and (max-width: 1200px) {
     .right-col .form-container {
