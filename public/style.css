@@ -692,7 +692,7 @@ main {
 }
 
 /* Special positioning for the landing page form */
-.landing-container .form-container {
+.form-container {
     position: absolute;
     left: 37%; /* Moves it more central */
     top: 59vh; /* Moves it further down */
@@ -713,7 +713,7 @@ main {
 
 /* Responsive adjustments for forms */
 @media screen and (max-width: 1200px) {
-    .right-col .form-container {
+    .form-container {
         float: none;
         margin: 30px auto;
         clear: both;
@@ -783,7 +783,7 @@ main {
 
 /* Further adjustments for smaller screens */
 @media screen and (max-width: 576px) and (orientation: portrait) {
-    .right-col .form-container {
+    .form-container {
         margin: 15px auto 30px auto;
         padding: 15px;
         transform: scale(1);
@@ -1427,7 +1427,7 @@ main {
 
     /* Specific adjustments for tutor directory and parents pages */
     .tutor-directory-page .form-container,
-    .parents-zone .form-container {
+    .form-container {
         margin: 40px auto;
         clear: both;
         background-color: rgba(255, 255, 255, 0.95);
