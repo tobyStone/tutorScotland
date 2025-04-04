@@ -1044,7 +1044,7 @@ main {
         align-items: center;
         justify-content: space-between;
         padding: 20px;
-        min-height: 100px; /* Increased height for header */
+        min-height: 137px; /* Increased height for header */
     }
 
         header h1 {
