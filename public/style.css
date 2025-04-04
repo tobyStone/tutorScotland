@@ -299,9 +299,16 @@ main {
 /* Add extra padding in restricted viewports */
 @media screen and (max-width: 1200px) {
     .float-right {
-        margin-left: 1.5rem;
-        margin-bottom: 1.5rem;
-        margin-top: 0.5rem;
+        margin-left: 2rem;
+        margin-bottom: 2rem;
+        margin-top: 1rem;
+        max-width: 45%; /* Make image larger */
+    }
+
+    /* Specific adjustment for the main landing page image */
+    .large-study-img.float-right {
+        max-width: 50%; /* Even larger for the main image */
+        border-width: 3px; /* Thicker border */
     }
 }
 
@@ -1092,13 +1099,7 @@ main {
         background-size: 90px auto, 150px auto;
     }
 
-    /* Handle direct links in header (for parents.html) */
-    header > a.banner-login-link {
-        grid-area: buttons;
-        justify-self: end;
-        align-self: end;
-        margin: 0 0 0 10px;
-    }
+    /* Header styling is now consistent across all pages */
 
         header h1 {
             grid-area: title;
@@ -1154,7 +1155,13 @@ main {
     /* Center mission statement */
     .mission-statement {
         text-align: center;
-        margin: 20px auto;
+        margin: 10px auto 30px auto;
+    }
+
+    /* Specific adjustment for parent zone heading */
+    .right-col .mission-statement {
+        margin-top: 0;
+        padding-top: 0;
     }
 
     /* Adjust mission row to account for missing left column */

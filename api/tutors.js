@@ -82,7 +82,7 @@ module.exports = async (req, res) => {
             <head>
                 <meta charset="UTF-8">
                 <title>Tutors Alliance Scotland - Find Your Tutor</title>
-                <link rel="icon" href="/images/bannerShield2.png" type="image/png">     
+                <link rel="icon" href="/images/bannerShield2.png" type="image/png">
                 <link rel="stylesheet" href="/style.css">
                 <script src="/responsive-helper.js"></script>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -92,20 +92,20 @@ module.exports = async (req, res) => {
     <header>
         <h1>Tutors Alliance Scotland</h1>
             <div class="header-links">
-            <a href="index.html" class="banner-login-link login-box">Home</a>
-            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a href="/index.html" class="banner-login-link login-box">Home</a>
+            <a href="/login.html?role=admin" class="banner-login-link login-box">Login</a>
             </div>
     </header>
 
     <!-- Dark-blue nav below banner -->
     <nav class="main-nav">
         <ul>
-            <li><a href="about-us.html">About Us</a></li>
-            <li><a href="tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="parents.html">Enter Parent Zone</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/about-us.html">About Us</a></li>
+            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="/parents.html">Enter Parent Zone</a></li>
+            <li><a href="/contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
