@@ -297,59 +297,6 @@ main {
     }
 }
 
-/* Specific styling for parents.html form */
-.right-col .form-container {
-    float: none;
-    margin: 30px auto;
-    clear: both;
-    max-width: 350px;
-}
-
-/* Responsive adjustments for forms */
-@media screen and (max-width: 1200px) {
-    .right-col .form-container {
-        float: none;
-        margin: 30px auto;
-        clear: both;
-        order: 2;
-    }
-
-    /* Ensure proper form positioning in parents page */
-    .about-us-landing {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .about-us-landing .cta-text {
-        order: 1;
-        margin-bottom: 20px;
-    }
-
-    .about-us-landing .form-container {
-        order: 2;
-        margin: 20px auto 40px;
-    }
-
-    .parents-extra-sections {
-        order: 3;
-        margin-top: 20px;
-    }
-
-    /* Specific adjustments for portrait orientation */
-    @media (orientation: portrait) {
-        .about-us-landing .cta-text {
-            margin-bottom: 30px;
-        }
-
-        .about-us-landing .form-container {
-            margin: 20px auto 40px;
-            max-width: 90%;
-            padding: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-            border-radius: 8px;
-        }
-    }
-}
 
 /* Float the tutor0.jpg so text flows around/under it */
 .float-right {
@@ -704,7 +651,14 @@ main {
     float: none;
     margin: 30px auto;
     clear: both;
-    max-width: 350px;
+    max-width: 350px; /* Slightly wider form */
+}
+
+/* Specific styling for tutorDirectory.html form */
+.tutor-directory-page .form-container {
+    margin: 30px auto;
+    float: none;
+    clear: both;
 }
 
 /* Responsive adjustments for forms */
@@ -713,51 +667,47 @@ main {
         float: none;
         margin: 30px auto;
         clear: both;
-        order: 2;
-    }
-
-    /* Ensure proper form positioning in parents page */
-    .about-us-landing {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .about-us-landing .cta-text {
-        order: 1;
-        margin-bottom: 20px;
-    }
-
-    .about-us-landing .form-container {
-        order: 2;
-        margin: 20px auto 40px;
-    }
-
-    .parents-extra-sections {
-        order: 3;
-        margin-top: 20px;
     }
 
     /* Specific adjustments for portrait orientation */
     @media (orientation: portrait) {
-        .about-us-landing .cta-text {
+        /* Ensure proper spacing after paragraph */
+        .right-col .cta-text {
             margin-bottom: 30px;
         }
 
-        .about-us-landing .form-container {
-            margin: 20px auto 40px;
+        .right-col .form-container {
+            margin: 20px auto 40px auto;
             max-width: 90%;
             padding: 20px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.15);
             border-radius: 8px;
+            transform: scale(1.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Make form elements larger and more touch-friendly */
+        .right-col .form-container select,
+        .right-col .form-container input,
+        .right-col .form-container button {
+            padding: 12px;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .right-col .form-container button {
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .right-col .form-container h3 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            text-align: center;
         }
     }
-}
-
-/* Specific styling for tutorDirectory.html form */
-.tutor-directory-page .form-container {
-    margin: 30px auto;
-    float: none;
-    clear: both;
 }
 
 /* Parents page extra sections styling */
