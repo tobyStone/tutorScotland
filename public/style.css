@@ -1039,24 +1039,34 @@ main {
 
     /* Header Adjustments */
     header {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        padding: 20px;
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+            "logo title"
+            "logo buttons";
+        padding: 15px;
         min-height: 137px; /* Increased height for header */
+        background-position: 15px 15px, left top;
+        background-size: 90px auto, 150px auto;
     }
 
         header h1 {
-            font-size: 2em;
+            grid-area: title;
+            font-size: 1.8em;
             margin: 0;
-            padding: 5px;
-            flex: 1;
+            padding: 5px 5px 5px 10px;
+            line-height: 1.2;
+            align-self: center;
+            word-wrap: break-word;
+            hyphens: auto;
+            margin-left: 0;
         }
 
     .header-links {
-        position: static;
-        width: auto;
+        grid-area: buttons;
+        justify-self: end;
+        align-self: end;
         padding: 5px;
         display: flex;
         gap: 10px;
@@ -1065,9 +1075,10 @@ main {
 
     .banner-login-link {
         display: inline-block;
-        margin: 0 5px;
-        padding: 5px 10px;
+        margin: 0;
+        padding: 8px 15px;
         white-space: nowrap;
+        font-size: 0.9em;
     }
 
     /* Column Layouts */
@@ -1116,17 +1127,21 @@ main {
 @media screen and (max-width: 900px) and (orientation: portrait) {
     /* Header Refinements */
     header {
-        padding: 5px;
+        padding: 10px;
         height: auto;
+        min-height: 120px;
+        grid-template-columns: 80px 1fr;
+        background-size: 70px auto, 150px auto;
+        background-position: 10px 10px, left top;
     }
 
         header h1 {
             font-size: 1.4em;
-            max-width: 60%;
+            padding: 5px 5px 5px 5px;
         }
 
     .header-links {
-        max-width: 40%;
+        padding: 5px 0;
     }
 
     /* Compact Navigation */
@@ -1284,26 +1299,24 @@ main {
 @media screen and (max-width: 576px) {
     /* Header Elements */
     header {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        padding: 5px;
+        grid-template-columns: 60px 1fr;
+        padding: 8px;
+        min-height: 100px;
+        background-size: 50px auto, 150px auto;
+        background-position: 8px 8px, left top;
     }
 
         header h1 {
             font-size: 1.2em;
-            max-width: 100%;
-            margin-bottom: 5px;
+            padding: 3px;
         }
 
     .header-links {
-        max-width: 100%;
-        justify-content: center;
-        margin-top: 5px;
+        padding: 3px 0;
     }
 
     .banner-login-link {
-        padding: 3px 8px;
+        padding: 5px 10px;
         font-size: 0.85em;
     }
 
@@ -1363,12 +1376,21 @@ main {
 
 /* Additional breakpoint for very narrow screens */
 @media screen and (max-width: 360px) {
+    header {
+        grid-template-columns: 50px 1fr;
+        padding: 5px;
+        min-height: 90px;
+        background-size: 40px auto, 150px auto;
+        background-position: 5px 5px, left top;
+    }
+
     header h1 {
         font-size: 1.1em;
+        padding: 2px;
     }
 
     .banner-login-link {
-        padding: 2px 6px;
+        padding: 4px 8px;
         font-size: 0.8em;
     }
 
@@ -1394,6 +1416,19 @@ main {
 
 /* Landscape-specific adjustments under 1200px */
 @media screen and (max-width: 1200px) and (orientation: landscape) {
+    /* Header adjustments for landscape */
+    header {
+        grid-template-columns: 100px 1fr;
+        min-height: 110px;
+        background-size: 80px auto, 150px auto;
+    }
+
+    /* Center align h1 in landscape mode */
+    header h1 {
+        text-align: center;
+        justify-self: center;
+    }
+
     /* Ensure proper spacing in landscape mode */
     .about-us-landing {
         margin: 20px auto;
@@ -1408,6 +1443,49 @@ main {
     /* Improve content flow in landscape */
     main {
         padding: 15px;
+    }
+}
+
+/* Small landscape screens */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    /* Further optimize header for small landscape screens */
+    header {
+        grid-template-columns: 80px 1fr;
+        min-height: 100px;
+        background-size: 65px auto, 150px auto;
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 1.5em;
+        text-align: center;
+        justify-self: center;
+    }
+
+    .banner-login-link {
+        padding: 6px 12px;
+    }
+}
+
+/* Very small landscape screens */
+@media screen and (max-width: 480px) and (orientation: landscape) {
+    /* Minimal header for very small landscape screens */
+    header {
+        grid-template-columns: 60px 1fr;
+        min-height: 90px;
+        background-size: 50px auto, 150px auto;
+        padding: 8px;
+    }
+
+    header h1 {
+        font-size: 1.3em;
+        text-align: center;
+        justify-self: center;
+    }
+
+    .banner-login-link {
+        padding: 5px 10px;
+        font-size: 0.85em;
     }
 }
 
