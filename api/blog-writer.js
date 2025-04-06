@@ -1,11 +1,15 @@
 // api/blog-writer.js
-const connectToDatabase = require('./connectToDatabase');
+const { connectToDatabase, uploadImage } = require('./connectToDatabase');
 const Blog = require('../models/Blog');
 const multer = require('multer');
 
-// Example: store uploaded files in /tmp or a custom folder
-// In production, you'd typically store them in a permanent location or a cloud service.
-const upload = multer({ dest: '/tmp' });
+// Configure multer for memory storage
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    }
+});
 
 module.exports = async (req, res) => {
     // Connect to DB once per Vercel invocation
@@ -33,51 +37,42 @@ module.exports = async (req, res) => {
                 content
             } = req.body;
 
-
-            //  Convert category from string => array
-            //    If user chose "general", store BOTH "primary" and "secondary"
             let categoryArray = [];
             if (category === 'general') {
                 categoryArray = ['primary', 'secondary'];
             } else {
-                // user picked 'primary' or 'secondary' => single-element array
                 categoryArray = [category];
             }
 
-            // If publishDate is provided, parse it. If not, default to now or omit.
-            let publishDateObj;
-            if (publishDate) {
-                publishDateObj = new Date(publishDate);
-                if (isNaN(publishDateObj)) {
-                    // If invalid date, handle as you wish; e.g. skip or use current date
-                    publishDateObj = new Date();
-                }
-            } else {
+            let publishDateObj = publishDate ? new Date(publishDate) : new Date();
+            if (isNaN(publishDateObj)) {
                 publishDateObj = new Date();
             }
 
-            // If a file was uploaded, get its path
-            let imagePath = '';
+            // Upload image to Vercel Blob if present
+            let imageUrl = '';
             if (req.file) {
-                imagePath = req.file.path; // e.g. "/tmp/abc123"
-                // In real life, you might rename/move it or upload to S3/Cloudinary, then store that final URL
+                imageUrl = await uploadImage(req.file, 'blog-images');
             }
 
             // Create the new Blog doc
             const newBlog = new Blog({
                 title,
                 author,
-                category,      // <--- store the category
+                category: categoryArray,
                 excerpt,
                 content,
                 publishDate: publishDateObj,
-                imagePath
+                imageUrl
             });
 
             // Save to MongoDB
             await newBlog.save();
 
-            return res.status(200).send('Blog entry created!');
+            return res.status(200).json({
+                message: 'Blog entry created!',
+                blog: newBlog
+            });
         } catch (err) {
             console.error('Error creating blog:', err);
             return res.status(500).send('Server error');

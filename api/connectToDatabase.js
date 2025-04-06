@@ -1,30 +1,38 @@
 // connectToDatabase.js
 const mongoose = require('mongoose');
-const config = require('../index/config');
+const { put } = require('@vercel/blob');
 
-let isConnected = false;
+let cachedDb = null;
 
-async function connectToDatabase() {
-    if (isConnected) {
-        console.log("Using existing database connection.");
-        return mongoose.connection;
-    }
+module.exports = {
+    connectToDatabase: async function() {
+        if (cachedDb) {
+            return cachedDb;
+        }
 
-    const dbUri = config.getDbConnectionString();
-    try {
-        await mongoose.connect(dbUri, {
+        const connection = await mongoose.connect(process.env.MONGODB_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 5000,
-            socketTimeoutMS: 45000,
         });
-        isConnected = true;
-        console.log("Database connected successfully.");
-        return mongoose.connection;
-    } catch (error) {
-        console.error("Error connecting to database:", error);
-        throw new Error("Failed to connect to database");
-    }
-}
 
-module.exports = connectToDatabase;
+        cachedDb = connection;
+        return cachedDb;
+    },
+
+    uploadImage: async function(file, folder) {
+        if (!file || !file.buffer) return '';
+        
+        try {
+            const filename = `${folder}/${Date.now()}-${file.originalname}`;
+            const blob = await put(filename, file.buffer, {
+                access: 'public',
+                addRandomSuffix: true
+            });
+            
+            return blob.url;
+        } catch (error) {
+            console.error('Error uploading to Vercel Blob:', error);
+            throw error;
+        }
+    }
+};

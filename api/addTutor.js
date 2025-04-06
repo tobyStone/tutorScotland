@@ -1,8 +1,16 @@
 // api/addTutor.js
-const mongoose = require('mongoose');
-const connectToDatabase = require('./connectToDatabase');
+const { connectToDatabase, uploadImage } = require('./connectToDatabase');
 const { verifyToken } = require('./auth');
-const Tutor = require('../models/Tutor'); // Must match your actual tutor model file name
+const Tutor = require('../models/Tutor');
+const multer = require('multer');
+
+// Configure multer for memory storage
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    }
+});
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -11,44 +19,59 @@ module.exports = async (req, res) => {
     }
 
     verifyToken(req, res, async () => {
-        // For case-insensitive check:
         const userRole = (req.user.role || '').toLowerCase();
         if (userRole !== 'admin') {
             return res.status(403).json({ message: "Access denied: Admin only" });
         }
 
-        try {
-            await connectToDatabase();
+        // Handle file upload
+        upload.single('tutorImage')(req, res, async (err) => {
+            if (err) {
+                console.error('Multer error:', err);
+                return res.status(500).send('Error uploading file');
+            }
 
-            // Extract fields from request body
-            const {
-                name,
-                subjects,
-                costRange,
-                badges,
-                imagePath,
-                contact,     
-                description,
-                postcodes
-            } = req.body;
+            try {
+                await connectToDatabase();
 
-            // Create new Tutor
-            const newTutor = new Tutor({
-                name,
-                subjects,    // array
-                costRange,
-                badges,      // array
-                imagePath,
-                contact,     // store the contact field
-                description,
-                postcodes    // array
-            });
+                // Extract fields from request body
+                const {
+                    name,
+                    subjects,
+                    costRange,
+                    badges,
+                    contact,     
+                    description,
+                    postcodes
+                } = req.body;
 
-            await newTutor.save();
-            return res.status(201).json({ message: "Tutor added successfully", tutor: newTutor });
-        } catch (error) {
-            console.error("Error adding tutor:", error);
-            return res.status(500).json({ message: "Server error" });
-        }
+                // Upload image to Vercel Blob if present
+                let imageUrl = '';
+                if (req.file) {
+                    imageUrl = await uploadImage(req.file, 'tutor-images');
+                }
+
+                // Create new Tutor
+                const newTutor = new Tutor({
+                    name,
+                    subjects: Array.isArray(subjects) ? subjects : [subjects],
+                    costRange,
+                    badges: Array.isArray(badges) ? badges : [badges],
+                    imageUrl,
+                    contact,
+                    description,
+                    postcodes: Array.isArray(postcodes) ? postcodes : [postcodes]
+                });
+
+                await newTutor.save();
+                return res.status(201).json({ 
+                    message: "Tutor added successfully", 
+                    tutor: newTutor 
+                });
+            } catch (error) {
+                console.error("Error adding tutor:", error);
+                return res.status(500).json({ message: "Server error" });
+            }
+        });
     });
 };

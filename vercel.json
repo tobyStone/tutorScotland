@@ -1,5 +1,25 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
+    }
+  ],
   "rewrites": [
     {
       "source": "/",
@@ -57,5 +77,10 @@
       "source": "/api/admin",
       "destination": "/api/admin.js"
     }
-  ]
+  ],
+  "env": {
+    "MONGODB_URI": "@mongodb_uri",
+    "JWT_SECRET": "@jwt_secret",
+    "BLOB_READ_WRITE_TOKEN": "@blob_read_write_token"
+  }
 }
