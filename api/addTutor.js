@@ -9,6 +9,14 @@ const upload = multer({
     storage: multer.memoryStorage(),
     limits: {
         fileSize: 5 * 1024 * 1024 // 5MB limit
+    },
+    fileFilter: (req, file, cb) => {
+        // Accept only image files
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'));
+        }
     }
 });
 
@@ -28,7 +36,10 @@ module.exports = async (req, res) => {
         upload.single('tutorImage')(req, res, async (err) => {
             if (err) {
                 console.error('Multer error:', err);
-                return res.status(500).send('Error uploading file');
+                return res.status(400).json({ 
+                    message: err.message || 'Error uploading file',
+                    error: err
+                });
             }
 
             try {
@@ -48,7 +59,15 @@ module.exports = async (req, res) => {
                 // Upload image to Vercel Blob if present
                 let imageUrl = '';
                 if (req.file) {
-                    imageUrl = await uploadImage(req.file, 'tutor-images');
+                    try {
+                        imageUrl = await uploadImage(req.file, 'tutor-images');
+                    } catch (uploadError) {
+                        console.error('Image upload error:', uploadError);
+                        return res.status(500).json({ 
+                            message: "Error uploading image to Blob storage",
+                            error: uploadError.message
+                        });
+                    }
                 }
 
                 // Create new Tutor
@@ -70,7 +89,10 @@ module.exports = async (req, res) => {
                 });
             } catch (error) {
                 console.error("Error adding tutor:", error);
-                return res.status(500).json({ message: "Server error" });
+                return res.status(500).json({ 
+                    message: "Server error",
+                    error: error.message
+                });
             }
         });
     });
