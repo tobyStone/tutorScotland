@@ -10,17 +10,11 @@
       "use": "@vercel/static"
     }
   ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/public/$1"
-    }
-  ],
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
     {
       "source": "/",
       "destination": "/public/index.html"
@@ -76,6 +70,10 @@
     {
       "source": "/api/admin",
       "destination": "/api/admin.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/public/$1"
     }
   ],
   "env": {
