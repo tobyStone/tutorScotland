@@ -41,12 +41,16 @@ function initResponsiveFeatures() {
 function adjustForViewport() {
     const isPortrait = window.innerHeight > window.innerWidth;
     const isNarrow = window.innerWidth < 600;
-    const isRestrictedViewport = isPortrait && isNarrow;
+    const isRestrictedViewport = isPortrait && isNarrow || window.innerWidth < 1200;
 
     // Add/remove classes based on viewport
     document.body.classList.toggle('portrait-mode', isPortrait);
     document.body.classList.toggle('narrow-viewport', isNarrow);
     document.body.classList.toggle('restricted-viewport', isRestrictedViewport);
+
+    // Check if we're on the contact page
+    const isContactPage = window.location.pathname.includes('contact');
+    document.body.classList.toggle('contact-page', isContactPage);
 
     // Handle shield and banner images in portrait mode on restricted viewports
     const shieldImage = document.getElementById('imageShield');

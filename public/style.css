@@ -1085,7 +1085,7 @@ main {
         align-items: center;
         justify-content: space-between;
         padding: 10px;
-        min-height: auto;
+        min-height: 120px; /* Increased height to fit bannerShield2.png */
     }
 
         header h1 {
@@ -1093,11 +1093,13 @@ main {
             margin: 0;
             padding: 5px;
             flex: 1;
+            text-align: center; /* Center align in landscape by default */
         }
 
     .header-links {
-        position: static;
-        width: auto;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
         padding: 5px;
         display: flex;
         gap: 10px;
@@ -1376,6 +1378,25 @@ main {
 
 /* Restricted viewport mode (portrait + narrow) */
 @media screen and (max-width: 600px) and (orientation: portrait) {
+    /* Increase header height and adjust h1 alignment in portrait mode */
+    header {
+        min-height: 150px; /* Even more height for portrait mode */
+        position: relative;
+    }
+
+    header h1 {
+        text-align: right; /* Right align in portrait mode */
+        padding-right: 15px;
+        font-size: 1.6em;
+    }
+
+    /* Position buttons at bottom right of header */
+    .header-links {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
+
     /* Hide shield and ribbons in portrait mode on restricted viewports */
     body.restricted-viewport .main-shield,
     body.restricted-viewport .main-ribbons {
@@ -1404,6 +1425,52 @@ main {
     body.restricted-viewport .directory-link-container {
         margin: 1.5rem auto;
         max-width: 100%;
+    }
+}
+
+/* Restricted viewport mode (landscape + narrow) */
+@media screen and (max-width: 1200px) and (orientation: landscape) {
+    /* Adjust header for landscape mode */
+    header {
+        min-height: 130px; /* Slightly taller for landscape */
+    }
+
+    header h1 {
+        text-align: center; /* Center align in landscape mode */
+    }
+
+    /* Position buttons at bottom right of header */
+    .header-links {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    /* Adjust shield and ribbons positioning in landscape mode */
+    .left-col {
+        float: right;
+        width: 120px;
+        margin-right: 15px;
+        margin-top: 15px;
+    }
+
+    /* Stack the images properly */
+    .main-shield {
+        margin-bottom: 10px;
+    }
+
+    /* Ensure images don't overlap other content */
+    .right-col {
+        width: calc(100% - 150px);
+        float: left;
+        padding-right: 15px;
+    }
+
+    /* Special case for contact page */
+    body.contact-page .left-col {
+        position: absolute;
+        top: 15px;
+        right: 15px;
     }
 }
 
