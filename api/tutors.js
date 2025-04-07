@@ -76,7 +76,7 @@ module.exports = async (req, res) => {
         if (tutors.length > 0) {
             tutorsHtml = tutors.map(tutor => `
                 <section class="tutor-card">
-                    <img src="${tutor.imagePath || '/images/tutor0.jpg'}" alt="Tutor ${tutor.name}" onerror="this.src='/images/tutor0.jpg'">
+                    <img src="${tutor.imagePath || '/images/tutor0.jpg'}" alt="Tutor ${tutor.name}" onerror="this.src='/images/tutor0.jpg'" class="tutor-image">
                     <h3>${tutor.name}</h3>
                     <p>Subjects: ${tutor.subjects.join(', ')}</p>
                     <p>Cost: <span class="purple-pound">${tutor.costRange.replace(/__P__/g, '&pound')} per hour</span></p>
@@ -178,11 +178,14 @@ module.exports = async (req, res) => {
                         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
                     }
 
-                    .tutor-card img {
+                    .tutor-image {
                         width: 100%;
-                        height: auto;
+                        height: 200px; /* Fixed height for consistency */
+                        object-fit: cover; /* Maintain aspect ratio while filling the container */
+                        object-position: center; /* Center the image */
                         border-radius: 4px;
                         margin-bottom: 10px;
+                        border: 1px solid #ddd;
                     }
 
                     .tutor-card h3 {

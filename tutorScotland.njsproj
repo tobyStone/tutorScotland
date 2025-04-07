@@ -62,9 +62,6 @@
     <Content Include="api\tutorConnection.js">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="api\tutorList.js">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="api\tutorzone.js">
       <SubType>Code</SubType>
     </Content>
