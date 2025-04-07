@@ -136,17 +136,21 @@ header {
     height: 2.5em; /* Enough height for the text */
     display: flex;
     align-items: center; /* vertically center the text */
+    margin-bottom: 10px;
 }
 
 .rolling-content {
     white-space: nowrap;
     display: inline-block;
+    padding-left: 100%;
     animation: scrollBanner 15s linear infinite;
+    font-weight: bold;
+    color: #0057B7;
 }
 
 @keyframes scrollBanner {
     0% {
-        transform: translateX(100%);
+        transform: translateX(0);
     }
 
     100% {
@@ -1388,6 +1392,10 @@ main {
         text-align: right; /* Right align in portrait mode */
         padding-right: 15px;
         font-size: 1.6em;
+        position: absolute;
+        right: 10px;
+        top: 20px;
+        width: 80%;
     }
 
     /* Position buttons at bottom right of header */

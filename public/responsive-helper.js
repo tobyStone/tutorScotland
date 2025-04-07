@@ -103,13 +103,38 @@ function initRollingBanner() {
     const rollingContent = document.querySelector('.rolling-content');
 
     if (rollingBanner && rollingContent) {
-        // If the banner doesn't have content yet, add a loading message
-        if (!rollingContent.textContent.trim()) {
+        // If the banner doesn't have content yet, add a loading message and fetch tutors
+        if (!rollingContent.textContent.trim() || rollingContent.textContent === 'Loading tutor information...') {
             rollingContent.textContent = 'Loading tutor information...';
-        }
 
-        // Add scrolling animation
-        animateRollingBanner(rollingContent);
+            // Fetch tutors from the API
+            fetch('/api/tutorlist')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(tutors => {
+                    if (tutors && tutors.length > 0) {
+                        // Format tutor information
+                        const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                        rollingContent.textContent = text;
+
+                        // Apply animation after content is loaded
+                        animateRollingBanner(rollingContent);
+                    } else {
+                        rollingContent.textContent = 'Welcome to Tutors Alliance Scotland';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching tutors:', error);
+                    rollingContent.textContent = 'Welcome to Tutors Alliance Scotland';
+                });
+        } else {
+            // Content already exists, just animate it
+            animateRollingBanner(rollingContent);
+        }
     }
 }
 
@@ -123,10 +148,18 @@ function animateRollingBanner(element) {
     const parent = element.parentElement;
     if (element.scrollWidth > parent.clientWidth) {
         // Set up the animation
+        element.style.display = 'inline-block';
+        element.style.whiteSpace = 'nowrap';
+        element.style.paddingLeft = '100%';
         element.style.animationName = 'scrollBanner';
-        element.style.animationDuration = Math.max(10, element.scrollWidth / 50) + 's';
+        element.style.animationDuration = Math.max(15, element.scrollWidth / 40) + 's';
         element.style.animationTimingFunction = 'linear';
         element.style.animationIterationCount = 'infinite';
+    } else {
+        // If content is not wider, center it
+        element.style.textAlign = 'center';
+        element.style.display = 'block';
+        element.style.width = '100%';
     }
 }
 
@@ -169,11 +202,6 @@ if (!document.querySelector('#responsive-helper-styles')) {
     const styleSheet = document.createElement('style');
     styleSheet.id = 'responsive-helper-styles';
     styleSheet.textContent = `
-        @keyframes scrollBanner {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
         .fade-in, .fade-in-on-scroll {
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
@@ -181,6 +209,14 @@ if (!document.querySelector('#responsive-helper-styles')) {
         .fade-in.visible, .fade-in-on-scroll.visible {
             opacity: 1 !important;
             transform: translateY(0) !important;
+        }
+
+        /* Additional responsive styles */
+        @media screen and (max-width: 600px) and (orientation: portrait) {
+            body.restricted-viewport .rolling-banner {
+                height: auto;
+                padding: 8px 0;
+            }
         }
     `;
     document.head.appendChild(styleSheet);
