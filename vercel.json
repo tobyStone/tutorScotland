@@ -30,6 +30,10 @@
       "destination": "/api/tutors.js"
     },
     {
+      "source": "/tutors",
+      "destination": "/api/tutors.js"
+    },
+    {
       "source": "/about",
       "destination": "/about-us.html"
     },

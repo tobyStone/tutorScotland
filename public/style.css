@@ -29,10 +29,10 @@ header {
     /* Two layered backgrounds: shield on top, tartan behind */
     background-image: url('/images/bannerShield2.png'), url('/images/bannerBackground.PNG');
     background-repeat: no-repeat, repeat;
-    /* Position the shield 20px from the left & top,
+    /* Position the shield 20px from the left & top, 
        while the tartan repeats from the top-left. */
     background-position: 20px 20px, left top;
-    /* Scale the shield to 100px wide,
+    /* Scale the shield to 100px wide, 
        the tartan tiles to 50px wide. */
     background-size: 100px auto, 150px auto;
     /* Banner padding (height) */
@@ -99,7 +99,7 @@ header {
     }
 
         .main-nav ul li {
-            position: relative;
+            position: relative; 
             border-left: 1px solid #ADD8E6;
         }
             .main-nav ul li:first-child {
@@ -211,7 +211,7 @@ main {
 .main-ribbons {
     max-width: 200px;
     width: 100%;
-    margin-top: 257px;
+    margin-top: 257px; 
     margin-left: 0.42rem; /* shift horizontally if needed */
 }
 
@@ -285,128 +285,15 @@ main {
     line-height: 1.5; /* some comfortable line spacing */
 }
 
-/* Adjust spacing in restricted viewports */
-@media screen and (max-width: 1200px) {
-    .about-us-landing {
-        margin: 0.5rem auto 1rem auto; /* reduced top margin to bring it closer to rolling news */
-    }
-
-    /* Ensure paragraph has proper spacing */
-    .about-us-landing .cta-text {
-        margin-top: 2rem; /* Add space between h2 and paragraph */
-    }
-}
-
-/* Specific styling for parents.html form */
-.right-col .form-container {
-    float: none;
-    margin: 30px auto;
-    clear: both;
-    max-width: 350px;
-}
-
-/* A general lilac button style (similar to .login-box). */
-.lilac-button {
-    display: inline-block;
-    background-color: #C8A2C8; /* or your chosen lilac color */
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 1.1em;
-    transition: background-color 0.3s ease;
-    margin-top: 10px; /* spacing around if needed */
-}
-
-    /* Hover/active states, etc. */
-    .lilac-button:hover {
-        background-color: #b37cb3; /* slightly darker lilac on hover */
-    }
-
-    .lilac-button:active {
-        background-color: #9e4da0; /* tapped/active color, optional */
-    }
-
-
-/* Responsive adjustments for forms */
-@media screen and (max-width: 1200px) {
-    .right-col .form-container {
-        float: none;
-        margin: 30px auto;
-        clear: both;
-        order: 2;
-    }
-
-    /* Ensure proper form positioning in parents page */
-    .about-us-landing {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .about-us-landing .cta-text {
-        order: 1;
-        margin-bottom: 20px;
-    }
-
-    .about-us-landing .form-container {
-        order: 2;
-        margin: 20px auto 40px;
-    }
-
-    .parents-extra-sections {
-        order: 3;
-        margin-top: 20px;
-    }
-
-    /* Specific adjustments for portrait orientation */
-    @media (orientation: portrait) {
-        .about-us-landing .cta-text {
-            margin-bottom: 30px;
-        }
-
-        .about-us-landing .form-container {
-            margin: 20px auto 40px;
-            max-width: 90%;
-            padding: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-            border-radius: 8px;
-        }
-    }
-}
 
 /* Float the tutor0.jpg so text flows around/under it */
 .float-right {
     float: right; /* anchor to the right side */
-    margin-left: 1.5rem; /* gap between image & text */
-    margin-bottom: 1.5rem; /* space below image so text doesn't butt up */
-    margin-top: 0.5rem; /* space above image */
+    margin-left: 1rem; /* gap between image & text */
+    margin-bottom: 1rem; /* space below image so text doesn't butt up */
     max-width: 227px; /* or 40%, etc. to control image size */
     height: auto;
     border: 2px solid #C8A2C8; /* keep your lilac border if desired */
-}
-
-/* Specific styling for the main landing page image */
-.large-study-img {
-    max-width: 265px; /* Base size (227px * 1.17) */
-}
-
-/* Add extra padding in restricted viewports */
-@media screen and (max-width: 1200px) {
-    .float-right {
-        margin-left: 2rem;
-        margin-bottom: 2rem;
-        margin-top: 1rem;
-        max-width: 45%; /* Make image larger */
-    }
-
-    /* Specific adjustment for the main landing page image */
-    .large-study-img.float-right {
-        max-width: 58.5%; /* 17% larger (50% * 1.17) */
-        border-width: 3px; /* Thicker border */
-        margin-left: 2.5rem; /* Increased left margin */
-        margin-bottom: 2.5rem; /* Increased bottom margin */
-        margin-top: 1.5rem; /* Increased top margin */
-    }
 }
 
 /* A new keyframes for the heading�s fade & grow */
@@ -481,8 +368,8 @@ main {
     /* The keyframes below will override these once triggered. */
 }
 
-    /* We'll use forwards to retain final state,
-   and set a short 0.8s duration + 1.5s or so delay
+    /* We'll use forwards to retain final state, 
+   and set a short 0.8s duration + 1.5s or so delay 
    (so it starts after the heading's done). */
     .fade-later.fade-in {
         animation: fadeUpQuick 0.5s 1.2s forwards ease-in-out;
@@ -490,22 +377,12 @@ main {
 
 
 
-/* By default, .fade-in-on-scroll elements start hidden.
+/* By default, .fade-in-on-scroll elements start hidden. 
    We'll remove these inline styles once they're observed. */
 .fade-in-on-scroll {
     opacity: 0;
     transform: translateY(20px);
 }
-
-.parents-extra-sections .form-container,
-.parents-page .form-container {
-    position: static !important;
-    transform: none !important;
-    left: auto !important;
-    top: auto !important;
-}
-
-
 
 
 .parents-zone-section {
@@ -642,7 +519,7 @@ main {
 
 
 
-/*
+/* 
    Example: styling for the parent/tutor login buttons
    so they're 3� bigger and match the tutor search style
 */
@@ -650,10 +527,10 @@ main {
     background-color: #0057B7; /* same as your tutor search button */
     color: #fff;
     border: none;
-    padding: 23px 33px;
+    padding: 23px 33px; 
     cursor: pointer;
     border-radius: 4px;
-    font-size: 2.3em;
+    font-size: 2.3em; 
     }
 
 
@@ -713,119 +590,15 @@ main {
 
 
 .form-container {
-    position: relative;
-    border: 1px solid #ddd;
-    padding: 15px;
-    max-width: 300px;
-    color: #333;
-    background-color: #f9f9f9;
-    margin: 20px auto;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    border-radius: 5px;
-}
-
-/* Special positioning for the landing page form */
-.landing-container .form-container {
     position: absolute;
     left: 37%; /* Moves it more central */
     top: 59vh; /* Moves it further down */
     transform: translate(-50%, -50%) scale(1.5);
-}
-
-/* Specific styling for parents.html form */
-.right-col .form-container {
-    float: none;
-    margin: 30px auto;
-    clear: both;
-    max-width: 350px;
-}
-
-/* Responsive adjustments for forms */
-@media screen and (max-width: 1200px) {
-    .right-col .form-container {
-        float: none;
-        margin: 30px auto;
-        clear: both;
-        order: 2;
-    }
-
-    /* Ensure proper form positioning in parents page */
-    .about-us-landing {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .about-us-landing .cta-text {
-        order: 1;
-        margin-bottom: 20px;
-    }
-
-    .about-us-landing .form-container {
-        order: 2;
-        margin: 20px auto 40px;
-    }
-
-    .parents-extra-sections {
-        order: 3;
-        margin-top: 20px;
-    }
-
-    /* Specific adjustments for portrait orientation */
-    @media (orientation: portrait) {
-        .about-us-landing .cta-text {
-            margin-bottom: 30px;
-        }
-
-        .about-us-landing .form-container {
-            margin: 20px auto 40px;
-            max-width: 90%;
-            padding: 20px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-            border-radius: 8px;
-        }
-    }
-}
-
-/* Specific styling for tutorDirectory.html form */
-.tutor-directory-page .form-container {
-    margin: 30px auto;
-    float: none;
-    clear: both;
-}
-
-/* Parents page extra sections styling */
-.parents-extra-sections {
-    clear: both;
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-}
-
-/* Adjust spacing in portrait orientation */
-@media screen and (max-width: 1200px) and (orientation: portrait) {
-    .parents-extra-sections {
-        margin-top: 20px;
-        padding-top: 30px;
-        border-top: 2px solid #eee;
-    }
-}
-
-/* Further adjustments for smaller screens */
-@media screen and (max-width: 576px) and (orientation: portrait) {
-    .right-col .form-container {
-        margin: 15px auto 30px auto;
-        padding: 15px;
-        transform: scale(1);
-    }
-
-    .parents-extra-sections {
-        margin-top: 10px;
-        padding-top: 20px;
-    }
-}
-
-.parents-section {
-    margin-bottom: 30px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    max-width: 250px;
+    color: #333;
+    background-color: #f9f9f9;
 }
 
     /* Add Lilac Shadow on Hover */
@@ -862,8 +635,6 @@ main {
         border-radius: 4px;
         font-size: 1em;
         transition: all 0.3s ease-in-out;
-        width: 100%;
-        margin-top: 10px;
     }
 
         /* Add Lilac Shadow on Hover */
@@ -1268,36 +1039,24 @@ main {
 
     /* Header Adjustments */
     header {
-        display: grid;
-        grid-template-columns: 120px 1fr;
-        grid-template-rows: auto auto;
-        grid-template-areas:
-            "logo title"
-            "logo buttons";
-        padding: 15px;
-        min-height: 137px; /* Increased height for header */
-        background-position: 15px 15px, left top;
-        background-size: 90px auto, 150px auto;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        min-height: auto;
     }
 
-    /* Header styling is now consistent across all pages */
-
         header h1 {
-            grid-area: title;
-            font-size: 2.4em; /* 33% larger */
+            font-size: 1.8em;
             margin: 0;
-            padding: 5px 5px 5px 10px;
-            line-height: 1.2;
-            align-self: center;
-            word-wrap: break-word;
-            hyphens: auto;
-            margin-left: 0;
+            padding: 5px;
+            flex: 1;
         }
 
     .header-links {
-        grid-area: buttons;
-        justify-self: end;
-        align-self: end;
+        position: static;
+        width: auto;
         padding: 5px;
         display: flex;
         gap: 10px;
@@ -1306,10 +1065,9 @@ main {
 
     .banner-login-link {
         display: inline-block;
-        margin: 0;
-        padding: 8px 15px;
+        margin: 0 5px;
+        padding: 5px 10px;
         white-space: nowrap;
-        font-size: 0.9em;
     }
 
     /* Column Layouts */
@@ -1322,33 +1080,15 @@ main {
         width: 100%;
     }
 
-    /* Hide Shield and Ribbons under 1200px in both orientations */
-    .left-col {
-        display: none;
+    /* Shield and Ribbon spacing */
+    .main-shield {
+        margin: 30px auto;
+        clear: both;
     }
 
-    /* Adjust right column to take full width */
-    .right-col {
-        width: 100%;
-        margin-left: 0;
-    }
-
-    /* Center mission statement */
-    .mission-statement {
-        text-align: center;
-        margin: 5px auto 40px auto; /* Reduced top margin, increased bottom margin */
-    }
-
-    /* Specific adjustment for parent zone heading */
-    .right-col .mission-statement {
-        margin-top: 0;
-        padding-top: 0;
-    }
-
-    /* Adjust mission row to account for missing left column */
-    .mission-row {
-        flex-direction: column;
-        align-items: center;
+    .main-ribbons {
+        margin: 30px auto;
+        clear: both;
     }
 
     /* Form container spacing */
@@ -1364,21 +1104,17 @@ main {
 @media screen and (max-width: 900px) and (orientation: portrait) {
     /* Header Refinements */
     header {
-        padding: 10px;
+        padding: 5px;
         height: auto;
-        min-height: 120px;
-        grid-template-columns: 80px 1fr;
-        background-size: 70px auto, 150px auto;
-        background-position: 10px 10px, left top;
     }
 
         header h1 {
-            font-size: 1.9em; /* 33% larger */
-            padding: 5px 5px 5px 5px;
+            font-size: 1.4em;
+            max-width: 60%;
         }
 
     .header-links {
-        padding: 5px 0;
+        max-width: 40%;
     }
 
     /* Compact Navigation */
@@ -1424,12 +1160,21 @@ main {
         border-top: 1px solid rgba(0, 0, 0, 0.1);
     }
 
-    /* Portrait-specific adjustments */
-    /* Note: Shield and Ribbons are already hidden for all orientations under 1200px */
+    /* Shield and Ribbon adjustments */
+    .main-shield {
+        width: 50%;
+        margin: 40px auto 20px;
+        display: block;
+        clear: both;
+    }
 
-    /* Additional portrait-specific spacing adjustments */
-    .about-us-landing {
-        margin: 15px auto;
+    .main-ribbons {
+        width: 50%;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 20px auto 40px;
+        clear: both;
     }
 
     /* Form container specific adjustments */
@@ -1469,12 +1214,6 @@ main {
         float: none !important;
         display: block;
         margin: 20px auto;
-    }
-
-    /* Adjust mission row to account for missing left column */
-    .mission-row {
-        flex-direction: column;
-        align-items: center;
     }
 }
 
@@ -1518,42 +1257,31 @@ main {
         width: 100%;
         margin: 10px 0;
     }
-
-    /* Additional adjustments for smaller screens */
-    @media (orientation: portrait) {
-        /* Portrait-specific adjustments for smaller screens */
-        .about-us-landing {
-            margin: 10px auto;
-        }
-
-        .mission-row {
-            flex-direction: column;
-            align-items: center;
-        }
-    }
 }
 
 @media screen and (max-width: 576px) {
     /* Header Elements */
     header {
-        grid-template-columns: 60px 1fr;
-        padding: 8px;
-        min-height: 100px;
-        background-size: 50px auto, 150px auto;
-        background-position: 8px 8px, left top;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 5px;
     }
 
         header h1 {
-            font-size: 1.6em; /* 33% larger */
-            padding: 3px;
+            font-size: 1.2em;
+            max-width: 100%;
+            margin-bottom: 5px;
         }
 
     .header-links {
-        padding: 3px 0;
+        max-width: 100%;
+        justify-content: center;
+        margin-top: 5px;
     }
 
     .banner-login-link {
-        padding: 5px 10px;
+        padding: 3px 8px;
         font-size: 0.85em;
     }
 
@@ -1587,147 +1315,21 @@ main {
         width: 100%;
         margin: 10px 0;
     }
-
-    /* Ensure shield and ribbons remain hidden in portrait orientation */
-    @media (orientation: portrait) {
-        .left-col {
-            display: none;
-        }
-
-        .right-col {
-            width: 100%;
-            margin-left: 0;
-        }
-
-        .mission-row {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Improve spacing for content without shield/ribbons */
-        .about-us-landing {
-            margin: 10px auto;
-        }
-    }
 }
 
 /* Additional breakpoint for very narrow screens */
 @media screen and (max-width: 360px) {
-    header {
-        grid-template-columns: 50px 1fr;
-        padding: 5px;
-        min-height: 90px;
-        background-size: 40px auto, 150px auto;
-        background-position: 5px 5px, left top;
-    }
-
     header h1 {
-        font-size: 1.5em; /* 33% larger */
-        padding: 2px;
+        font-size: 1.1em;
     }
 
     .banner-login-link {
-        padding: 4px 8px;
+        padding: 2px 6px;
         font-size: 0.8em;
     }
 
     .main-nav li {
         font-size: 0.8em;
-    }
-
-    /* Ensure shield and ribbons remain hidden in portrait orientation */
-    @media (orientation: portrait) {
-        /* Further reduce spacing for very small screens */
-        .about-us-landing {
-            margin: 0 auto 5px auto;
-        }
-
-        /* Maintain space between h2 and paragraph */
-        .about-us-landing .cta-text {
-            margin-top: 1.5rem; /* Slightly reduced but still maintains separation */
-        }
-
-        /* Reduce mission statement size */
-        .mission-statement {
-            font-size: 18px;
-            margin: 10px auto;
-            padding: 5px;
-        }
-    }
-}
-
-/* Landscape-specific adjustments under 1200px */
-@media screen and (max-width: 1200px) and (orientation: landscape) {
-    /* Header adjustments for landscape */
-    header {
-        grid-template-columns: 100px 1fr;
-        min-height: 110px;
-        background-size: 80px auto, 150px auto;
-    }
-
-    /* Center align h1 in landscape mode */
-    header h1 {
-        text-align: center;
-        justify-self: center;
-    }
-
-    /* Ensure proper spacing in landscape mode */
-    .about-us-landing {
-        margin: 20px auto;
-    }
-
-    /* Adjust mission statement for landscape */
-    .mission-statement {
-        font-size: 1.5em;
-        margin: 15px auto;
-    }
-
-    /* Improve content flow in landscape */
-    main {
-        padding: 15px;
-    }
-}
-
-/* Small landscape screens */
-@media screen and (max-width: 768px) and (orientation: landscape) {
-    /* Further optimize header for small landscape screens */
-    header {
-        grid-template-columns: 80px 1fr;
-        min-height: 100px;
-        background-size: 65px auto, 150px auto;
-        padding: 10px;
-    }
-
-    header h1 {
-        font-size: 2.0em; /* 33% larger */
-        text-align: center;
-        justify-self: center;
-    }
-
-    .banner-login-link {
-        padding: 6px 12px;
-    }
-}
-
-/* Very small landscape screens */
-@media screen and (max-width: 480px) and (orientation: landscape) {
-    /* Minimal header for very small landscape screens */
-    header {
-        grid-template-columns: 60px 1fr;
-        min-height: 90px;
-        background-size: 50px auto, 150px auto;
-        padding: 8px;
-    }
-
-    header h1 {
-        font-size: 1.7em; /* 33% larger */
-        text-align: center;
-        justify-self: center;
-    }
-
-    .banner-login-link {
-        padding: 5px 10px;
-        font-size: 0.85em;
     }
 }
 

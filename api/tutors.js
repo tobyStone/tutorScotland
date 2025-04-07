@@ -11,6 +11,7 @@ const tutorSchema = new mongoose.Schema({
     postcodes: [String]
 });
 
+// Get or create the Tutor model
 let Tutor;
 try {
     Tutor = mongoose.model('Tutor');
@@ -19,11 +20,12 @@ try {
 }
 
 module.exports = async (req, res) => {
-    await connectToDatabase();
-
-    const { subject, mode, postcode } = req.query;
-
     try {
+        // Connect to the database with better error handling
+        await connectToDatabase();
+        console.log('Database connected successfully');
+
+        const { subject, mode, postcode } = req.query;
         let query = {};
 
         console.log("Received query parameters:", { subject, mode, postcode });
@@ -52,7 +54,7 @@ module.exports = async (req, res) => {
         const tutors = await Tutor.find(query, '-description')
             .sort({ costRange: 1 }); // Ascending order: cheapest to most expensive
 
-        console.log("Tutors found:", tutors.length > 0 ? tutors : "No tutors found");
+        console.log("Tutors found:", tutors.length > 0 ? tutors.length : "No tutors found");
 
         const tutorsHtml = tutors.map(tutor => `
             <section class="tutor-card">
@@ -92,20 +94,20 @@ module.exports = async (req, res) => {
     <header>
         <h1>Tutors Alliance Scotland</h1>
             <div class="header-links">
-            <a href="/index.html" class="banner-login-link login-box">Home</a>
-            <a href="/login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a href="index.html" class="banner-login-link login-box">Home</a>
+            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
             </div>
     </header>
 
     <!-- Dark-blue nav below banner -->
     <nav class="main-nav">
         <ul>
-            <li><a href="/about-us.html">About Us</a></li>
-            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="/parents.html">Enter Parent Zone</a></li>
-            <li><a href="/contact.html">Contact Us</a></li>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="parents.html">Enter Parent Zone</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
+            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
@@ -158,7 +160,31 @@ module.exports = async (req, res) => {
         res.setHeader('Content-Type', 'text/html');
         return res.status(200).send(html);
     } catch (error) {
-        console.error("Error fetching tutors:", error);
-        return res.status(500).send('<p>Internal Server Error</p>');
+        console.error("Error in tutors API:", error);
+
+        // Send a more detailed error message for debugging
+        const errorHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Error</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; }
+                    .error { color: red; background: #ffeeee; padding: 10px; border-radius: 5px; }
+                    .message { margin-top: 20px; }
+                    .stack { margin-top: 20px; white-space: pre-wrap; background: #f5f5f5; padding: 10px; }
+                </style>
+            </head>
+            <body>
+                <h1>Something went wrong</h1>
+                <div class="error">${error.message}</div>
+                <div class="message">We're having trouble connecting to the database. Please try again later.</div>
+                <div class="stack">${error.stack}</div>
+                <p><a href="/">Return to home page</a></p>
+            </body>
+            </html>
+        `;
+
+        return res.status(500).send(errorHtml);
     }
 };
