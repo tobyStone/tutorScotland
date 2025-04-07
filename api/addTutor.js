@@ -1,6 +1,5 @@
 // api/addTutor.js
 const connectToDatabase = require('./db');
-const uploadImage = require('./uploadImage');
 const { verifyToken } = require('./auth');
 const Tutor = require('../models/Tutor');
 const multer = require('multer');
@@ -10,14 +9,6 @@ const upload = multer({
     storage: multer.memoryStorage(),
     limits: {
         fileSize: 5 * 1024 * 1024 // 5MB limit
-    },
-    fileFilter: (req, file, cb) => {
-        // Accept only image files
-        if (file.mimetype.startsWith('image/')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Only image files are allowed!'));
-        }
     }
 });
 
@@ -57,27 +48,12 @@ module.exports = async (req, res) => {
                     postcodes
                 } = req.body;
 
-                // Upload image to Vercel Blob if present
-                let imageUrl = '';
-                if (req.file) {
-                    try {
-                        imagePath = await uploadImage(req.file, 'tutor-images');
-                    } catch (uploadError) {
-                        console.error('Image upload error:', uploadError);
-                        return res.status(500).json({ 
-                            message: "Error uploading image to Blob storage",
-                            error: uploadError.message
-                        });
-                    }
-                }
-
                 // Create new Tutor
                 const newTutor = new Tutor({
                     name,
                     subjects: Array.isArray(subjects) ? subjects : [subjects],
                     costRange,
                     badges: Array.isArray(badges) ? badges : [badges],
-                    imagePath,
                     contact,
                     description,
                     postcodes: Array.isArray(postcodes) ? postcodes : [postcodes]

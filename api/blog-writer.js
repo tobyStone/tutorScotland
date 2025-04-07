@@ -1,6 +1,5 @@
 // api/blog-writer.js
 const connectToDatabase = require('./db');
-const uploadImage = require('./uploadImage');
 const Blog = require('../models/Blog');
 const multer = require('multer');
 
@@ -62,20 +61,6 @@ module.exports = async (req, res) => {
                     publishDateObj = new Date();
                 }
 
-                // Upload image to Vercel Blob if present
-                let imageUrl = '';
-                if (req.file) {
-                    try {
-                        imageUrl = await uploadImage(req.file, 'blog-images');
-                    } catch (uploadError) {
-                        console.error('Image upload error:', uploadError);
-                        return res.status(500).json({ 
-                            message: "Error uploading image to Blob storage",
-                            error: uploadError.message
-                        });
-                    }
-                }
-
                 // Create the new Blog doc
                 const newBlog = new Blog({
                     title,
@@ -83,8 +68,7 @@ module.exports = async (req, res) => {
                     category: categoryArray,
                     excerpt,
                     content,
-                    publishDate: publishDateObj,
-                    imageUrl
+                    publishDate: publishDateObj
                 });
 
                 // Save to MongoDB
