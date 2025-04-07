@@ -56,27 +56,36 @@ module.exports = async (req, res) => {
 
         console.log("Tutors found:", tutors.length > 0 ? tutors.length : "No tutors found");
 
-        const tutorsHtml = tutors.map(tutor => `
-            <section class="tutor-card">
-        <!-- Remove or comment out the anchor tag -->
-        <!-- <a href="/tutor/${tutor._id}"> -->
-            <img src="${tutor.imagePath}" alt="Tutor ${tutor.name}">
-        <!-- </a> -->
-                <h3>${tutor.name}</h3>
+        // Generate HTML for tutors or show a message if none found
+        let tutorsHtml = '';
+
+        if (tutors.length > 0) {
+            tutorsHtml = tutors.map(tutor => `
+                <section class="tutor-card">
+                    <img src="${tutor.imagePath || '/images/tutor0.jpg'}" alt="Tutor ${tutor.name}" onerror="this.src='/images/tutor0.jpg'">
+                    <h3>${tutor.name}</h3>
                     <p>Subjects: ${tutor.subjects.join(', ')}</p>
                     <p>Cost: <span class="purple-pound">${tutor.costRange.replace(/__P__/g, '&pound')} per hour</span></p>
-                  <ul>
-                    ${tutor.badges.map(badge => `
-                        <li class="badge-item">
-                            ${badge} <span class="badge-tick">&#10004;</span>
-                        </li>
-                    `).join('')}
-                </ul>
-              <p class="available-in custom-style">
-                <strong>Available in:</strong> ${tutor.postcodes.join(', ')}
-              </p>
-          </section>
-        `).join('');
+                    <ul>
+                        ${tutor.badges.map(badge => `
+                            <li class="badge-item">
+                                ${badge} <span class="badge-tick">&#10004;</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    <p class="available-in custom-style">
+                        <strong>Available in:</strong> ${tutor.postcodes.join(', ')}
+                    </p>
+                </section>
+            `).join('');
+        } else {
+            tutorsHtml = `
+                <div class="no-tutors-message">
+                    <h3>No tutors found matching your criteria</h3>
+                    <p>Please try different search parameters or <a href="/contact">contact us</a> for assistance.</p>
+                </div>
+            `;
+        }
 
         const html = `
             <!DOCTYPE html>
@@ -88,6 +97,121 @@ module.exports = async (req, res) => {
                 <link rel="stylesheet" href="/style.css">
                 <script src="/responsive-helper.js"></script>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    /* Ensure tutor cards are visible by default */
+                    .tutor-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                        gap: 20px;
+                        margin: 20px 0;
+                        opacity: 1 !important;
+                    }
+
+                    .tutor-card {
+                        background: white;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        padding: 15px;
+                        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                        opacity: 1 !important;
+                        transform: none !important;
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    }
+
+                    .tutor-card:hover {
+                        transform: translateY(-5px) !important;
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                    }
+
+                    .tutor-card img {
+                        width: 100%;
+                        height: auto;
+                        border-radius: 4px;
+                        margin-bottom: 10px;
+                    }
+
+                    .tutor-card h3 {
+                        margin-top: 0;
+                        color: #0057B7;
+                    }
+
+                    .badge-item {
+                        margin-bottom: 5px;
+                    }
+
+                    .badge-tick {
+                        color: green;
+                        font-weight: bold;
+                    }
+
+                    .pricing-key {
+                        background: #f9f9f9;
+                        padding: 10px;
+                        border-radius: 4px;
+                        margin-bottom: 20px;
+                        opacity: 1 !important;
+                    }
+
+                    .purple-pound {
+                        color: #C8A2C8;
+                        font-weight: bold;
+                    }
+
+                    /* Additional styling for search results page */
+                    .search-summary {
+                        margin: 20px 0;
+                        font-size: 1.1em;
+                        line-height: 1.5;
+                    }
+
+                    .search-again {
+                        margin: 20px 0 30px;
+                    }
+
+                    .btn {
+                        display: inline-block;
+                        padding: 10px 20px;
+                        background-color: #0057B7;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 4px;
+                        margin-right: 10px;
+                        transition: background-color 0.3s ease;
+                    }
+
+                    .btn:hover {
+                        background-color: #003d80;
+                    }
+
+                    .no-tutors-message {
+                        text-align: center;
+                        padding: 30px;
+                        background: #f9f9f9;
+                        border-radius: 8px;
+                        margin: 30px 0;
+                    }
+
+                    .no-tutors-message h3 {
+                        color: #0057B7;
+                        margin-top: 0;
+                    }
+
+                    .tutor-results-container {
+                        clear: both;
+                        margin: 20px 0;
+                        padding: 20px;
+                        background: #f9f9f9;
+                        border-radius: 8px;
+                    }
+
+                    .results-heading {
+                        color: #0057B7;
+                        margin-top: 0;
+                        margin-bottom: 20px;
+                        text-align: center;
+                        font-size: 1.5em;
+                    }
+                </style>
             </head>
             <body>
                <!-- Shared banner/header -->
@@ -119,9 +243,26 @@ module.exports = async (req, res) => {
         </div>
     </div>
                 <main>
-                     <div class="left-col">
+                    <div class="left-col">
                         <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
                         <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
+                    </div>
+
+                    <div class="right-col">
+                        <h2 class="mission-statement">Tutor Search Results</h2>
+                        <p class="search-summary">
+                            ${tutors.length > 0 ?
+                                `We found <strong>${tutors.length}</strong> tutors matching your search criteria.` :
+                                'No tutors were found matching your search criteria.'}
+                            ${subject ? ` Subject: <strong>${subject}</strong>` : ''}
+                            ${mode ? ` Mode: <strong>${mode}</strong>` : ''}
+                            ${postcode ? ` Postcode: <strong>${postcode}</strong>` : ''}
+                        </p>
+
+                        <p class="search-again">
+                            <a href="/parents" class="btn">Search Again</a>
+                            <a href="/contact" class="btn">Contact Us</a>
+                        </p>
                     </div>
 
                     <div class="pricing-key">
@@ -133,23 +274,29 @@ module.exports = async (req, res) => {
                             <span class="purple-pound">&pound&pound&pound&pound&pound</span> : &pound35+ per hour
                         </p>
                     </div>
-                    <div class="tutor-grid">${tutorsHtml}</div>
+                    <div class="tutor-results-container">
+                        <h3 class="results-heading">${tutors.length > 0 ? 'Available Tutors' : 'No Tutors Found'}</h3>
+                        <div class="tutor-grid">${tutorsHtml}</div>
+                    </div>
                     <script>
-                        document.querySelector('.thistle-leaf img').addEventListener('animationend', function() {
+                        // Immediately show tutor cards without waiting for animation
+                        document.addEventListener('DOMContentLoaded', function() {
                             const tutorCards = document.querySelectorAll('.tutor-card');
                             tutorCards.forEach((card, index) => {
                                 setTimeout(() => {
                                     card.classList.add('show');
                                 }, index * 300);  // Delay each card by 300ms
                             });
-                            const tutorgrids = document.querySelectorAll('.tutor-grid');
-                            tutorgrids.forEach((grid, index) => {
-                                setTimeout(() => {
-                                    grid.classList.add('show');
-                                }, index * 300);  // Delay each card by 300ms
-                            });
 
-                            document.querySelector('.pricing-key').classList.add('show');
+                            const tutorGrid = document.querySelector('.tutor-grid');
+                            if (tutorGrid) {
+                                tutorGrid.classList.add('show');
+                            }
+
+                            const pricingKey = document.querySelector('.pricing-key');
+                            if (pricingKey) {
+                                pricingKey.classList.add('show');
+                            }
                         });
                     </script>
                 </main>
