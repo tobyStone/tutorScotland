@@ -9,7 +9,6 @@
     <script src="/responsive-helper.js"></script>
     <style>
         /* Inline or place in style.css: center the admin form, add lilac background, bigger fields */
-
         .admin-form-container {
             max-width: 700px; /* Wider form */
             margin: 40px auto; /* Center horizontally, add top/bottom margin */
@@ -87,7 +86,6 @@
         </ul>
     </nav>
 
-
     <!-- Rolling banner container -->
     <div class="rolling-banner">
         <div class="rolling-content" id="tutorBanner">
@@ -95,16 +93,26 @@
         </div>
     </div>
 
-
     <main>
         <h2>Welcome, Admin!</h2>
         <p>Add new tutors to the database below.</p>
 
         <div class="admin-form-container">
             <h3>Add a Tutor</h3>
-            <form id="adminAddTutorForm" class="admin-tutor-form">
+
+            <!--
+              1) Use method=POST action=/api/addTutor
+              2) Use enctype="multipart/form-data" to upload file
+              3) Name fields to match addTutor.js (which expects name, subjects, costRange, badges, contact, description, postcodes, and tutorImage)
+            -->
+            <form id="adminAddTutorForm"
+                  class="admin-tutor-form"
+                  method="POST"
+                  action="/api/addTutor"
+                  enctype="multipart/form-data">
+
                 <label for="tutorName">Tutor Name:</label>
-                <input type="text" id="tutorName" name="tutorName" required>
+                <input type="text" id="tutorName" name="name" required>
 
                 <label for="subjects">Subjects (comma-separated):</label>
                 <input type="text" id="subjects" name="subjects" required>
@@ -115,8 +123,11 @@
                 <label for="badges">Badges (comma-separated):</label>
                 <input type="text" id="badges" name="badges">
 
-                <label for="imagePath">Image Path:</label>
-                <input type="text" id="imagePath" name="imagePath">
+                <label for="tutorImage">Tutor Image (upload file):</label>
+                <input type="file"
+                       id="tutorImage"
+                       name="tutorImage"
+                       accept="image/*" />
 
                 <label for="contact">Contact (email or website):</label>
                 <input type="text" id="contact" name="contact">
@@ -150,50 +161,16 @@
     </script>
 
     <script>
-
         // Rolling banner fetch
         fetch('/api/tutorList')
             .then(res => res.json())
             .then(tutors => {
-                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                const text = tutors
+                    .map(t => `${t.name} (${t.subjects.join(', ')})`)
+                    .join(' | ');
                 document.getElementById('tutorBanner').innerText = text;
             })
             .catch(err => console.error('Error fetching tutors:', err));
-
-
-        document.getElementById('adminAddTutorForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const newTutor = {
-                name: document.getElementById('tutorName').value.trim(),
-                subjects: document.getElementById('subjects').value.split(',').map(s => s.trim()),
-                costRange: document.getElementById('costRange').value.trim(),
-                badges: document.getElementById('badges').value.split(',').map(b => b.trim()),
-                imagePath: document.getElementById('imagePath').value.trim(),
-                contact: document.getElementById('contact').value.trim(),
-                description: document.getElementById('description').value.trim(),
-                postcodes: document.getElementById('postcodes').value.split(',').map(p => p.trim())
-            };
-
-            try {
-                // POST request to /api/addTutor
-                const response = await fetch('/api/addTutor', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newTutor)
-                });
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.message || 'Failed to add tutor');
-                }
-
-                alert("Tutor added successfully!");
-                // Optionally clear the form
-                document.getElementById('adminAddTutorForm').reset();
-            } catch (err) {
-                console.error("Error adding tutor:", err);
-                alert("Failed to add tutor. Please try again.");
-            }
-        });
     </script>
 </body>
 </html>

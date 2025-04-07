@@ -60,7 +60,7 @@ module.exports = async (req, res) => {
                 let imageUrl = '';
                 if (req.file) {
                     try {
-                        imageUrl = await uploadImage(req.file, 'tutor-images');
+                        imagePath = await uploadImage(req.file, 'tutor-images');
                     } catch (uploadError) {
                         console.error('Image upload error:', uploadError);
                         return res.status(500).json({ 
@@ -76,7 +76,7 @@ module.exports = async (req, res) => {
                     subjects: Array.isArray(subjects) ? subjects : [subjects],
                     costRange,
                     badges: Array.isArray(badges) ? badges : [badges],
-                    imageUrl,
+                    imagePath,
                     contact,
                     description,
                     postcodes: Array.isArray(postcodes) ? postcodes : [postcodes]
