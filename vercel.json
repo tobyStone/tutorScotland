@@ -60,6 +60,10 @@
     {
       "source": "/api/admin",
       "destination": "/api/admin.js"
+    },
+    {
+      "source": "/api/tutorlist",
+      "destination": "/api/tutors.js"
     }
 
   ]

@@ -1,27 +1,39 @@
 const mongoose = require('mongoose');
 const connectToDatabase = require('./connectToDatabase');
+const path = require('path');
 
-// Define Tutor Schema
-const tutorSchema = new mongoose.Schema({
-    name: String,
-    subjects: [String],
-    costRange: String,
-    badges: [String],
-    imagePath: String,
-    postcodes: [String],
-    contact: String // Add contact field for email or website
-});
+// Import the Tutor model
+let Tutor;
+try {
+    // Try to get the existing model first
+    Tutor = mongoose.model('Tutor');
+} catch {
+    // If it doesn't exist, import it from the models directory
+    try {
+        Tutor = require('../models/Tutor');
+    } catch (error) {
+        console.error('Error importing Tutor model:', error);
+        // Fallback to a simple model definition if the import fails
+        const tutorSchema = new mongoose.Schema({
+            name: String,
+            subjects: [String],
+            costRange: String,
+            badges: [String],
+            imagePath: String,
+            postcodes: [String],
+            contact: String
+        });
+        Tutor = mongoose.model('Tutor', tutorSchema);
+    }
+}
 
 async function seedTutors() {
     try {
         await connectToDatabase();
-        
-        // Create the Tutor model
-        const Tutor = mongoose.model('Tutor', tutorSchema);
-        
+
         // Clear existing tutors
         await Tutor.deleteMany({});
-        
+
         // Create sample tutors
         const tutors = [
             {
@@ -79,12 +91,12 @@ async function seedTutors() {
                 contact: "https://davidclark-history.example.com"
             }
         ];
-        
+
         // Insert the tutors
         await Tutor.insertMany(tutors);
-        
+
         console.log('Sample tutors created successfully!');
-        
+
         // Close the connection
         mongoose.connection.close();
     } catch (error) {

@@ -1,23 +1,30 @@
 const connectToDatabase = require('./connectToDatabase');
 const mongoose = require('mongoose');
+const path = require('path');
 
-// Define Tutor Schema
-const tutorSchema = new mongoose.Schema({
-    name: String,
-    subjects: [String],
-    costRange: String,
-    badges: [String],
-    imagePath: String,
-    postcodes: [String],
-    contact: String // Add contact field for email or website
-});
-
-// Get or create the Tutor model
+// Import the Tutor model
 let Tutor;
 try {
+    // Try to get the existing model first
     Tutor = mongoose.model('Tutor');
 } catch {
-    Tutor = mongoose.model('Tutor', tutorSchema);
+    // If it doesn't exist, import it from the models directory
+    try {
+        Tutor = require('../models/Tutor');
+    } catch (error) {
+        console.error('Error importing Tutor model:', error);
+        // Fallback to a simple model definition if the import fails
+        const tutorSchema = new mongoose.Schema({
+            name: String,
+            subjects: [String],
+            costRange: String,
+            badges: [String],
+            imagePath: String,
+            postcodes: [String],
+            contact: String
+        });
+        Tutor = mongoose.model('Tutor', tutorSchema);
+    }
 }
 
 module.exports = async (req, res) => {
@@ -25,6 +32,12 @@ module.exports = async (req, res) => {
         // Connect to the database with better error handling
         await connectToDatabase();
         console.log('Database connected successfully');
+
+        // Check if this is a request for the tutor list (for rolling banner)
+        if (req.url === '/api/tutorlist' || req.query.format === 'json') {
+            const tutors = await Tutor.find({}, 'name subjects -_id').lean();
+            return res.status(200).json(tutors);
+        }
 
         const { subject, mode, postcode } = req.query;
         let query = {};
