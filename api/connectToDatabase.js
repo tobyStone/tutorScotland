@@ -1,7 +1,7 @@
 // connectToDatabase.js
 
 const mongoose = require('mongoose');
-const { getDbConnectionString } = require('./config');
+const { getDbConnectionString } = require('../index/config');
 
 let cachedDb = null;
 
