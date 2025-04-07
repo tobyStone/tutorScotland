@@ -8,7 +8,8 @@ const tutorSchema = new mongoose.Schema({
     costRange: String,
     badges: [String],
     imagePath: String,
-    postcodes: [String]
+    postcodes: [String],
+    contact: String // Add contact field for email or website
 });
 
 // Get or create the Tutor model
@@ -76,6 +77,13 @@ module.exports = async (req, res) => {
                     <p class="available-in custom-style">
                         <strong>Available in:</strong> ${tutor.postcodes.join(', ')}
                     </p>
+                    ${tutor.contact ? `
+                    <div class="tutor-contact">
+                        <a href="${tutor.contact.includes('@') ? 'mailto:' + tutor.contact : tutor.contact}" class="contact-btn" target="${tutor.contact.includes('@') ? '_self' : '_blank'}">
+                            ${tutor.contact.includes('@') ? 'Email Tutor' : 'Visit Website'}
+                        </a>
+                    </div>
+                    ` : ''}
                 </section>
             `).join('');
         } else {
@@ -101,10 +109,44 @@ module.exports = async (req, res) => {
                     /* Ensure tutor cards are visible by default */
                     .tutor-grid {
                         display: grid;
-                        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                        grid-template-columns: repeat(3, 1fr);
                         gap: 20px;
                         margin: 20px 0;
                         opacity: 1 !important;
+                    }
+
+                    /* Adjust for smaller screens */
+                    @media (max-width: 900px) {
+                        .tutor-grid {
+                            grid-template-columns: repeat(2, 1fr);
+                        }
+                    }
+
+                    /* Single column for portrait on mobile */
+                    @media (max-width: 600px) and (orientation: portrait) {
+                        .tutor-grid {
+                            grid-template-columns: 1fr;
+                        }
+
+                        /* Hide shield and ribbons on portrait mobile */
+                        .left-col {
+                            display: none;
+                        }
+                    }
+
+                    /* Position the left column with shield and ribbons */
+                    .left-col {
+                        float: left;
+                        width: 150px;
+                        margin-left: 20px; /* Move slightly to the right */
+                        position: relative;
+                    }
+
+                    .main-shield, .main-ribbons {
+                        max-width: 100%;
+                        height: auto;
+                        display: block;
+                        margin: 0 auto;
                     }
 
                     .tutor-card {
@@ -166,6 +208,37 @@ module.exports = async (req, res) => {
 
                     .search-again {
                         margin: 20px 0 30px;
+                        text-align: left;
+                        padding-left: 180px; /* Position to the right of the shield */
+                    }
+
+                    /* Adjust for portrait mode */
+                    @media (max-width: 600px) and (orientation: portrait) {
+                        .search-again {
+                            padding-left: 0;
+                            text-align: center;
+                            margin-bottom: 15px;
+                        }
+
+                        .right-col {
+                            width: 100%;
+                            margin-left: 0;
+                        }
+
+                        /* Adjust layout for portrait mode */
+                        main {
+                            display: flex;
+                            flex-direction: column;
+                        }
+
+                        .pricing-key {
+                            order: 2;
+                            margin-top: 10px;
+                        }
+
+                        .tutor-results-container {
+                            order: 3;
+                        }
                     }
 
                     .btn {
@@ -194,6 +267,27 @@ module.exports = async (req, res) => {
                     .no-tutors-message h3 {
                         color: #0057B7;
                         margin-top: 0;
+                    }
+
+                    /* Contact button styling */
+                    .tutor-contact {
+                        margin-top: 15px;
+                        text-align: center;
+                    }
+
+                    .contact-btn {
+                        display: inline-block;
+                        padding: 8px 15px;
+                        background-color: #C8A2C8;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 4px;
+                        font-size: 0.9em;
+                        transition: background-color 0.3s ease;
+                    }
+
+                    .contact-btn:hover {
+                        background-color: #b48fb4;
                     }
 
                     .tutor-results-container {
@@ -260,7 +354,7 @@ module.exports = async (req, res) => {
                         </p>
 
                         <p class="search-again">
-                            <a href="/parents" class="btn">Search Again</a>
+                            <a href="/tutorDirectory" class="btn">Search Again</a>
                             <a href="/contact" class="btn">Contact Us</a>
                         </p>
                     </div>
