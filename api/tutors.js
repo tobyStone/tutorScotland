@@ -20,6 +20,7 @@ try {
             costRange: String,
             badges: [String],
             imagePath: String,
+            description: String,
             postcodes: [String],
             contact: String
         });
