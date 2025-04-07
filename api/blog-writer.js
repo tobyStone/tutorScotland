@@ -1,5 +1,6 @@
 // api/blog-writer.js
-const { connectToDatabase, uploadImage } = require('./connectToDatabase');
+const connectToDatabase = require('./db');
+const uploadImage = require('./uploadImage');
 const Blog = require('../models/Blog');
 const multer = require('multer');
 

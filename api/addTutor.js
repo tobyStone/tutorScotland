@@ -1,5 +1,6 @@
 // api/addTutor.js
-const { connectToDatabase, uploadImage } = require('./connectToDatabase');
+const connectToDatabase = require('./db');
+const uploadImage = require('./uploadImage');
 const { verifyToken } = require('./auth');
 const Tutor = require('../models/Tutor');
 const multer = require('multer');
