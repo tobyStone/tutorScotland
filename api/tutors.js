@@ -53,23 +53,29 @@ module.exports = async (req, res) => {
         };
 
         if (subject) {
-            // e.g. if user picks 'mathematics', synonyms[subject.toLowerCase()] is 'math'
-            const pattern = subjectSynonyms[subject.toLowerCase()] || subject;
-            // We'll do a partial match ignoring case
-            query.subjects = { $regex: pattern, $options: 'i' };
+            // Make the subject search more flexible
+            const searchTerms = subject.toLowerCase().split(/\s+/);
+            query.subjects = {
+                $regex: searchTerms.join('|'),
+                $options: 'i'
+            };
         }
 
         if (mode === "online") {
             query.postcodes = { $in: ["Online"] };
         } else if (mode === "in-person" && postcode) {
-            query.postcodes = { $in: [postcode] };
+            // Make postcode search more flexible
+            query.postcodes = { 
+                $regex: new RegExp(postcode, 'i')
+            };
         }
 
         console.log("MongoDB Query:", JSON.stringify(query, null, 2));
-        const tutors = await Tutor.find(query, '-description')
-            .sort({ costRange: 1 }); // Ascending order: cheapest to most expensive
+        const tutors = await Tutor.find(query)
+            .sort({ costRange: 1 })
+            .lean(); // Use lean() for better performance
 
-        console.log("Tutors found:", tutors.length > 0 ? tutors.length : "No tutors found");
+        console.log("Raw tutors result:", JSON.stringify(tutors, null, 2));
 
         // Generate HTML for tutors or show a message if none found
         let tutorsHtml = '';
