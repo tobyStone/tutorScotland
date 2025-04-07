@@ -144,7 +144,24 @@ module.exports = async (req, res) => {
 
                         /* Hide shield and ribbons on portrait mobile */
                         .left-col {
-                            display: none;
+                            display: none !important;
+                        }
+
+                        /* Adjust layout for portrait mode */
+                        .right-col {
+                            width: 100%;
+                            float: none;
+                            margin: 0 auto;
+                            padding: 0 15px;
+                        }
+
+                        .mission-statement {
+                            text-align: center;
+                            margin-bottom: 1.5rem;
+                        }
+
+                        .search-summary {
+                            text-align: center;
                         }
                     }
 

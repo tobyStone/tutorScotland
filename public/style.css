@@ -29,10 +29,10 @@ header {
     /* Two layered backgrounds: shield on top, tartan behind */
     background-image: url('/images/bannerShield2.png'), url('/images/bannerBackground.PNG');
     background-repeat: no-repeat, repeat;
-    /* Position the shield 20px from the left & top, 
+    /* Position the shield 20px from the left & top,
        while the tartan repeats from the top-left. */
     background-position: 20px 20px, left top;
-    /* Scale the shield to 100px wide, 
+    /* Scale the shield to 100px wide,
        the tartan tiles to 50px wide. */
     background-size: 100px auto, 150px auto;
     /* Banner padding (height) */
@@ -99,7 +99,7 @@ header {
     }
 
         .main-nav ul li {
-            position: relative; 
+            position: relative;
             border-left: 1px solid #ADD8E6;
         }
             .main-nav ul li:first-child {
@@ -211,7 +211,7 @@ main {
 .main-ribbons {
     max-width: 200px;
     width: 100%;
-    margin-top: 257px; 
+    margin-top: 257px;
     margin-left: 0.42rem; /* shift horizontally if needed */
 }
 
@@ -368,8 +368,8 @@ main {
     /* The keyframes below will override these once triggered. */
 }
 
-    /* We'll use forwards to retain final state, 
-   and set a short 0.8s duration + 1.5s or so delay 
+    /* We'll use forwards to retain final state,
+   and set a short 0.8s duration + 1.5s or so delay
    (so it starts after the heading's done). */
     .fade-later.fade-in {
         animation: fadeUpQuick 0.5s 1.2s forwards ease-in-out;
@@ -377,7 +377,7 @@ main {
 
 
 
-/* By default, .fade-in-on-scroll elements start hidden. 
+/* By default, .fade-in-on-scroll elements start hidden.
    We'll remove these inline styles once they're observed. */
 .fade-in-on-scroll {
     opacity: 0;
@@ -516,10 +516,51 @@ main {
     border-radius: 4px;
 }
 
+/* Directory Link Container styling */
+.directory-link-container {
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    max-width: 90%;
+}
+
+.directory-link-container h3 {
+    color: #0057B7;
+    margin-bottom: 0.5rem;
+}
+
+.directory-link-container p {
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary {
+    background-color: #0057B7;
+    color: white;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    display: inline-block;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #003d80;
+}
+
+.btn-large {
+    font-size: 1.2em;
+    padding: 15px 30px;
+}
 
 
 
-/* 
+
+/*
    Example: styling for the parent/tutor login buttons
    so they're 3� bigger and match the tutor search style
 */
@@ -527,10 +568,10 @@ main {
     background-color: #0057B7; /* same as your tutor search button */
     color: #fff;
     border: none;
-    padding: 23px 33px; 
+    padding: 23px 33px;
     cursor: pointer;
     border-radius: 4px;
-    font-size: 2.3em; 
+    font-size: 2.3em;
     }
 
 
@@ -1330,6 +1371,39 @@ main {
 
     .main-nav li {
         font-size: 0.8em;
+    }
+}
+
+/* Restricted viewport mode (portrait + narrow) */
+@media screen and (max-width: 600px) and (orientation: portrait) {
+    /* Hide shield and ribbons in portrait mode on restricted viewports */
+    body.restricted-viewport .main-shield,
+    body.restricted-viewport .main-ribbons {
+        display: none !important;
+    }
+
+    /* Adjust layout for restricted viewport */
+    body.restricted-viewport .right-col {
+        width: 100%;
+        float: none;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    body.restricted-viewport .mission-statement {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    body.restricted-viewport .cta-text {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    /* Style the directory link container in restricted viewport */
+    body.restricted-viewport .directory-link-container {
+        margin: 1.5rem auto;
+        max-width: 100%;
     }
 }
 
