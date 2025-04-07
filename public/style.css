@@ -1395,7 +1395,28 @@ main {
         position: absolute;
         right: 10px;
         top: 20px;
-        width: 80%;
+        width: 60%;
+        /* Break the words onto separate lines */
+        white-space: pre-line;
+        line-height: 1.2;
+        content: "Tutors\nAlliance\nScotland";
+    }
+
+    /* Use ::after to replace the content with line breaks */
+    header h1::after {
+        content: "Tutors\A Alliance\A Scotland";
+        white-space: pre;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        text-align: right;
+    }
+
+    /* Hide the original text */
+    header h1 span {
+        opacity: 0;
+        visibility: hidden;
     }
 
     /* Position buttons at bottom right of header */
