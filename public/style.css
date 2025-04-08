@@ -1348,7 +1348,7 @@ body.portrait-restricted header h1 {
     margin: 0;
     padding: 5px 15px 5px 5px;
     position: absolute;
-    right: 0;
+    right: -17px;
     top: 20px;
     width: 60%;
     /* Break words to fit better */
