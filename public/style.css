@@ -1348,7 +1348,6 @@ body.portrait-restricted header h1 {
     margin: 0;
     padding: 5px 15px 5px 5px;
     position: absolute;
-    right: 0;
     top: 20px;
     width: 60%;
     /* Break words to fit better */
@@ -1356,7 +1355,7 @@ body.portrait-restricted header h1 {
     line-height: 1.2;
     /* Add styling for better readability */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    left: calc(50% - 0.25rem);
+    left: calc(50% - 0.5rem);
 }
 
 /* Restricted viewport mode (portrait + narrow) */
