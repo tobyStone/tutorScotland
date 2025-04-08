@@ -1148,7 +1148,7 @@ main {
     }
 }
 
-@media screen and (max-width: 900px) and (orientation: portrait) {
+@media screen and (max-width: 1200px) and (orientation: portrait) {
     /* Header Refinements */
 
 
@@ -1157,11 +1157,11 @@ main {
        and allow line breaks if it’s long. */
         flex: 0 0 60%;
         font-size: 1.8em;
+        margin: 0; /* no large left margin needed in mobile mode */
         padding: 5px;
         text-align: right; /* if you’d like to push it to the right side */
         word-wrap: break-word; /* or word-break: break-all; if you want forced breaks */
         line-height: 1.3;
-        right: 40px;
     }
 
     .header-links {
