@@ -1456,7 +1456,7 @@ main {
     body.restricted-viewport.tutorDirectory-page .form-container {
         /* Override the absolute positioning */
         position: static; /* or relative—anything except absolute */
-        margin-top: 20px; /* space below the <p> */
+        margin-top: 77px; /* space below the <p> */
         left: auto; /* remove the left offset */
         top: auto; /* remove the top offset */
         transform: none; /* cancel the translate(-50%, -50%) scale(...) */
