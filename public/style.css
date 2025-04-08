@@ -1396,113 +1396,58 @@ main {
 
 /* Restricted viewport mode (portrait + narrow) */
 @media screen and (max-width: 600px) and (orientation: portrait) {
-    /* Increase header height and adjust h1 alignment in portrait mode */
-    header {
-        min-height: 150px; /* Even more height for portrait mode */
-        position: relative;
+    /* Tutor image adjustments for portrait restricted viewport */
+    body.restricted-viewport .large-study-img {
+        transform: scale(1.33); /* Make image 33% larger */
+        margin-top: 60px; /* Move down */
+        margin-left: auto;
+        margin-right: auto;
+        display: block; /* Ensures centering works */
+        float: none; /* Override any float */
+        max-width: 80%; /* Adjust base size for the 1.33 scale */
     }
 
-    header h1 {
-        text-align: right; /* Right align in portrait mode */
-        padding-right: 15px;
-        font-size: 1.6em;
-        position: absolute;
-        right: 10px;
-        top: 20px;
-        width: 60%;
-        /* Break the words onto separate lines */
-        white-space: pre-line;
-        line-height: 1.2;
-    }
-
-    /* Remove the duplicate content */
-    header h1::after {
-        display: none;
-    }
-
-    /* Position buttons at bottom right of header */
-    .header-links {
-        position: absolute;
-        bottom: 10px;
-        right: 40px; /* Moved more to the left from 10px */
-    }
-
-    /* Hide shield and ribbons in portrait mode on restricted viewports */
-    body.restricted-viewport .main-shield,
-    body.restricted-viewport .main-ribbons {
-        display: none !important;
-    }
-
-    /* Adjust layout for restricted viewport */
-    body.restricted-viewport .right-col {
-        width: 100%;
-        float: none;
-        margin: 0 auto;
-        padding: 0 15px;
-    }
-
-    body.restricted-viewport .mission-statement {
-        text-align: center;
-        margin-bottom: 1.5rem;
-    }
-
-    body.restricted-viewport .cta-text {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    /* Style the directory link container in restricted viewport */
-    body.restricted-viewport .directory-link-container {
-        margin: 1.5rem auto;
-        max-width: 100%;
+    /* Parents page resource section adjustment for portrait */
+    body.restricted-viewport .parents-resources {
+        margin-top: -40px; /* Move resources up closer to find-a-tutor div */
+        padding-top: 0;
     }
 }
 
 /* Restricted viewport mode (landscape + narrow) */
 @media screen and (max-width: 1200px) and (orientation: landscape) {
-    /* Adjust header for landscape mode */
-    header {
-        min-height: 140px; /* Increased height for landscape */
-        padding-bottom: 50px; /* Extra padding at bottom */
+    /* Parents page resource section adjustment for landscape */
+    body.restricted-viewport .parents-resources {
+        margin-top: -30px; /* Move resources up closer to find-a-tutor div */
+        padding-top: 0;
     }
 
-    header h1 {
-        text-align: center; /* Center align in landscape mode */
-        margin-top: 10px; /* Push down slightly from top */
+    /* Tutor Directory page adjustments for landscape */
+    body.restricted-viewport .tutorDirectory-page .tutor-finder {
+        margin-top: 40px; /* Move finder below the paragraph */
+        position: relative;
+        clear: both;
     }
+}
 
-    /* Position buttons at bottom right of header */
-    .header-links {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-    }
-
-    /* Adjust shield and ribbons positioning in landscape mode */
-    .left-col {
+/* Ensure desktop sizes maintain original positioning */
+@media screen and (min-width: 1201px) {
+    .large-study-img {
+        /* Maintain original desktop positioning */
+        transform: none;
+        margin: 20px;
         float: right;
-        width: 120px;
-        margin-right: 15px;
-        margin-top: 15px;
     }
 
-    /* Stack the images properly */
-    .main-shield {
-        margin-bottom: 10px;
+    .parents-resources {
+        /* Maintain original desktop positioning */
+        margin-top: initial;
+        padding-top: initial;
     }
 
-    /* Ensure images don't overlap other content */
-    .right-col {
-        width: calc(100% - 150px);
-        float: left;
-        padding-right: 15px;
-    }
-
-    /* Special case for contact page */
-    body.contact-page .left-col {
-        position: absolute;
-        top: 15px;
-        right: 15px;
+    .tutorDirectory-page .tutor-finder {
+        /* Maintain original desktop positioning */
+        margin-top: initial;
     }
 }
 
