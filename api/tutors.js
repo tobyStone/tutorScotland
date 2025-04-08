@@ -346,7 +346,7 @@ module.exports = async (req, res) => {
                     }
                 </style>
             </head>
-            <body>
+            <body class="tutor-directory-page">
                <!-- Shared banner/header -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
