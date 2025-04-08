@@ -1356,7 +1356,7 @@ body.portrait-restricted header h1 {
     line-height: 1.2;
     /* Add styling for better readability */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    left: calc(50% + 0.25rem);
+    left: calc(50% - 0.25rem);
 }
 
 /* Restricted viewport mode (portrait + narrow) */
