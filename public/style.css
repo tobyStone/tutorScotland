@@ -1451,19 +1451,6 @@ main {
     }
 }
 
-/* Only for narrow landscape mode + restricted viewport + on the tutorDirectory page */
-@media screen and (max-width: 1200px) and (orientation: landscape) {
-    body.restricted-viewport.tutorDirectory-page .form-container {
-        /* Override the absolute positioning */
-        position: static; /* or relative—anything except absolute */
-        margin-top: 77px; /* space below the <p> */
-        left: auto; /* remove the left offset */
-        top: auto; /* remove the top offset */
-        transform: none; /* cancel the translate(-50%, -50%) scale(...) */
-        /* (You can also adjust width, if needed) */
-        max-width: 95%;
-    }
-}
 
 
 /* High-DPI Screen Optimization */
