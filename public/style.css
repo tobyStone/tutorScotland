@@ -1451,6 +1451,21 @@ main {
     }
 }
 
+/* Only for narrow landscape mode + restricted viewport + on the tutorDirectory page */
+@media screen and (max-width: 1200px) and (orientation: landscape) {
+    body.restricted-viewport.tutorDirectory-page .form-container {
+        /* Override the absolute positioning */
+        position: static; /* or relative—anything except absolute */
+        margin-top: 20px; /* space below the <p> */
+        left: auto; /* remove the left offset */
+        top: auto; /* remove the top offset */
+        transform: none; /* cancel the translate(-50%, -50%) scale(...) */
+        /* (You can also adjust width, if needed) */
+        max-width: 95%;
+    }
+}
+
+
 /* High-DPI Screen Optimization */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
     .main-shield,
@@ -1458,49 +1473,5 @@ main {
     header img[src*="bannerShield2"] {
         image-rendering: -webkit-optimize-contrast;
         image-rendering: crisp-edges;
-    }
-}
-
-/* Restricted viewport mode (both orientations) */
-@media screen and (max-width: 1200px) {
-    /* Make header taller for both orientations in restricted viewport */
-    body.restricted-viewport header {
-        min-height: 180px; /* Increased height to fit banner image */
-        background-size: 100px auto, 180px auto; /* Adjust background image sizes */
-    }
-}
-
-/* Restricted viewport mode (portrait + narrow) */
-@media screen and (max-width: 600px) and (orientation: portrait) {
-    body.restricted-viewport header {
-        min-height: 200px; /* Even taller for portrait */
-    }
-
-    body.restricted-viewport header h1 {
-        text-align: right;
-        padding-right: 15px;
-        font-size: 1.6em;
-        position: absolute;
-        left: 50%; /* Start from center */
-        top: 20px;
-        width: 45%; /* Reduced width to ensure text wraps properly */
-        white-space: pre-line;
-        line-height: 1.2;
-        margin-left: 0; /* Reset any existing margin */
-    }
-}
-
-/* Restricted viewport mode (landscape + narrow) */
-@media screen and (max-width: 1200px) and (orientation: landscape) {
-    /* Tutor Directory page specific adjustments for landscape restricted viewport */
-    body.restricted-viewport.tutorDirectory-page .parents-zone {
-        position: relative;
-        z-index: 1;
-    }
-
-    body.restricted-viewport.tutorDirectory-page .form-container {
-        position: relative;
-        margin-top: 220px; /* Adjust this value based on the paragraph height */
-        z-index: 0;
     }
 }
