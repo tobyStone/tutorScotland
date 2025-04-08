@@ -42,7 +42,7 @@
         <ul>
             <li><a href="about-us.html">About Us</a></li>
             <li><a href="tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="parents.html">Enter Parent Zone</a></li>        
+            <li><a href="parents.html">Enter Parent Zone</a></li>
             <li><a href="contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
             <li><a href="tutorDirectory.html">Tutor Directory</a></li>
@@ -120,7 +120,7 @@
         }
 
         // Rolling banner fetch
-        fetch('/api/tutorList')
+        fetch('/api/tutors?format=json')
             .then(res => res.json())
             .then(tutors => {
                 const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');

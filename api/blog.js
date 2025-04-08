@@ -95,7 +95,7 @@ module.exports = async (req, res) => {
 
           <script>
             // Fetch tutors for the rolling banner
-            fetch('/api/tutorList')
+            fetch('/api/tutors?format=json')
               .then(res => res.json())
               .then(tutors => {
                 const text = tutors.map(t => \`\${t.name} (\${t.subjects.join(', ')})\`).join(' | ');

@@ -1,6 +1,5 @@
 const connectToDatabase = require('./connectToDatabase');
 const mongoose = require('mongoose');
-const path = require('path');
 
 // Import the Tutor model
 let Tutor;
@@ -65,7 +64,7 @@ module.exports = async (req, res) => {
             query.postcodes = { $in: ["Online"] };
         } else if (mode === "in-person" && postcode) {
             // Make postcode search more flexible
-            query.postcodes = { 
+            query.postcodes = {
                 $regex: new RegExp(postcode, 'i')
             };
         }
@@ -384,20 +383,6 @@ module.exports = async (req, res) => {
 
                     <div class="right-col">
                         <h2 class="mission-statement">Tutor Search Results</h2>
-                        <p class="search-summary">
-                            ${tutors.length > 0 ?
-                                `We found <strong>${tutors.length}</strong> tutors matching your search criteria.` :
-                                'No tutors were found matching your search criteria.'}
-                            ${subject ? ` Subject: <strong>${subject}</strong>` : ''}
-                            ${mode ? ` Mode: <strong>${mode}</strong>` : ''}
-                            ${postcode ? ` Postcode: <strong>${postcode}</strong>` : ''}
-                        </p>
-
-                        <p class="search-again">
-                            <a href="/tutorDirectory" class="btn">Search Again</a>
-                            <a href="/contact" class="btn">Contact Us</a>
-                        </p>
-                    </div>
 
                     <div class="pricing-key">
                         <p>
@@ -433,6 +418,7 @@ module.exports = async (req, res) => {
                             }
                         });
                     </script>
+                </div>
                 </main>
             </body>
             </html>

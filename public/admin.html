@@ -162,7 +162,7 @@
 
     <script>
         // Rolling banner fetch
-        fetch('/api/tutorList')
+        fetch('/api/tutors?format=json')
             .then(res => res.json())
             .then(tutors => {
                 const text = tutors

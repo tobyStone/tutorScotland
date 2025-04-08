@@ -110,7 +110,7 @@ function initRollingBanner() {
             rollingContent.textContent = 'Loading tutor information...';
 
             // Fetch tutors from the API
-            fetch('/api/tutorlist')
+            fetch('/api/tutors?format=json')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
