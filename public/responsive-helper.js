@@ -42,11 +42,13 @@ function adjustForViewport() {
     const isPortrait = window.innerHeight > window.innerWidth;
     const isNarrow = window.innerWidth < 600;
     const isRestrictedViewport = isPortrait && isNarrow || window.innerWidth < 1200;
+    const isPortraitRestricted = isPortrait && window.innerWidth < 1200;
 
     // Add/remove classes based on viewport
     document.body.classList.toggle('portrait-mode', isPortrait);
     document.body.classList.toggle('narrow-viewport', isNarrow);
     document.body.classList.toggle('restricted-viewport', isRestrictedViewport);
+    document.body.classList.toggle('portrait-restricted', isPortraitRestricted);
 
     // Check if we're on the contact page
     const isContactPage = window.location.pathname.includes('contact');
