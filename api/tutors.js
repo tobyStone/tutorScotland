@@ -134,6 +134,18 @@ module.exports = async (req, res) => {
                         opacity: 1 !important;
                     }
 
+                    #imageShield {
+                      top: 10% !important;
+                      left: 60% !important;
+                    }
+
+                    /* Make #imageBanner just below shield’s bottom edge */
+                    #imageBanner {
+                      top: 25% !important; /* Example: you may need to tweak 25% or 28% or 30% */
+                      left: 60% !important;
+                    }
+
+
                     /* Adjust for smaller screens */
                     @media (max-width: 900px) {
                         .tutor-grid {
@@ -344,6 +356,8 @@ module.exports = async (req, res) => {
                         text-align: center;
                         font-size: 1.5em;
                     }
+
+
                 </style>
             </head>
             <body class="tutor-directory-page">
