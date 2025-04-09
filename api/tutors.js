@@ -109,8 +109,7 @@ module.exports = async (req, res) => {
             tutorsHtml = `
                 <div class="no-tutors-message">
                     <h3>No tutors found matching your criteria</h3>
-                    <p>Please try different search parameters or <a href="/contact.html">contact us</a> for assistance.</p>
-                </div>
+                 </div>
             `;
         }
 
@@ -134,13 +133,13 @@ module.exports = async (req, res) => {
                         opacity: 1 !important;
                     }
                     .tutor-directory-page #imageShield {
-                        top: 277px !important;
+                        top: 177px !important;
                         left: 60% !important;
                     }
 
                     /* Make #imageBanner just below shield’s bottom edge */
                     .tutor-directory-page #imageBanner {
-                      top: 607px !important; /* Example: you may need to tweak 25% or 28% or 30% */
+                      top: 507px !important; /* Example: you may need to tweak 25% or 28% or 30% */
                       left: 60% !important;
                     }
 
