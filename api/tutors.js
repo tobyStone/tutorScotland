@@ -134,7 +134,7 @@ module.exports = async (req, res) => {
                         opacity: 1 !important;
                     }
                     .tutor-directory-page #imageShield {
-                        top: 300px !important;
+                        top: 277px !important;
                         left: 60% !important;
                     }
 
