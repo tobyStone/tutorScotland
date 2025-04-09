@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Tutor Scotland</title>
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
+    <link rel="stylesheet" href="/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/responsive-helper.js"></script>
+    <style>
+        /* Inline styles for the login page */
+        main {
+            padding: 40px 20px;
+            min-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            width: 300px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+            .login-container h2 {
+                font-size: 1.8em;
+                color: #0057B7;
+                margin-bottom: 15px;
+            }
+
+            .login-container form {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .login-container label {
+                margin: 10px 0 5px;
+                font-weight: bold;
+            }
+
+            .login-container input {
+                padding: 8px;
+                font-size: 1em;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
+            .login-container button {
+                margin-top: 15px;
+                padding: 10px 15px;
+                font-size: 1em;
+                background-color: #0057B7;
+                color: #fff;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+                .login-container button:hover {
+                    background-color: #0046a5;
+                }
+    </style>
+</head>
+<body>
+
+    <!-- Shared banner/header -->
+    <header>
+        <h1>Tutors Alliance Scotland</h1>
+        <div class="header-links">
+            <a href="index.html" class="banner-login-link login-box">Home</a>
+            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+        </div>
+    </header>
+
+    <!-- Dark-blue nav below banner -->
+    <nav class="main-nav">
+        <ul>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="parents.html">Enter Parent Zone</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+        </ul>
+    </nav>
+
+
+    <!-- Rolling banner container -->
+    <div class="rolling-banner">
+        <div class="rolling-content" id="tutorBanner">
+            <!-- JS will populate tutor names/subjects here -->
+        </div>
+    </div>
+
+    <main>
+        <div class="login-container">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        // Handle login form submission: call /api/login and, on success, redirect based on role
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    alert(data.message || 'Login failed');
+                    return;
+                }
+                // The token is set as an HTTP-only cookie by the server.
+                // Redirect based on the role (data.redirectUrl will be either "/parents" or "/admin")
+                window.location.href = data.redirectUrl;
+            } catch (err) {
+                console.error("Login error:", err);
+                alert("An error occurred during login. Please try again.");
+            }
+        });
+    </script>
+</body>
+</html>
