@@ -1050,7 +1050,7 @@ main {
 
 /* Move them to the right and closer together */
 .tutor-directory-page #imageShield {
-    top: 300px !important;
+    top: 10% !important;
     left: 60% !important;
 }
 

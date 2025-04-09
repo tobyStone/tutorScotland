@@ -133,10 +133,14 @@ module.exports = async (req, res) => {
                         margin: 20px 0;
                         opacity: 1 !important;
                     }
+                    .tutor-directory-page #imageShield {
+                        top: 300px !important;
+                        left: 60% !important;
+                    }
 
                     /* Make #imageBanner just below shield’s bottom edge */
                     .tutor-directory-page #imageBanner {
-                      top: 600px !important; /* Example: you may need to tweak 25% or 28% or 30% */
+                      top: 607px !important; /* Example: you may need to tweak 25% or 28% or 30% */
                       left: 60% !important;
                     }
 
