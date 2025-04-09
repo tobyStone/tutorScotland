@@ -375,7 +375,8 @@ module.exports = async (req, res) => {
             <!-- JS will populate tutor names/subjects here -->
         </div>
     </div>
-                <main>
+        <main>
+            <div class="content-flex-wrapper">
                     <div class="left-col">
                         <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
                         <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
@@ -418,6 +419,7 @@ module.exports = async (req, res) => {
                             }
                         });
                     </script>
+                </div>
                 </div>
                 </main>
             </body>
