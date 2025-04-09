@@ -1054,10 +1054,7 @@ main {
     left: 60% !important;
 }
 
-.tutor-directory-page #imageBanner {
-    top: 12% !important;
-    left: 60% !important;
-}
+
 /* Comprehensive Responsive Design Media Queries */
 @media screen and (max-width: 1200px) {
     /* Global Container Styles */
