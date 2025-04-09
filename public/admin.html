@@ -143,23 +143,6 @@
         </div>
     </main>
 
-    <!-- SERVER-SIDE CHECK: ensure the user is admin by calling /api/admin -->
-    <script>
-        (async function () {
-            try {
-                const response = await fetch('/api/admin');
-                if (!response.ok) {
-                    alert('Access denied. You must be an admin to view this page.');
-                    window.location.href = '/';
-                }
-            } catch (err) {
-                console.error('Error verifying admin access:', err);
-                alert('Error verifying access. Redirecting...');
-                window.location.href = '/';
-            }
-        })();
-    </script>
-
     <script>
         // Rolling banner fetch
         fetch('/api/tutors?format=json')
