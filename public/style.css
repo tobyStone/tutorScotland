@@ -737,6 +737,7 @@ main {
         margin-top: 0;
         height: 37vh;
         object-fit: cover;
+        height: 200px;
         border-radius: 1px;
     }
 
