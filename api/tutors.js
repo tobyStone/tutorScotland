@@ -368,12 +368,12 @@ module.exports = async (req, res) => {
     <!-- Dark-blue nav below banner -->
     <nav class="main-nav">
         <ul>
-            <li><a href="/about-us">About Us</a></li>
-            <li><a href="/tutorMembership">Tutor Membership</a></li>
-            <li><a href="/parents">Enter Parent Zone</a></li>
-            <li><a href="/contact">Contact Us</a></li>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="parents.html">Enter Parent Zone</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="/tutorDirectory">Tutor Directory</a></li>
+            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
