@@ -109,7 +109,7 @@ module.exports = async (req, res) => {
             tutorsHtml = `
                 <div class="no-tutors-message">
                     <h3>No tutors found matching your criteria</h3>
-                    <p>Please try different search parameters or <a href="/contact">contact us</a> for assistance.</p>
+                    <p>Please try different search parameters or <a href="/contact.html">contact us</a> for assistance.</p>
                 </div>
             `;
         }
