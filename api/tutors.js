@@ -136,7 +136,7 @@ module.exports = async (req, res) => {
 
                     /* Make #imageBanner just below shield’s bottom edge */
                     .tutor-directory-page #imageBanner {
-                      top: 25% !important; /* Example: you may need to tweak 25% or 28% or 30% */
+                      top: 27% !important; /* Example: you may need to tweak 25% or 28% or 30% */
                       left: 60% !important;
                     }
 

@@ -735,9 +735,8 @@ main {
         max-width: 100%;
         display: block; /* block-level so it starts at top of card */
         margin-top: 0;
-        height: 37vh;
+        height: 57vh;
         object-fit: cover;
-        height: 200px;
         border-radius: 1px;
     }
 
