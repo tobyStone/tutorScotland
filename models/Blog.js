@@ -7,7 +7,7 @@ const blogSchema = new mongoose.Schema({
     imagePath: String,
     category: [{
         type: String,
-        enum: ['secondary', 'primary']
+        enum: ['tutor', 'parent']
     }],
     createdAt: {
         type: Date,

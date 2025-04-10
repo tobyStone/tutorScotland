@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
 
             let categoryArray = [];
             if (category === 'general') {
-                categoryArray = ['primary', 'secondary'];
+                categoryArray = ['parent', 'tutor'];
             } else {
                 categoryArray = [category];
             }

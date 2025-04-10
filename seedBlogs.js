@@ -13,25 +13,25 @@ async function seedBlogs() {
                 title: '5 Tips for Effective Math Tutoring',
                 content: 'Mathematics can be a tricky subject, but with the right approach...',
                 imagePath: '/images/tutor2.jpg',
-                category: ['secondary', 'primary']
+                category: ['tutor']
             },
             {
                 title: 'Improving Literacy Skills at Home',
                 content: 'Encouraging reading and writing from a young age helps build strong literacy...',
                 imagePath: '/images/tutor1.jpg',
-                category: ['secondary']
+                category: ['parent']
             },
             {
                 title: 'Online vs. In-Person Tutoring',
                 content: 'In an ever-connected world, online tutoring has become a popular choice...',
                 imagePath: '/images/tutor0.jpg',
-                category: ['primary']
+                category: ['tutor']
             },
             {
                 title: 'General Advice on Study Techniques',
                 content: 'General study strategies can help students achieve success in all subjects...',
                 imagePath: '/images/flag.PNG',
-                category: ['secondary', 'primary']
+                category: ['parent', 'tutor']
             }
         ];
 

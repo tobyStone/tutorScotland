@@ -14,8 +14,8 @@ module.exports = async (req, res) => {
 
         if (category && category !== 'all') {
             if (category === 'general') {
-                // "General" means posts that have BOTH "primary" and "secondary" in the category array.
-                query.category = { $all: ['primary', 'secondary'] };
+                // "General" means posts that have BOTH "parent" and "tutor" in the category array.
+                query.category = { $all: ['parent', 'tutor'] };
             } else {
                 // Otherwise, filter by the specific category.
                 query.category = category;
@@ -82,8 +82,8 @@ module.exports = async (req, res) => {
                 <select id="categorySelect" name="category">
                   <option value="">(None)</option>
                   <option value="general">General</option>
-                  <option value="secondary">Secondary</option>
-                  <option value="primary">Primary</option>
+                  <option value="parent">Parent</option>
+                  <option value="tutor">Tutor</option>
                 </select>
                 <button type="submit">Apply</button>
               </form>
