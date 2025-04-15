@@ -364,7 +364,7 @@ module.exports = async (req, res) => {
         <h1>Tutors Alliance Scotland</h1>
             <div class="header-links">
             <a href="/" class="banner-login-link login-box">Home</a>
-            <a href="/login" class="banner-login-link login-box">Login</a>
+            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
             </div>
     </header>
 
