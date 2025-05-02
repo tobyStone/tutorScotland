@@ -65,6 +65,9 @@
     <Content Include="api\tutorzone.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\upload-image.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="models\Blog.js">
       <SubType>Code</SubType>
     </Content>
@@ -101,6 +104,9 @@
     <Content Include="public\images\tutor0.jpg" />
     <Content Include="public\images\tutor1.jpg" />
     <Content Include="public\images\tutor2.jpg" />
+    <Content Include="public\js\upload-helper.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="public\parents.html">
       <SubType>Code</SubType>
     </Content>
@@ -159,6 +165,7 @@
     <Folder Include="models\" />
     <Folder Include="public\" />
     <Folder Include="public\images\" />
+    <Folder Include="public\js\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>

@@ -47,7 +47,7 @@
         <!-- A single form to create a new blog post, with extra fields for microdata -->
         <section id="newBlogSection">
             <h2>Create a New Blog Post</h2>
-            <form id="blogForm" enctype="multipart/form-data">
+            <form id="blogForm">
                 <label>
                     Title:
                     <input type="text" id="titleField" name="title" required>
@@ -86,7 +86,7 @@
 
                 <label>
                     Image:
-                    <input type="file" id="imageField" name="blogImage" accept="image/*">
+                    <input type="file" id="imageField" accept="image/*">
                 </label>
 
                 <button type="submit">Create Blog</button>
@@ -95,86 +95,70 @@
         </section>
     </main>
 
-    <script>
-        //
-        // On form submission:
-        // 1) Build JSON-LD microdata from user input and populate #blogMicrodata <script>.
-        // 2) Submit the form data to /blog-writer (server side).
-        //
+    <script type="module">
+        import { uploadImage } from '/js/upload-helper.js';
 
         const blogForm = document.getElementById('blogForm');
         const blogMicrodata = document.getElementById('blogMicrodata');
 
-        blogForm.addEventListener('submit', (e) => {
+        blogForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // 1) Gather user input
+            /* 1. Gather user input */
             const title = document.getElementById('titleField').value.trim();
             const author = document.getElementById('authorField').value.trim();
+            const category = document.getElementById('categoryField').value;
             const excerpt = document.getElementById('excerptField').value.trim();
-            const publishDate = document.getElementById('publishDateField').value; // e.g. "2025-03-29T10:30"
+            const publishDate = document.getElementById('publishDateField').value;
             const content = document.getElementById('contentField').value.trim();
-            // For the image, we only have a file object in the browser; we won't know the final URL yet.
-            // Typically, your server will store the file and give you a final path.
 
-            // 2) Build JSON-LD object
-            // Domain references: https://tutorsalliancescotland.co.uk
+            /* 2. Upload image first (if any) */
+            const imageFile = document.getElementById('imageField').files[0];
+            const imagePath = imageFile ? await uploadImage(imageFile, 'blog') : '';
+
+            /* 3. Build JSON‑LD */
             const domain = 'https://tutorsalliancescotland.co.uk';
-            // If you have server logic to handle the file, you might eventually get an image URL like:
-            // domain + '/uploads/myImage.jpg'
-            // For now, let's just store a placeholder or the original file name in "description".
-
-            const nowISO = new Date().toISOString(); // fallback for dateModified
+            const nowISO = new Date().toISOString();
 
             const jsonLdObj = {
                 "@context": "https://schema.org",
                 "@type": "BlogPosting",
-                "mainEntityOfPage": {
-                    "@type": "WebPage",
-                    "@id": `${domain}/blog`
-                },
+                "mainEntityOfPage": { "@type": "WebPage", "@id": `${domain}/blog` },
                 "headline": title,
-                "author": {
-                    "@type": "Person",
-                    "name": author || "Tutors Alliance Scotland"
-                },
+                "author": { "@type": "Person", "name": author || "Tutors Alliance Scotland" },
                 "publisher": {
                     "@type": "Organization",
                     "name": "Tutors Alliance Scotland",
-                    "logo": {
-                        "@type": "ImageObject",
-                        "url": `${domain}/images/bannerShield2.png`
-                    }
+                    "logo": { "@type": "ImageObject", "url": `${domain}/images/bannerShield2.png` }
                 },
                 "datePublished": publishDate ? new Date(publishDate).toISOString() : nowISO,
                 "dateModified": nowISO,
-                "description": excerpt || (content.slice(0, 160) + '...'), // fallback excerpt
-                // If you already have a stored image path, you'd set "image" to that full URL:
-                "image": `${domain}/images/defaultBlog.png`, // placeholder
+                "description": excerpt || (content.slice(0, 160) + '…'),
+                "image": imagePath || `${domain}/images/defaultBlog.png`
             };
 
-            // 3) Insert JSON-LD into #blogMicrodata <script>
             blogMicrodata.textContent = JSON.stringify(jsonLdObj, null, 2);
 
-            // 4) Now proceed with the form submission to /blog-writer
-            const formData = new FormData(blogForm);
-
-            fetch('/blog-writer', {
+            /* 4. Send blog to server */
+            const payload = { title, author, category, excerpt, publishDate, content, imagePath };
+            const res = await fetch('/api/blog-writer', {
                 method: 'POST',
-                body: formData
-            })
-                .then(res => res.text())
-                .then(responseText => {
-                    alert(responseText);
-                    blogForm.reset();
-                    // Optionally clear or update the microdata script:
-                    blogMicrodata.textContent = '';
-                })
-                .catch(err => {
-                    console.error('Error creating blog:', err);
-                    alert('Error creating blog');
-                });
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const msg = await res.text();
+                alert(`Error: ${msg}`);
+                return;
+            }
+
+            const data = await res.json();
+            alert(data.message || 'Blog created!');
+            blogForm.reset();
+            blogMicrodata.textContent = '';
         });
     </script>
+
 </body>
 </html>

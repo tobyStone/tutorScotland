@@ -19,7 +19,8 @@ module.exports = async (req, res) => {
                 category,
                 excerpt,
                 publishDate,
-                content
+                content,
+                imagePath = ''
             } = req.body;
 
             let categoryArray = [];
@@ -41,7 +42,9 @@ module.exports = async (req, res) => {
                 category: categoryArray,
                 excerpt,
                 content,
-                publishDate: publishDateObj
+                imagePath,
+                publishDate: publishDateObj,
+                imagePath
             });
 
             // Save to MongoDB
