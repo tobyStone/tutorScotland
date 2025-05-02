@@ -1,6 +1,6 @@
 // api/upload-image.js
 const { put } = require('@vercel/blob');
-const formidable = require('formidable');
+const { formidable } = require('formidable');
 const fs = require('fs');
 
 module.exports = async (req, res) => {
