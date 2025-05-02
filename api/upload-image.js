@@ -10,18 +10,25 @@ module.exports = async (req, res) => {
     }
 
     // 1. Parse multipart/form-data
-    const form = formidable({ multiples: false });
+    const form = formidable({ multiples: false, keepExtensions: true });
     form.parse(req, async (err, fields, files) => {
         if (err) return res.status(400).json({ message: err.message });
 
-        const file = files.file;                     // <input name="file">
+        let file = files.file;                       // <input name="file">
         if (!file) return res.status(400).json({ message: 'No file found' });
+        if (Array.isArray(file)) file = file[0];     // safety for future multiples=true
+        
+        // Formidable v2+ => file.filepath
+        const tempPath = file.filepath || file.path;
+        if (!tempPath) {
+        return res.status(400).json({ message: 'Temp file path missing' });
+        }
 
         try {
             // 2. Push the stream to Vercel Blob
             const blob = await put(
                 `${fields.folder || 'misc'}/${Date.now()}-${file.originalFilename}`,
-                fs.createReadStream(file.filepath),
+                fs.createReadStream(tempPath),
                 {
                     access: 'public',                      // anonymous GETs
                     contentType: file.mimetype,
