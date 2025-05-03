@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
         // Build HTML for each post
         const postsHtml = posts.map(post => `
       <section class="blog-entry">
-        <img src="${post.imagePath}" alt="Blog image" class="blog-image">
+         ${post.imagePath ? `<img src="${post.imagePath}" alt="Blog image" class="blog-image">` : ''}
         <h2>${post.title}</h2>
         <p class="byline">By?${post.author}</p>
         <p>${post.content}</p>
