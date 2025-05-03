@@ -26,7 +26,8 @@ module.exports = async (req, res) => {
                 badges,
                 contact,     
                 description,
-                postcodes
+                postcodes,
+                imagePath = ''
             } = req.body;
 
             // Create new Tutor
@@ -37,7 +38,8 @@ module.exports = async (req, res) => {
                 badges: Array.isArray(badges) ? badges : [badges],
                 contact,
                 description,
-                postcodes: Array.isArray(postcodes) ? postcodes : [postcodes]
+                postcodes: Array.isArray(postcodes) ? postcodes : [postcodes],
+                imagePath
             });
 
             await newTutor.save();
