@@ -39,7 +39,8 @@ module.exports = async (req, res) => {
             return res.status(200).json(tutors);
         }
 
-        const { subject, mode, postcode } = req.query;
+        const { subject, mode = '', postcode } = req.query;
+        const modeLc = mode.toLowerCase().trim();
         let query = {};
 
         console.log("Received query parameters:", { subject, mode, postcode });
@@ -58,9 +59,9 @@ module.exports = async (req, res) => {
         }
 
 
-        if (mode === "online") {
-            query.postcodes = { $in: ["Online"] };
-        } else if (mode === "in-person" && postcode) {
+        if (modeLc === "online") {
+            query.postcodes = { $regex: /^online$/i };
+        } else if (modeLc === "in-person" && postcode) {
             // Make postcode search more flexible
             query.postcodes = {
                 $regex: new RegExp(postcode, 'i')
