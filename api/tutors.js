@@ -81,7 +81,13 @@ module.exports = async (req, res) => {
         if (tutors.length > 0) {
             tutorsHtml = tutors.map(tutor => `
                 <section class="tutor-card">
-                    <img src="${tutor.imagePath || '/images/tutor0.jpg'}" alt="Tutor ${tutor.name}" onerror="this.src='/images/tutor0.jpg'" class="tutor-image">
+                    <img src="${tutor.imagePath || '/images/tutor0.jpg'}"   
+                    alt="Tutor ${tutor.name}"
+                    onerror="this.src='/images/tutor0.jpg'"
+                    class="tutor-image" loading="lazy"                 
+                    decoding="async"
+                    width="300" height="200"    
+                    style="object-fit:cover">
                     <h3>${tutor.name}</h3>
                     <p>Subjects: ${tutor.subjects.join(', ')}</p>
                     <p>Cost: <span class="purple-pound">${tutor.costRange.replace(/__P__/g, '&pound')} per hour</span></p>
