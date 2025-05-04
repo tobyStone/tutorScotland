@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>TAS Admin – Add Tutor</title>
-    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
-    <link rel="stylesheet" href="/style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="/responsive-helper.js"></script>
+    <meta charset="UTF-8" />
+    <title>TAS Admin – Add Tutor</title>
+
+    <!-- favicon & css -->
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png" />
+    <link rel="stylesheet" href="/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/responsive-helper.js" defer></script>
+
     <style>
         /* centred lilac panel */
         .admin-form-container {
@@ -24,7 +27,8 @@
             font-weight: bold
         }
 
-        .admin-tutor-form input, .admin-tutor-form textarea {
+        .admin-tutor-form input,
+        .admin-tutor-form textarea {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -50,23 +54,25 @@
             }
     </style>
 </head>
+
 <body>
+    <!-- ─────────────── HEADER/BANNER ─────────────── -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a href="/" class="banner-login-link login-box">Home</a>
-            <a href="/login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a class="banner-login-link login-box" href="/">Home</a>
+            <a class="banner-login-link login-box" href="/login.html?role=admin">Login</a>
         </div>
     </header>
 
     <nav class="main-nav">
         <ul>
-            <li><a href="/about-us.html">About Us</a></li>
-            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="/parents.html">Enter Parent Zone</a></li>
-            <li><a href="/contact.html">Contact Us</a></li>
+            <li><a href="/about-us.html">About Us</a></li>
+            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="/parents.html">Enter Parent Zone</a></li>
+            <li><a href="/contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
+            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
@@ -74,6 +80,7 @@
         <div class="rolling-content" id="tutorBanner"></div>
     </div>
 
+    <!-- ─────────────── MAIN CONTENT ─────────────── -->
     <main>
         <h2>Welcome, Admin!</h2>
         <p>Add new tutors to the database below.</p>
@@ -81,90 +88,97 @@
         <div class="admin-form-container">
             <h3>Add a Tutor</h3>
 
-            <!-- no action/enctype because we handle it in JS -->
-            <form id="tutorForm" class="admin-tutor-form">
+            <!-- handled completely in JS  -->
+            <form id="tutorForm" class="admin-tutor-form" autocomplete="off">
+                <label>Tutor Name:<input type="text" name="name" required /></label>
+
                 <label>
-                    Tutor Name:
-                    <input type="text" name="name" required>
+                    Subjects (comma‑separated):
+                    <input type="text" name="subjects" required />
                 </label>
 
                 <label>
-                    Subjects (comma‑separated):
-                    <input type="text" name="subjects" required>
+                    Cost Range (e.g. £, ££):
+                    <input type="text" name="costRange" />
                 </label>
 
                 <label>
-                    Cost Range (e.g. £, ££):
-                    <input type="text" name="costRange">
+                    Badges (comma‑separated):
+                    <input type="text" name="badges" />
                 </label>
 
                 <label>
-                    Badges (comma‑separated):
-                    <input type="text" name="badges">
+                    Tutor Image (upload):
+                    <input type="file" id="imageField" name="file" accept="image/*" />
                 </label>
 
                 <label>
-                    Tutor Image (upload file):
-                    <input type="file" id="imageField" name="file" accept="image/*">
+                    Contact (email or website):
+                    <input type="text" name="contact" />
                 </label>
+
+                <label>Description:<textarea name="description"></textarea></label>
 
                 <label>
-                    Contact (email or website):
-                    <input type="text" name="contact">
+                    Postcodes (comma‑separated):
+                    <input type="text" name="postcodes" />
                 </label>
 
-                <label>
-                    Description:
-                    <textarea name="description"></textarea>
-                </label>
-
-                <label>
-                    Postcodes (comma‑separated):
-                    <input type="text" name="postcodes">
-                </label>
-
-                <button type="submit">Add Tutor</button>
+                <button type="submit">Add Tutor</button>
             </form>
         </div>
     </main>
 
-    <!-- everything below runs as an ES module -->
+    <!-- ───────────────  MODULE SCRIPT  ─────────────── -->
     <script type="module">
         import { uploadImage } from '/js/upload-helper.js';
 
-        /* rolling banner text */
+        /* ── page‑guard: only admins allowed ───────────────────────── */
+        const auth = await fetch('/api/protected?role=admin');
+        if (!auth.ok) {
+            location.href = '/login.html?role=admin';
+            throw new Error('not authorised'); // stop further JS
+        }
+
+        /* ── rolling banner ────────────────────────────────────────── */
         fetch('/api/tutors?format=json')
             .then(r => r.json())
-            .then(t => {
-                document.getElementById('tutorBanner').textContent =
-                    t.map(o => `${o.name} (${o.subjects.join(', ')})`).join(' | ');
+            .then(list => {
+                tutorBanner.textContent =
+                    list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
             })
             .catch(console.error);
 
-        /* add‑tutor workflow */
+        /* ── add‑tutor workflow ────────────────────────────────────── */
         document.getElementById('tutorForm').addEventListener('submit', async e => {
             e.preventDefault();
             const fd = new FormData(e.target);
-            const img = document.getElementById('imageField').files[0];
+            const img = imageField.files[0];
 
+            /* 1. optional upload */
             let imagePath = '';
             if (img) {
+                if (img.size > 2 * 1024 * 1024)
+                    return alert('Please keep images under 2 MB');
+
                 try { imagePath = await uploadImage(img, 'tutors'); }
-                catch (err) { alert('Image upload failed: ' + err.message); return; }
+                catch (err) { return alert('Upload failed: ' + err.message); }
             }
 
-            /* build clean payload */
+            /* 2. clean payload */
+            const csv = s => s.split(',').map(x => x.trim()).filter(Boolean);
             const payload = {
                 name: fd.get('name')?.trim(),
-                subjects: fd.get('subjects').split(',').map(s => s.trim()).filter(Boolean),
+                subjects: csv(fd.get('subjects')),
                 costRange: fd.get('costRange').trim(),
-                badges: fd.get('badges').split(',').map(b => b.trim()).filter(Boolean),
+                badges: csv(fd.get('badges')),
                 contact: fd.get('contact').trim(),
                 description: fd.get('description').trim(),
-                postcodes: fd.get('postcodes').split(',').map(p => p.trim()).filter(Boolean),
+                postcodes: csv(fd.get('postcodes')),
                 imagePath
             };
 
+            /* 3. POST */
             const r = await fetch('/api/addTutor', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -172,7 +186,7 @@
             });
 
             const data = await r.json();
-            if (!r.ok) { alert('Server error: ' + data.message); return; }
+            if (!r.ok) return alert('Server: ' + data.message);
 
             alert('Tutor added!');
             e.target.reset();
