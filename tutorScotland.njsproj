@@ -38,12 +38,6 @@
     <Content Include="api\addTutor.js">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="api\auth.js">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="api\blog-writer.js">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="api\blog.js">
       <SubType>Code</SubType>
     </Content>
@@ -60,9 +54,6 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="api\tutorConnection.js">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="api\tutorzone.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="api\upload-image.js">

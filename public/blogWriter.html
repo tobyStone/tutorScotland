@@ -24,6 +24,18 @@
             }
         })();
     </script>
+
+    <style>
+        .wide-input {
+            width: 100%; /* full width of the lilac panel                */
+            padding: 12px 14px; /* taller & roomier                              */
+            font-size: 1.15rem; /* larger text – tweak to taste (1rem ≈ 16 px)   */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* keeps the width from overflowing          */
+        }
+    </style>
+
 </head>
 <body>
     <!-- HEADER / NAV identical to other pages -->
@@ -56,8 +68,8 @@
             <h2>Create a New Blog Post</h2>
 
             <form id="blogForm">
-                <label>Title:<input id="titleField" name="title" required /></label>
-                <label>Author:<input id="authorField" name="author" required /></label>
+                <label>Title:<input id="titleField" class="wide-input" name="title" required /></label>
+                <label>Author:<input id="authorField" class="wide-input" name="author" required /></label>
 
                 <label>
                     Category:
