@@ -1,64 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Tutors Alliance Scotland - Blog Writer</title>
-    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
-    <link rel="stylesheet" href="/style.css">
-    <script src="/responsive-helper.js"></script>
+    <meta charset="UTF-8" />
+    <title>Blog Writer – Tutors Alliance Scotland</title>
 
-    <!--
-      1) A placeholder script block for JSON-LD microdata.
-         We'll populate this dynamically based on the user’s form input.
-    -->
+    <!-- assets -->
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png" />
+    <link rel="stylesheet" href="/style.css" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <script src="/responsive-helper.js" defer></script>
+
+    <!-- JSON‑LD placeholder (filled on submit) -->
     <script id="blogMicrodata" type="application/ld+json"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- blog‑writer guard -->
+    <script>
+        (async () => {
+            try {
+                const ok = await fetch('/api/protected?role=blogwriter');
+                if (!ok.ok) throw new Error('not writer');
+            } catch {
+                location.href = '/login.html?role=blogwriter';
+            }
+        })();
+    </script>
 </head>
 <body>
-    <!-- Shared banner/header -->
+    <!-- HEADER / NAV identical to other pages -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a href="index.html" class="banner-login-link login-box">Home</a>
-            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a class="banner-login-link login-box" href="/">Home</a>
+            <a class="banner-login-link login-box" href="/login.html?role=admin">Login</a>
         </div>
     </header>
 
-    <!-- Dark-blue nav below banner -->
     <nav class="main-nav">
         <ul>
-            <li><a href="about-us.html">About Us</a></li>
-            <li><a href="tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="parents.html">Enter Parent Zone</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/about-us.html">About Us</a></li>
+            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="/parents.html">Enter Parent Zone</a></li>
+            <li><a href="/contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
-    <!-- Rolling banner container -->
     <div class="rolling-banner">
-        <div class="rolling-content" id="tutorBanner">
-            <!-- JS can populate tutor names/subjects here -->
-        </div>
+        <div class="rolling-content" id="tutorBanner"></div>
     </div>
 
+    <!-- ── WRITE‑A‑POST FORM ───────────────────────── -->
     <main>
-        <!-- A single form to create a new blog post, with extra fields for microdata -->
         <section id="newBlogSection">
             <h2>Create a New Blog Post</h2>
+
             <form id="blogForm">
-                <label>
-                    Title:
-                    <input type="text" id="titleField" name="title" required>
-                </label>
+                <label>Title:<input id="titleField" name="title" required /></label>
+                <label>Author:<input id="authorField" name="author" required /></label>
 
-                <label>
-                    Author:
-                    <input type="text" id="authorField" name="author" placeholder="e.g. John Smith" required>
-                </label>
-
-                <!-- New Category Field -->
                 <label>
                     Category:
                     <select id="categoryField" name="category">
@@ -70,95 +70,90 @@
 
                 <label>
                     Excerpt (short summary):
-                    <textarea id="excerptField" name="excerpt" rows="2" maxlength="200"
-                              placeholder="A short teaser or summary of the post."></textarea>
+                    <textarea id="excerptField" rows="2" maxlength="200"></textarea>
                 </label>
 
                 <label>
-                    Publish Date/Time:
-                    <input type="datetime-local" id="publishDateField" name="publishDate">
+                    Publish Date/Time:
+                    <input type="datetime-local" id="publishDateField" name="publishDate" />
                 </label>
 
                 <label>
                     Content:
-                    <textarea id="contentField" name="content" rows="5" cols="50" required></textarea>
+                    <textarea id="contentField" rows="6" required></textarea>
                 </label>
 
                 <label>
                     Image:
-                    <input type="file" id="imageField" accept="image/*">
+                    <input type="file" id="imageField" accept="image/*" />
                 </label>
 
-                <button type="submit">Create Blog</button>
+                <button type="submit">Create Blog</button>
             </form>
-
         </section>
     </main>
 
+    <!-- JS as module so we can import upload‑helper -->
     <script type="module">
         import { uploadImage } from '/js/upload-helper.js';
 
-        const blogForm = document.getElementById('blogForm');
-        const blogMicrodata = document.getElementById('blogMicrodata');
+        /* rolling banner */
+        fetch('/api/tutors?format=json')
+            .then(r => r.json())
+            .then(list => {
+                tutorBanner.textContent =
+                    list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+            })
+            .catch(console.error);
 
-        blogForm.addEventListener('submit', async (e) => {
+        /* form workflow */
+        blogForm.addEventListener('submit', async e => {
             e.preventDefault();
 
-            /* 1. Gather user input */
-            const title = document.getElementById('titleField').value.trim();
-            const author = document.getElementById('authorField').value.trim();
-            const category = document.getElementById('categoryField').value;
-            const excerpt = document.getElementById('excerptField').value.trim();
-            const publishDate = document.getElementById('publishDateField').value;
-            const content = document.getElementById('contentField').value.trim();
+            const title = titleField.value.trim();
+            const author = authorField.value.trim();
+            const category = categoryField.value;
+            const excerpt = excerptField.value.trim();
+            const publishDate = publishDateField.value;
+            const content = contentField.value.trim();
 
-            /* 2. Upload image first (if any) */
-            const imageFile = document.getElementById('imageField').files[0];
-            const imagePath = imageFile ? await uploadImage(imageFile, 'blog') : '';
-
-            /* 3. Build JSON‑LD */
-            const domain = 'https://tutorsalliancescotland.co.uk';
-            const nowISO = new Date().toISOString();
-
-            const jsonLdObj = {
-                "@context": "https://schema.org",
-                "@type": "BlogPosting",
-                "mainEntityOfPage": { "@type": "WebPage", "@id": `${domain}/blog` },
-                "headline": title,
-                "author": { "@type": "Person", "name": author || "Tutors Alliance Scotland" },
-                "publisher": {
-                    "@type": "Organization",
-                    "name": "Tutors Alliance Scotland",
-                    "logo": { "@type": "ImageObject", "url": `${domain}/images/bannerShield2.png` }
-                },
-                "datePublished": publishDate ? new Date(publishDate).toISOString() : nowISO,
-                "dateModified": nowISO,
-                "description": excerpt || (content.slice(0, 160) + '…'),
-                "image": imagePath || `${domain}/images/defaultBlog.png`
-            };
-
-            blogMicrodata.textContent = JSON.stringify(jsonLdObj, null, 2);
-
-            /* 4. Send blog to server */
-            const payload = { title, author, category, excerpt, publishDate, content, imagePath };
-            const res = await fetch('/api/blog-writer', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!res.ok) {
-                const msg = await res.text();
-                alert(`Error: ${msg}`);
-                return;
+            /* image first */
+            let imagePath = '';
+            if (imageField.files[0]) {
+                try { imagePath = await uploadImage(imageField.files[0], 'blog'); }
+                catch (err) { return alert('Upload failed: ' + err.message); }
             }
 
-            const data = await res.json();
-            alert(data.message || 'Blog created!');
+            /* JSON‑LD for SEO */
+            const nowISO = new Date().toISOString();
+            blogMicrodata.textContent = JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "BlogPosting",
+                "mainEntityOfPage": { "@id": "https://tutorsalliancescotland.co.uk/blog", "@type": "WebPage" },
+                headline: title,
+                author: { "@type": "Person", name: author || "Tutors Alliance Scotland" },
+                publisher: {
+                    "@type": "Organization",
+                    name: "Tutors Alliance Scotland",
+                    logo: { "@type": "ImageObject", url: "https://tutorsalliancescotland.co.uk/images/bannerShield2.png" }
+                },
+                datePublished: publishDate ? new Date(publishDate).toISOString() : nowISO,
+                dateModified: nowISO,
+                description: excerpt || (content.slice(0, 160) + '…'),
+                image: imagePath || "https://tutorsalliancescotland.co.uk/images/defaultBlog.png"
+            }, null, 2);
+
+            /* send to server */
+            const payload = { title, author, category, excerpt, publishDate, content, imagePath };
+            const r = await fetch('/api/blog-writer', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+            });
+
+            if (!r.ok) return alert('Server: ' + await r.text());
+            alert('Blog created!');
             blogForm.reset();
             blogMicrodata.textContent = '';
         });
     </script>
-
 </body>
 </html>

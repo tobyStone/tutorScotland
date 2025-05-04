@@ -1,108 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Tutors Alliance Scotland - Tutor Zone</title>
-    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
-    <link rel="stylesheet" href="/style.css">
-    <script src="/responsive-helper.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body class="tutorzone-page">
-    <!-- Check if the user is authenticated as a tutor -->
+    <meta charset="UTF-8" />
+    <title>Tutor Zone – Tutors Alliance Scotland</title>
+
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png" />
+    <link rel="stylesheet" href="/style.css" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <script src="/responsive-helper.js" defer></script>
+
     <script>
-        (async function () {
+        /* Guard ‑ redirect non‑tutors to login */
+        (async () => {
             try {
-                const res = await fetch('/api/tutorzone');
-                if (!res.ok) {
-                    // If not authenticated as tutor, redirect to login
-                    window.location.href = '/login.html?role=tutor';
-                }
-            } catch (err) {
-                console.error("Error verifying tutor zone access:", err);
-                window.location.href = '/login.html?role=tutor';
+                const r = await fetch('/api/protected?role=tutor');
+                if (!r.ok) throw new Error();
+            } catch {
+                location.href = '/login.html?role=tutor';
             }
         })();
     </script>
+</head>
 
-    <!-- Shared banner/header -->
+
+
+<body class="tutorzone-page">
     <header>
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a href="index.html" class="banner-login-link login-box">Home</a>
-            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a class="banner-login-link login-box" href="/">Home</a>
+            <a class="banner-login-link login-box" href="/login.html?role=admin">Login</a>
         </div>
     </header>
 
-    <!-- Dark-blue navigation bar -->
     <nav class="main-nav">
         <ul>
-            <li><a href="about-us.html">About Us</a></li>
-            <li><a href="tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="parents.html">Enter Parent Zone</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/about-us.html">About Us</a></li>
+            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="/parents.html">Enter Parent Zone</a></li>
+            <li><a href="/contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
-    <!-- Rolling banner container -->
     <div class="rolling-banner">
-        <div class="rolling-content" id="tutorBanner">
-            <!-- JS will populate tutor names/subjects here -->
-        </div>
+        <div class="rolling-content" id="tutorBanner"></div>
     </div>
 
     <main>
         <div class="tutorzone-container">
-            <!-- Resources Section -->
-            <section class="tutorzone-section" id="resources">
+            <section id="resources" class="tutorzone-section">
                 <h2>Resources</h2>
                 <p>Find guides, tutorials, and other materials to help you excel as a tutor.</p>
                 <ul>
-                    <li><a href="#">Tutoring Best Practices</a></li>
-                    <li><a href="#">Professional Development Guides</a></li>
-                    <li><a href="#">Resource Library</a></li>
+                    <li><a href="#">Tutoring Best Practices</a></li>
+                    <li><a href="#">Professional Development Guides</a></li>
+                    <li><a href="#">Resource Library</a></li>
                 </ul>
             </section>
 
-            <!-- Events Section with Calendar -->
-            <section class="tutorzone-section" id="events">
+            <section id="events" class="tutorzone-section">
                 <h2>Events</h2>
-                <p>Keep up-to-date with upcoming events, webinars, and training sessions.</p>
-                <div class="calendar">
-                    <!-- Replace with your actual calendar widget or custom calendar code -->
-                    <p>[Calendar Widget Placeholder]</p>
-                </div>
+                <p>Keep up‑to‑date with upcoming webinars and training sessions.</p>
+                <div class="calendar">[Calendar Widget Placeholder]</div>
             </section>
 
-            <!-- Facebook Link Section -->
-            <section class="tutorzone-section" id="facebook">
+            <section id="facebook" class="tutorzone-section">
                 <h2>Connect on Facebook</h2>
                 <p class="facebook-link">
-                    <a href="https://www.facebook.com/TutorsAllianceScotland" target="_blank">Visit our Facebook Page</a>
+                    <a target="_blank" href="https://www.facebook.com/TutorsAllianceScotland">
+                        Visit our Facebook Page
+                    </a>
                 </p>
             </section>
 
-            <!-- Tutor Highlight Banner -->
-            <section class="tutor-highlight-banner" id="tutorHighlight">
-                <h2>Tutor Highlight</h2>
-                <p>This month’s featured tutor: <strong>Jane Doe</strong> – Excellence in Math Tutoring</p>
+            <section id="tutorHighlight" class="tutor-highlight-banner">
+                <h2>Tutor Highlight</h2>
+                <p>This month’s featured tutor: <strong>Jane Doe</strong></p>
             </section>
         </div>
     </main>
 
-    <script>
-        // Populate the rolling banner with tutor names and subjects
+    <script type="module">
         fetch('/api/tutors?format=json')
-            .then(res => res.json())
-            .then(tutors => {
-                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
-                document.getElementById('tutorBanner').innerText = text;
+            .then(r => r.json())
+            .then(list => {
+                tutorBanner.textContent =
+                    list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
             })
-            .catch(err => console.error('Error fetching tutors:', err));
-
-        // (Optional) Additional JS to dynamically update the Tutor Highlight banner
+            .catch(console.error);
     </script>
 </body>
 </html>

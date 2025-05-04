@@ -56,14 +56,14 @@ module.exports = async (req, res) => {
             });
         } catch (err) {
             console.error('Error creating blog:', err);
-            return res.status(500).json({ 
+            return res.status(500).json({
                 message: 'Server error',
                 error: err.message
             });
         }
     } catch (err) {
         console.error('Database connection error:', err);
-        return res.status(500).json({ 
+        return res.status(500).json({
             message: 'Database connection error',
             error: err.message
         });
