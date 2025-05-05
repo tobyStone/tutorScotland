@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>TAS Admin – Add Tutor / Page Sections</title>
+    <title>TAS Admin – Dashboard</title>
 
-    <!-- assets -->
+    <!-- favicon & css -->
     <link rel="icon" href="/images/bannerShield2.png" type="image/png" />
     <link rel="stylesheet" href="/style.css" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="/responsive-helper.js" defer></script>
 
     <style>
-        /* lilac panel */
+        /* lilac panel used by both forms */
         .admin-form-container {
             max-width: 700px;
             margin: 40px auto;
@@ -22,25 +22,19 @@
         }
 
             .admin-form-container h3 {
-                margin-bottom: .4rem
-            }
-
-            .admin-form-container hr {
-                margin: 2rem 0;
-                border: none;
-                border-top: 1px solid #bbb
+                margin-top: 0
             }
 
         form label {
             display: block;
-            margin-top: 15px;
+            margin-top: 14px;
             font-weight: bold
         }
 
         form input, form textarea, form select {
             width: 100%;
-            padding: 10px;
-            margin-top: 5px;
+            padding: 9px;
+            margin-top: 4px;
             border: 1px solid #ccc;
             border-radius: 4px
         }
@@ -62,18 +56,39 @@
                 box-shadow: 0 0 8px #C8A2C8
             }
 
-        #sectionList li {
-            margin: .4rem 0
+        /* small table that lists existing dynamic sections */
+        table#sectionTable {
+            width: 100%;
+            margin-top: 25px;
+            border-collapse: collapse;
+            font-size: .93em
         }
 
-        #sectionList button {
-            margin-left: .5rem;
-            font-size: .8em
+        #sectionTable th, #sectionTable td {
+            border: 1px solid #ddd;
+            padding: 6px
         }
+
+        #sectionTable th {
+            background: #ececec;
+            text-align: left
+        }
+
+        #sectionTable button {
+            background: none;
+            border: 0;
+            font-size: 1.2em;
+            cursor: pointer
+        }
+
+            #sectionTable button:hover {
+                color: #b00
+            }
     </style>
 </head>
-<body>
 
+<body>
+    <!-- ─────────────── HEADER/BANNER ─────────────── -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
@@ -93,90 +108,122 @@
         </ul>
     </nav>
 
-    <div class="rolling-banner"><div class="rolling-content" id="tutorBanner"></div></div>
+    <div class="rolling-banner">
+        <div class="rolling-content" id="tutorBanner"></div>
+    </div>
 
+    <!-- ─────────────── MAIN CONTENT ─────────────── -->
     <main>
-        <h2>Welcome, Admin!</h2>
-
-        <!-- ────────── ADD‑TUTOR ────────── -->
+        <!-- ░░░░░░ ADD‑TUTOR FORM ░░░░░░ -->
         <div class="admin-form-container">
             <h3>Add a Tutor</h3>
-            <form id="tutorForm" autocomplete="off">
-                <label>Tutor Name:<input name="name" required></label>
-                <label>Subjects (comma):<input name="subjects" required></label>
-                <label>Cost Range:<input name="costRange"></label>
-                <label>Badges (comma):<input name="badges"></label>
-                <label>Tutor Image:<input type="file" id="imageField" name="file" accept="image/*"></label>
-                <label>Contact:<input name="contact"></label>
-                <label>Description:<textarea name="description"></textarea></label>
-                <label>Postcodes (comma):<input name="postcodes"></label>
-                <button>Add Tutor</button>
-            </form>
 
-            <!-- ────────── ADD‑SECTION ────────── -->
-            <hr>
-            <h3>Add a Dynamic Section</h3>
-            <form id="addSection" enctype="multipart/form-data">
+            <!-- handled completely in JS  -->
+            <form id="tutorForm" autocomplete="off">
+                <label>Tutor Name:<input type="text" name="name" required /></label>
+
                 <label>
-                    Target Page:
-                    <select name="page">
+                    Subjects (comma‑separated):
+                    <input type="text" name="subjects" required />
+                </label>
+
+                <label>
+                    Cost Range (e.g. £, ££):
+                    <input type="text" name="costRange" />
+                </label>
+
+                <label>
+                    Badges (comma‑separated):
+                    <input type="text" name="badges" />
+                </label>
+
+                <label>
+                    Tutor Image:
+                    <input type="file" id="imageField" accept="image/*" />
+                </label>
+
+                <label>
+                    Contact (email or website):
+                    <input type="text" name="contact" />
+                </label>
+
+                <label>Description:<textarea name="description"></textarea></label>
+
+                <label>
+                    Postcodes (comma‑separated):
+                    <input type="text" name="postcodes" />
+                </label>
+
+                <button type="submit">Add Tutor</button>
+            </form>
+        </div>
+
+        <!-- ░░░░░░  ADD‑/DELETE SECTION  ░░░░░░ -->
+        <div class="admin-form-container">
+            <h3>Add a Dynamic Section</h3>
+
+            <!-- ★ NEW – simplified form : only page, heading, paragraph, image ★ -->
+            <form id="addSection" enctype="multipart/form-data" autocomplete="off">
+                <label>
+                    Target Page:
+                    <select name="page" id="pageSelect">
+                        <!-- add more options if you create new pages -->
                         <option value="index">index</option>
                         <option value="about-us">about‑us</option>
-                        <option value="contact">contact</option>
-                        <!-- add more pages here -->
+                        <option value="tutorMembership">tutorMembership</option>
                     </select>
                 </label>
-
-                <label>
-                    Slot (optional):
-                    <select name="slot">
-                        <option value="hero">hero</option>
-                        <option value="footer">footer</option>
-                    </select>
-                </label>
-
-                <label>Display Order (0 = top):<input name="order" type="number" value="0"></label>
 
                 <label>Heading:<input name="heading" required></label>
-                <label>Paragraph:<textarea name="text" required></textarea></label>
+                <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
                 <label>Image:<input type="file" name="image" accept="image/*"></label>
-                <button>Add Section</button>
+
+                <button>Add Section</button>
             </form>
 
-            <h4>Existing sections for this page</h4>
-            <ul id="sectionList"><li>Loading…</li></ul>
+            <!-- ★ NEW – table of existing sections with a delete button ★ -->
+            <h3 style="margin-top:35px">Existing sections for this page</h3>
+            <table id="sectionTable">
+                <thead>
+                    <tr><th>#</th><th>Heading</th><th>Image?</th><th></th></tr>
+                </thead>
+                <tbody><!-- filled by JS --></tbody>
+            </table>
         </div>
     </main>
 
+    <!-- ───────────────  MODULE SCRIPT  ─────────────── -->
     <script type="module">
         import { uploadImage } from '/js/upload-helper.js';
 
-        /* ── admin‑guard ─────────────────────────────────────────── */
+        /* ── page‑guard: only admins allowed ───────────────────────── */
         const auth = await fetch('/api/protected?role=admin');
-        if (!auth.ok) { location.href = '/login.html?role=admin'; throw new Error('not admin'); }
+        if (!auth.ok) { location.href = '/login.html?role=admin'; throw 0; }
 
-        /* ── rolling banner ──────────────────────────────────────── */
+        /* ── rolling banner text ──────────────────────────────────── */
         fetch('/api/tutors?format=json')
             .then(r => r.json())
             .then(list => {
-                tutorBanner.textContent = list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                tutorBanner.textContent =
+                    list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
             })
             .catch(console.error);
 
-        /* ── ADD‑TUTOR logic  (unchanged) ────────────────────────── */
+        /* ░░░ 1. ADD‑TUTOR WORKFLOW  ░░░ */
         tutorForm.addEventListener('submit', async e => {
             e.preventDefault();
             const fd = new FormData(tutorForm);
-            const img = imageField.files[0];
+            const csv = s => s.split(',').map(x => x.trim()).filter(Boolean);
 
+            /* optional image upload */
             let imagePath = '';
-            if (img) {
-                if (img.size > 2 * 1024 * 1024) return alert('Please keep images under 2 MB');
-                try { imagePath = await uploadImage(img, 'tutors'); }
-                catch (err) { return alert('Upload failed: ' + err.message); }
+            if (imageField.files[0]) {
+                const f = imageField.files[0];
+                if (f.size > 2 * 1024 * 1024) return alert('Image > 2 MB');
+                try { imagePath = await uploadImage(f, 'tutors'); }
+                catch (err) { return alert(err.message); }
             }
 
-            const csv = s => s.split(',').map(x => x.trim()).filter(Boolean);
             const payload = {
                 name: fd.get('name').trim(),
                 subjects: csv(fd.get('subjects')),
@@ -188,64 +235,68 @@
                 imagePath
             };
 
-            const r = await fetch('/api/addTutor', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            const data = await r.json();
-            if (!r.ok) return alert('Server: ' + data.message);
+            const r = await fetch('/api/addTutor', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!r.ok) return alert(await r.text());
             alert('Tutor added!');
             tutorForm.reset();
         });
 
-        /* ── SECTION helper: refresh list ────────────────────────── */
-        async function refreshSectionList() {
-            const pg = addSection.page.value;
-            const ul = document.getElementById('sectionList');
-            ul.innerHTML = '<li>Loading…</li>';
+        /* ░░░ 2. ADD / DELETE  SECTIONS ░░░ */
+        const pageSel = document.getElementById('pageSelect');
+        const sectionTbody = document.querySelector('#sectionTable tbody');
 
-            const r = await fetch(`/api/sections?page=${pg}`);
-            const list = r.ok ? await r.json() : [];
-            ul.innerHTML = list.length ? '' : '<li>No sections yet</li>';
+        /* helper loads list for current <select> value */
+        async function loadSections() {
+            const r = await fetch(`/api/sections?page=${pageSel.value}`);
+            if (!r.ok) { alert(await r.text()); return; }
+            const list = await r.json();
 
-            list.forEach(sec => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-            <strong>[${sec.slot}]&nbsp;${sec.heading}</strong>
-            <button data-id="${sec._id}">Delete</button>
-          `;
-                ul.appendChild(li);
+            sectionTbody.innerHTML = '';
+            list.forEach((s, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                       <td>${i + 1}</td>
+                       <td>${s.heading}</td>
+                       <td>${s.image ? '✔︎' : ''}</td>
+                       <td><button data-id="${s._id}">🗑️</button></td>`;
+                sectionTbody.appendChild(tr);
             });
         }
-        addSection.page.addEventListener('change', refreshSectionList);
+        await loadSections();
+        pageSel.addEventListener('change', loadSections);
 
-        /* ── ADD‑SECTION submit ──────────────────────────────────── */
+        /* add‑section submit */
         addSection.addEventListener('submit', async e => {
             e.preventDefault();
             const fd = new FormData(addSection);
 
-            /* manual size check (formidable will enforce 2 MB too) */
-            if (fd.get('image') && fd.get('image').size > 2 * 1024 * 1024)
-                return alert('Image too large (2 MB max)');
+            /* upload image first (optional) */
+            const img = fd.get('image') instanceof File && fd.get('image').size ? fd.get('image') : null;
+            if (img) {
+                try {
+                    const url = await uploadImage(img, 'sections');
+                    fd.set('imagePath', url);          // server expects this field
+                } catch (err) { return alert(err.message); }
+            }
 
+            fd.delete('image');                       // raw file not sent to server
             const r = await fetch('/api/sections', { method: 'POST', body: fd });
             if (!r.ok) return alert(await r.text());
-
-            alert('Section saved!');
+            alert('Section added!');
             addSection.reset();
-            refreshSectionList();
+            loadSections();
         });
 
-        /* ── DELETE handler (event‑delegation) ───────────────────── */
-        sectionList.addEventListener('click', async e => {
-            if (e.target.tagName !== 'BUTTON') return;
+        /* delete click */
+        sectionTbody.addEventListener('click', async e => {
+            if (!e.target.dataset.id) return;
             if (!confirm('Delete this section?')) return;
-
-            const id = e.target.dataset.id;
-            const r = await fetch(`/api/sections?id=${id}`, { method: 'DELETE' });
-            if (r.status === 204) e.target.closest('li').remove();
-            else alert(await r.text());
+            const r = await fetch(`/api/sections/${e.target.dataset.id}`, { method: 'DELETE' });
+            if (r.ok) loadSections(); else alert(await r.text());
         });
-
-        /* first load */
-        refreshSectionList();
     </script>
 </body>
 </html>
