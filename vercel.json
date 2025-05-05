@@ -66,9 +66,12 @@
       "destination": "/api/upload-image.js"
     },
     {
+      "source": "/api/sections",
+      "destination": "/api/sections.js"
+    },
+    {
       "source": "/api/tutorlist",
       "destination": "/api/tutors.js"
     }
-
   ]
 }
