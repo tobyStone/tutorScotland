@@ -3,7 +3,7 @@
  * Uses Vercel Blob for images and MongoDB (Mongoose) for meta.
  */
 import { put } from '@vercel/blob';
-import { formidable } from 'formidable';
+import formidable from 'formidable';
 import fs from 'fs';
 import mongoose from 'mongoose';
 import connectToDB from './connectToDatabase';
