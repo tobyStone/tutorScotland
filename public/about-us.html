@@ -1,120 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>About Tutor Scotland</title>
-    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
-    <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="/responsive-helper.js"></script>
-    <!-- JSON-LD microdata for the About Page -->
-    <script type="application/ld+json">
-        {
-          "@context": "https://schema.org",
-          "@type": "AboutPage",
-          "url": "https://tutorsalliancescotland.co.uk/about-us.html",
-          "name": "About Tutors Alliance Scotland",
-          "description": "Our mission is to create a recognised standard of excellence in tutoring while ensuring that every child, regardless of background or financial situation, has access to high-quality educational support.",
-          "mainEntity": {
-            "@type": "EducationalOrganization",
-            "name": "Tutors Alliance Scotland",
-            "url": "https://tutorsalliancescotland.co.uk",
-            "foundingDate": "2025-03-27",
-            "founder": {
-              "@type": "Person",
-              "name": "Karen Simpson"
-            },
-            "logo": "https://tutorsalliancescotland.co.uk/images/centralShield.png",
-            "description": "Through accreditation, professional development, partnerships, and community collaboration, we aim to bridge the attainment gap and empower students to reach their full potential."
-          }
+    <meta charset="UTF-8" />
+    <title>TAS Admin – Dashboard</title>
+
+    <!-- favicon & css -->
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png" />
+    <link rel="stylesheet" href="/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="/responsive-helper.js" defer></script>
+
+    <style>
+        /* lilac panel used by both forms */
+        .admin-form-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #C8A2C8;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,.1)
         }
-    </script>
+
+            .admin-form-container h3 {
+                margin-top: 0
+            }
+
+        form label {
+            display: block;
+            margin-top: 14px;
+            font-weight: bold
+        }
+
+        form input, form textarea, form select {
+            width: 100%;
+            padding: 9px;
+            margin-top: 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px
+        }
+
+        form button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #0057B7;
+            color: #fff;
+            border: 0;
+            border-radius: 4px;
+            font-size: 1.05em;
+            cursor: pointer;
+            transition: .25s
+        }
+
+            form button:hover {
+                background: #0046a5;
+                box-shadow: 0 0 8px #C8A2C8
+            }
+
+        /* small table that lists existing dynamic sections */
+        table#sectionTable {
+            width: 100%;
+            margin-top: 25px;
+            border-collapse: collapse;
+            font-size: .93em
+        }
+
+        #sectionTable th, #sectionTable td {
+            border: 1px solid #ddd;
+            padding: 6px
+        }
+
+        #sectionTable th {
+            background: #ececec;
+            text-align: left
+        }
+
+        #sectionTable button {
+            background: none;
+            border: 0;
+            font-size: 1.2em;
+            cursor: pointer
+        }
+
+            #sectionTable button:hover {
+                color: #b00
+            }
+    </style>
 </head>
-<body class="about-page">
-    <!-- Shared banner/header -->
+
+<body>
+    <!-- ─────────────── HEADER/BANNER ─────────────── -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a href="index.html" class="banner-login-link login-box">Home</a>
-            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a class="banner-login-link login-box" href="/">Home</a>
+            <a class="banner-login-link login-box" href="/login.html?role=admin">Login</a>
         </div>
     </header>
 
-    <!-- Dark-blue nav below banner -->
     <nav class="main-nav">
         <ul>
-            <li><a href="about-us.html">About Us</a></li>
-            <li><a href="tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="parents.html">Enter Parent Zone</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/about-us.html">About Us</a></li>
+            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="/parents.html">Enter Parent Zone</a></li>
+            <li><a href="/contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
-
-    <!-- Rolling banner container -->
     <div class="rolling-banner">
-        <div class="rolling-content" id="tutorBanner">
-            <!-- JS will populate tutor names/subjects here -->
-        </div>
+        <div class="rolling-content" id="tutorBanner"></div>
     </div>
 
-
+    <!-- ─────────────── MAIN CONTENT ─────────────── -->
     <main>
-        <div class="content-flex-wrapper">
-            <!-- Left-Side Thistle -->
-            <div class="left-col">
-                <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
-                <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
-            </div>
+        <!-- ░░░░░░ ADD‑TUTOR FORM ░░░░░░ -->
+        <div class="admin-form-container">
+            <h3>Add a Tutor</h3>
 
+            <!-- handled completely in JS  -->
+            <form id="tutorForm" autocomplete="off">
+                <label>Tutor Name:<input type="text" name="name" required /></label>
 
-            <div class="about-content">
-                <h2 class="lilac-heading">About the Tutors Alliance Scotland</h2>
-                <div class="about-paragraph">
-                    <p>
-                        Our mission is to create a recognised standard of excellence in tutoring while ensuring that every child, regardless of background or financial situation, has access to high-quality educational support. Through accreditation, professional development, partnerships and community collaboration, we aim to bridge the attainment gap and empower students to reach their full potential.
-                    </p>
-                </div>
-            </div>
+                <label>
+                    Subjects (comma‑separated):
+                    <input type="text" name="subjects" required />
+                </label>
 
-            <section id="dynamicSections"></section>
+                <label>
+                    Cost Range (e.g. £, ££):
+                    <input type="text" name="costRange" />
+                </label>
 
+                <label>
+                    Badges (comma‑separated):
+                    <input type="text" name="badges" />
+                </label>
+
+                <label>
+                    Tutor Image:
+                    <input type="file" id="imageField" accept="image/*" />
+                </label>
+
+                <label>
+                    Contact (email or website):
+                    <input type="text" name="contact" />
+                </label>
+
+                <label>Description:<textarea name="description"></textarea></label>
+
+                <label>
+                    Postcodes (comma‑separated):
+                    <input type="text" name="postcodes" />
+                </label>
+
+                <button type="submit">Add Tutor</button>
+            </form>
+        </div>
+
+        <!-- ░░░░░░  ADD‑/DELETE SECTION  ░░░░░░ -->
+        <div class="admin-form-container">
+            <h3>Add a Dynamic Section</h3>
+
+            <!-- ★ NEW – simplified form : only page, heading, paragraph, image ★ -->
+            <form id="addSection" enctype="multipart/form-data" autocomplete="off">
+                <label>
+                    Target Page:
+                    <select name="page" id="pageSelect">
+                        <!-- add more options if you create new pages -->
+                        <option value="index">index</option>
+                        <option value="about-us">about‑us</option>
+                        <option value="tutorMembership">tutorMembership</option>
+                    </select>
+                </label>
+
+                <label>Heading:<input name="heading" required></label>
+                <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
+                <label>Image:<input type="file" name="image" accept="image/*"></label>
+
+                <button>Add Section</button>
+            </form>
+
+            <!-- ★ NEW – table of existing sections with a delete button ★ -->
+            <h3 style="margin-top:35px">Existing sections for this page</h3>
+            <table id="sectionTable">
+                <thead>
+                    <tr><th>#</th><th>Heading</th><th>Image?</th><th></th></tr>
+                </thead>
+                <tbody><!-- filled by JS --></tbody>
+            </table>
         </div>
     </main>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelector(".thistle-center").style.opacity = "1";
-            document.querySelector(".thistle-leaf").style.opacity = "1";
-            document.querySelector(".thistle-center-flipped").style.opacity = "1";
-            document.querySelector(".thistle-leaf-flipped").style.opacity = "1";
-        });
-    </script>
+    <!-- ───────────────  MODULE SCRIPT  ─────────────── -->
     <script type="module">
-        const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
+        import { uploadImage } from '/js/upload-helper.js';
 
-        fetch(`/api/sections?page=${page}`)
+        /* ── page‑guard: only admins allowed ───────────────────────── */
+        const auth = await fetch('/api/protected?role=admin');
+        if (!auth.ok) { location.href = '/login.html?role=admin'; throw 0; }
+
+        /* ── rolling banner text ──────────────────────────────────── */
+        fetch('/api/tutors?format=json')
             .then(r => r.json())
             .then(list => {
-                const host = document.getElementById('dynamicSections');
-                list.forEach(s => {
-                    host.insertAdjacentHTML('beforeend', `
-                  <article class="dyn-block fade-in-on-scroll">
-                    ${s.image ? `<img src="${s.image}" alt="${s.heading}">` : ''}
-                    <h2>${s.heading}</h2><p>${s.text}</p>
-                  </article>`);
-                });
-
-
-                document
-                    .querySelectorAll('.dyn-block.fade-in-on-scroll')
-                    .forEach(el => observer.observe(el));
+                tutorBanner.textContent =
+                    list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
             })
-
             .catch(console.error);
-    </script>
 
+        /* ░░░ 1. ADD‑TUTOR WORKFLOW  ░░░ */
+        tutorForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            const fd = new FormData(tutorForm);
+            const csv = s => s.split(',').map(x => x.trim()).filter(Boolean);
+
+            /* optional image upload */
+            let imagePath = '';
+            if (imageField.files[0]) {
+                const f = imageField.files[0];
+                if (f.size > 2 * 1024 * 1024) return alert('Image > 2 MB');
+                try { imagePath = await uploadImage(f, 'tutors'); }
+                catch (err) { return alert(err.message); }
+            }
+
+            const payload = {
+                name: fd.get('name').trim(),
+                subjects: csv(fd.get('subjects')),
+                costRange: fd.get('costRange').trim(),
+                badges: csv(fd.get('badges')),
+                contact: fd.get('contact').trim(),
+                description: fd.get('description').trim(),
+                postcodes: csv(fd.get('postcodes')),
+                imagePath
+            };
+
+            const r = await fetch('/api/addTutor', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!r.ok) return alert(await r.text());
+            alert('Tutor added!');
+            tutorForm.reset();
+        });
+
+        /* ░░░ 2. ADD / DELETE  SECTIONS ░░░ */
+        const pageSel = document.getElementById('pageSelect');
+        const sectionTbody = document.querySelector('#sectionTable tbody');
+
+        /* helper loads list for current <select> value */
+        async function loadSections() {
+            const r = await fetch(`/api/sections?page=${pageSel.value}`);
+            if (!r.ok) { alert(await r.text()); return; }
+            const list = await r.json();
+
+            sectionTbody.innerHTML = '';
+            list.forEach((s, i) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                       <td>${i + 1}</td>
+                       <td>${s.heading}</td>
+                       <td>${s.image ? '✔︎' : ''}</td>
+                       <td><button data-id="${s._id}">🗑️</button></td>`;
+                sectionTbody.appendChild(tr);
+            });
+        }
+        await loadSections();
+        pageSel.addEventListener('change', loadSections);
+
+        /* add‑section submit */
+        addSection.addEventListener('submit', async e => {
+            e.preventDefault();
+            const fd = new FormData(addSection);
+
+            /* upload image first (optional) */
+            const img = fd.get('image') instanceof File && fd.get('image').size ? fd.get('image') : null;
+            if (img) {
+                try {
+                    const url = await uploadImage(img, 'sections');
+                    fd.set('imagePath', url);          // server expects this field
+                } catch (err) { return alert(err.message); }
+            }
+
+            fd.delete('image');                       // raw file not sent to server
+            const r = await fetch('/api/sections', { method: 'POST', body: fd });
+            if (!r.ok) return alert(await r.text());
+            alert('Section added!');
+            addSection.reset();
+            loadSections();
+        });
+
+        /* delete click */
+        sectionTbody.addEventListener('click', async e => {
+            if (!e.target.dataset.id) return;
+            if (!confirm('Delete this section?')) return;
+            const r = await fetch(`/api/sections/${e.target.dataset.id}`, { method: 'DELETE' });
+            if (r.ok) loadSections(); else alert(await r.text());
+        });
+    </script>
 </body>
 </html>
