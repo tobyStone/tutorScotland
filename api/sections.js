@@ -1,31 +1,30 @@
 /**
- * /api/sections   — create, list, delete dynamic page sections
- * Uses Vercel Blob for images and MongoDB (Mongoose) for meta.
+ * /api/sections  – create / list / delete dynamic sections
+ * Images go to Vercel Blob, meta to MongoDB.
  */
-import { put } from '@vercel/blob';
-import formidable from 'formidable';
-import fs from 'fs';
-import mongoose from 'mongoose';
-import connectToDB from './connectToDatabase';
+const { put } = require('@vercel/blob');
+const formidable = require('formidable');
+const fs = require('fs');
+const mongoose = require('mongoose');
+const connectToDB = require('./connectToDatabase');
 
-const MAX_UPLOAD = 4.5 * 1024 * 1024;          // 4.5?MB
+const MAX_UPLOAD = 4.5 * 1024 * 1024;           // 4.5?MB
 
-/* ??? once?only model ???????????????????????????????????????????????? */
+/* ?? once?only model registration ??????????????????????????????????? */
 let Section;
 try { Section = mongoose.model('Section'); }
 catch {
-    const schema = new mongoose.Schema({
+    Section = mongoose.model('Section', new mongoose.Schema({
         page: { type: String, required: true, lowercase: true },
         heading: { type: String, required: true },
         text: { type: String, required: true },
         image: String,
         createdAt: { type: Date, default: Date.now }
-    });
-    Section = mongoose.model('Section', schema);
+    }));
 }
 
-/* ??? tiny helper: upload to Blob ???????????????????????????????????? */
-async function upload(file) {
+/* ?? tiny helper: upload to Blob ???????????????????????????????????? */
+async function uploadToBlob(file) {
     const stream = fs.createReadStream(file.filepath || file.path);
     const key = `sections/${Date.now()}-${file.originalFilename}`;
     const { url } = await put(key, stream,
@@ -33,13 +32,13 @@ async function upload(file) {
     return url;
 }
 
-/* ??? main handler ??????????????????????????????????????????????????? */
-export default async (req, res) => {
+/* ?? main handler ??????????????????????????????????????????????????? */
+module.exports = async (req, res) => {
     await connectToDB();
 
-    /* ?? CREATE ??????????????????????????????????????????????????????? */
+    /* ---------- CREATE ---------- */
     if (req.method === 'POST') {
-        const form = formidable({ multiples: false, keepExtensions: true });
+        const form = formidable({ keepExtensions: true, multiples: false });
 
         form.parse(req, async (err, fields, files) => {
             if (err) return res.status(400).json({ message: err.message });
@@ -54,49 +53,51 @@ export default async (req, res) => {
                 /* optional image */
                 let image = '';
                 let file = files.image || files.file;
-                if (file && Array.isArray(file)) file = file[0];
+                if (Array.isArray(file)) file = file[0];
 
                 if (file && file.size) {
                     if (file.size > MAX_UPLOAD)
                         return res.status(400).json({ message: 'Image larger than 4.5?MB' });
-                    image = await upload(file);
+                    image = await uploadToBlob(file);
                 }
 
                 const doc = await Section.create({ page, heading, text, image });
-                return res.status(201).json(doc);
+                return res.status(201).json(doc);          // created ?
             } catch (e) {
-                console.error('SECTION POST fail:', e);
-                return res.status(500)
-                    .json({ message: 'Server error while saving section' });
+                console.error('SECTION?POST error:', e);
+                return res.status(500).json({ message: 'Server error while saving section' });
             }
         });
-        return;                                   // multipart response sent
+        return;                                        // multipart callback handles response
     }
 
-    /* ?? READ (list) ??????????????????????????????????????????????????? */
+    /* ---------- READ ---------- */
     if (req.method === 'GET') {
         const page = (req.query.page || 'index').toLowerCase();
         const list = await Section.find({ page }).sort({ createdAt: 1 }).lean();
         return res.status(200).json(list);
     }
 
-    /* ?? DELETE ??????????????????????????????????????????????????????? */
+    /* ---------- DELETE ---------- */
     if (req.method === 'DELETE') {
         const { id } = req.query;
         if (!id) return res.status(400).json({ message: 'id query?param required' });
+
         try {
             const gone = await Section.findByIdAndDelete(id);
             if (!gone) return res.status(404).json({ message: 'Not found' });
             return res.status(204).end();
         } catch (e) {
-            console.error('SECTION DELETE fail:', e);
+            console.error('SECTION?DELETE error:', e);
             return res.status(500).json({ message: 'Delete failed' });
         }
     }
 
-    /* fallback */
+    /* ---------- fallback ---------- */
     res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
     res.status(405).end('Method Not Allowed');
 };
 
-export const config = { runtime: 'nodejs18.x' };
+/* tell Vercel to treat this as a standard Node function (optional)   */
+/* you can also remove the whole export – the default is 'nodejs'.     */
+module.exports.config = { runtime: 'nodejs' };
