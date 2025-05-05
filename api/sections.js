@@ -3,14 +3,14 @@
  * Images go to Vercel Blob, meta to MongoDB.
  */
 const { put } = require('@vercel/blob');
-const { formidable } = require('formidable');
+const formidable = require('formidable');
 const fs = require('fs');
 const mongoose = require('mongoose');
-const connectToDB = require('./connectToDatabase');
+const connectDB = require('./connectToDatabase');
 
-const MAX_UPLOAD = 4.5 * 1024 * 1024;           // 4.5?MB
+const MAX_UPLOAD = 4.5 * 1024 * 1024;    // 4?½?MB
 
-/* ?? once?only model registration ??????????????????????????????????? */
+/* ?? once?only model ??????????????????????????????????????????????? */
 let Section;
 try { Section = mongoose.model('Section'); }
 catch {
@@ -23,36 +23,37 @@ catch {
     }));
 }
 
-/* ?? tiny helper: upload to Blob ???????????????????????????????????? */
+/* ?? helper: Vercel Blob upload ??????????????????????????????????? */
 async function uploadToBlob(file) {
+    console.log('??  uploading image', file.originalFilename, file.size);
     const stream = fs.createReadStream(file.filepath || file.path);
     const key = `sections/${Date.now()}-${file.originalFilename}`;
     const { url } = await put(key, stream,
         { access: 'public', contentType: file.mimetype });
+    console.log('? uploaded ?', url);
     return url;
 }
 
-
-/* ?????????? create a formidable instance that works on v2 & v3 ???? */
+/* ?? helper: create formidable instance that works on v2 / v3 ????? */
 function makeForm(opts = {}) {
-    // v2: module itself is a function
-    if (typeof formidable === 'function') return formidable(opts);
-
-    // v3+: need IncomingForm
-    const { IncomingForm } = formidable;
+    if (typeof formidable === 'function') return formidable(opts);   // v2.x
+    const { IncomingForm } = formidable;                             // v3+
     return new IncomingForm(opts);
 }
 
-/* ?? main handler ??????????????????????????????????????????????????? */
+/* ?? main handler ????????????????????????????????????????????????? */
 module.exports = async (req, res) => {
-    await connectToDB();
+    await connectDB();
 
     /* ---------- CREATE ---------- */
     if (req.method === 'POST') {
-        const form = formidable({ keepExtensions: true, multiples: false });
+        const form = makeForm({ keepExtensions: true, multiples: false });
 
         form.parse(req, async (err, fields, files) => {
-            if (err) return res.status(400).json({ message: err.message });
+            if (err) {
+                console.error('? parse error', err);
+                return res.status(400).json({ message: err.message });
+            }
 
             const page = (fields.page || 'index').toLowerCase().trim();
             const heading = (fields.heading || '').trim();
@@ -73,13 +74,13 @@ module.exports = async (req, res) => {
                 }
 
                 const doc = await Section.create({ page, heading, text, image });
-                return res.status(201).json(doc);          // created ?
+                return res.status(201).json(doc);
             } catch (e) {
-                console.error('SECTION?POST error:', e);
+                console.error('? SECTION?POST error', e);
                 return res.status(500).json({ message: 'Server error while saving section' });
             }
         });
-        return;                                        // multipart callback handles response
+        return;                                           // multipart callback ends
     }
 
     /* ---------- READ ---------- */
@@ -99,7 +100,7 @@ module.exports = async (req, res) => {
             if (!gone) return res.status(404).json({ message: 'Not found' });
             return res.status(204).end();
         } catch (e) {
-            console.error('SECTION?DELETE error:', e);
+            console.error('? SECTION?DELETE error', e);
             return res.status(500).json({ message: 'Delete failed' });
         }
     }
@@ -109,6 +110,4 @@ module.exports = async (req, res) => {
     res.status(405).end('Method Not Allowed');
 };
 
-/* tell Vercel to treat this as a standard Node function (optional)   */
-/* you can also remove the whole export – the default is 'nodejs'.     */
 module.exports.config = { runtime: 'nodejs' };
