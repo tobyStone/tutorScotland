@@ -44,9 +44,16 @@ module.exports = async (req, res) => {
             try {
                 const { fields, files } = await parseForm(req);
 
-                const page = (fields.page || 'index').toLowerCase().trim();
-                const heading = (fields.heading || '').trim();
-                const text = (fields.text || '').trim();
+                // Handle different possible formats of fields
+                const page = fields.page ?
+                    (Array.isArray(fields.page) ? fields.page[0] : fields.page).toString().toLowerCase().trim()
+                    : 'index';
+                const heading = fields.heading ?
+                    (Array.isArray(fields.heading) ? fields.heading[0] : fields.heading).toString().trim()
+                    : '';
+                const text = fields.text ?
+                    (Array.isArray(fields.text) ? fields.text[0] : fields.text).toString().trim()
+                    : '';
 
                 if (!heading || !text) {
                     return res.status(400).json({ message: 'Heading and text required' });
@@ -68,29 +75,61 @@ module.exports = async (req, res) => {
                 return res.status(201).json(doc);
             } catch (e) {
                 console.error('SECTION_POST error', e);
-                return res.status(500).json({ message: 'Server error while saving section' });
+                // Log the fields received to help diagnose issues
+                console.error('Fields received:', JSON.stringify(fields, null, 2));
+                console.error('Files received:', JSON.stringify(Object.keys(files), null, 2));
+                return res.status(500).json({
+                    message: 'Server error while saving section',
+                    error: e.message // Include error message for better debugging
+                });
             }
         }
 
         // READ
         if (req.method === 'GET') {
-            const page = (req.query.page || 'index').toLowerCase();
-            const list = await Section.find({ page }).sort({ createdAt: 1 }).lean();
-            return res.status(200).json(list);
+            // Use the same robust approach for handling the page parameter
+            const page = req.query.page ?
+                (Array.isArray(req.query.page) ? req.query.page[0] : req.query.page).toString().toLowerCase()
+                : 'index';
+
+            try {
+                const list = await Section.find({ page }).sort({ createdAt: 1 }).lean();
+                return res.status(200).json(list);
+            } catch (e) {
+                console.error('SECTION_GET error', e);
+                return res.status(500).json({
+                    message: 'Error retrieving sections',
+                    error: e.message
+                });
+            }
         }
 
         // DELETE
         if (req.method === 'DELETE') {
-            const id = req.url.split('/').pop();
-            if (!id) return res.status(400).json({ message: 'ID parameter required' });
+            // Get ID from URL or query parameter
+            let id = req.url.split('/').pop();
+
+            // If ID is not in URL path, try query parameter
+            if (!id || id === 'sections') {
+                id = req.query.id;
+            }
+
+            if (!id) {
+                return res.status(400).json({ message: 'ID parameter required' });
+            }
 
             try {
                 const gone = await Section.findByIdAndDelete(id);
-                if (!gone) return res.status(404).json({ message: 'Not found' });
+                if (!gone) {
+                    return res.status(404).json({ message: 'Section not found' });
+                }
                 return res.status(204).end();
             } catch (e) {
                 console.error('SECTION_DELETE error', e);
-                return res.status(500).json({ message: 'Delete failed' });
+                return res.status(500).json({
+                    message: 'Delete failed',
+                    error: e.message
+                });
             }
         }
 
