@@ -53,6 +53,9 @@
     <Content Include="api\protected.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\sections.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="api\tutorConnection.js">
       <SubType>Code</SubType>
     </Content>
@@ -60,6 +63,9 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="models\Blog.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="models\Section.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="models\Tutor.js">

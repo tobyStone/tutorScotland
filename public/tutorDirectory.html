@@ -61,29 +61,32 @@
 
                 <div class="form-container">
                     <h3>Tutor Finder</h3>
-                        <form id="tutorFinderForm" action="/tutors" method="GET">
-                            <label for="subject">Subject</label>
-                            <select name="subject" id="subject">
-                                <option value="mathematics">Mathematics</option>
-                                <option value="english">English</option>
-                            </select>
+                    <form id="tutorFinderForm" action="/tutors" method="GET">
+                        <label for="subject">Subject</label>
+                        <select name="subject" id="subject">
+                            <option value="mathematics">Mathematics</option>
+                            <option value="english">English</option>
+                        </select>
 
-                            <label for="mode">Location</label>
-                            <select name="mode" id="mode">
-                                <option value="online">Online</option>
-                                <option value="in-person">In Person</option>
-                            </select>
+                        <label for="mode">Location</label>
+                        <select name="mode" id="mode">
+                            <option value="online">Online</option>
+                            <option value="in-person">In Person</option>
+                        </select>
 
-                            <div id="postcodeContainer" style="display: none;">
-                                <label for="postcode">Postcode</label>
-                                <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
-                            </div>
+                        <div id="postcodeContainer" style="display: none;">
+                            <label for="postcode">Postcode</label>
+                            <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
+                        </div>
 
-                            <button type="submit">Find Tutors</button>
-                        </form>
+                        <button type="submit">Find Tutors</button>
+                    </form>
                 </div>
             </div>
-            </div>
+
+            <section id="dynamicSections"></section>
+
+        </div>
     </main>
 
 
@@ -142,6 +145,30 @@
             window.location.href = `/tutors/search${queryParams}`;
         });
     </script>
+    <script type="module">
+        const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
+
+        fetch(`/api/sections?page=${page}`)
+            .then(r => r.json())
+            .then(list => {
+                const host = document.getElementById('dynamicSections');
+                list.forEach(s => {
+                    host.insertAdjacentHTML('beforeend', `
+                  <article class="dyn-block fade-in-on-scroll">
+                    ${s.image ? `<img src="${s.image}" alt="${s.heading}">` : ''}
+                    <h2>${s.heading}</h2><p>${s.text}</p>
+                  </article>`);
+                });
+
+
+                document
+                    .querySelectorAll('.dyn-block.fade-in-on-scroll')
+                    .forEach(el => observer.observe(el));
+            })
+
+            .catch(console.error);
+    </script>
+
 </body>
 </html>
 

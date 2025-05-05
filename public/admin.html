@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>TAS Admin – Add Tutor</title>
+    <title>TAS Admin – Add Tutor / Page Sections</title>
 
-    <!-- favicon & css -->
+    <!-- assets -->
     <link rel="icon" href="/images/bannerShield2.png" type="image/png" />
     <link rel="stylesheet" href="/style.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <script src="/responsive-helper.js" defer></script>
 
     <style>
-        /* centred lilac panel */
+        /* lilac panel */
         .admin-form-container {
             max-width: 700px;
             margin: 40px auto;
@@ -21,14 +21,23 @@
             box-shadow: 0 0 10px rgba(0,0,0,.1)
         }
 
-        .admin-tutor-form label {
+            .admin-form-container h3 {
+                margin-bottom: .4rem
+            }
+
+            .admin-form-container hr {
+                margin: 2rem 0;
+                border: none;
+                border-top: 1px solid #bbb
+            }
+
+        form label {
             display: block;
             margin-top: 15px;
             font-weight: bold
         }
 
-        .admin-tutor-form input,
-        .admin-tutor-form textarea {
+        form input, form textarea, form select {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -36,7 +45,7 @@
             border-radius: 4px
         }
 
-        .admin-tutor-form button {
+        form button {
             margin-top: 20px;
             padding: 12px 20px;
             background: #0057B7;
@@ -48,15 +57,23 @@
             transition: .25s
         }
 
-            .admin-tutor-form button:hover {
+            form button:hover {
                 background: #0046a5;
                 box-shadow: 0 0 8px #C8A2C8
             }
+
+        #sectionList li {
+            margin: .4rem 0
+        }
+
+        #sectionList button {
+            margin-left: .5rem;
+            font-size: .8em
+        }
     </style>
 </head>
-
 <body>
-    <!-- ─────────────── HEADER/BANNER ─────────────── -->
+
     <header>
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
@@ -76,99 +93,92 @@
         </ul>
     </nav>
 
-    <div class="rolling-banner">
-        <div class="rolling-content" id="tutorBanner"></div>
-    </div>
+    <div class="rolling-banner"><div class="rolling-content" id="tutorBanner"></div></div>
 
-    <!-- ─────────────── MAIN CONTENT ─────────────── -->
     <main>
         <h2>Welcome, Admin!</h2>
-        <p>Add new tutors to the database below.</p>
 
+        <!-- ────────── ADD‑TUTOR ────────── -->
         <div class="admin-form-container">
             <h3>Add a Tutor</h3>
-
-            <!-- handled completely in JS  -->
-            <form id="tutorForm" class="admin-tutor-form" autocomplete="off">
-                <label>Tutor Name:<input type="text" name="name" required /></label>
-
-                <label>
-                    Subjects (comma‑separated):
-                    <input type="text" name="subjects" required />
-                </label>
-
-                <label>
-                    Cost Range (e.g. £, ££):
-                    <input type="text" name="costRange" />
-                </label>
-
-                <label>
-                    Badges (comma‑separated):
-                    <input type="text" name="badges" />
-                </label>
-
-                <label>
-                    Tutor Image (upload):
-                    <input type="file" id="imageField" name="file" accept="image/*" />
-                </label>
-
-                <label>
-                    Contact (email or website):
-                    <input type="text" name="contact" />
-                </label>
-
+            <form id="tutorForm" autocomplete="off">
+                <label>Tutor Name:<input name="name" required></label>
+                <label>Subjects (comma):<input name="subjects" required></label>
+                <label>Cost Range:<input name="costRange"></label>
+                <label>Badges (comma):<input name="badges"></label>
+                <label>Tutor Image:<input type="file" id="imageField" name="file" accept="image/*"></label>
+                <label>Contact:<input name="contact"></label>
                 <label>Description:<textarea name="description"></textarea></label>
+                <label>Postcodes (comma):<input name="postcodes"></label>
+                <button>Add Tutor</button>
+            </form>
 
+            <!-- ────────── ADD‑SECTION ────────── -->
+            <hr>
+            <h3>Add a Dynamic Section</h3>
+            <form id="addSection" enctype="multipart/form-data">
                 <label>
-                    Postcodes (comma‑separated):
-                    <input type="text" name="postcodes" />
+                    Target Page:
+                    <select name="page">
+                        <option value="index">index</option>
+                        <option value="about-us">about‑us</option>
+                        <option value="contact">contact</option>
+                        <!-- add more pages here -->
+                    </select>
                 </label>
 
-                <button type="submit">Add Tutor</button>
+                <label>
+                    Slot (optional):
+                    <select name="slot">
+                        <option value="hero">hero</option>
+                        <option value="footer">footer</option>
+                    </select>
+                </label>
+
+                <label>Display Order (0 = top):<input name="order" type="number" value="0"></label>
+
+                <label>Heading:<input name="heading" required></label>
+                <label>Paragraph:<textarea name="text" required></textarea></label>
+                <label>Image:<input type="file" name="image" accept="image/*"></label>
+                <button>Add Section</button>
             </form>
+
+            <h4>Existing sections for this page</h4>
+            <ul id="sectionList"><li>Loading…</li></ul>
         </div>
     </main>
 
-    <!-- ───────────────  MODULE SCRIPT  ─────────────── -->
     <script type="module">
         import { uploadImage } from '/js/upload-helper.js';
 
-        /* ── page‑guard: only admins allowed ───────────────────────── */
+        /* ── admin‑guard ─────────────────────────────────────────── */
         const auth = await fetch('/api/protected?role=admin');
-        if (!auth.ok) {
-            location.href = '/login.html?role=admin';
-            throw new Error('not authorised'); // stop further JS
-        }
+        if (!auth.ok) { location.href = '/login.html?role=admin'; throw new Error('not admin'); }
 
-        /* ── rolling banner ────────────────────────────────────────── */
+        /* ── rolling banner ──────────────────────────────────────── */
         fetch('/api/tutors?format=json')
             .then(r => r.json())
             .then(list => {
-                tutorBanner.textContent =
-                    list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                tutorBanner.textContent = list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
             })
             .catch(console.error);
 
-        /* ── add‑tutor workflow ────────────────────────────────────── */
-        document.getElementById('tutorForm').addEventListener('submit', async e => {
+        /* ── ADD‑TUTOR logic  (unchanged) ────────────────────────── */
+        tutorForm.addEventListener('submit', async e => {
             e.preventDefault();
-            const fd = new FormData(e.target);
+            const fd = new FormData(tutorForm);
             const img = imageField.files[0];
 
-            /* 1. optional upload */
             let imagePath = '';
             if (img) {
-                if (img.size > 2 * 1024 * 1024)
-                    return alert('Please keep images under 2 MB');
-
+                if (img.size > 2 * 1024 * 1024) return alert('Please keep images under 2 MB');
                 try { imagePath = await uploadImage(img, 'tutors'); }
                 catch (err) { return alert('Upload failed: ' + err.message); }
             }
 
-            /* 2. clean payload */
             const csv = s => s.split(',').map(x => x.trim()).filter(Boolean);
             const payload = {
-                name: fd.get('name')?.trim(),
+                name: fd.get('name').trim(),
                 subjects: csv(fd.get('subjects')),
                 costRange: fd.get('costRange').trim(),
                 badges: csv(fd.get('badges')),
@@ -178,19 +188,64 @@
                 imagePath
             };
 
-            /* 3. POST */
-            const r = await fetch('/api/addTutor', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
+            const r = await fetch('/api/addTutor', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             const data = await r.json();
             if (!r.ok) return alert('Server: ' + data.message);
-
             alert('Tutor added!');
-            e.target.reset();
+            tutorForm.reset();
         });
+
+        /* ── SECTION helper: refresh list ────────────────────────── */
+        async function refreshSectionList() {
+            const pg = addSection.page.value;
+            const ul = document.getElementById('sectionList');
+            ul.innerHTML = '<li>Loading…</li>';
+
+            const r = await fetch(`/api/sections?page=${pg}`);
+            const list = r.ok ? await r.json() : [];
+            ul.innerHTML = list.length ? '' : '<li>No sections yet</li>';
+
+            list.forEach(sec => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+            <strong>[${sec.slot}]&nbsp;${sec.heading}</strong>
+            <button data-id="${sec._id}">Delete</button>
+          `;
+                ul.appendChild(li);
+            });
+        }
+        addSection.page.addEventListener('change', refreshSectionList);
+
+        /* ── ADD‑SECTION submit ──────────────────────────────────── */
+        addSection.addEventListener('submit', async e => {
+            e.preventDefault();
+            const fd = new FormData(addSection);
+
+            /* manual size check (formidable will enforce 2 MB too) */
+            if (fd.get('image') && fd.get('image').size > 2 * 1024 * 1024)
+                return alert('Image too large (2 MB max)');
+
+            const r = await fetch('/api/sections', { method: 'POST', body: fd });
+            if (!r.ok) return alert(await r.text());
+
+            alert('Section saved!');
+            addSection.reset();
+            refreshSectionList();
+        });
+
+        /* ── DELETE handler (event‑delegation) ───────────────────── */
+        sectionList.addEventListener('click', async e => {
+            if (e.target.tagName !== 'BUTTON') return;
+            if (!confirm('Delete this section?')) return;
+
+            const id = e.target.dataset.id;
+            const r = await fetch(`/api/sections?id=${id}`, { method: 'DELETE' });
+            if (r.status === 204) e.target.closest('li').remove();
+            else alert(await r.text());
+        });
+
+        /* first load */
+        refreshSectionList();
     </script>
 </body>
 </html>

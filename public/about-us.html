@@ -78,6 +78,9 @@
                     </p>
                 </div>
             </div>
+
+            <section id="dynamicSections"></section>
+
         </div>
     </main>
 
@@ -89,5 +92,29 @@
             document.querySelector(".thistle-leaf-flipped").style.opacity = "1";
         });
     </script>
+    <script type="module">
+        const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
+
+        fetch(`/api/sections?page=${page}`)
+            .then(r => r.json())
+            .then(list => {
+                const host = document.getElementById('dynamicSections');
+                list.forEach(s => {
+                    host.insertAdjacentHTML('beforeend', `
+                  <article class="dyn-block fade-in-on-scroll">
+                    ${s.image ? `<img src="${s.image}" alt="${s.heading}">` : ''}
+                    <h2>${s.heading}</h2><p>${s.text}</p>
+                  </article>`);
+                });
+
+
+                document
+                    .querySelectorAll('.dyn-block.fade-in-on-scroll')
+                    .forEach(el => observer.observe(el));
+            })
+
+            .catch(console.error);
+    </script>
+
 </body>
 </html>
