@@ -3,27 +3,27 @@
   "rewrites": [
     {
       "source": "/page/:slug",
-      "destination": "/public/page.html"
+      "destination": "/page.html"
     },
     {
       "source": "/",
-      "destination": "/public/index.html"
+      "destination": "/index.html"
     },
     {
       "source": "/parents",
-      "destination": "/public/parents.html"
+      "destination": "/parents.html"
     },
     {
       "source": "/tutorszone",
-      "destination": "/public/tutorszone.html"
+      "destination": "/tutorszone.html"
     },
     {
       "source": "/admin",
-      "destination": "/public/admin.html"
+      "destination": "/admin.html"
     },
     {
       "source": "/login",
-      "destination": "/public/login.html"
+      "destination": "/login.html"
     },
     {
       "source": "/tutors/search",
@@ -35,6 +35,10 @@
     },
     {
       "source": "/about",
+      "destination": "/about-us.html"
+    },
+    {
+      "source": "/about-us",
       "destination": "/about-us.html"
     },
     {

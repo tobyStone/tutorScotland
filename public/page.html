@@ -111,15 +111,22 @@
 
     <script type="module">
         // Get the page slug from the URL
-        const slug = location.pathname.split('/').pop();
+        const pathParts = location.pathname.split('/');
+        const slug = pathParts[pathParts.length - 1];
+
+        console.log('Loading page with slug:', slug);
 
         // Fetch the page content
         fetch(`/api/page?slug=${slug}`)
             .then(r => {
-                if (!r.ok) throw new Error('Page not found');
+                if (!r.ok) {
+                    console.error('API response not OK:', r.status, r.statusText);
+                    throw new Error('Page not found');
+                }
                 return r.json();
             })
             .then(page => {
+                console.log('Page data received:', page);
                 document.title = `${page.heading} - Tutors Alliance Scotland`;
 
                 document.getElementById('pageContent').innerHTML = `
@@ -138,10 +145,10 @@
             });
 
         // Load any additional dynamic sections for this page
-        const pageName = location.pathname.split('/').pop();
-        fetch(`/api/sections?page=${pageName}`)
+        fetch(`/api/sections?page=${slug}`)
             .then(r => r.json())
             .then(list => {
+                console.log('Dynamic sections for page:', list);
                 const host = document.getElementById('dynamicSections');
                 list.forEach(s => {
                     host.insertAdjacentHTML('beforeend', `
