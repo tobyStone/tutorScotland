@@ -63,7 +63,6 @@
 
     <main>
         <div class="content-flex-wrapper">
-            <!-- Left-Side Thistle -->
             <div class="left-col">
                 <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
                 <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
@@ -85,13 +84,34 @@
     </main>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.querySelector(".thistle-center").style.opacity = "1";
-            document.querySelector(".thistle-leaf").style.opacity = "1";
-            document.querySelector(".thistle-center-flipped").style.opacity = "1";
-            document.querySelector(".thistle-leaf-flipped").style.opacity = "1";
+        // Fade-in animation for sections
+        const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
+
+        // Set initial styles
+        fadeEls.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
         });
+
+        // Create the Intersection Observer
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Fade it in
+                    entry.target.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+
+                    // Once triggered, stop observing so it doesn't re-animate if user scrolls away
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
+
+        // Observe each fadeEl
+        fadeEls.forEach(el => observer.observe(el));
     </script>
+
     <script type="module">
         const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
 
@@ -107,12 +127,11 @@
                   </article>`);
                 });
 
-
+                // Apply observer to newly created elements
                 document
                     .querySelectorAll('.dyn-block.fade-in-on-scroll')
                     .forEach(el => observer.observe(el));
             })
-
             .catch(console.error);
     </script>
 
