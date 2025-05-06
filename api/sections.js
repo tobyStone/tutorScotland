@@ -116,17 +116,38 @@ module.exports = async (req, res) => {
 
         // DELETE
         if (req.method === 'DELETE') {
-            // Get ID from URL or query parameter
-            let id = req.url.split('/').pop();
+            // Debug the incoming request
+            console.log('DELETE request received');
+            console.log('URL:', req.url);
+            console.log('Query:', req.query);
 
-            // If ID is not in URL path, try query parameter
-            if (!id || id === 'sections') {
+            // Get ID from URL path segments
+            // The URL format could be /api/sections/[id] or /api/sections?id=[id]
+            let id;
+
+            // Try to extract from path
+            const urlParts = req.url.split('/');
+            console.log('URL parts:', urlParts);
+
+            // Check if we have a path parameter after /api/sections/
+            if (urlParts.length >= 4) {
+                // Handle potential query parameters in the ID segment
+                id = urlParts[3].split('?')[0];
+                console.log('Extracted ID from URL path:', id);
+            }
+
+            // If no ID in path or ID is empty, try query parameter
+            if (!id || id === 'sections' || id === '') {
                 id = req.query.id;
+                console.log('Using ID from query parameter:', id);
             }
 
             if (!id) {
+                console.log('No ID found in request');
                 return res.status(400).json({ message: 'ID parameter required' });
             }
+
+            console.log('Final ID to be used for deletion:', id);
 
             try {
                 const gone = await Section.findByIdAndDelete(id);

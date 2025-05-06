@@ -294,8 +294,22 @@
         sectionTbody.addEventListener('click', async e => {
             if (!e.target.dataset.id) return;
             if (!confirm('Delete this section?')) return;
-            const r = await fetch(`/api/sections/${e.target.dataset.id}`, { method: 'DELETE' });
-            if (r.ok) loadSections(); else alert(await r.text());
+
+            // Try with query parameter approach which is more reliable with Vercel
+            const r = await fetch(`/api/sections?id=${e.target.dataset.id}`, {
+                method: 'DELETE'
+            });
+
+            if (r.ok) {
+                loadSections();
+            } else {
+                try {
+                    const errorText = await r.text();
+                    alert(`Error: ${errorText}`);
+                } catch (err) {
+                    alert(`Failed to delete section. Status: ${r.status}`);
+                }
+            }
         });
     </script>
 </body>
