@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tutors Alliance Scotland - Dynamic Page</title>
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
+    <link rel="stylesheet" href="/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/responsive-helper.js" defer></script>
+</head>
+<body class="dynamic-page">
+    <!-- Shared banner/header -->
+    <header>
+        <h1>Tutors Alliance Scotland</h1>
+        <div class="header-links">
+            <a href="/" class="banner-login-link login-box">Home</a>
+            <a href="/login.html?role=admin" class="banner-login-link login-box">Login</a>
+        </div>
+    </header>
+
+    <!-- Dark-blue nav below banner -->
+    <nav class="main-nav">
+        <ul>
+            <li><a href="/about-us.html">About Us</a></li>
+            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="/parents.html">Enter Parent Zone</a></li>
+            <li><a href="/contact.html">Contact Us</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
+        </ul>
+    </nav>
+
+    <!-- Rolling banner container -->
+    <div class="rolling-banner">
+        <div class="rolling-content" id="tutorBanner">
+            <!-- JS or server code can populate tutor names/subjects here -->
+        </div>
+    </div>
+
+    <main>
+        <div class="content-flex-wrapper">
+            <!-- LEFT COLUMN: Shield + Ribbons -->
+            <div class="left-col">
+                <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
+                <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
+            </div>
+
+            <!-- RIGHT COLUMN: Dynamic page content -->
+            <div class="right-col" id="pageContent">
+                <!-- Dynamic page content will be inserted here -->
+                <div class="loading-indicator">Loading page content...</div>
+            </div>
+        </div>
+        
+        <section id="dynamicSections"></section>
+    </main>
+
+    <script>
+        function goToLogin(role) {
+            window.location.href = `login.html?role=${encodeURIComponent(role)}`;
+        }
+
+        // Rolling banner fetch
+        fetch('/api/tutors?format=json')
+            .then(res => res.json())
+            .then(tutors => {
+                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                document.getElementById('tutorBanner').innerText = text;
+            })
+            .catch(err => console.error('Error fetching tutors:', err));
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // After the heading's animation delay (say 1.5s) plus a little buffer:
+            setTimeout(() => {
+                document.querySelectorAll('.fade-later').forEach(el => {
+                    el.classList.add('fade-in');
+                });
+            }, 1500); // or 2000 if you want a bit more buffer
+        });
+    </script>
+
+    <script>
+        // Fade-in animation for sections
+        const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
+
+        // Set initial styles
+        fadeEls.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+        });
+
+        // Create the Intersection Observer
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Fade it in
+                    entry.target.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+
+                    // Once triggered, stop observing so it doesn't re-animate if user scrolls away
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
+
+        // Observe each fadeEl
+        fadeEls.forEach(el => observer.observe(el));
+    </script>
+
+    <script type="module">
+        // Get the page slug from the URL
+        const slug = location.pathname.split('/').pop();
+        
+        // Fetch the page content
+        fetch(`/api/page?slug=${slug}`)
+            .then(r => {
+                if (!r.ok) throw new Error('Page not found');
+                return r.json();
+            })
+            .then(page => {
+                document.title = `${page.heading} - Tutors Alliance Scotland`;
+                
+                document.getElementById('pageContent').innerHTML = `
+                    <h1>${page.heading}</h1>
+                    ${page.image ? `<img src="${page.image}" alt="${page.heading}" class="page-featured-image">` : ''}
+                    <div class="page-content">${page.text}</div>
+                `;
+            })
+            .catch(error => {
+                console.error('Error loading page:', error);
+                document.getElementById('pageContent').innerHTML = `
+                    <h1>Page Not Found</h1>
+                    <p>Sorry, the page you requested could not be found.</p>
+                    <p><a href="/">Return to Home</a></p>
+                `;
+            });
+            
+        // Load any additional dynamic sections for this page
+        const pageName = location.pathname.split('/').pop();
+        fetch(`/api/sections?page=${pageName}`)
+            .then(r => r.json())
+            .then(list => {
+                const host = document.getElementById('dynamicSections');
+                list.forEach(s => {
+                    host.insertAdjacentHTML('beforeend', `
+                        <article class="dyn-block fade-in-on-scroll">
+                            ${s.image ? `<img src="${s.image}" alt="${s.heading}">` : ''}
+                            <h2>${s.heading}</h2><p>${s.text}</p>
+                        </article>`);
+                });
+                
+                // Apply observer to newly created elements
+                document
+                    .querySelectorAll('.dyn-block.fade-in-on-scroll')
+                    .forEach(el => observer.observe(el));
+            })
+            .catch(console.error);
+    </script>
+</body>
+</html>

@@ -2,6 +2,10 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/page/:slug",
+      "destination": "/public/page.html"
+    },
+    {
       "source": "/",
       "destination": "/public/index.html"
     },
@@ -68,6 +72,10 @@
     {
       "source": "/api/sections",
       "destination": "/api/sections.js"
+    },
+    {
+      "source": "/api/page",
+      "destination": "/api/page.js"
     },
     {
       "source": "/api/tutorlist",

@@ -79,8 +79,41 @@ module.exports = async (req, res) => {
                     }
                 }
 
-                console.log('Creating section with data:', { page, heading, text, image });
-                const doc = await Section.create({ page, heading, text, image });
+                // Check if this is a full page
+                const isFullPage = fields.isFullPage ?
+                    (Array.isArray(fields.isFullPage) ? fields.isFullPage[0] : fields.isFullPage) === 'true'
+                    : false;
+
+                // If it's a full page, we need a slug
+                let slug = '';
+                if (isFullPage) {
+                    slug = fields.slug ?
+                        (Array.isArray(fields.slug) ? fields.slug[0] : fields.slug).toString().toLowerCase().trim().replace(/\s+/g, '-')
+                        : '';
+
+                    if (!slug) {
+                        return res.status(400).json({ message: 'Slug is required for full pages' });
+                    }
+
+                    // Check if slug already exists
+                    const existingPage = await Section.findOne({ slug, isFullPage: true });
+                    if (existingPage) {
+                        return res.status(400).json({ message: 'A page with this slug already exists' });
+                    }
+                }
+
+                // Check if page should be published
+                const isPublished = fields.isPublished ?
+                    (Array.isArray(fields.isPublished) ? fields.isPublished[0] : fields.isPublished) === 'true'
+                    : true;
+
+                console.log('Creating section with data:', {
+                    page, heading, text, image, isFullPage, slug, isPublished
+                });
+
+                const doc = await Section.create({
+                    page, heading, text, image, isFullPage, slug, isPublished
+                });
                 console.log('Section created:', doc);
                 return res.status(201).json(doc);
             } catch (e) {
@@ -97,13 +130,49 @@ module.exports = async (req, res) => {
 
         // READ
         if (req.method === 'GET') {
-            // Use the same robust approach for handling the page parameter
+            // Check if we're requesting full pages
+            if (req.query.isFullPage === 'true') {
+                try {
+                    // If slug is provided, get a specific page
+                    if (req.query.slug) {
+                        const slug = Array.isArray(req.query.slug) ? req.query.slug[0] : req.query.slug;
+                        const page = await Section.findOne({
+                            isFullPage: true,
+                            slug: slug
+                        }).lean();
+
+                        if (!page) {
+                            return res.status(404).json({ message: 'Page not found' });
+                        }
+
+                        return res.status(200).json(page);
+                    }
+
+                    // Otherwise, get all pages
+                    const pages = await Section.find({
+                        isFullPage: true
+                    }).sort({ createdAt: -1 }).lean();
+
+                    return res.status(200).json(pages);
+                } catch (e) {
+                    console.error('SECTION_GET_PAGES error', e);
+                    return res.status(500).json({
+                        message: 'Error retrieving pages',
+                        error: e.message
+                    });
+                }
+            }
+
+            // Regular sections request
             const page = req.query.page ?
                 (Array.isArray(req.query.page) ? req.query.page[0] : req.query.page).toString().toLowerCase()
                 : 'index';
 
             try {
-                const list = await Section.find({ page }).sort({ createdAt: 1 }).lean();
+                const list = await Section.find({
+                    page,
+                    isFullPage: { $ne: true } // Exclude full pages from regular sections
+                }).sort({ createdAt: 1 }).lean();
                 return res.status(200).json(list);
             } catch (e) {
                 console.error('SECTION_GET error', e);
