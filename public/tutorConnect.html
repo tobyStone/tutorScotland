@@ -129,6 +129,9 @@
                 <button type="submit">Submit</button>
             </form>
         </div>
+
+        <!-- Add dynamic sections container -->
+        <section id="dynamicSections"></section>
     </main>
 
     <script>
@@ -173,6 +176,40 @@
                 alert("Submission failed. Please try again.");
             }
         });
+    </script>
+
+    <!-- Script to load dynamic sections -->
+    <script type="module">
+        const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
+
+        fetch(`/api/sections?page=${page}`)
+            .then(r => r.json())
+            .then(list => {
+                const host = document.getElementById('dynamicSections');
+                list.forEach(s => {
+                    host.insertAdjacentHTML('beforeend', `
+                  <article class="dyn-block fade-in-on-scroll">
+                    ${s.image ? `<img src="${s.image}" alt="${s.heading}">` : ''}
+                    <h2>${s.heading}</h2><p>${s.text}</p>
+                  </article>`);
+                });
+
+                // Initialize fade-in animation for dynamic blocks
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document
+                    .querySelectorAll('.dyn-block.fade-in-on-scroll')
+                    .forEach(el => observer.observe(el));
+            })
+            .catch(console.error);
     </script>
 </body>
 </html>
