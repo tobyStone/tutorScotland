@@ -118,6 +118,39 @@ header {
                     background-color: #003F8F; /* highlight on hover */
                 }
 
+/* Custom pages dropdown styles */
+.custom-pages-dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #001B44;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1000;
+    top: 100%;
+    left: 0;
+}
+
+.dropdown-content a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    border-bottom: 1px solid #003F8F;
+}
+
+.dropdown-content a:hover {
+    background-color: #003F8F;
+}
+
+.custom-pages-dropdown:hover .dropdown-content {
+    display: block;
+}
+
 
 
 
@@ -483,6 +516,30 @@ main {
     max-width: 900px;
     margin: 2rem auto;
     padding: 1rem;
+}
+
+/* Dynamic page styles */
+.dynamic-page .right-col {
+    padding: 20px;
+}
+
+.dynamic-page .page-featured-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    border: 2px solid #C8A2C8;
+}
+
+.dynamic-page .page-content {
+    line-height: 1.6;
+    color: #0057B7;
+}
+
+.dynamic-page .loading-indicator {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-style: italic;
 }
 
 .tutorzone-section {

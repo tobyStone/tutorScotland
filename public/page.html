@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/responsive-helper.js" defer></script>
+    <script src="/js/dynamic-nav.js" defer></script>
 </head>
 <body class="dynamic-page">
     <!-- Shared banner/header -->
@@ -51,7 +52,7 @@
                 <div class="loading-indicator">Loading page content...</div>
             </div>
         </div>
-        
+
         <section id="dynamicSections"></section>
     </main>
 
@@ -111,7 +112,7 @@
     <script type="module">
         // Get the page slug from the URL
         const slug = location.pathname.split('/').pop();
-        
+
         // Fetch the page content
         fetch(`/api/page?slug=${slug}`)
             .then(r => {
@@ -120,7 +121,7 @@
             })
             .then(page => {
                 document.title = `${page.heading} - Tutors Alliance Scotland`;
-                
+
                 document.getElementById('pageContent').innerHTML = `
                     <h1>${page.heading}</h1>
                     ${page.image ? `<img src="${page.image}" alt="${page.heading}" class="page-featured-image">` : ''}
@@ -135,7 +136,7 @@
                     <p><a href="/">Return to Home</a></p>
                 `;
             });
-            
+
         // Load any additional dynamic sections for this page
         const pageName = location.pathname.split('/').pop();
         fetch(`/api/sections?page=${pageName}`)
@@ -149,7 +150,7 @@
                             <h2>${s.heading}</h2><p>${s.text}</p>
                         </article>`);
                 });
-                
+
                 // Apply observer to newly created elements
                 document
                     .querySelectorAll('.dyn-block.fade-in-on-scroll')
