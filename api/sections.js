@@ -61,17 +61,27 @@ module.exports = async (req, res) => {
 
                 // Optional image
                 let image = '';
-                let file = files.image || files.file;
-                if (Array.isArray(file)) file = file[0];
 
-                if (file && file.size) {
-                    if (file.size > MAX_UPLOAD) {
-                        return res.status(400).json({ message: 'Image larger than 4.5 MB' });
+                // Check if imagePath is provided in fields (from client-side upload)
+                if (fields.imagePath) {
+                    image = Array.isArray(fields.imagePath) ? fields.imagePath[0] : fields.imagePath;
+                    console.log('Using imagePath from fields:', image);
+                } else {
+                    // Otherwise try to upload file directly
+                    let file = files.image || files.file;
+                    if (Array.isArray(file)) file = file[0];
+
+                    if (file && file.size) {
+                        if (file.size > MAX_UPLOAD) {
+                            return res.status(400).json({ message: 'Image larger than 4.5 MB' });
+                        }
+                        image = await uploadToBlob(file);
                     }
-                    image = await uploadToBlob(file);
                 }
 
+                console.log('Creating section with data:', { page, heading, text, image });
                 const doc = await Section.create({ page, heading, text, image });
+                console.log('Section created:', doc);
                 return res.status(201).json(doc);
             } catch (e) {
                 console.error('SECTION_POST error', e);
