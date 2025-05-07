@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tutors Alliance Scotland - Landing</title>
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
+    <link rel="stylesheet" href="/styles2.css">
+    <link rel="stylesheet" href="/refresh.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/responsive-helper.js"></script>
+    <!-- JSON-LD microdata for Tutors Alliance Scotland as an EducationalOrganization -->
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "EducationalOrganization",
+          "name": "Tutors Alliance Scotland",
+          "url": "https://tutorsalliancescotland.co.uk",
+          "foundingDate": "2025-03-27",
+          "founder": {
+            "@type": "Person",
+            "name": "Karen Simpson"
+          },
+          "logo": "https://tutorsalliancescotland.co.uk/images/centralShield.png",
+          "description": "Raising Standards, Shaping Futures in Scottish education. Providing resources, training, and recognition for tutors.",
+          "sameAs": [
+            "https://www.facebook.com/TutorsAllianceScotland",
+            "https://twitter.com/TutorsAllianceScotland"
+          ]
+        }
+    </script>
+</head>
+<body>
+    <!-- Shared banner/header -->
+    <header>
+        <h1>Tutors Alliance Scotland</h1>
+        <div class="header-links">
+            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+        </div>
+    </header>
+
+    <!-- Dark-blue nav below banner -->
+    <nav class="main-nav">
+        <ul>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="parents.html">Enter Parent Zone</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+        </ul>
+    </nav>
+
+    <!-- Rolling banner container -->
+    <div class="rolling-banner">
+        <div class="rolling-content" id="tutorBanner">
+            <!-- JS will populate tutor names/subjects here -->
+        </div>
+    </div>
+
+    <main>
+        <!-- HERO: Split layout, info card left, background image right -->
+        <section class="main-image">
+            <div class="info">
+                <h1>Welcome to Tutors Alliance Scotland</h1>
+                <p>Raising Standards, Shaping Futures. Scotland’s professional membership organisation for tutors.</p>
+                <a class="button aurora" href="tutorMembership.html">Join as a Tutor</a>
+            </div>
+            <div class="hero-bg-img" aria-hidden="true"></div>
+        </section>
+
+        <!-- ABOUT: Two-column info block -->
+        <section class="two-col-content">
+            <div>
+                <h2>About Us</h2>
+                <p>The Tutors Alliance Scotland (STA) is dedicated to supporting tutors and ensuring every child has access to high-quality tuition.</p>
+            </div>
+            <div>
+                <img src="/images/tutor0.jpg" alt="Tutoring in action" />
+            </div>
+        </section>
+
+        <!-- CORE VALUES ICON PANEL -->
+        <section class="icon-panel">
+            <div class="icon-symbol"><span aria-label="Support" title="Support">??</span><p>Support</p></div>
+            <div class="icon-symbol"><span aria-label="Training" title="Training">??</span><p>Training</p></div>
+            <div class="icon-symbol"><span aria-label="Recognition" title="Recognition">??</span><p>Recognition</p></div>
+            <div class="icon-symbol"><span aria-label="Inclusion" title="Inclusion">??</span><p>Inclusion</p></div>
+            <div class="icon-symbol"><span aria-label="Excellence" title="Excellence">?</span><p>Excellence</p></div>
+        </section>
+
+        <!-- CTA BUTTONS ROW -->
+        <section class="aurora-buttons">
+            <a class="button aurora" href="tutorDirectory.html">Find a Tutor</a>
+            <a class="button aurora" href="contact.html">Contact Us</a>
+            <a class="button aurora" href="tutorMembership.html">Become a Member</a>
+        </section>
+
+        <!-- CONFIDENCE BLOCK: Two-column info -->
+        <section class="two-col-content confidence-block">
+            <div>
+                <h2>Confidence for Parents</h2>
+                <p>All our tutors are fully qualified teachers, PVG-checked, and committed to Scotland’s highest educational standards.</p>
+            </div>
+            <div>
+                <img src="/images/centralShield.png" alt="STA Shield" />
+            </div>
+        </section>
+
+        <!-- TESTIMONIALS: Card placeholders -->
+        <section class="testimonials-row">
+            <div class="testimonial-card">
+                <p>“The STA helped me connect with families who value high standards.”</p>
+                <span>- Tutor, Edinburgh</span>
+            </div>
+            <div class="testimonial-card">
+                <p>“I trust STA tutors because they’re all qualified teachers.”</p>
+                <span>- Parent, Glasgow</span>
+            </div>
+            <div class="testimonial-card">
+                <p>“Great community and support for tutors.”</p>
+                <span>- Tutor, Aberdeen</span>
+            </div>
+        </section>
+    </main>
+
+    <!-- THREE-COLUMN FOOTER -->
+    <footer class="footer-grid">
+        <div>
+            <h4>About</h4>
+            <ul>
+                <li><a href="about-us.html">Who We Are</a></li>
+                <li><a href="tutorMembership.html">Membership</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Get Involved</h4>
+            <ul>
+                <li><a href="tutorDirectory.html">Find a Tutor</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Connect</h4>
+            <ul>
+                <li><a href="https://www.facebook.com/TutorsAllianceScotland" target="_blank">Facebook</a></li>
+                <li><a href="mailto:info@scottishtutors.org">Email</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        // Rolling banner fetch
+        fetch('/api/tutors?format=json')
+            .then(res => res.json())
+            .then(tutors => {
+                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                document.getElementById('tutorBanner').innerText = text;
+            })
+            .catch(err => console.error('Error fetching tutors:', err));
+    </script>
+</body>
+</html>

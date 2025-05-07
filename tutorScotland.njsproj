@@ -84,6 +84,9 @@
     <Content Include="public\contact.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\home2.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="public\images\bannerBackground.PNG" />
     <Content Include="public\images\bannerShield.png" />
     <Content Include="public\images\bannerShield2.png" />
@@ -124,6 +127,9 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="api\tutors.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\styles2.css">
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\tutorConnect.html">
