@@ -9,6 +9,101 @@ body {
     background: #E6F0FF;
 }
 
+/* Header */
+header {
+    background-image: url('/images/bannerShield2.png'), url('/images/bannerBackground.PNG');
+    background-repeat: no-repeat, repeat;
+    background-position: 20px 20px, left top;
+    background-size: 100px auto, 150px auto;
+    padding: 40px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+    header h1 {
+        font-size: 3.3em;
+        font-weight: bold;
+        margin-left: 100px;
+        line-height: 1.2;
+        text-shadow: 5px 5px 10px #0057B7;
+    }
+
+.header-links {
+    display: flex;
+    gap: 10px;
+}
+
+.login-box {
+    background-color: #0057B7;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+    .login-box:hover {
+        background-color: #b37cb3;
+    }
+
+/* Nav Bar */
+.main-nav {
+    background-color: #001B44;
+}
+
+    .main-nav ul {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        list-style: none;
+    }
+
+        .main-nav ul li {
+            margin: 0 15px;
+        }
+
+            .main-nav ul li a {
+                color: #fff;
+                text-decoration: none;
+                font-weight: bold;
+                padding: 12px 18px;
+                border-radius: 3px;
+                transition: background 0.2s;
+            }
+
+                .main-nav ul li a:hover,
+                .main-nav ul li a.active {
+                    background-color: #0057B7;
+                }
+
+/* Rolling Banner */
+.rolling-banner {
+    background: #b37cb3;
+    color: #fff;
+    padding: 12px 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.rolling-content {
+    white-space: nowrap;
+    animation: rollingBanner 18s linear infinite;
+    font-size: 1.2em;
+    padding-left: 100%;
+}
+
+@keyframes rollingBanner {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
 /* HERO split layout */
 .main-image {
     display: flex;
@@ -116,6 +211,35 @@ body {
     .button.aurora:hover, .button.aurora:focus {
         transform: translateY(-2px) scale(1.03);
         box-shadow: 0 4px 16px rgba(206,48,59,0.12);
+    }
+
+/* General button style for page body */
+body button,
+.button, /* for <a> or <input> with class="button" */
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+    background: linear-gradient(90deg, #E6F0FF 0%, #0057B7 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: none;
+    outline: none;
+    display: inline-block;
+}
+
+    body button:hover,
+    .button:hover,
+    input[type="button"]:hover,
+    input[type="submit"]:hover,
+    input[type="reset"]:hover {
+        background: #b37cb3; /* Lilac */
+        color: #fff;
     }
 
 /* Testimonials row */

@@ -30,7 +30,6 @@
     </script>
 </head>
 <body>
-    <!-- Shared banner/header -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
@@ -38,9 +37,9 @@
         </div>
     </header>
 
-    <!-- Dark-blue nav below banner -->
     <nav class="main-nav">
         <ul>
+            <li><a href="home2.html">New Landing Page</a></li>
             <li><a href="about-us.html">About Us</a></li>
             <li><a href="tutorMembership.html">Tutor Membership</a></li>
             <li><a href="parents.html">Enter Parent Zone</a></li>
@@ -50,13 +49,11 @@
         </ul>
     </nav>
 
-    <!-- Rolling banner container -->
     <div class="rolling-banner">
         <div class="rolling-content" id="tutorBanner">
             <!-- JS will populate tutor names/subjects here -->
         </div>
     </div>
-
     <main>
         <!-- HERO: Split layout, info card left, background image right -->
         <section class="main-image">
@@ -149,6 +146,10 @@
     </footer>
 
     <script>
+        function goToLogin(role) {
+            window.location.href = `login.html?role=${encodeURIComponent(role)}`;
+        }
+
         // Rolling banner fetch
         fetch('/api/tutors?format=json')
             .then(res => res.json())
@@ -157,6 +158,70 @@
                 document.getElementById('tutorBanner').innerText = text;
             })
             .catch(err => console.error('Error fetching tutors:', err));
+
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // After the heading’s animation delay (say 1.5s) plus a little buffer:
+            setTimeout(() => {
+                document.querySelectorAll('.fade-later').forEach(el => {
+                    el.classList.add('fade-in');
+                });
+            }, 1500); // or 2000 if you want a bit more buffer
+        });
+
+        //fade in logic
+        // 1. Grab all elements with fade-in-on-scroll
+        const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
+
+        // 2. Set initial styles (optional if you do them in CSS, but sometimes we do it here)
+        fadeEls.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+        });
+
+        // 3. Create the Intersection Observer
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Fade it in
+                    entry.target.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+
+                    // Once triggered, stop observing so it doesn't re-animate if user scrolls away
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
+
+        // 4. Observe each fadeEl
+        fadeEls.forEach(el => observer.observe(el));
+
+
+
+    </script>
+    <script type="module">
+        const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
+
+        fetch(`/api/sections?page=${page}`)
+            .then(r => r.json())
+            .then(list => {
+                const host = document.getElementById('dynamicSections');
+                list.forEach(s => {
+                    host.insertAdjacentHTML('beforeend', `
+                      <article class="dyn-block fade-in-on-scroll">
+                        ${s.image ? `<img src="${s.image}" alt="${s.heading}">` : ''}
+                        <h2>${s.heading}</h2><p>${s.text}</p>
+                      </article>`);
+                });
+
+
+                document
+                    .querySelectorAll('.dyn-block.fade-in-on-scroll')
+                    .forEach(el => observer.observe(el));
+            })
+
+            .catch(console.error);
     </script>
 </body>
 </html>
