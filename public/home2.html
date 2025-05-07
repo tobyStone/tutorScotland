@@ -253,7 +253,7 @@
                 const host = document.getElementById('dynamicSections');
                 list.forEach(s => {
                     host.insertAdjacentHTML('beforeend', `
-                      <article class="dyn-block fade-in-on-scroll">
+                      <article class="dyn-block fade-in-section">
                         ${s.image ? `<img src="${s.image}" alt="${s.heading}">` : ''}
                         <h2>${s.heading}</h2><p>${s.text}</p>
                       </article>`);
@@ -261,7 +261,7 @@
 
 
                 document
-                    .querySelectorAll('.dyn-block.fade-in-on-scroll')
+                    .querySelectorAll('.dyn-block.fade-in-section')
                     .forEach(el => observer.observe(el));
             })
 
