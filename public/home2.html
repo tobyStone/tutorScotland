@@ -6,8 +6,10 @@
     <link rel="icon" href="/images/bannerShield2.png" type="image/png">
     <link rel="stylesheet" href="/styles2.css">
     <link rel="stylesheet" href="/refresh.css">
+    <link rel="stylesheet" href="/header-banner.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/responsive-helper.js"></script>
+    <script src="/js/dynamic-nav.js" defer></script>
     <!-- JSON-LD microdata for Tutors Alliance Scotland as an EducationalOrganization -->
     <script type="application/ld+json">
         {
@@ -49,6 +51,7 @@
         </ul>
     </nav>
 
+    <!-- Rolling banner container -->
     <div class="rolling-banner">
         <div class="rolling-content" id="tutorBanner">
             <!-- JS will populate tutor names/subjects here -->
@@ -59,7 +62,7 @@
         <section class="main-image">
             <div class="info">
                 <h1>Welcome to Tutors Alliance Scotland</h1>
-                <p>Raising Standards, Shaping Futures. Scotland’s professional membership organisation for tutors.</p>
+                <p>Raising Standards, Shaping Futures. Scotlandï¿½s professional membership organisation for tutors.</p>
                 <a class="button aurora" href="tutorMembership.html">Join as a Tutor</a>
             </div>
             <div class="hero-bg-img" aria-hidden="true"></div>
@@ -96,7 +99,7 @@
         <section class="two-col-content confidence-block">
             <div>
                 <h2>Confidence for Parents</h2>
-                <p>All our tutors are fully qualified teachers, PVG-checked, and committed to Scotland’s highest educational standards.</p>
+                <p>All our tutors are fully qualified teachers, PVG-checked, and committed to Scotlandï¿½s highest educational standards.</p>
             </div>
             <div>
                 <img src="/images/centralShield.png" alt="STA Shield" />
@@ -106,18 +109,21 @@
         <!-- TESTIMONIALS: Card placeholders -->
         <section class="testimonials-row">
             <div class="testimonial-card">
-                <p>“The STA helped me connect with families who value high standards.”</p>
+                <p>ï¿½The STA helped me connect with families who value high standards.ï¿½</p>
                 <span>- Tutor, Edinburgh</span>
             </div>
             <div class="testimonial-card">
-                <p>“I trust STA tutors because they’re all qualified teachers.”</p>
+                <p>ï¿½I trust STA tutors because theyï¿½re all qualified teachers.ï¿½</p>
                 <span>- Parent, Glasgow</span>
             </div>
             <div class="testimonial-card">
-                <p>“Great community and support for tutors.”</p>
+                <p>ï¿½Great community and support for tutors.ï¿½</p>
                 <span>- Tutor, Aberdeen</span>
             </div>
         </section>
+
+        <!-- Dynamic sections will be added here -->
+        <section id="dynamicSections"></section>
     </main>
 
     <!-- THREE-COLUMN FOOTER -->
@@ -161,7 +167,7 @@
 
 
         window.addEventListener('DOMContentLoaded', () => {
-            // After the heading’s animation delay (say 1.5s) plus a little buffer:
+            // After the headingï¿½s animation delay (say 1.5s) plus a little buffer:
             setTimeout(() => {
                 document.querySelectorAll('.fade-later').forEach(el => {
                     el.classList.add('fade-in');
