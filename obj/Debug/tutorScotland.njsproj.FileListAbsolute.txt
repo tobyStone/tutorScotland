@@ -1,0 +1,3 @@
+C:\Users\tobys\source\repos\tutorScotland\obj\Debug\tutorScotland.njsproj.AssemblyReference.cache
+C:\Users\tobys\source\repos\tutorScotland\obj\Debug\tutorScotland.njsproj.CoreCompileInputs.cache
+C:\Users\tobys\source\repos\tutorScotland\bin\Microsoft.NodejsTools.WebRole.dll
