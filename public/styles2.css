@@ -7,6 +7,8 @@ body {
 
 .main-image, .two-col-content, .icon-panel, .aurora-buttons, .testimonials-row, .confidence-block, .footer-grid {
     background: #E6F0FF;
+    max-width: 1080px;
+    margin: 2rem auto;
 }
 
 /* Header and navigation styles are now in header-banner.css */
@@ -102,7 +104,7 @@ body {
 }
 
 .button.aurora {
-    background: linear-gradient(90deg, #E6F0FF 0%, #0057B7 50%, #001B44 100%);
+    background: linear-gradient(90deg, #B8D4FF 0%, #0057B7 50%, #001B44 100%);
     color: #fff;
     border: none;
     border-radius: 2rem;
@@ -277,6 +279,7 @@ input[type="reset"] {
     transform: translateX(20px);
     animation: growRight 0.8s ease-out 0.3s forwards;
     margin: 0 auto;
+    margin-top: -50px;
 }
 
 @keyframes growRight {
@@ -320,4 +323,40 @@ input[type="reset"] {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Add fade-in animations for sections */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Style parent and tutor sections to match other sections */
+.parents-zone-section,
+.tutor-zone-section {
+    max-width: 1080px;
+    margin: 2rem auto;
+    padding: 2.5rem 2rem;
+    border-radius: 1.5rem;
+    background: #fff;
+    box-shadow: 0 2px 18px rgba(0,87,183,0.05);
+}
+
+.parents-box,
+.tutor-box {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.parents-box h2,
+.tutor-box h2 {
+    color: #0057B7;
+    margin-bottom: 1rem;
+    font-size: 1.8em;
 }
