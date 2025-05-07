@@ -102,7 +102,7 @@ body {
 }
 
 .button.aurora {
-    background: linear-gradient(90deg,#f39500 0%,#ed6514 35%,#ce303b 100%);
+    background: linear-gradient(90deg, #E6F0FF 0%, #0057B7 50%, #001B44 100%);
     color: #fff;
     border: none;
     border-radius: 2rem;
@@ -117,7 +117,7 @@ body {
 
     .button.aurora:hover, .button.aurora:focus {
         transform: translateY(-2px) scale(1.03);
-        box-shadow: 0 4px 16px rgba(206,48,59,0.12);
+        box-shadow: 0 4px 16px rgba(0,27,68,0.12);
     }
 
 /* General button style for page body */
@@ -250,13 +250,14 @@ input[type="reset"] {
     max-width: 1200px;
     margin: 0 auto;
     padding: 40px;
+    flex-direction: row-reverse;
 }
 
 .left-col {
     flex: 0 0 23%;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     position: relative;
 }
 
@@ -265,22 +266,23 @@ input[type="reset"] {
     width: 100%;
     margin-bottom: 0.5rem;
     opacity: 0;
-    transform: translateX(-20px);
-    animation: growLeft 0.8s ease-out forwards;
+    transform: translateX(20px);
+    animation: growRight 0.8s ease-out forwards;
 }
 
 .main-ribbons {
     max-width: 200px;
     width: 100%;
     opacity: 0;
-    transform: translateX(-20px);
-    animation: growLeft 0.8s ease-out 0.3s forwards;
+    transform: translateX(20px);
+    animation: growRight 0.8s ease-out 0.3s forwards;
+    margin: 0 auto;
 }
 
-@keyframes growLeft {
+@keyframes growRight {
     from {
         opacity: 0;
-        transform: translateX(-20px);
+        transform: translateX(20px);
     }
     to {
         opacity: 1;
