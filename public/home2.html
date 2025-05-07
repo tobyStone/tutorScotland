@@ -245,50 +245,47 @@
 
     </script>
     <script>
-        // Fade in elements as they come into view
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries, observer) => {
+        // Single Intersection Observer for all fade-in elements
+        const fadeObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('is-visible');
-                    observer.unobserve(entry.target);
+                    fadeObserver.unobserve(entry.target);
                 }
             });
-        }, observerOptions);
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        });
 
-        // Function to observe elements
-        function observeElements() {
+        // Function to observe all fade-in elements
+        function observeFadeElements() {
             // Observe all sections with fade-in-section class
             document.querySelectorAll('.fade-in-section').forEach(section => {
-                observer.observe(section);
-            });
-            
-            // Observe all dynamic blocks
-            document.querySelectorAll('.dyn-block').forEach(block => {
-                observer.observe(block);
+                fadeObserver.observe(section);
             });
         }
 
-        // Initial observation
-        document.addEventListener('DOMContentLoaded', observeElements);
+        // Initial observation when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            observeFadeElements();
+        });
 
-        // Observe new elements that might be added dynamically
-        const observerConfig = { childList: true, subtree: true };
+        // Watch for dynamically added content
         const mutationObserver = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 if (mutation.addedNodes.length) {
-                    observeElements();
+                    observeFadeElements();
                 }
             });
         });
 
         // Start observing the document body for changes
-        mutationObserver.observe(document.body, observerConfig);
+        mutationObserver.observe(document.body, { 
+            childList: true, 
+            subtree: true 
+        });
     </script>
     <script type="module">
         const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
@@ -307,7 +304,7 @@
 
                 // Observe the newly added dynamic blocks
                 document.querySelectorAll('.dyn-block').forEach(block => {
-                    observer.observe(block);
+                    fadeObserver.observe(block);
                 });
             })
             .catch(console.error);

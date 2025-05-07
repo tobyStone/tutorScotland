@@ -331,6 +331,7 @@ input[type="reset"] {
     transform: translateY(20px);
     transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     will-change: opacity, transform;
+    visibility: visible !important; /* Ensure elements are visible */
 }
 
 .fade-in-section.is-visible {
@@ -344,12 +345,19 @@ input[type="reset"] {
     transform: translateY(20px);
     transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     will-change: opacity, transform;
+    visibility: visible !important; /* Ensure elements are visible */
 }
 
 .dyn-block.is-visible {
     opacity: 1;
     transform: translateY(0);
 }
+
+/* Add a small delay between sections for a staggered effect */
+.fade-in-section:nth-child(2) { transition-delay: 0.1s; }
+.fade-in-section:nth-child(3) { transition-delay: 0.2s; }
+.fade-in-section:nth-child(4) { transition-delay: 0.3s; }
+.fade-in-section:nth-child(5) { transition-delay: 0.4s; }
 
 /* Style parent and tutor sections to match other sections */
 .parents-zone-section,
