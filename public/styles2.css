@@ -12,6 +12,18 @@ body {
     margin: 2rem auto;
 }
 
+/* Fade-in animation for sections */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* Header and navigation styles are now in header-banner.css */
 
 /* HERO split layout */
@@ -192,6 +204,43 @@ input[type="reset"] {
     color: #fff;
     padding: 2.5rem 1.5rem 1.2rem 1.5rem;
     margin-top: 2.5rem;
+}
+
+/* Site footer with fade-in effect */
+.site-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 27, 68, 0.9); /* Semi-transparent dark blue */
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    z-index: 100;
+    opacity: 0; /* Start hidden */
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.site-footer.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.footer-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.footer-icons a {
+    color: white;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+
+.footer-icons a:hover {
+    color: #C8A2C8; /* Lilac on hover */
 }
 
     .footer-grid h4 {
@@ -389,12 +438,12 @@ input[type="reset"] {
 }
 
 /* Center all sections and add more padding between them */
-.main-image, 
-.two-col-content, 
-.icon-panel, 
-.aurora-buttons, 
-.testimonials-row, 
-.confidence-block, 
+.main-image,
+.two-col-content,
+.icon-panel,
+.aurora-buttons,
+.testimonials-row,
+.confidence-block,
 .footer-grid,
 .parents-zone-section,
 .tutor-zone-section {

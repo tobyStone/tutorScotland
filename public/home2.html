@@ -296,9 +296,9 @@
         });
 
         // Start observing the document body for changes
-        mutationObserver.observe(document.body, { 
-            childList: true, 
-            subtree: true 
+        mutationObserver.observe(document.body, {
+            childList: true,
+            subtree: true
         });
     </script>
     <script type="module">
@@ -323,36 +323,50 @@
             })
             .catch(console.error);
     </script>
+    <!-- Footer fade-in is now controlled by the About Us section animation -->
     <script>
-        // Only fade in the footer after the user scrolls downward
-        let lastScrollY = window.scrollY;
-        let footerRevealed = false;
-        function onScrollFooter() {
+        // Synchronize footer fade-in with the About Us section fade-in
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get the About Us section (the first two-col-content section)
+            const aboutUsSection = document.querySelector('.two-col-content.fade-in-section');
             const footer = document.querySelector('.site-footer');
-            if (!footerRevealed && window.scrollY > lastScrollY) {
-                if (footer && !footer.classList.contains('is-visible')) {
-                    footer.classList.add('is-visible');
-                    footerRevealed = true;
-                    window.removeEventListener('scroll', onScrollFooter);
-                }
+
+            if (aboutUsSection && footer) {
+                // Initially hide the footer completely
+                footer.style.opacity = '0';
+                footer.style.transition = 'opacity 0.5s ease-out';
+
+                // Create an observer specifically for the About Us section
+                const aboutUsObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // When About Us section becomes visible, add the is-visible class
+                            aboutUsSection.classList.add('is-visible');
+
+                            // Wait for the About Us animation to complete before showing the footer
+                            // Get the computed transition duration from CSS
+                            const aboutUsStyle = window.getComputedStyle(aboutUsSection);
+                            const transitionDuration = parseFloat(aboutUsStyle.transitionDuration) * 1000 || 500;
+
+                            // Add a small buffer to ensure the animation completes
+                            setTimeout(() => {
+                                // Fade in the footer
+                                footer.style.opacity = '1';
+                                footer.classList.add('is-visible');
+                            }, transitionDuration + 200); // Add 200ms buffer
+
+                            // Stop observing once triggered
+                            aboutUsObserver.unobserve(aboutUsSection);
+                        }
+                    });
+                }, {
+                    threshold: 0.3 // Trigger when 30% of the About Us section is visible
+                });
+
+                // Start observing the About Us section
+                aboutUsObserver.observe(aboutUsSection);
             }
-            lastScrollY = window.scrollY;
-        }
-        window.addEventListener('scroll', onScrollFooter);
-    </script>
-    <script>
-        // Synchronize footer fade-in with two-col-content fade-in-section
-        const twoColSection = document.querySelector('.two-col-content.fade-in-section');
-        const footer = document.querySelector('.site-footer');
-        if (twoColSection && footer) {
-            const observer = new MutationObserver(() => {
-                if (twoColSection.classList.contains('is-visible')) {
-                    footer.classList.add('is-visible');
-                    observer.disconnect();
-                }
-            });
-            observer.observe(twoColSection, { attributes: true, attributeFilter: ['class'] });
-        }
+        });
     </script>
 </body>
 </html>
