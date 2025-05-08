@@ -3,6 +3,7 @@ body {
     background: #E6F0FF;
     color: #222;
     font-family: 'Segoe UI', Arial, sans-serif;
+    padding-bottom: 110px; /* Ensure content is not hidden behind the fixed footer */
 }
 
 .main-image, .two-col-content, .icon-panel, .aurora-buttons, .testimonials-row, .confidence-block, .footer-grid {
@@ -452,10 +453,12 @@ input[type="reset"] {
     align-items: center;
     justify-content: center;
     padding: 2rem 0;
-    margin: 3.6rem 0 0 0;
+    margin: 0;
     border-top: 0;
-    position: relative;
-    z-index: 2;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
     transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     opacity: 0;
     transform: translateY(20px);
@@ -499,4 +502,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 .mission-statement {
     color: #b37cb3 !important;
+}
+
+/* Header H1 back to white */
+header h1 {
+    color: #fff !important;
+}
+
+/* Mission statement H2 back to dark blue */
+.mission-statement {
+    color: #001B44 !important;
+}
+
+/* Aurora button in mission statement: start gradient with slightly darker blue */
+.about-us-landing .button.aurora {
+    background: linear-gradient(90deg, #7CA7D9 0%, #0057B7 50%, #001B44 100%);
 }
