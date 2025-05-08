@@ -43,6 +43,10 @@ body {
         border-bottom-right-radius: 1.5rem;
     }
 
+    .main-image .info h1 {
+        color: #0057B7;
+    }
+
 /* Two-column generic block */
 .two-col-content {
     display: flex;
@@ -501,7 +505,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #001B44;
 }
 .mission-statement {
-    color: #b37cb3 !important;
+    color: #0057B7 !important;
 }
 
 /* Header H1 back to white */
