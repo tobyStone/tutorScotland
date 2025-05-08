@@ -446,13 +446,13 @@ input[type="reset"] {
 /* Footer style with tartan/tile pattern and fade-in */
 .site-footer {
     width: 100%;
-    min-height: 96px;
+    min-height: 48px;
     background-image: url('/images/bannerBackground.PNG');
     background-repeat: repeat;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem 0;
+    padding: 1rem 0;
     margin: 0;
     border-top: 0;
     position: fixed;

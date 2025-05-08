@@ -324,14 +324,18 @@
             .catch(console.error);
     </script>
     <script>
-        // Fade in footer as soon as user scrolls
-        window.addEventListener('scroll', function onScrollFooter() {
+        // Fade in footer 1 second after user starts scrolling
+        let footerFadeTimeout;
+        function onScrollFooter() {
             const footer = document.querySelector('.site-footer');
             if (footer && !footer.classList.contains('is-visible')) {
-                footer.classList.add('is-visible');
-                window.removeEventListener('scroll', onScrollFooter);
+                clearTimeout(footerFadeTimeout);
+                footerFadeTimeout = setTimeout(() => {
+                    footer.classList.add('is-visible');
+                }, 1000);
             }
-        });
+        }
+        window.addEventListener('scroll', onScrollFooter);
     </script>
 </body>
 </html>
