@@ -394,7 +394,7 @@ input[type="reset"] {
 .parents-zone-section,
 .tutor-zone-section {
     max-width: 1080px;
-    margin: 3rem auto;
+    margin: 3.6rem auto;
     padding: 2.5rem 2rem;
     border-radius: 1.5rem;
     background: #fff;
@@ -435,4 +435,46 @@ input[type="reset"] {
     height: auto;
     border-radius: 1rem;
     margin: 0 auto;
+}
+
+/* About section H2 color to lilac */
+.two-col-content h2 {
+    color: #b37cb3;
+}
+
+/* Footer style with tartan/tile pattern and fade-in */
+.site-footer {
+    width: 100%;
+    min-height: 120px;
+    background-image: url('/images/bannerBackground.PNG');
+    background-repeat: repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 0;
+    margin: 3.6rem 0 0 0;
+    border-top: 0;
+    position: relative;
+    z-index: 2;
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    opacity: 0;
+    transform: translateY(20px);
+}
+.site-footer.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.site-footer .footer-icons {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: center;
+}
+.site-footer .footer-icons a {
+    color: #fff;
+    font-size: 2.5rem;
+    transition: color 0.2s;
+}
+.site-footer .footer-icons a:hover {
+    color: #b37cb3;
 }
