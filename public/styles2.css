@@ -522,3 +522,7 @@ header h1 {
 .about-us-landing .button.aurora {
     background: linear-gradient(90deg, #7CA7D9 0%, #0057B7 50%, #001B44 100%);
 }
+
+.about-us-landing .mission-statement {
+    color: #0057B7 !important;
+}
