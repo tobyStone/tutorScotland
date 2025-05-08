@@ -178,6 +178,7 @@ body {
     .button.aurora:hover, .button.aurora:focus {
         transform: translateY(-2px) scale(1.03);
         box-shadow: 0 4px 16px rgba(0,27,68,0.12);
+        background: #b37cb3; /* Lilac color */
     }
 
 /* General button style for page body */
@@ -418,6 +419,11 @@ input[type="reset"] {
     .strive-value p {
         font-size: 0.9rem;
     }
+
+    /* Responsive mission statement */
+    .mission-statement {
+        font-size: 2.5em; /* Smaller on mobile but still larger than original */
+    }
 }
 
 /* Mission row layout */
@@ -482,8 +488,8 @@ input[type="reset"] {
 }
 
 .mission-statement {
-    font-size: 2.2em;
-    color: #0057B7;
+    font-size: 3.3em; /* 50% bigger than 2.2em */
+    color: #b37cb3; /* Lilac color from buttons:hover */
     margin-bottom: 2.5rem;
     line-height: 1.3;
     opacity: 0;
@@ -810,6 +816,4 @@ header h1 {
     background: linear-gradient(90deg, #7CA7D9 0%, #0057B7 50%, #001B44 100%);
 }
 
-.about-us-landing .mission-statement {
-    color: #0057B7 !important;
-}
+/* Mission statement color is now defined in the main .mission-statement rule */
