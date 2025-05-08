@@ -26,38 +26,46 @@ body {
 
 /* Header and navigation styles are now in header-banner.css */
 
-/* HERO split layout */
-.main-image {
-    display: flex;
-    align-items: stretch;
-    min-height: 340px;
+/* HERO full-width banner with background image */
+.hero-banner {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
     margin: 2rem 0 2.5rem;
     border-radius: 1.5rem;
     overflow: hidden;
     box-shadow: 0 6px 36px rgba(0,87,183,0.06);
+    background: linear-gradient(rgba(0, 27, 68, 0.7), rgba(0, 87, 183, 0.7)),
+                url('/images/parentAndChild.PNG') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
 }
 
-    .main-image .info {
-        flex: 1 1 320px;
-        padding: 2.5rem 2rem;
-        background: #fff;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        border-top-left-radius: 1.5rem;
-        border-bottom-left-radius: 1.5rem;
-    }
+.hero-content {
+    max-width: 800px;
+    text-align: center;
+    color: white;
+    z-index: 2;
+    padding: 2rem;
+    background-color: rgba(0, 27, 68, 0.5);
+    border-radius: 1rem;
+    backdrop-filter: blur(5px);
+}
 
-    .main-image .hero-bg-img {
-        flex: 1 1 320px;
-        background: url('/images/tutor0.jpg') center/cover no-repeat;
-        border-top-right-radius: 1.5rem;
-        border-bottom-right-radius: 1.5rem;
-    }
+.hero-content h1 {
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
 
-    .main-image .info h1 {
-        color: #0057B7;
-    }
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
 
 /* Two-column generic block */
 .two-col-content {
@@ -112,12 +120,36 @@ body {
         color: #333;
     }
 
-/* Aurora gradient buttons */
-.aurora-buttons {
+/* CTA Banner with background image */
+.cta-banner {
+    position: relative;
+    width: 100%;
+    min-height: 200px;
+    margin: 2.5rem 0;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 6px 36px rgba(0,87,183,0.06);
+    background: linear-gradient(rgba(0, 27, 68, 0.6), rgba(0, 87, 183, 0.6)),
+                url('/images/childStudy.png') center/cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.cta-content {
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+    z-index: 2;
+}
+
+.cta-buttons {
     display: flex;
     gap: 1.5rem;
     justify-content: center;
-    margin: 2.5rem 0;
+    margin: 0;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 /* Button group for multiple buttons in a container */
@@ -278,15 +310,32 @@ input[type="reset"] {
 
 /* Responsive tweaks */
 @media (max-width: 900px) {
-    .main-image, .two-col-content {
+    .hero-banner {
+        min-height: 300px;
+        padding: 2rem 1rem;
+    }
+
+    .hero-content {
+        padding: 1.5rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .cta-banner {
+        min-height: 180px;
+        padding: 1.5rem 1rem;
+    }
+
+    .two-col-content {
         flex-direction: column;
         padding: 1.2rem 0.8rem;
     }
-
-        .main-image .info, .main-image .hero-bg-img {
-            border-radius: 1.5rem 1.5rem 0 0;
-            min-height: 180px;
-        }
 
     .icon-panel {
         flex-direction: column;
@@ -625,10 +674,8 @@ input[type="reset"] {
 }
 
 /* Center all sections and add more padding between them */
-.main-image,
 .two-col-content,
 .icon-panel,
-.aurora-buttons,
 .testimonials-row,
 .confidence-block,
 .footer-grid,
@@ -647,6 +694,14 @@ input[type="reset"] {
     flex-direction: column;
     align-items: center;
     text-align: center;
+}
+
+/* Hero and CTA banners are full-width and have their own styling */
+.hero-banner,
+.cta-banner {
+    max-width: 1080px;
+    margin: 3.6rem auto;
+    border-radius: 1.5rem;
 }
 
 /* Ensure content within sections is properly centered */
