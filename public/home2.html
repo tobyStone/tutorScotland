@@ -341,17 +341,17 @@
         window.addEventListener('scroll', onScrollFooter);
     </script>
     <script>
-        // Synchronize footer fade-in with main-image fade-in-section
-        const mainImageSection = document.querySelector('.main-image.fade-in-section');
+        // Synchronize footer fade-in with two-col-content fade-in-section
+        const twoColSection = document.querySelector('.two-col-content.fade-in-section');
         const footer = document.querySelector('.site-footer');
-        if (mainImageSection && footer) {
+        if (twoColSection && footer) {
             const observer = new MutationObserver(() => {
-                if (mainImageSection.classList.contains('is-visible')) {
+                if (twoColSection.classList.contains('is-visible')) {
                     footer.classList.add('is-visible');
                     observer.disconnect();
                 }
             });
-            observer.observe(mainImageSection, { attributes: true, attributeFilter: ['class'] });
+            observer.observe(twoColSection, { attributes: true, attributeFilter: ['class'] });
         }
     </script>
 </body>

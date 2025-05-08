@@ -504,18 +504,11 @@ header {
 h1, h2, h3, h4, h5, h6 {
     color: #001B44;
 }
-.mission-statement {
-    color: #0057B7 !important;
-}
+
 
 /* Header H1 back to white */
 header h1 {
     color: #fff !important;
-}
-
-/* Mission statement H2 back to dark blue */
-.mission-statement {
-    color: #001B44 !important;
 }
 
 /* Aurora button in mission statement: start gradient with slightly darker blue */
