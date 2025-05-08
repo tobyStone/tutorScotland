@@ -120,6 +120,15 @@ body {
     margin: 2.5rem 0;
 }
 
+/* Button group for multiple buttons in a container */
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1.5rem 0 0.5rem;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
 .button.aurora {
     background: linear-gradient(90deg, #B8D4FF 0%, #0057B7 50%, #001B44 100%);
     color: #fff;
@@ -295,6 +304,71 @@ input[type="reset"] {
         gap: 1.2rem;
         text-align: center;
     }
+
+    /* Responsive button adjustments */
+    .button-group {
+        gap: 0.8rem;
+    }
+
+    .button.aurora {
+        padding: 0.8em 1.8em;
+        font-size: 1rem;
+    }
+
+    /* Responsive adjustments for parent, tutor, pupil, strive, and newsletter boxes */
+    .parents-box h2,
+    .tutor-box h2,
+    .pupil-box h2,
+    .strive-box h2,
+    .newsletter-box h2 {
+        font-size: 1.5em;
+    }
+
+    .parents-box ul,
+    .tutor-box ul,
+    .pupil-box ul,
+    .newsletter-box ul {
+        padding-left: 0;
+        margin: 1rem auto;
+    }
+
+    .parents-box li,
+    .tutor-box li,
+    .pupil-box li,
+    .newsletter-box li {
+        padding-left: 1.5rem;
+        margin-bottom: 0.6rem;
+    }
+
+    /* Responsive newsletter adjustments */
+    .newsletter-cta {
+        margin: 1.5rem auto 0.5rem;
+    }
+
+    .subscribe-image {
+        max-width: 160px;
+    }
+
+    /* Responsive STRIVE values */
+    .strive-values {
+        gap: 0.8rem;
+        margin: 1.5rem auto;
+    }
+
+    .strive-value {
+        padding: 0.8rem;
+        gap: 1rem;
+    }
+
+    .strive-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.5rem;
+    }
+
+    .strive-value p {
+        font-size: 0.9rem;
+    }
 }
 
 /* Mission row layout */
@@ -413,9 +487,12 @@ input[type="reset"] {
 .fade-in-section:nth-child(4) { transition-delay: 0.3s; }
 .fade-in-section:nth-child(5) { transition-delay: 0.4s; }
 
-/* Style parent and tutor sections to match other sections */
+/* Style parent, tutor, pupil, strive, and newsletter sections to match other sections */
 .parents-zone-section,
-.tutor-zone-section {
+.tutor-zone-section,
+.pupil-zone-section,
+.strive-zone-section,
+.newsletter-zone-section {
     max-width: 1080px;
     margin: 2rem auto;
     padding: 2.5rem 2rem;
@@ -425,16 +502,126 @@ input[type="reset"] {
 }
 
 .parents-box,
-.tutor-box {
+.tutor-box,
+.pupil-box,
+.strive-box,
+.newsletter-box {
     text-align: center;
     padding: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .parents-box h2,
-.tutor-box h2 {
+.tutor-box h2,
+.pupil-box h2,
+.strive-box h2,
+.newsletter-box h2 {
     color: #0057B7;
     margin-bottom: 1rem;
     font-size: 1.8em;
+}
+
+.parents-box ul,
+.tutor-box ul,
+.pupil-box ul,
+.newsletter-box ul {
+    text-align: left;
+    max-width: 600px;
+    margin: 1.5rem auto;
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.parents-box li,
+.tutor-box li,
+.pupil-box li,
+.newsletter-box li {
+    margin-bottom: 0.8rem;
+    padding-left: 2rem;
+    position: relative;
+    line-height: 1.5;
+}
+
+.parents-box p,
+.tutor-box p,
+.pupil-box p,
+.strive-box p,
+.newsletter-box p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+/* Newsletter specific styles */
+.newsletter-cta {
+    margin: 2rem auto 1rem;
+}
+
+.subscribe-link {
+    display: inline-block;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.subscribe-link:hover {
+    transform: translateY(-5px);
+}
+
+.subscribe-image {
+    max-width: 200px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,87,183,0.15);
+    transition: filter 0.3s ease;
+}
+
+.subscribe-link:hover .subscribe-image {
+    filter: hue-rotate(-10deg) saturate(1.5) brightness(1.05);
+    box-shadow: 0 6px 16px rgba(200,162,200,0.3);
+}
+
+/* STRIVE values styling */
+.strive-values {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    max-width: 700px;
+    margin: 2rem auto;
+}
+
+.strive-value {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: left;
+    background-color: #f8f9ff;
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,87,183,0.05);
+    transition: transform 0.2s ease-out;
+}
+
+.strive-value:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,87,183,0.1);
+}
+
+.strive-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background: linear-gradient(135deg, #0057B7, #001B44);
+    color: white;
+    border-radius: 50%;
+    font-size: 1.8rem;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.strive-value p {
+    margin: 0;
+    flex: 1;
 }
 
 /* Center all sections and add more padding between them */
@@ -446,7 +633,10 @@ input[type="reset"] {
 .confidence-block,
 .footer-grid,
 .parents-zone-section,
-.tutor-zone-section {
+.tutor-zone-section,
+.pupil-zone-section,
+.strive-zone-section,
+.newsletter-zone-section {
     max-width: 1080px;
     margin: 3.6rem auto;
     padding: 2.5rem 2rem;
