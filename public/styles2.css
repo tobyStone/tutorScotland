@@ -445,13 +445,13 @@ input[type="reset"] {
 /* Footer style with tartan/tile pattern and fade-in */
 .site-footer {
     width: 100%;
-    min-height: 120px;
+    min-height: 96px;
     background-image: url('/images/bannerBackground.PNG');
     background-repeat: repeat;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2.5rem 0;
+    padding: 2rem 0;
     margin: 3.6rem 0 0 0;
     border-top: 0;
     position: relative;
@@ -477,4 +477,26 @@ input[type="reset"] {
 }
 .site-footer .footer-icons a:hover {
     color: #b37cb3;
+}
+
+/* Header: reduce vertical height by 10% (from 40px to 36px) */
+header {
+    background-image: url('/images/bannerShield2.png'), url('/images/bannerBackground.PNG');
+    background-repeat: no-repeat, repeat;
+    background-position: 20px 20px, left top;
+    background-size: 100px auto, 150px auto;
+    padding: 36px;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+/* Headings: dark blue except .mission-statement h2 */
+h1, h2, h3, h4, h5, h6 {
+    color: #001B44;
+}
+.mission-statement {
+    color: #b37cb3 !important;
 }

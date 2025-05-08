@@ -323,5 +323,15 @@
             })
             .catch(console.error);
     </script>
+    <script>
+        // Fade in footer as soon as user scrolls
+        window.addEventListener('scroll', function onScrollFooter() {
+            const footer = document.querySelector('.site-footer');
+            if (footer && !footer.classList.contains('is-visible')) {
+                footer.classList.add('is-visible');
+                window.removeEventListener('scroll', onScrollFooter);
+            }
+        });
+    </script>
 </body>
 </html>
