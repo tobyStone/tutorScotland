@@ -88,10 +88,10 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\images\bannerBackground.PNG" />
-    <Content Include="public\images\bannerShield.png" />
     <Content Include="public\images\bannerShield2.png" />
     <Content Include="public\images\bannerWithRibbons.png" />
     <Content Include="public\images\centralShield.png" />
+    <Content Include="public\images\childStudy.PNG" />
     <Content Include="public\images\englishTutor.PNG" />
     <Content Include="public\images\englishTutor2.PNG" />
     <Content Include="public\images\englishTutor3.PNG" />
@@ -101,6 +101,8 @@
     <Content Include="public\images\mathsTutor.PNG" />
     <Content Include="public\images\mathsTutor3.PNG" />
     <Content Include="public\images\mathsTutor4.PNG" />
+    <Content Include="public\images\parentAndChild.png" />
+    <Content Include="public\images\subscribe-computer.PNG" />
     <Content Include="public\images\tutor0.jpg" />
     <Content Include="public\images\tutor1.jpg" />
     <Content Include="public\images\tutor2.jpg" />
