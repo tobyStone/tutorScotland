@@ -1564,3 +1564,59 @@ header h1 {
         height: 19px;
     }
 }
+
+.parent-stack-left .parent-img-list-left-period {
+    position: relative;
+    left: -50px;
+}
+.parent-stack-right .parent-img-list-right {
+    position: relative;
+    right: -60px;
+}
+
+@media (max-width: 900px) {
+    .parents-box {
+        max-width: 98vw;
+    }
+    .questionmark-row {
+        height: 140px;
+    }
+    .parent-stack-right {
+        display: none;
+    }
+    .parent-stack-left {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .parent-img-list-left {
+        height: 112px;
+    }
+    .parent-img-list-left-period {
+        height: 19px;
+    }
+    /* Narrow floating footer for social links */
+    .site-footer .footer-icons {
+        gap: 0.7rem;
+        font-size: 1.5rem;
+        flex-wrap: wrap;
+        max-width: 98vw;
+    }
+    .site-footer {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    /* Center legoRight.png below section */
+    .tutor-img-list-right {
+        display: block !important;
+        position: static;
+        margin: 1.5rem auto 0 auto;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 150px;
+    }
+    /* Move parent-box paragraph lower */
+    .parents-box > p:first-of-type {
+        margin-top: 60px;
+    }
+}
