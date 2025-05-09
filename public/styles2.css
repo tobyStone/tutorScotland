@@ -1399,25 +1399,27 @@ header h1 {
 }
 
 .pupil-img-list {
-    height: 180px; /* 150px * 1.2 = 180px */
+    height: 216px; /* 180px * 1.2 = 216px */
 }
 .pupil-img-list-left {
     display: block !important;
     margin-right: 1.5rem;
     position: relative;
     top: 30px;
-    left: 60px;
+    left: 70px;
+    z-index: 10;
 }
 .pupil-img-list-right {
     display: block !important;
     margin-left: 1.5rem;
     position: relative;
     top: 30px;
-    right: 60px;
+    right: 70px;
+    z-index: 10;
 }
 @media (max-width: 900px) {
     .pupil-img-list {
-        height: 108px;
+        height: 130px;
     }
     .pupil-img-list-left {
         left: 0;
