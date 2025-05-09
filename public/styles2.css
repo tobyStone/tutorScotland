@@ -1250,3 +1250,85 @@ header h1 {
         width: 60px;
     }
 }
+
+.newsletter-gradient-bg {
+    background: linear-gradient(135deg, #0057B7 0%, #001B44 100%);
+    border-radius: 1.7rem;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+}
+
+/* Remove white framing from sections */
+.parents-zone-section,
+.tutor-zone-section,
+.pupil-zone-section,
+.newsletter-zone-section {
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+}
+
+/* Confidence block image 20% further right */
+.confidence-img-right {
+    position: relative;
+    left: 20%;
+    max-width: 100%;
+}
+
+/* WeAreTheFuture images 50% larger and 20% more central */
+.big-pupil-img {
+    width: 180px;
+    left: 20%;
+    transform: translateY(20%) !important;
+}
+.pupil-img-left { left: 20%; }
+.pupil-img-right { right: 20%; }
+
+/* Lego images 100% larger, 10% down, 10% more central */
+.big-tutor-img {
+    width: 216px;
+    left: 10%;
+    transform: translateY(10%) !important;
+}
+.tutor-img-left { left: 10%; }
+.tutor-img-right { right: 10%; }
+
+/* Question mark gap 30px, move 10% down */
+.big-questionmark .question-curl {
+    width: 96px;
+}
+.big-questionmark .question-period {
+    width: 72px;
+    margin-top: 30px;
+}
+.parent-img-outer {
+    top: 65%;
+}
+
+@media (max-width: 900px) {
+    .newsletter-gradient-bg {
+        padding: 1.2rem 0.5rem;
+    }
+    .big-pupil-img {
+        width: 90px;
+        left: 50%;
+        transform: translate(-50%, 20%) !important;
+    }
+    .big-tutor-img {
+        width: 108px;
+        left: 50%;
+        transform: translate(-50%, 10%) !important;
+    }
+    .big-questionmark .question-curl {
+        width: 54px;
+    }
+    .big-questionmark .question-period {
+        width: 40px;
+        margin-top: 15px;
+    }
+    .parent-img-outer {
+        top: 80%;
+    }
+}
