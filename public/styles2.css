@@ -1399,14 +1399,14 @@ header h1 {
 }
 
 .pupil-img-list {
-    height: 216px; /* 180px * 1.2 = 216px */
+    height: 248px; /* 216px * 1.15 = 248px */
 }
 .pupil-img-list-left {
     display: block !important;
     margin-right: 1.5rem;
     position: relative;
     top: 30px;
-    left: 70px;
+    left: 90px;
     z-index: 10;
 }
 .pupil-img-list-right {
@@ -1414,12 +1414,12 @@ header h1 {
     margin-left: 1.5rem;
     position: relative;
     top: 30px;
-    right: 70px;
+    right: 90px;
     z-index: 10;
 }
 @media (max-width: 900px) {
     .pupil-img-list {
-        height: 130px;
+        height: 150px;
     }
     .pupil-img-list-left {
         left: 0;
