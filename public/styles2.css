@@ -1562,16 +1562,16 @@ header h1 {
     }
     .parent-img-list-left-period {
         height: 19px;
+        left: 30px;
+        top: -10px;
     }
 }
 
 .parent-stack-left .parent-img-list-left-period {
-    position: relative;
-    left: -50px;
+    left: -45px;
 }
 .parent-stack-right .parent-img-list-right {
-    position: relative;
-    right: -60px;
+    right: -70px;
 }
 
 @media (max-width: 900px) {
@@ -1593,8 +1593,10 @@ header h1 {
     }
     .parent-img-list-left-period {
         height: 19px;
+        left: 30px;
+        top: -10px;
     }
-    /* Narrow floating footer for social links */
+    /* Narrow floating footer for social links and move left */
     .site-footer .footer-icons {
         gap: 0.7rem;
         font-size: 1.5rem;
@@ -1604,6 +1606,7 @@ header h1 {
     .site-footer {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
+        left: -50px;
     }
     /* Center legoRight.png below section */
     .tutor-img-list-right {
@@ -1618,5 +1621,64 @@ header h1 {
     /* Move parent-box paragraph lower */
     .parents-box > p:first-of-type {
         margin-top: 60px;
+    }
+    /* About us section: stack columns, center content */
+    .two-col-content {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 1.2rem !important;
+    }
+    .two-col-content > div {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    .two-col-content img {
+        margin: 0 auto 1rem auto !important;
+        display: block !important;
+    }
+    /* Testimonials: move lowest lower, highest higher */
+    .testimonials-laced .testimonial-quote-card:first-child {
+        top: 2% !important;
+    }
+    .testimonials-laced .testimonial-quote-card:last-child {
+        bottom: 2% !important;
+    }
+    /* Center mission statement and join button */
+    .mission-statement {
+        text-align: center !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+    .about-us-landing .button.aurora {
+        display: block;
+        margin: 1.5rem auto 0 auto !important;
+        text-align: center;
+    }
+    /* Header: stack image, button, heading vertically */
+    header {
+        flex-direction: column !important;
+        align-items: center !important;
+        padding: 18px !important;
+    }
+    header h1 {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    .header-links {
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    /* Nav: stack links in two columns */
+    .main-nav ul {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.5rem !important;
+        justify-items: center !important;
+        width: 100% !important;
+    }
+    .main-nav ul li {
+        width: 100% !important;
+        text-align: center !important;
     }
 }
