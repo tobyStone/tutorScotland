@@ -937,3 +937,59 @@ header h1 {
 }
 
 /* Mission statement color is now defined in the main .mission-statement rule */
+
+/* STRIVE and TESTIMONIALS full-width background sections */
+.strive-bg-section, .testimonials-bg-section {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    overflow: hidden;
+}
+
+.strive-bg-section {
+    background: linear-gradient(rgba(0,27,68,0.55), rgba(0,87,183,0.45)), url('/images/childStudy.PNG') center/cover no-repeat;
+}
+
+.testimonials-bg-section {
+    background: linear-gradient(rgba(0,27,68,0.55), rgba(0,87,183,0.45)), url('/images/parentAndChild.png') center/cover no-repeat;
+}
+
+.strive-overlay-card, .testimonials-overlay-card {
+    background: #fff;
+    max-width: 900px;
+    width: 90vw;
+    margin: 3.5rem auto;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 6px 36px rgba(0,87,183,0.10);
+    border-radius: 2rem;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Pronounced bottom-left curve */
+.curve-bottom-left {
+    border-bottom-left-radius: 5rem 7rem !important;
+}
+
+/* Responsive adjustments for overlay cards */
+@media (max-width: 700px) {
+    .strive-overlay-card, .testimonials-overlay-card {
+        padding: 1.2rem 0.5rem;
+        border-radius: 1.2rem;
+    }
+    .curve-bottom-left {
+        border-bottom-left-radius: 2.5rem 3.5rem !important;
+    }
+}
