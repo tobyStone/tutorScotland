@@ -1340,6 +1340,7 @@ header h1 {
     position: relative;
     width: 100%;
     gap: 0;
+    overflow: visible;
 }
 .parent-img-list,
 .tutor-img-list,
@@ -1400,24 +1401,9 @@ header h1 {
 .pupil-img-list {
     height: 225px; /* 150px * 1.5 = 225px */
 }
-.pupil-img-list-left {
-    margin-right: 1.5rem;
-    left: 20%;
-    position: relative;
-}
+.pupil-img-list-left,
 .pupil-img-list-right {
-    margin-left: 1.5rem;
-    right: 20%;
-    position: relative;
-}
-@media (max-width: 900px) {
-    .pupil-img-list {
-        height: 135px;
-    }
-    .pupil-img-list-left {
-        left: 0;
-    }
-    .pupil-img-list-right {
-        right: 0;
-    }
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
