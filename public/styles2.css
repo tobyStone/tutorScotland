@@ -1399,11 +1399,32 @@ header h1 {
 }
 
 .pupil-img-list {
-    height: 225px; /* 150px * 1.5 = 225px */
+    height: 180px; /* 150px * 1.2 = 180px */
 }
-.pupil-img-list-left,
+.pupil-img-list-left {
+    display: block !important;
+    margin-right: 1.5rem;
+    position: relative;
+    top: 30px;
+    left: 60px;
+}
 .pupil-img-list-right {
     display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    margin-left: 1.5rem;
+    position: relative;
+    top: 30px;
+    right: 60px;
+}
+@media (max-width: 900px) {
+    .pupil-img-list {
+        height: 108px;
+    }
+    .pupil-img-list-left {
+        left: 0;
+        top: 15px;
+    }
+    .pupil-img-list-right {
+        right: 0;
+        top: 15px;
+    }
 }
