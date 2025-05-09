@@ -955,11 +955,11 @@ header h1 {
 }
 
 .strive-bg-section {
-    background: linear-gradient(rgba(0,27,68,0.55), rgba(0,87,183,0.45)), url('/images/childStudy.PNG') center/cover no-repeat;
+    background: linear-gradient(rgba(255,255,255,0.60), rgba(255,255,255,0.50)), url('/images/childStudy.PNG') center/cover no-repeat;
 }
 
 .testimonials-bg-section {
-    background: linear-gradient(rgba(0,27,68,0.55), rgba(0,87,183,0.45)), url('/images/parentAndChild.png') center/cover no-repeat;
+    background: linear-gradient(rgba(255,255,255,0.65), rgba(255,255,255,0.55)), url('/images/parentAndChild.png') center/cover no-repeat;
 }
 
 .strive-overlay-card, .testimonials-overlay-card {
@@ -992,4 +992,48 @@ header h1 {
     .curve-bottom-left {
         border-bottom-left-radius: 2.5rem 3.5rem !important;
     }
+}
+
+/* STRIVE overlay card smaller and centered */
+.strive-small-card {
+    max-width: 520px;
+    padding: 1.5rem 1.2rem;
+    margin: 2.5rem auto;
+    box-shadow: 0 4px 18px rgba(0,87,183,0.10);
+}
+
+/* Testimonials laced style */
+.testimonials-laced {
+    position: relative;
+    min-height: 420px;
+    padding: 0;
+}
+.testimonial-quote-card {
+    position: absolute;
+    background: rgba(255,255,255,0.93);
+    box-shadow: 0 2px 12px rgba(200,162,200,0.13);
+    border-radius: 1.5rem 1.5rem 3.5rem 1.5rem;
+    padding: 1.2rem 1.1rem;
+    max-width: 320px;
+    min-width: 180px;
+    font-size: 1.08rem;
+    color: #222;
+    z-index: 2;
+    text-align: left;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.testimonial-quote-card span {
+    color: #C8A2C8;
+    font-size: 0.98rem;
+    display: block;
+    margin-top: 0.7rem;
+}
+
+/* Newsletter subscribe link lilac hover */
+.subscribe-link.newsletter-lilac-hover:hover .subscribe-image {
+    filter: none;
+    box-shadow: 0 6px 16px #b37cb3;
+    border: 2px solid #b37cb3;
 }
