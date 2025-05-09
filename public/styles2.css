@@ -1332,3 +1332,67 @@ header h1 {
         top: 80%;
     }
 }
+
+.zone-list-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    gap: 0;
+}
+.parent-img-list,
+.tutor-img-list,
+.pupil-img-list {
+    height: 150px;
+    width: auto;
+    display: block;
+    flex-shrink: 0;
+}
+.parent-img-list-left,
+.tutor-img-list-left,
+.pupil-img-list-left {
+    margin-right: 1.5rem;
+}
+.parent-img-list-right,
+.tutor-img-list-right,
+.pupil-img-list-right {
+    margin-left: 1.5rem;
+}
+.parent-img-list-left-period {
+    margin-right: 1.5rem;
+    margin-top: 30px;
+}
+.parent-img-list-right-period {
+    margin-left: 1.5rem;
+    margin-top: 30px;
+}
+.tutor-list,
+.parent-list,
+.pupil-list {
+    margin: 0 0;
+}
+@media (max-width: 900px) {
+    .zone-list-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    .parent-img-list-right,
+    .parent-img-list-right-period,
+    .tutor-img-list-right,
+    .pupil-img-list-right {
+        display: none !important;
+    }
+    .parent-img-list-left,
+    .parent-img-list-left-period,
+    .tutor-img-list-left,
+    .pupil-img-list-left {
+        margin: 0 auto 0.5rem auto;
+        display: block;
+    }
+    .parent-img-list,
+    .tutor-img-list,
+    .pupil-img-list {
+        height: 90px;
+    }
+}
