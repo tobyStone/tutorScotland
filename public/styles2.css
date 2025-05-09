@@ -552,6 +552,49 @@ input[type="reset"] {
         right: auto;
         left: auto;
     }
+
+    /* Header: move h1 and buttons to the right */
+    header {
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        padding: 18px !important;
+    }
+    header h1 {
+        font-size: 1.5rem !important;
+        margin-bottom: 0.5rem !important;
+        text-align: right !important;
+        width: 100%;
+    }
+    .header-links {
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+        text-align: right !important;
+        width: 100%;
+    }
+    /* Parent-box: move questionPeriod 3px left and 3px up */
+    .parent-img-list-left-period,
+    .parent-img-list-right-period {
+        left: 27px !important;
+        top: -13px !important;
+    }
+    /* Center image in confidence section */
+    .confidence-block img {
+        display: block !important;
+        margin: 0 auto !important;
+        float: none !important;
+    }
+    /* Move bottom testimonial quote 5px to the right */
+    .testimonials-laced .testimonial-quote-card:last-child {
+        right: 5px !important;
+    }
+}
+
+/* Normal viewports: move right questionPeriod 3px right, left questionPeriod 3px left */
+.parent-stack-left .parent-img-list-left-period {
+    left: -42px;
+}
+.parent-stack-right .parent-img-list-right-period {
+    left: 3px;
 }
 
 /* Mission row layout */
