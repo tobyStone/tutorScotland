@@ -546,8 +546,11 @@ input[type="reset"] {
     }
 
     .strive-small-card {
-        margin-left: auto;
-        margin-right: auto;
+        position: static;
+        margin: 2.5rem auto;
+        transform: none;
+        right: auto;
+        left: auto;
     }
 }
 
@@ -961,6 +964,7 @@ header h1 {
 
 .strive-bg-section {
     background: linear-gradient(rgba(255,255,255,0.60), rgba(255,255,255,0.50)), url('/images/childStudy.PNG') center/cover no-repeat;
+    position: relative;
 }
 
 .testimonials-bg-section {
@@ -1003,8 +1007,12 @@ header h1 {
 .strive-small-card {
     max-width: 520px;
     padding: 1.5rem 1.2rem;
-    margin: 2.5rem auto 2.5rem 30vw;
+    margin: 0;
     box-shadow: 0 4px 18px rgba(0,87,183,0.10);
+    position: absolute;
+    top: 50%;
+    right: 10vw;
+    transform: translateY(-50%);
 }
 
 /* Testimonials laced style */
