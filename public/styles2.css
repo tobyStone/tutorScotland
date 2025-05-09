@@ -1155,3 +1155,98 @@ header h1 {
         min-width: 0;
     }
 }
+
+.zone-gradient-bg {
+    position: relative;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    background: linear-gradient(135deg, #0057B7 0%, #001B44 100%);
+    border-radius: 1.7rem;
+    margin-bottom: 2.5rem;
+}
+.parent-gradient-bg, .tutor-gradient-bg, .pupil-gradient-bg {
+    background: linear-gradient(135deg, #0057B7 0%, #001B44 100%);
+}
+.parents-box, .tutor-box, .pupil-box {
+    background: #e9d6ee;
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 18px rgba(0,87,183,0.05);
+    text-align: center;
+    padding: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+/* OUTER IMAGE POSITIONING */
+.parent-img-outer, .tutor-img-outer, .pupil-img-outer {
+    position: absolute;
+    top: 55%;
+    transform: translateY(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+}
+.parent-img-left { left: 0.5rem; }
+.parent-img-right { right: 0.5rem; }
+.tutor-img-left { left: 0.5rem; }
+.tutor-img-right { right: 0.5rem; }
+.pupil-img-left { left: 0.5rem; }
+.pupil-img-right { right: 0.5rem; }
+
+/* DOUBLE SIZE IMAGES */
+.big-questionmark .question-curl {
+    width: 96px;
+    height: auto;
+}
+.big-questionmark .question-period {
+    width: 72px;
+    height: auto;
+    margin-top: 18px;
+}
+.big-tutor-img {
+    width: 108px;
+    height: auto;
+}
+.big-pupil-img {
+    width: 120px;
+    height: auto;
+}
+
+/* INCREASE GAP BETWEEN CURL AND PERIOD */
+.questionmark-stack {
+    gap: 18px;
+}
+
+/* Responsive for <900px: only show left image, reduce size */
+@media (max-width: 900px) {
+    .zone-gradient-bg {
+        padding: 1.2rem 0.5rem;
+    }
+    .parent-img-right, .tutor-img-right, .pupil-img-right {
+        display: none !important;
+    }
+    .parent-img-left, .tutor-img-left, .pupil-img-left {
+        left: 50%;
+        transform: translate(-50%, 0);
+        top: 92%;
+    }
+    .big-questionmark .question-curl {
+        width: 54px;
+    }
+    .big-questionmark .question-period {
+        width: 40px;
+        margin-top: 8px;
+    }
+    .big-tutor-img {
+        width: 54px;
+    }
+    .big-pupil-img {
+        width: 60px;
+    }
+}
