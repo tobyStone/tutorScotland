@@ -689,6 +689,9 @@ input[type="reset"] {
 .pupil-box,
 .strive-box,
 .newsletter-box {
+    background: #e9d6ee; /* lighter lilac */
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 18px rgba(0,87,183,0.05);
     text-align: center;
     padding: 1.5rem;
     max-width: 900px;
@@ -1052,4 +1055,103 @@ header h1 {
     filter: none;
     box-shadow: 0 6px 16px #b37cb3;
     border: 2px solid #b37cb3;
+}
+
+/* Parent image row with question marks */
+.parent-img-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.2rem;
+}
+.parent-img-row p {
+    flex: 1 1 0;
+    margin: 0;
+    font-size: 1.15rem;
+}
+.questionmark-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-width: 48px;
+}
+.question-curl {
+    width: 48px;
+    height: auto;
+    display: block;
+}
+.question-period {
+    width: 36px;
+    height: auto;
+    margin-top: -10px;
+    display: block;
+}
+.parent-img-left {
+    margin-right: 0.5rem;
+    transform: rotate(-35deg);
+}
+.parent-img-right {
+    margin-left: 0.5rem;
+    transform: rotate(35deg);
+}
+
+/* Tutor image row with legos */
+.tutor-img-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.2rem;
+}
+.tutor-img-row p {
+    flex: 1 1 0;
+    margin: 0;
+    font-size: 1.15rem;
+}
+.tutor-img-left, .tutor-img-right {
+    width: 54px;
+    height: auto;
+    display: block;
+}
+.tutor-img-left { margin-right: 0.5rem; }
+.tutor-img-right { margin-left: 0.5rem; }
+
+/* Pupil image row with WeAreTheFuture */
+.pupil-img-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.2rem;
+}
+.pupil-img-row p {
+    flex: 1 1 0;
+    margin: 0;
+    font-size: 1.15rem;
+}
+.pupil-img-left, .pupil-img-right {
+    width: 60px;
+    height: auto;
+    display: block;
+}
+.pupil-img-left { margin-right: 0.5rem; }
+.pupil-img-right { margin-left: 0.5rem; }
+
+@media (max-width: 900px) {
+    .parent-img-row, .tutor-img-row, .pupil-img-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .parent-img-left, .tutor-img-left, .pupil-img-left {
+        margin: 0 auto 0.5rem auto;
+        display: block;
+    }
+    .parent-img-right, .tutor-img-right, .pupil-img-right {
+        display: none;
+    }
+    .questionmark-stack {
+        min-width: 0;
+    }
 }

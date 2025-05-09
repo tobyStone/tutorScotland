@@ -97,15 +97,20 @@
     <Content Include="public\images\englishTutor3.PNG" />
     <Content Include="public\images\favicon2.png" />
     <Content Include="public\images\flag.PNG" />
+    <Content Include="public\images\legoLeft.png" />
+    <Content Include="public\images\legoRight.png" />
     <Content Include="public\images\mainMaxim.png" />
     <Content Include="public\images\mathsTutor.PNG" />
     <Content Include="public\images\mathsTutor3.PNG" />
     <Content Include="public\images\mathsTutor4.PNG" />
     <Content Include="public\images\parentAndChild.png" />
+    <Content Include="public\images\questionCurl.png" />
+    <Content Include="public\images\questionPeriod.png" />
     <Content Include="public\images\subscribe-computer.PNG" />
     <Content Include="public\images\tutor0.jpg" />
     <Content Include="public\images\tutor1.jpg" />
     <Content Include="public\images\tutor2.jpg" />
+    <Content Include="public\images\weAreTheFuture.PNG" />
     <Content Include="public\js\upload-helper.js">
       <SubType>Code</SubType>
     </Content>
