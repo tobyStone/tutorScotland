@@ -917,13 +917,13 @@ input[type="reset"] {
     color: #b37cb3;
 }
 
-/* Header: reduce vertical height by 10% (from 40px to 36px) */
+/* Header: reduce vertical height by 15% (from 36px to 30.6px) */
 header {
     background-image: url('/images/bannerShield2.png'), url('/images/bannerBackground.PNG');
     background-repeat: no-repeat, repeat;
     background-position: 20px 20px, left top;
     background-size: 100px auto, 150px auto;
-    padding: 36px;
+    padding: 30.6px;
     color: #fff;
     display: flex;
     justify-content: space-between;
@@ -1428,5 +1428,73 @@ header h1 {
     .pupil-img-list-right {
         right: 0;
         top: 15px;
+    }
+}
+
+/* LEGO images: double size, move down 50px, more central by 100px, high z-index */
+.tutor-img-list-left {
+    height: 300px;
+    margin-right: 1.5rem;
+    position: relative;
+    top: 50px;
+    left: 100px;
+    z-index: 20;
+}
+.tutor-img-list-right {
+    height: 300px;
+    margin-left: 1.5rem;
+    position: relative;
+    top: 50px;
+    right: 100px;
+    z-index: 20;
+}
+
+/* Question mark images: curl 50% larger, period 50% smaller, stack curl above period */
+.parent-img-list-left,
+.parent-img-list-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+.parent-img-list-left .parent-img-list-left-period,
+.parent-img-list-right .parent-img-list-right-period {
+    margin-top: 0;
+}
+.parent-img-list-left .parent-img-list-left,
+.parent-img-list-right .parent-img-list-right {
+    height: 225px; /* 150px * 1.5 = 225px */
+    width: auto;
+    display: block;
+}
+.parent-img-list-left-period,
+.parent-img-list-right-period {
+    height: 37.5px; /* 75px * 0.5 = 37.5px */
+    width: auto;
+    display: block;
+    margin-top: 0;
+}
+.parent-img-list-left,
+.parent-img-list-right {
+    margin: 0;
+    position: relative;
+    z-index: 10;
+}
+
+@media (max-width: 900px) {
+    .tutor-img-list-left,
+    .tutor-img-list-right {
+        height: 150px;
+        left: 0;
+        right: 0;
+        top: 25px;
+    }
+    .parent-img-list-left .parent-img-list-left,
+    .parent-img-list-right .parent-img-list-right {
+        height: 112px;
+    }
+    .parent-img-list-left-period,
+    .parent-img-list-right-period {
+        height: 19px;
     }
 }
