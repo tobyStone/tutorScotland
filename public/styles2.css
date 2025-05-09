@@ -544,6 +544,11 @@ input[type="reset"] {
     .mission-statement {
         font-size: 2.5em; /* Smaller on mobile but still larger than original */
     }
+
+    .strive-small-card {
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 /* Mission row layout */
@@ -998,7 +1003,7 @@ header h1 {
 .strive-small-card {
     max-width: 520px;
     padding: 1.5rem 1.2rem;
-    margin: 2.5rem auto;
+    margin: 2.5rem auto 2.5rem 30vw;
     box-shadow: 0 4px 18px rgba(0,87,183,0.10);
 }
 
