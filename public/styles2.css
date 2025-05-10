@@ -571,10 +571,11 @@ input[type="reset"] {
         text-align: right !important;
         width: 100%;
     }
-    /* Move all questionPeriod.png images 10px to the left */
+    /* Restore previous questionPeriod.png position */
     .parent-img-list-left-period,
     .parent-img-list-right-period {
-        left: 17px !important;
+        left: 27px !important;
+        top: -13px !important;
     }
     /* Center all sections and images in portrait view */
     .zone-list-row,
@@ -603,7 +604,7 @@ input[type="reset"] {
     }
 }
 
-/* Normal viewports: move right questionPeriod 3px right, left questionPeriod 3px left */
+/* Full viewport: restore previous questionPeriod.png positions */
 .parent-stack-left .parent-img-list-left-period {
     left: -42px;
 }
@@ -1619,16 +1620,16 @@ header h1 {
     }
     .parent-img-list-left-period {
         height: 19px;
-        left: 17px;
-        top: -10px;
+        left: 27px;
+        top: -13px;
     }
 }
 
 .parent-stack-left .parent-img-list-left-period {
-    left: -49px;
+    left: -42px;
 }
 .parent-stack-right .parent-img-list-right {
-    right: 8px;
+    right: 3px;
 }
 
 @media (max-width: 900px) {
@@ -1650,8 +1651,8 @@ header h1 {
     }
     .parent-img-list-left-period {
         height: 19px;
-        left: 17px;
-        top: -10px;
+        left: 27px;
+        top: -13px;
     }
     /* Narrow floating footer for social links and move left */
     .site-footer .footer-icons {
