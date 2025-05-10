@@ -571,21 +571,35 @@ input[type="reset"] {
         text-align: right !important;
         width: 100%;
     }
-    /* Parent-box: move questionPeriod 3px left and 3px up */
+    /* Move all questionPeriod.png images 10px to the left */
     .parent-img-list-left-period,
     .parent-img-list-right-period {
-        left: 27px !important;
-        top: -13px !important;
+        left: 17px !important;
     }
-    /* Center image in confidence section */
-    .confidence-block img {
+    /* Center all sections and images in portrait view */
+    .zone-list-row,
+    .parents-box,
+    .tutor-box,
+    .pupil-box {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        text-align: center !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    .parent-list,
+    .tutor-list,
+    .pupil-list {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        text-align: center !important;
+    }
+    .parent-img-list,
+    .tutor-img-list,
+    .pupil-img-list {
         display: block !important;
-        margin: 0 auto !important;
-        float: none !important;
-    }
-    /* Move bottom testimonial quote 5px to the right */
-    .testimonials-laced .testimonial-quote-card:last-child {
-        right: 5px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 }
 
@@ -1605,16 +1619,16 @@ header h1 {
     }
     .parent-img-list-left-period {
         height: 19px;
-        left: 30px;
+        left: 17px;
         top: -10px;
     }
 }
 
 .parent-stack-left .parent-img-list-left-period {
-    left: -45px;
+    left: -49px;
 }
 .parent-stack-right .parent-img-list-right {
-    right: -70px;
+    right: 8px;
 }
 
 @media (max-width: 900px) {
@@ -1636,7 +1650,7 @@ header h1 {
     }
     .parent-img-list-left-period {
         height: 19px;
-        left: 30px;
+        left: 17px;
         top: -10px;
     }
     /* Narrow floating footer for social links and move left */
