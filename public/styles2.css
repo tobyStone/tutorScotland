@@ -607,12 +607,12 @@ input[type="reset"] {
 /* move the CURL 5?px right */
 .parent-stack-left .parent-img-list-left {
     position: relative; /* create a new positioning context   */
-    left: 10px;
+    left: 14px;
 }
 
 .parent-stack-left .parent-img-list-right {
     position: relative; /* create a new positioning context   */
-    left: -10px; /* push it 5px to the right           */
+    left: -30px; /* push it 5px to the right           */
 }
 
 /* Full viewport: restore previous questionPeriod.png positions */
