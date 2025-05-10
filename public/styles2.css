@@ -607,10 +607,10 @@ input[type="reset"] {
 /* move the CURL 5?px right */
 .parent-stack-left .parent-img-list-left {
     position: relative; /* create a new positioning context   */
-    left: 14px;
+    left: 17px;
 }
 
-.parent-stack-left .parent-img-list-right {
+.parent-stack-right .parent-img-list-right {
     position: relative; /* create a new positioning context   */
     left: -30px; /* push it 5px to the right           */
 }
