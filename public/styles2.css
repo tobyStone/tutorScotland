@@ -1584,10 +1584,10 @@ header h1 {
     z-index: 30;
 }
 .parent-stack-left {
-    left: 0;
+    left: -10px; /* Moved 10px to the left */
 }
 .parent-stack-right {
-    right: 0;
+    right: -20px; /* Moved 20px to the right */
 }
 .parent-img-list-left,
 .parent-img-list-right {
@@ -1616,7 +1616,7 @@ header h1 {
         display: none;
     }
     .parent-stack-left {
-        left: 50%;
+        left: calc(50% - 10px); /* Centered but shifted 10px to the left */
         transform: translateX(-50%);
     }
     .parent-img-list-left {
@@ -1657,7 +1657,7 @@ header h1 {
         display: none;
     }
     .parent-stack-left {
-        left: 50%;
+        left: calc(50% - 10px); /* Centered but shifted 10px to the left */
         transform: translateX(-50%);
     }
     .parent-img-list-left {
