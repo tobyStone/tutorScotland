@@ -1642,7 +1642,7 @@ header h1 {
 /* Align the question mark curl's lowest point directly above the center of the period */
 .parent-stack-left .parent-img-list-left-period {
     position: relative;
-    left: -70px; /* Center the period under the curl */
+    left: -90px; /* Center the period under the curl */
     margin-top: 5px; /* Small gap between curl and period */
 }
 .parent-stack-right .parent-img-list-right-period {
