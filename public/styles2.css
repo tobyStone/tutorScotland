@@ -612,7 +612,7 @@ input[type="reset"] {
 
 .parent-stack-left .parent-img-list-right {
     position: relative; /* create a new positioning context   */
-    left: -50px; /* push it 5px to the right           */
+    left: -97px; /* push it 5px to the right           */
 }
 
 /* Full viewport: restore previous questionPeriod.png positions */
