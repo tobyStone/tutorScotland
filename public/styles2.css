@@ -604,12 +604,18 @@ input[type="reset"] {
     }
 }
 
+/* move the CURL 5?px right */
+.parent-stack-left .parent-img-list-left {
+    position: relative; /* create a new positioning context   */
+    left: 5px; /* push it 5px to the right           */
+}
+
 /* Full viewport: restore previous questionPeriod.png positions */
 .parent-stack-left .parent-img-list-left-period {
     left: -42px;
 }
 .parent-stack-right .parent-img-list-right-period {
-    left: 3px;
+    left: -5px;
 }
 
 /* Mission row layout */
