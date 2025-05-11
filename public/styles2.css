@@ -1610,7 +1610,7 @@ header h1 {
     left: 0; /* Ensure the period is centered under the curl */
     right: 0;
 }
-@media (max-width: 900px) {
+@media (max-width: 900px) and (orientation: portrait) {
     .parents-box {
         max-width: 98vw;
     }
@@ -1629,16 +1629,48 @@ header h1 {
     }
     .parent-img-list-left-period {
         height: 19px;
-        left: 0; /* Center the period under the curl */
+        left: -10px; /* Move 10px to the left */
         top: 0;
         position: relative;
         margin-top: 5px; /* Small gap between curl and period */
     }
 }
 
+/* Specific styles for landscape orientation under 900px */
+@media (max-width: 900px) and (orientation: landscape) {
+    .parents-box {
+        max-width: 98vw;
+    }
+    .questionmark-row {
+        height: 140px;
+    }
+    /* Keep both question marks visible in landscape */
+    .parent-stack-right {
+        display: flex;
+        right: -20px; /* Keep the 20px right offset */
+    }
+    .parent-stack-left {
+        left: -10px; /* Keep the 10px left offset */
+    }
+    .parent-img-list-left,
+    .parent-img-list-right {
+        height: 112px;
+    }
+    .parent-img-list-left-period,
+    .parent-img-list-right-period {
+        height: 19px;
+        position: relative;
+        margin-top: 5px; /* Small gap between curl and period */
+    }
+    .parent-img-list-left-period {
+        left: -10px; /* Move 10px to the left */
+    }
+}
+
 /* Align the question mark curl's lowest point directly above the center of the period */
 .parent-stack-left .parent-img-list-left-period {
     position: relative;
+    left: -10px; /* Move 10px to the left */
     margin-top: 5px; /* Small gap between curl and period */
 }
 .parent-stack-right .parent-img-list-right-period {
@@ -1647,7 +1679,7 @@ header h1 {
     margin-top: 5px; /* Small gap between curl and period */
 }
 .parent-stack-right .parent-img-list-right {
-    right: 3px;
+    right: 20px; /* Move 20px to the right */
 }
 
 @media (max-width: 900px) {
@@ -1657,19 +1689,22 @@ header h1 {
     .questionmark-row {
         height: 140px;
     }
-    .parent-stack-right {
-        display: none;
-    }
-    .parent-stack-left {
-        left: calc(50% - 10px); /* Centered but shifted 10px to the left */
-        transform: translateX(-50%);
+    /* Portrait-specific styles */
+    @media (orientation: portrait) {
+        .parent-stack-right {
+            display: none;
+        }
+        .parent-stack-left {
+            left: calc(50% - 10px); /* Centered but shifted 10px to the left */
+            transform: translateX(-50%);
+        }
     }
     .parent-img-list-left {
         height: 112px;
     }
     .parent-img-list-left-period {
         height: 19px;
-        left: 0; /* Center the period under the curl */
+        left: -10px; /* Move 10px to the left */
         top: 0;
         position: relative;
         margin-top: 5px; /* Small gap between curl and period */
@@ -1715,6 +1750,14 @@ header h1 {
         margin: 0 auto 1rem auto !important;
         display: block !important;
     }
+    /* Center the shield in the confidence section */
+    .confidence-img-right {
+        position: static !important;
+        left: auto !important;
+        margin: 0 auto !important;
+        display: block !important;
+        max-width: 150px !important;
+    }
     /* Testimonials: move lowest lower, highest higher */
     .testimonials-laced .testimonial-quote-card:first-child {
         top: 2% !important;
@@ -1733,19 +1776,28 @@ header h1 {
         margin: 1.5rem auto 0 auto !important;
         text-align: center;
     }
-    /* Header: stack image, button, heading vertically */
+    /* Header: position heading to the right with line breaks, button bottom right */
     header {
-        flex-direction: column !important;
-        align-items: center !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
         padding: 18px !important;
+        position: relative !important;
+        min-height: 120px !important;
     }
     header h1 {
         font-size: 1.5rem !important;
         margin-bottom: 0.5rem !important;
+        text-align: right !important;
+        width: 100% !important;
+        word-wrap: break-word !important;
+        hyphens: auto !important;
+        padding-right: 10px !important;
     }
     .header-links {
-        margin-top: 0.5rem !important;
-        margin-bottom: 0.5rem !important;
+        position: absolute !important;
+        bottom: 10px !important;
+        right: 10px !important;
+        margin: 0 !important;
     }
     /* Nav: stack links in two columns */
     .main-nav ul {
