@@ -1484,13 +1484,29 @@ header h1 {
     .pupil-img-list {
         height: 150px;
     }
-    .pupil-img-list-left {
-        left: 0;
-        top: 15px;
+
+    /* Portrait orientation */
+    @media (orientation: portrait) {
+        .pupil-img-list-left {
+            left: 0;
+            top: 15px;
+        }
+        .pupil-img-list-right {
+            right: 0;
+            top: 15px;
+        }
     }
-    .pupil-img-list-right {
-        right: 0;
-        top: 15px;
+
+    /* Landscape orientation - wider positioning */
+    @media (orientation: landscape) {
+        .pupil-img-list-left {
+            left: 20px;
+            top: 15px;
+        }
+        .pupil-img-list-right {
+            right: 20px;
+            top: 15px;
+        }
     }
 }
 
@@ -1548,9 +1564,27 @@ header h1 {
     .tutor-img-list-left,
     .tutor-img-list-right {
         height: 150px;
-        left: 0;
-        right: 0;
         top: 25px;
+    }
+
+    /* Portrait orientation */
+    @media (orientation: portrait) {
+        .tutor-img-list-left {
+            left: 0;
+        }
+        .tutor-img-list-right {
+            right: 0;
+        }
+    }
+
+    /* Landscape orientation - wider positioning */
+    @media (orientation: landscape) {
+        .tutor-img-list-left {
+            left: 20px;
+        }
+        .tutor-img-list-right {
+            right: 20px;
+        }
     }
     .parent-img-list-left .parent-img-list-left,
     .parent-img-list-right .parent-img-list-right {
@@ -1636,36 +1670,7 @@ header h1 {
     }
 }
 
-/* Specific styles for landscape orientation under 900px */
-@media (max-width: 900px) and (orientation: landscape) {
-    .parents-box {
-        max-width: 98vw;
-    }
-    .questionmark-row {
-        height: 140px;
-    }
-    /* Keep both question marks visible in landscape */
-    .parent-stack-right {
-        display: flex;
-        right: -20px; /* Keep the 20px right offset */
-    }
-    .parent-stack-left {
-        left: -10px; /* Keep the 10px left offset */
-    }
-    .parent-img-list-left,
-    .parent-img-list-right {
-        height: 112px;
-    }
-    .parent-img-list-left-period,
-    .parent-img-list-right-period {
-        height: 19px;
-        position: relative;
-        margin-top: 5px; /* Small gap between curl and period */
-    }
-    .parent-img-list-left-period {
-        left: -10px; /* Move 10px to the left */
-    }
-}
+/* Removed landscape-specific media query to hide right question mark in all restricted viewports */
 
 /* Align the question mark curl's lowest point directly above the center of the period */
 .parent-stack-left .parent-img-list-left-period {
@@ -1689,14 +1694,21 @@ header h1 {
     .questionmark-row {
         height: 140px;
     }
+    /* Hide right question mark in all orientations under 900px */
+    .parent-stack-right {
+        display: none;
+    }
     /* Portrait-specific styles */
     @media (orientation: portrait) {
-        .parent-stack-right {
-            display: none;
-        }
         .parent-stack-left {
             left: calc(50% - 10px); /* Centered but shifted 10px to the left */
             transform: translateX(-50%);
+        }
+    }
+    /* Landscape-specific styles */
+    @media (orientation: landscape) {
+        .parent-stack-left {
+            left: -10px; /* Keep the 10px left offset */
         }
     }
     .parent-img-list-left {
@@ -1721,15 +1733,17 @@ header h1 {
         padding-right: 0.5rem;
         left: -50px;
     }
-    /* Center legoRight.png below section */
-    .tutor-img-list-right {
-        display: block !important;
-        position: static;
-        margin: 1.5rem auto 0 auto;
-        left: 0;
-        right: 0;
-        top: 0;
-        height: 150px;
+    /* Center legoRight.png below section in portrait mode only */
+    @media (orientation: portrait) {
+        .tutor-img-list-right {
+            display: block !important;
+            position: static;
+            margin: 1.5rem auto 0 auto;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 150px;
+        }
     }
     /* Move parent-box paragraph lower */
     .parents-box > p:first-of-type {
@@ -1798,6 +1812,7 @@ header h1 {
         bottom: 10px !important;
         right: 10px !important;
         margin: 0 !important;
+        z-index: 10 !important; /* Ensure buttons are above other elements */
     }
     /* Nav: stack links in two columns */
     .main-nav ul {
