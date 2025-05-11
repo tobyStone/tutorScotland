@@ -574,7 +574,7 @@ input[type="reset"] {
     /* Restore previous questionPeriod.png position */
     .parent-img-list-left-period,
     .parent-img-list-right-period {
-        left: 17px !important;
+        left: 3px !important;
         top: -13px !important;
     }
     /* Center all sections and images in portrait view */
@@ -613,9 +613,6 @@ input[type="reset"] {
 
 
 /* Full viewport: restore previous questionPeriod.png positions */
-.parent-stack-left .parent-img-list-left-period {
-    left: -42px;
-}
 .parent-stack-right .parent-img-list-right-period {
     left: -15px;
 }
