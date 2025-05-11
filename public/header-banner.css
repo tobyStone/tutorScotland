@@ -50,6 +50,8 @@ header h1 {
     display: flex;
     /* A small gap for the space between them (adjust as needed) */
     gap: 10px;
+    /* Right-align the buttons */
+    margin-left: auto;
 }
 
 /* Navigation styles */
