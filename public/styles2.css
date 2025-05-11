@@ -1790,6 +1790,29 @@ header h1 {
         margin: 1.5rem auto 0 auto !important;
         text-align: center;
     }
+
+    /* Landscape-specific adjustments for restricted viewports */
+    @media (orientation: landscape) {
+        /* Move mission statement h1 15px to the right */
+        .mission-statement {
+            transform: translateX(15px) !important;
+        }
+
+        /* Move aurora join us button 23px to the right */
+        .about-us-landing .button.aurora {
+            transform: translateX(23px) !important;
+        }
+
+        /* Move STRIVE section 10px to the right */
+        .strive-bg-section {
+            transform: translateX(10px) !important;
+        }
+
+        /* Move CTA BUTTONS section 7px to the left */
+        .cta-banner {
+            transform: translateX(-7px) !important;
+        }
+    }
     /* Header: position heading to the right with line breaks, button bottom right */
     header {
         flex-direction: row !important;
@@ -1826,5 +1849,13 @@ header h1 {
     .main-nav ul li {
         width: 100% !important;
         text-align: center !important;
+    }
+
+    /* Landscape-specific nav adjustment */
+    @media (orientation: landscape) {
+        /* Move nav section 12px to the left */
+        .main-nav {
+            transform: translateX(-12px) !important;
+        }
     }
 }
