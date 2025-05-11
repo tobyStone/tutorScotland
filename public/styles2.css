@@ -574,7 +574,7 @@ input[type="reset"] {
     /* Restore previous questionPeriod.png position */
     .parent-img-list-left-period,
     .parent-img-list-right-period {
-        left: 27px !important;
+        left: 17px !important;
         top: -13px !important;
     }
     /* Center all sections and images in portrait view */
