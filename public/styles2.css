@@ -485,19 +485,32 @@ input[type="reset"] {
         font-size: 1rem;
     }
 
-    /* Responsive adjustments for parent, tutor, pupil, strive, and newsletter boxes */
+    /* Responsive adjustments for parent, tutor, pupil, strive, newsletter, and dynamic boxes */
     .parents-box h2,
     .tutor-box h2,
     .pupil-box h2,
     .strive-box h2,
-    .newsletter-box h2 {
+    .newsletter-box h2,
+    .dyn-block h2 {
         font-size: 1.5em;
+    }
+
+    /* Responsive adjustments for dynamic sections */
+    #dynamicSections {
+        margin-top: 3rem;
+        padding: 0 1rem;
+    }
+
+    .dyn-block {
+        padding: 1rem;
+        margin: 2rem auto;
     }
 
     .parents-box ul,
     .tutor-box ul,
     .pupil-box ul,
-    .newsletter-box ul {
+    .newsletter-box ul,
+    .dyn-block ul {
         padding-left: 0;
         margin: 1rem auto;
     }
@@ -714,17 +727,74 @@ input[type="reset"] {
 }
 
 /* Ensure dynamic blocks also fade in */
+/* Dynamic Sections Container */
+#dynamicSections {
+    margin-top: 4rem; /* Add significant space above dynamic sections */
+    padding-top: 2rem; /* Additional padding */
+    border-top: 1px solid rgba(0, 87, 183, 0.2); /* Light separator line */
+    width: 100%;
+    max-width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    clear: both; /* Ensure it clears any floated elements */
+}
+
+/* Add a visual indicator before the dynamic sections */
+#dynamicSections::before {
+    content: "Additional Content";
+    display: block;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #0057B7;
+    opacity: 0.7;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
 .dyn-block {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.6s ease-out, transform 0.6s ease-out;
     will-change: opacity, transform;
     visibility: visible !important; /* Ensure elements are visible */
+    max-width: 900px;
+    margin: 3rem auto;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 18px rgba(0,87,183,0.05);
 }
 
 .dyn-block.is-visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Style the dynamic section images */
+.dyn-block img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Style the dynamic section headings */
+.dyn-block h2 {
+    color: #0057B7;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+/* Style the dynamic section paragraphs */
+.dyn-block p {
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 1rem;
 }
 
 /* Add a small delay between sections for a staggered effect */
