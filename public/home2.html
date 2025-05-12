@@ -258,10 +258,13 @@
             </div>
         </section>
 
-        <!-- Dynamic sections will be added here -->
-        <section id="dynamicSections"></section>
     </main>
 
+    <!-- Clear separator before dynamic sections -->
+    <div class="dynamic-sections-separator"></div>
+
+    <!-- Dynamic sections will be added here -->
+    <section id="dynamicSections"></section>
 
     <!-- SOCIAL ICONS FOOTER -->
     <footer class="site-footer fade-in-section">
@@ -435,6 +438,12 @@
                     // Make sure the dynamic sections container is visible
                     host.style.display = 'block';
 
+                    // Ensure the separator is visible
+                    document.querySelector('.dynamic-sections-separator').style.display = 'block';
+
+                    // Force layout recalculation to ensure proper positioning
+                    document.body.offsetHeight;
+
                     // Observe the newly added dynamic blocks for fade-in animation
                     document.querySelectorAll('.dyn-block').forEach(block => {
                         fadeObserver.observe(block);
@@ -448,15 +457,17 @@
                         }, 500);
                     }
                 } else {
-                    // If no dynamic sections, hide the container
+                    // If no dynamic sections, hide the container and separator
                     const host = document.getElementById('dynamicSections');
                     host.style.display = 'none';
+                    document.querySelector('.dynamic-sections-separator').style.display = 'none';
                 }
             })
             .catch(error => {
                 console.error('Error loading dynamic sections:', error);
-                // Hide the container on error
+                // Hide the container and separator on error
                 document.getElementById('dynamicSections').style.display = 'none';
+                document.querySelector('.dynamic-sections-separator').style.display = 'none';
             });
     </script>
     <!-- Footer fade-in is now controlled by the About Us section animation -->
