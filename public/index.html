@@ -80,7 +80,7 @@
                              class="large-study-img float-right fade-later">
 
                         <p class="cta-text fade-later">
-                            Scotland’s professional membership organisation for tutors dedicated to raising educational standards and ensuring every child receives the support they deserve.
+                            Scotland's professional membership organisation for tutors dedicated to raising educational standards and ensuring every child receives the support they deserve.
                             Join today and unlock the tools, training and community you need to thrive as a tutor in Scotland.<br /><br /><h3> About Us </h3>
                             The Tutors Alliance Scotland (STA) is the professional membership organisation for tutors in Scotland, committed to setting high standards, supporting tutors and ensuring every child has access to high-quality tuition.
                             The STA believe that tutoring is a powerful tool for bridging the attainment and poverty gaps in Scotland. By providing tutors with resources, training and professional recognition, we ensure that families can trust and access the best possible support for their children.
@@ -115,8 +115,11 @@
                 </div>
             </section>
 
-            <section id="dynamicSections"></section>
+            <!-- Clear separator before dynamic sections -->
+            <div class="dynamic-sections-separator"></div>
 
+            <!-- Dynamic sections will be added here -->
+            <section id="dynamicSections"></section>
         </div>
     </main>
 
@@ -136,7 +139,7 @@
 
 
         window.addEventListener('DOMContentLoaded', () => {
-            // After the heading’s animation delay (say 1.5s) plus a little buffer:
+            // After the heading's animation delay (say 1.5s) plus a little buffer:
             setTimeout(() => {
                 document.querySelectorAll('.fade-later').forEach(el => {
                     el.classList.add('fade-in');

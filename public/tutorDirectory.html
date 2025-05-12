@@ -85,6 +85,10 @@
             </div>
         </div>
 
+        <!-- Clear separator before dynamic sections -->
+        <div class="dynamic-sections-separator"></div>
+
+        <!-- Dynamic sections will be added here -->
         <section id="dynamicSections"></section>
     </main>
 
@@ -105,7 +109,7 @@
 
 
         window.addEventListener('DOMContentLoaded', () => {
-            // After the heading’s animation delay (say 1.5s) plus a little buffer:
+            // After the heading's animation delay (say 1.5s) plus a little buffer:
             setTimeout(() => {
                 document.querySelectorAll('.fade-later').forEach(el => {
                     el.classList.add('fade-in');
