@@ -16,9 +16,9 @@ function verify(req, res) {
 }
 
 // Export verify for use in other routes
-module.exports.verify = verify;
+exports.verify = verify;
 
-module.exports = async (req, res) => {
+const handler = async (req, res) => {
     /* Which role is required?   /api/protected?role=admin   (default = tutor) */
     const requiredRole = (req.query.role || 'tutor').toLowerCase();
 
@@ -34,3 +34,5 @@ module.exports = async (req, res) => {
         .status(200)
         .json({ message: `Welcome, ${requiredRole}!`, user: payloadOrMsg });
 };
+
+module.exports = handler;
