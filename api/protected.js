@@ -2,7 +2,7 @@
 const jwt = require('jsonwebtoken');
 const SECRET = process.env.JWT_SECRET;
 
-/* Small helper – keeps everything in one file, so auth.js can disappear */
+/* Small helper keeps everything in one file, so auth.js can disappear */
 function verify(req, res) {
     const token = req.cookies?.token;
     if (!token) return [false, "No token"];
@@ -15,6 +15,9 @@ function verify(req, res) {
     }
 }
 
+// Export verify for use in other routes
+module.exports.verify = verify;
+
 module.exports = async (req, res) => {
     /* Which role is required?   /api/protected?role=admin   (default = tutor) */
     const requiredRole = (req.query.role || 'tutor').toLowerCase();
@@ -26,7 +29,7 @@ module.exports = async (req, res) => {
         return res.status(403).json({ message: `Access denied: ${requiredRole} only` });
     }
 
-    /* Success – return whatever you need */
+    /* Success return whatever you need */
     return res
         .status(200)
         .json({ message: `Welcome, ${requiredRole}!`, user: payloadOrMsg });
