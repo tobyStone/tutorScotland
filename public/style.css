@@ -1536,17 +1536,11 @@ body.portrait-restricted header h1 {
 
 /* Add a visual indicator before the dynamic sections */
 #dynamicSections::before {
-    content: "Additional Content";
+    content: '';
     display: block;
-    text-align: center;
-    font-size: 1.2rem;
-    color: #0057B7;
-    opacity: 0.8;
+    height: 3px;
+    background: linear-gradient(to right, #C8A2C8, transparent);
     margin-bottom: 2rem;
-    font-style: italic;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
 .dyn-block {
