@@ -17,9 +17,15 @@
     <script>
         (async () => {
             try {
-                const ok = await fetch('/api/protected?role=blogwriter');
-                if (!ok.ok) throw new Error('not writer');
-            } catch {
+                const ok = await fetch('/api/protected?role=blogwriter', {
+                    credentials: 'include' // Important: include cookies for authentication
+                });
+                if (!ok.ok) {
+                    console.error('Authentication failed:', await ok.text());
+                    throw new Error('not writer');
+                }
+            } catch (error) {
+                console.error('Authentication error:', error);
                 location.href = '/login.html?role=blogwriter';
             }
         })();
@@ -158,7 +164,10 @@
             /* send to server */
             const payload = { title, author, category, excerpt, publishDate, content, imagePath };
             const r = await fetch('/api/blog-writer', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                credentials: 'include' // Important: include cookies for authentication
             });
 
             if (!r.ok) return alert('Server: ' + await r.text());

@@ -62,6 +62,10 @@
       "destination": "/api/blog-writer.js"
     },
     {
+      "source": "/api/blog-writer",
+      "destination": "/api/blog-writer.js"
+    },
+    {
       "source": "/blog",
       "destination": "/api/blog.js"
     },
