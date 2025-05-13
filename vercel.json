@@ -82,8 +82,8 @@
       "destination": "/api/page.js"
     },
     {
-      "source": "/api/tutorlist",
-      "destination": "/api/tutors.js"
+      "source": "/protected",
+      "destination": "/api/protected.js"
     }
   ]
 }
