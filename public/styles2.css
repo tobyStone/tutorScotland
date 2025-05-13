@@ -232,7 +232,7 @@ input[type="reset"] {
 }
 
     .testimonial-card span {
-        color: #C8A2C8;
+        color: #0057B7;
         margin-top: 0.75rem;
         font-size: 0.98rem;
     }
@@ -280,7 +280,7 @@ input[type="reset"] {
 }
 
 .footer-icons a:hover {
-    color: #C8A2C8; /* Lilac on hover */
+    color: #0057B7; /* Lilac on hover */
 }
 
 /* Static bottom footer */
@@ -316,7 +316,7 @@ input[type="reset"] {
 }
 
 .static-footer h4 {
-    color: #C8A2C8; /* Lilac color for headings */
+    color: #0057B7; /* Lilac color for headings */
     margin-bottom: 20px;
     font-size: 1.2rem;
 }
@@ -338,7 +338,7 @@ input[type="reset"] {
 }
 
 .static-footer a:hover {
-    color: #C8A2C8; /* Lilac on hover */
+    color: #0057B7; /* Lilac on hover */
     text-decoration: underline;
 }
 
@@ -376,7 +376,7 @@ input[type="reset"] {
 }
 
 .insurance-link {
-    color: #C8A2C8; /* Lilac color for the link */
+    color: #0057B7; /* Lilac color for the link */
     font-size: 0.9rem;
     margin-top: 5px;
 }
@@ -387,7 +387,7 @@ input[type="reset"] {
 }
 
     .footer-grid h4 {
-        color: #C8A2C8;
+        color: #0057B7;
         margin-bottom: 0.8rem;
     }
 
@@ -407,7 +407,7 @@ input[type="reset"] {
     }
 
         .footer-grid a:hover, .footer-grid a:focus {
-            color: #C8A2C8;
+            color: #0057B7;
         }
 
 /* Responsive tweaks */
@@ -693,7 +693,7 @@ input[type="reset"] {
 
 .mission-statement {
     font-size: 3.3em; /* 50% bigger than 2.2em */
-    color: #b37cb3; /* Lilac color from buttons:hover */
+    color: #7CA7D9; /* Lilac color from buttons:hover */
     margin-bottom: 2.5rem;
     line-height: 1.3;
     opacity: 0;
@@ -840,7 +840,7 @@ input[type="reset"] {
 .pupil-box,
 .strive-box,
 .newsletter-box {
-    background: #e9d6ee; /* lighter lilac */
+    background: #B8D4FF; /* lighter lilac */
     border-radius: 1.5rem;
     box-shadow: 0 2px 18px rgba(0,87,183,0.05);
     text-align: center;
@@ -1026,7 +1026,7 @@ input[type="reset"] {
 
 /* About section H2 color to lilac */
 .two-col-content h2 {
-    color: #b37cb3;
+    color: #7CA7D9;
 }
 
 /* Footer style with tartan/tile pattern and fade-in */
@@ -1065,7 +1065,7 @@ input[type="reset"] {
     transition: color 0.2s;
 }
 .site-footer .footer-icons a:hover {
-    color: #b37cb3;
+    color: #7CA7D9;
 }
 
 /* Header: reduce vertical height by 15% (from 36px to 30.6px) */
@@ -1195,17 +1195,17 @@ header h1 {
     justify-content: flex-start;
 }
 .testimonial-quote-card span {
-    color: #C8A2C8;
+    color: #0057B7;
     font-size: 0.98rem;
     display: block;
     margin-top: 0.7rem;
 }
 
 /* Newsletter subscribe link lilac hover */
-.subscribe-link.newsletter-lilac-hover:hover .subscribe-image {
+.subscribe-link.newsletter-blue-hover:hover .subscribe-image {
     filter: none;
-    box-shadow: 0 6px 16px #b37cb3;
-    border: 2px solid #b37cb3;
+    box-shadow: 0 6px 16px #7CA7D9;
+    border: 2px solid #7CA7D9;
 }
 
 /* Parent image row with question marks */
@@ -1321,7 +1321,7 @@ header h1 {
     background: linear-gradient(135deg, #0057B7 0%, #001B44 100%);
 }
 .parents-box, .tutor-box, .pupil-box {
-    background: #e9d6ee;
+    background: #B8D4FF;
     border-radius: 1.5rem;
     box-shadow: 0 2px 18px rgba(0,87,183,0.05);
     text-align: center;
@@ -1685,7 +1685,7 @@ header h1 {
 }
 
 .parents-box {
-    background: #e9d6ee;
+    background: #B8D4FF;
     border-radius: 1.5rem;
     box-shadow: 0 2px 18px rgba(0,87,183,0.05);
     text-align: center;
