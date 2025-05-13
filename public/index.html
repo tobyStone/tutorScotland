@@ -115,13 +115,17 @@
                 </div>
             </section>
 
-            <!-- Clear separator before dynamic sections -->
-            <div class="dynamic-sections-separator"></div>
-
-            <!-- Dynamic sections will be added here -->
-            <section id="dynamicSections"></section>
         </div>
+
+        <!-- End of main content -->
+        <div style="clear: both; width: 100%; height: 50px;"></div>
     </main>
+
+    <!-- Clear separator before dynamic sections -->
+    <div class="dynamic-sections-separator"></div>
+
+    <!-- Dynamic sections will be added here -->
+    <section id="dynamicSections"></section>
 
     <script>
         function goToLogin(role) {
@@ -178,56 +182,8 @@
 
 
     </script>
-    <script type="module">
-        const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
-
-        fetch(`/api/sections?page=${page}`)
-            .then(r => r.json())
-            .then(list => {
-                if (list && list.length > 0) {
-                    // Only show the dynamic sections container if there are sections to display
-                    const host = document.getElementById('dynamicSections');
-
-                    // Clear any existing content
-                    host.innerHTML = '';
-
-                    // Add each section with proper spacing and styling
-                    list.forEach((s, index) => {
-                        host.insertAdjacentHTML('beforeend', `
-                          <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
-                            ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
-                            <h2>${s.heading}</h2>
-                            <div class="dyn-content">${s.text}</div>
-                          </article>`);
-                    });
-
-                    // Make sure the dynamic sections container is visible
-                    host.style.display = 'block';
-
-                    // Ensure the separator is visible
-                    document.querySelector('.dynamic-sections-separator').style.display = 'block';
-
-                    // Force layout recalculation to ensure proper positioning
-                    document.body.offsetHeight;
-
-                    // Apply observer to newly created elements
-                    document
-                        .querySelectorAll('.dyn-block.fade-in-on-scroll')
-                        .forEach(el => observer.observe(el));
-                } else {
-                    // If no dynamic sections, hide the container and separator
-                    const host = document.getElementById('dynamicSections');
-                    host.style.display = 'none';
-                    document.querySelector('.dynamic-sections-separator').style.display = 'none';
-                }
-            })
-            .catch(error => {
-                console.error('Error loading dynamic sections:', error);
-                // Hide the container and separator on error
-                document.getElementById('dynamicSections').style.display = 'none';
-                document.querySelector('.dynamic-sections-separator').style.display = 'none';
-            });
-    </script>
+    <!-- Load the dynamic sections script -->
+    <script type="module" src="/js/dynamic-sections.js"></script>
 
 </body>
 </html>

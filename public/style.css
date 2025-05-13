@@ -1515,9 +1515,14 @@ body.portrait-restricted header h1 {
     }
 }
 
+/* Body class when dynamic sections are present */
+body.has-dynamic-sections {
+    padding-bottom: 2rem; /* Add some bottom padding */
+}
+
 /* Dynamic Sections Container */
 #dynamicSections {
-    margin-top: 6rem;
+    margin-top: 8rem; /* Increased top margin */
     padding: 3rem 2rem;
     border-top: 3px solid #C8A2C8; /* Lilac separator line */
     width: 100%;
@@ -1525,30 +1530,39 @@ body.portrait-restricted header h1 {
     margin-left: auto;
     margin-right: auto;
     position: relative;
-    clear: both;
+    clear: both; /* Ensure it clears any floated elements */
     display: block;
+    float: none; /* Prevent floating */
     background-color: #f9f9f9; /* Light background to separate from main content */
+    z-index: 1; /* Ensure proper stacking */
 }
 
 /* Clear separator before dynamic sections */
 .dynamic-sections-separator {
-    clear: both;
+    clear: both; /* Clear any floated elements */
     width: 100%;
-    height: 100px; /* Increased space */
+    height: 150px; /* Significantly increased space */
     display: block;
     margin: 0;
     padding: 0;
     position: relative;
-    background: linear-gradient(to bottom, transparent, #f9f9f9);
+    background: linear-gradient(to bottom, transparent, #f9f9f9 70%);
+    border-bottom: 1px dashed #C8A2C8; /* Add a subtle dashed line */
 }
 
 /* Add a visual indicator before the dynamic sections */
 #dynamicSections::before {
-    content: '';
+    content: 'Additional Content'; /* Text indicator */
     display: block;
-    height: 3px;
-    background: linear-gradient(to right, #C8A2C8, transparent);
+    text-align: center;
+    font-size: 1.1rem;
+    color: #0057B7;
+    opacity: 0.8;
     margin-bottom: 2rem;
+    font-style: italic;
+    font-weight: 500;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #C8A2C8; /* Thicker separator line */
 }
 
 .dyn-block {
@@ -1560,8 +1574,11 @@ body.portrait-restricted header h1 {
     box-shadow: 0 2px 18px rgba(0,87,183,0.05);
     position: relative;
     z-index: 1;
-    clear: both;
+    clear: both; /* Ensure it clears any floated elements */
+    float: none; /* Prevent floating */
+    display: block; /* Ensure block display */
     border: 1px solid rgba(200,162,200,0.3); /* Subtle lilac border */
+    overflow: hidden; /* Contain floated children */
 }
 
 .dyn-block img {
@@ -1595,23 +1612,35 @@ body.portrait-restricted header h1 {
 @media (max-width: 768px) {
     #dynamicSections {
         padding: 2rem 1rem;
-        margin-top: 4rem;
+        margin-top: 6rem; /* Increased from 4rem */
+        width: 95%; /* Slightly narrower on mobile */
     }
 
     .dynamic-sections-separator {
-        height: 60px;
+        height: 100px; /* Increased from 60px */
+        margin-top: 2rem; /* Add some top margin */
     }
 
     .dyn-block {
         padding: 1.5rem;
-        margin: 2rem auto;
+        margin: 2.5rem auto; /* Increased from 2rem */
+        width: 95%; /* Slightly narrower on mobile */
     }
 
     .dyn-block h2 {
         font-size: 1.5rem;
+        padding-bottom: 0.75rem; /* Add some padding */
     }
 
     .dyn-block p {
         font-size: 1rem;
+        line-height: 1.5; /* Improved readability */
+    }
+
+    /* Make the separator more visible on mobile */
+    #dynamicSections::before {
+        font-size: 1rem;
+        padding: 0.5rem 0;
+        margin-bottom: 1.5rem;
     }
 }
