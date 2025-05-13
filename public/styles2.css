@@ -280,7 +280,7 @@ input[type="reset"] {
 }
 
 .footer-icons a:hover {
-    color: #0057B7; /* Lilac on hover */
+    color: #C8A2C8;
 }
 
 /* Static bottom footer */
@@ -1065,7 +1065,7 @@ input[type="reset"] {
     transition: color 0.2s;
 }
 .site-footer .footer-icons a:hover {
-    color: #7CA7D9;
+    color: #C8A2C8;
 }
 
 /* Header: reduce vertical height by 15% (from 36px to 30.6px) */
@@ -1946,4 +1946,8 @@ header h1 {
             transform: translateX(-12px) !important;
         }
     }
+}
+
+.mission-statement h1 {
+    color: #001B44;
 }
