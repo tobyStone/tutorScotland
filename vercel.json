@@ -88,6 +88,10 @@
     {
       "source": "/protected",
       "destination": "/api/protected.js"
+    },
+    {
+      "source": "/api/tutorConnection",
+      "destination": "/api/tutorConnection.js"
     }
   ]
 }
