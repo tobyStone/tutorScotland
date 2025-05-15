@@ -2,12 +2,12 @@
 const nodemailer = require('nodemailer');
 const connectToDatabase = require('./connectToDatabase');
 
-// e.g. environment variables or placeholders:
-const SMTP_HOST = process.env.SMTP_HOST || 'smtp.example.com';
-const SMTP_PORT = process.env.SMTP_PORT || 587;
-const SMTP_USER = process.env.SMTP_USER || 'your-smtp-user';
-const SMTP_PASS = process.env.SMTP_PASS || 'your-smtp-pass';
-const ADMIN_EMAIL = 'tobybarrasstone@hotmail.com';
+// Gmail SMTP configuration
+const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
+const SMTP_PORT = process.env.SMTP_PORT || 465; // Use 465 for SSL or 587 for TLS
+const SMTP_USER = process.env.SMTP_USER || 'your-gmail-address@gmail.com';
+const SMTP_PASS = process.env.SMTP_PASS || 'your-gmail-app-password';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tobybarrasstone@hotmail.com';
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -20,13 +20,18 @@ module.exports = async (req, res) => {
 
         const { name, email, subjects, qualification, safeguarding } = req.body;
 
+        // Create a transporter for Gmail
         let transporter = nodemailer.createTransport({
             host: SMTP_HOST,
             port: SMTP_PORT,
-            secure: false,
+            secure: SMTP_PORT === 465, // true for 465, false for other ports
             auth: {
                 user: SMTP_USER,
                 pass: SMTP_PASS
+            },
+            tls: {
+                // Do not fail on invalid certificates
+                rejectUnauthorized: false
             }
         });
 
@@ -53,11 +58,47 @@ Safeguarding: ${safeguarding}
             `
         };
 
-        await transporter.sendMail(mailOptions);
+        // Verify SMTP connection configuration
+        try {
+            await transporter.verify();
+            console.log('SMTP connection verified successfully');
+        } catch (verifyError) {
+            console.error('SMTP connection verification failed:', verifyError);
+            return res.status(500).json({
+                message: 'Email server connection failed',
+                error: verifyError.message,
+                details: 'Please check your SMTP configuration'
+            });
+        }
 
-        return res.status(200).json({ message: 'Email sent successfully' });
+        // Send the email
+        try {
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Email sent successfully:', info.messageId);
+
+            // Store submission in database if needed
+            // const submission = new TutorSubmission({ name, email, subjects, qualification, safeguarding });
+            // await submission.save();
+
+            return res.status(200).json({
+                message: 'Email sent successfully',
+                messageId: info.messageId
+            });
+        } catch (sendError) {
+            console.error('Error sending email:', sendError);
+            return res.status(500).json({
+                message: 'Failed to send email',
+                error: sendError.message
+            });
+        }
     } catch (err) {
-        console.error('Error sending email:', err);
-        return res.status(500).json({ message: 'Failed to send email' });
+        console.error('General error in tutorConnection API:', err);
+        return res.status(500).json({
+            message: 'Failed to process tutor connection request',
+            error: err.message
+        });
     }
 };
+
+// Tell Vercel we need the Node runtime
+module.exports.config = { runtime: 'nodejs18.x' };

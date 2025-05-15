@@ -148,8 +148,45 @@
             .catch(err => console.error('Error fetching tutors:', err));
 
         // Remove any role-based or user checks, since this is public now
+        // Add a status message element
+        const statusMessageDiv = document.createElement('div');
+        statusMessageDiv.id = 'statusMessage';
+        statusMessageDiv.style.marginTop = '20px';
+        statusMessageDiv.style.padding = '10px';
+        statusMessageDiv.style.borderRadius = '5px';
+        statusMessageDiv.style.display = 'none';
+        document.querySelector('.tutor-form-container').appendChild(statusMessageDiv);
+
+        // Function to show status messages
+        function showStatusMessage(message, isError = false) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+
+            if (isError) {
+                statusDiv.style.backgroundColor = '#ffdddd';
+                statusDiv.style.color = '#d8000c';
+                statusDiv.style.border = '1px solid #d8000c';
+            } else {
+                statusDiv.style.backgroundColor = '#dff2bf';
+                statusDiv.style.color = '#4f8a10';
+                statusDiv.style.border = '1px solid #4f8a10';
+            }
+
+            // Scroll to the message
+            statusDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
         document.getElementById('tutorSubmissionForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // Show loading message
+            showStatusMessage('Submitting your information... Please wait.', false);
+
+            // Disable the submit button to prevent multiple submissions
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Submitting...';
 
             const formData = {
                 name: document.getElementById('tutorName').value.trim(),
@@ -167,16 +204,23 @@
                     body: JSON.stringify(formData)
                 });
 
+                // Parse the response
+                const data = await response.json();
+
                 if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.message || 'Failed to send tutor connection');
+                    throw new Error(data.message || data.error || 'Failed to send tutor connection');
                 }
 
-                alert("Thank you for your submission! We will be in touch soon.");
+                // Show success message
+                showStatusMessage("Thank you for your submission! We will be in touch soon.", false);
                 document.getElementById('tutorSubmissionForm').reset();
             } catch (err) {
                 console.error("Error submitting tutor info:", err);
-                alert("Submission failed. Please try again.");
+                showStatusMessage(`Submission failed: ${err.message}. Please try again.`, true);
+            } finally {
+                // Re-enable the submit button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit';
             }
         });
     </script>
