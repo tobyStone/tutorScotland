@@ -2,17 +2,25 @@
 const nodemailer = require('nodemailer');
 const connectToDatabase = require('./connectToDatabase');
 
-// Gmail SMTP configuration
-const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
-const SMTP_PORT = process.env.SMTP_PORT || 465; // Use 465 for SSL or 587 for TLS
-const SMTP_USER = process.env.SMTP_USER || 'your-gmail-address@gmail.com';
+// Gmail configuration - using OAuth2 is more reliable than password
+const SMTP_USER = process.env.SMTP_USER || 'tobystonewriter@gmail.com';
 const SMTP_PASS = process.env.SMTP_PASS || 'your-gmail-app-password';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tobybarrasstone@hotmail.com';
 
+// Debug environment variables (without exposing sensitive data)
+console.log('Email Configuration:', {
+    smtpUser: SMTP_USER,
+    smtpPassLength: SMTP_PASS ? SMTP_PASS.length : 0,
+    adminEmail: ADMIN_EMAIL
+});
+
 module.exports = async (req, res) => {
+    // Always set JSON content type for all responses
+    res.setHeader('Content-Type', 'application/json');
+
     if (req.method !== 'POST') {
         res.setHeader('Allow', ['POST']);
-        return res.status(405).end(`Method ${req.method} Not Allowed`);
+        return res.status(405).json({ message: `Method ${req.method} Not Allowed`, success: false });
     }
 
     try {
@@ -20,20 +28,16 @@ module.exports = async (req, res) => {
 
         const { name, email, subjects, qualification, safeguarding } = req.body;
 
-        // Create a transporter for Gmail
+        // Create a simpler transporter for Gmail
         let transporter = nodemailer.createTransport({
-            host: SMTP_HOST,
-            port: SMTP_PORT,
-            secure: SMTP_PORT === 465, // true for 465, false for other ports
+            service: 'gmail',  // Using the built-in Gmail configuration
             auth: {
                 user: SMTP_USER,
                 pass: SMTP_PASS
-            },
-            tls: {
-                // Do not fail on invalid certificates
-                rejectUnauthorized: false
             }
         });
+
+        console.log('Created transporter for Gmail');
 
         const mailOptions = {
             from: `"Tutor Submission" <${SMTP_USER}>`,
@@ -58,23 +62,16 @@ Safeguarding: ${safeguarding}
             `
         };
 
-        // Verify SMTP connection configuration
+        // Send the email directly without verification
         try {
-            await transporter.verify();
-            console.log('SMTP connection verified successfully');
-        } catch (verifyError) {
-            console.error('SMTP connection verification failed:', verifyError);
-            return res.status(500).json({
-                message: 'Email server connection failed',
-                error: verifyError.message,
-                details: 'Please check your SMTP configuration'
+            console.log('Attempting to send email with the following options:', {
+                from: mailOptions.from,
+                to: mailOptions.to,
+                subject: mailOptions.subject
             });
-        }
 
-        // Send the email
-        try {
             const info = await transporter.sendMail(mailOptions);
-            console.log('Email sent successfully:', info.messageId);
+            console.log('Email sent successfully:', info.messageId, info.response);
 
             // Store submission in database if needed
             // const submission = new TutorSubmission({ name, email, subjects, qualification, safeguarding });
@@ -82,20 +79,29 @@ Safeguarding: ${safeguarding}
 
             return res.status(200).json({
                 message: 'Email sent successfully',
-                messageId: info.messageId
+                success: true
             });
         } catch (sendError) {
             console.error('Error sending email:', sendError);
+
+            // Log detailed error information
+            if (sendError.code) console.error('Error code:', sendError.code);
+            if (sendError.command) console.error('Failed command:', sendError.command);
+            if (sendError.response) console.error('Server response:', sendError.response);
+
             return res.status(500).json({
-                message: 'Failed to send email',
-                error: sendError.message
+                message: 'Failed to send email: ' + sendError.message,
+                success: false
             });
         }
     } catch (err) {
         console.error('General error in tutorConnection API:', err);
+
+        // Ensure we're sending a proper JSON response even for unexpected errors
+        res.setHeader('Content-Type', 'application/json');
         return res.status(500).json({
-            message: 'Failed to process tutor connection request',
-            error: err.message
+            message: 'Failed to process tutor connection request: ' + err.message,
+            success: false
         });
     }
 };

@@ -204,8 +204,17 @@
                     body: JSON.stringify(formData)
                 });
 
-                // Parse the response
-                const data = await response.json();
+                // Check if the response is JSON
+                let data;
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    // If not JSON, get the text and create an error
+                    const text = await response.text();
+                    console.error('Non-JSON response:', text);
+                    throw new Error('Server returned an invalid response format. Please try again later.');
+                }
 
                 if (!response.ok) {
                     throw new Error(data.message || data.error || 'Failed to send tutor connection');
