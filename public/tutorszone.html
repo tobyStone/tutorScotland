@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Tutor Zone – Tutors Alliance Scotland</title>
-
-    <link rel="icon" href="/images/bannerShield2.png" type="image/png" />
-    <link rel="stylesheet" href="/style.css" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <script src="/responsive-helper.js" defer></script>
+    <meta charset="UTF-8">
+    <title>Tutor Zone – Tutors Alliance Scotland</title>
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
+    <link rel="stylesheet" href="/styles2.css">
+    <link rel="stylesheet" href="/header-banner.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/responsive-helper.js"></script>
+    <script src="/js/dynamic-nav.js" defer></script>
 
     <script>
         /* Guard ‑ redirect non‑tutors to login */
@@ -21,65 +22,146 @@
         })();
     </script>
 </head>
-
-
-
 <body class="tutorzone-page">
+    <!-- Shared banner/header -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a class="banner-login-link login-box" href="/">Home</a>
-            <a class="banner-login-link login-box" href="/login.html?role=admin">Login</a>
+            <a href="/" class="banner-login-link login-box">Home</a>
+            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
         </div>
     </header>
 
+    <!-- Dark-blue nav below banner -->
     <nav class="main-nav">
         <ul>
-            <li><a href="/about-us.html">About Us</a></li>
-            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="/parents.html">Enter Parent Zone</a></li>
-            <li><a href="/contact.html">Contact Us</a></li>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="parents.html">Enter Parent Zone</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
+            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
+    <!-- Rolling banner container -->
     <div class="rolling-banner">
-        <div class="rolling-content" id="tutorBanner"></div>
+        <div class="rolling-content" id="tutorBanner">
+            <!-- JS will populate tutor names/subjects here -->
+        </div>
     </div>
 
     <main>
-        <div class="tutorzone-container">
-            <section id="resources" class="tutorzone-section">
-                <h2>Resources</h2>
-                <p>Find guides, tutorials, and other materials to help you excel as a tutor.</p>
-                <ul>
-                    <li><a href="#">Tutoring Best Practices</a></li>
-                    <li><a href="#">Professional Development Guides</a></li>
-                    <li><a href="#">Resource Library</a></li>
+        <div class="mission-row">
+            <!-- LEFT COLUMN: Shield + Ribbons -->
+            <div class="left-col">
+                <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
+                <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
+            </div>
+
+            <!-- RIGHT COLUMN: heading + about-us text -->
+            <div class="right-col">
+                <div class="about-us-landing" id="aboutUsLanding">
+                    <h1 class="mission-statement">Tutor Zone</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- TUTOR RESOURCES: Two-column content -->
+        <section class="two-col-content fade-in-section">
+            <div>
+                <h2>Resources for Tutors</h2>
+                <p>
+                    Find guides, tutorials, and other materials to help you excel as a tutor.
+                    Our resources are designed to support your professional development and enhance
+                    your tutoring practice.
+                </p>
+                <ul class="resource-list">
+                    <li><a href="#">Tutoring Best Practices</a></li>
+                    <li><a href="#">Professional Development Guides</a></li>
+                    <li><a href="#">Resource Library</a></li>
                 </ul>
-            </section>
+                <a href="#" class="button aurora">View All Resources</a>
+            </div>
+            <div>
+                <img src="/images/tutor0.jpg" alt="Tutoring resources" />
+            </div>
+        </section>
 
-            <section id="events" class="tutorzone-section">
-                <h2>Events</h2>
-                <p>Keep up‑to‑date with upcoming webinars and training sessions.</p>
-                <div class="calendar">[Calendar Widget Placeholder]</div>
-            </section>
+        <!-- EVENTS SECTION: Full-width section -->
+        <section class="tutor-zone-section fade-in-section">
+            <div class="zone-gradient-bg tutor-gradient-bg">
+                <div class="zone-list-row">
+                    <div class="tutor-box">
+                        <h2>📅 Upcoming Events</h2>
+                        <p>Keep up-to-date with upcoming webinars and training sessions to enhance your tutoring skills.</p>
+                        <div class="events-list">
+                            <div class="event-item">
+                                <h3>Effective Online Tutoring</h3>
+                                <p>June 15, 2023 | 7:00 PM</p>
+                            </div>
+                            <div class="event-item">
+                                <h3>Supporting Students with Learning Differences</h3>
+                                <p>June 22, 2023 | 6:30 PM</p>
+                            </div>
+                        </div>
+                        <a class="button aurora" href="#">View All Events</a>
+                    </div>
+                    <img src="/images/lego.PNG" alt="Lego Right" class="tutor-img-list tutor-img-list-right">
+                </div>
+            </div>
+        </section>
 
-            <section id="facebook" class="tutorzone-section">
-                <h2>Connect on Facebook</h2>
-                <p class="facebook-link">
-                    <a target="_blank" href="https://www.facebook.com/TutorsAllianceScotland">
+        <!-- CONNECT SECTION: Two-column content -->
+        <section class="two-col-content fade-in-section">
+            <div>
+                <h2>Connect with Fellow Tutors</h2>
+                <p>
+                    Join our community of professional tutors to share experiences, resources, and best practices.
+                    Connect with other tutors in your area or subject specialty.
+                </p>
+                <div class="social-connect">
+                    <p>Follow us on Facebook:</p>
+                    <a href="https://www.facebook.com/TutorsAllianceScotland" target="_blank" class="button aurora">
                         Visit our Facebook Page
                     </a>
-                </p>
-            </section>
+                </div>
+            </div>
+            <div>
+                <img src="/images/mathsTutor.PNG" alt="Connect with tutors" />
+            </div>
+        </section>
 
-            <section id="tutorHighlight" class="tutor-highlight-banner">
-                <h2>Tutor Highlight</h2>
-                <p>This month's featured tutor: <strong>Jane Doe</strong></p>
-            </section>
-        </div>
+        <!-- TUTOR HIGHLIGHT: Full-width section -->
+        <section class="tutor-highlight-section fade-in-section">
+            <div class="tutor-highlight-banner">
+                <h2>Tutor Highlight</h2>
+                <div class="tutor-highlight-content">
+                    <img src="/images/englishTutor.PNG" alt="Featured Tutor" class="tutor-highlight-img">
+                    <div class="tutor-highlight-info">
+                        <h3>Jane Doe</h3>
+                        <p class="tutor-subjects">English, Literature</p>
+                        <p class="tutor-bio">
+                            Jane has been tutoring for over 10 years and specializes in helping students
+                            improve their writing skills and critical analysis. Her students consistently
+                            achieve excellent results in their exams.
+                        </p>
+                        <a href="#" class="button aurora">View Profile</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA BUTTONS WITH BACKGROUND -->
+        <section class="cta-banner fade-in-section">
+            <div class="cta-content">
+                <div class="cta-buttons">
+                    <a class="button aurora" href="#">View Resources</a>
+                    <a class="button aurora" href="#">Upcoming Events</a>
+                    <a class="button aurora" href="contact.html">Contact Us</a>
+                </div>
+            </div>
+        </section>
 
         <!-- Clear separator before dynamic sections -->
         <div class="dynamic-sections-separator"></div>
@@ -88,18 +170,66 @@
         <section id="dynamicSections"></section>
     </main>
 
-    <script type="module">
-        fetch('/api/tutors?format=json')
-            .then(r => r.json())
-            .then(list => {
-                tutorBanner.textContent =
-                    list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
-            })
-            .catch(console.error);
-    </script>
+    <!-- SOCIAL ICONS FOOTER -->
+    <footer class="site-footer fade-in-section">
+        <div class="footer-icons">
+            <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        </div>
+    </footer>
+
+    <!-- STATIC BOTTOM FOOTER -->
+    <footer class="static-footer">
+        <div class="static-footer-container">
+            <div class="static-footer-left">
+                <h4>Extra Information</h4>
+                <ul>
+                    <li><a href="tutoring-standards.html">Our Tutoring Standards</a></li>
+                    <li><a href="faq.html">FAQ's</a></li>
+                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="safeguarding-policy.html">Safeguarding Policy</a></li>
+                    <li><a href="terms-and-conditions.html">Terms and Conditions</a></li>
+                </ul>
+                <div class="static-footer-copyright">
+                    <p>ALL RIGHTS RESERVED © Tutors Alliance Scotland 2023</p>
+                    <p>Tutors Alliance Scotland is VAT registered</p>
+                    <p>VAT No 429 8003 10</p>
+                </div>
+                <div class="static-footer-credits">
+                    <p>Website by <a href="#" target="_blank">Tutors Alliance Scotland</a></p>
+                </div>
+            </div>
+            <div class="static-footer-right">
+                <div class="business-insurance">
+                    <img src="/images/centralShield.png" alt="Business Insurance" class="insurance-logo">
+                    <p>Business Insurance provided through Tutors Alliance Scotland</p>
+                    <a href="#" class="insurance-link">View our insurance details</a>
+                </div>
+                <div class="website-url">
+                    <p>www.tutorsalliancescotland.org.uk</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Font Awesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
     <script>
+        // Rolling banner fetch
+        fetch('/api/tutors?format=json')
+            .then(res => res.json())
+            .then(tutors => {
+                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                document.getElementById('tutorBanner').innerText = text;
+            })
+            .catch(err => console.error('Error fetching tutors:', err));
+
         // Fade-in animation for sections
-        const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
+        const fadeEls = document.querySelectorAll('.fade-in-section');
 
         // Set initial styles
         fadeEls.forEach(el => {
@@ -124,6 +254,90 @@
 
         // Observe each fadeEl
         fadeEls.forEach(el => observer.observe(el));
+
+        // Single Intersection Observer for all fade-in elements
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    fadeObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        });
+
+        // Function to observe all fade-in elements
+        function observeFadeElements() {
+            // Observe all sections with fade-in-section class
+            document.querySelectorAll('.fade-in-section').forEach(section => {
+                fadeObserver.observe(section);
+            });
+        }
+
+        // Initial observation when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            observeFadeElements();
+        });
+
+        // Watch for dynamically added content
+        const mutationObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length) {
+                    observeFadeElements();
+                }
+            });
+        });
+
+        // Start observing the document body for changes
+        mutationObserver.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    </script>
+
+    <!-- Footer fade-in is now controlled by the About Us section animation -->
+    <script>
+        // Synchronize footer fade-in with the About Us section fade-in
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get the About Us section (the first two-col-content section)
+            const aboutUsSection = document.querySelector('.two-col-content.fade-in-section');
+            const socialFooter = document.querySelector('.site-footer');
+
+            if (aboutUsSection && socialFooter) {
+                // Initially hide the social footer completely
+                socialFooter.style.opacity = '0';
+                socialFooter.style.transition = 'opacity 0.5s ease-out';
+
+                // Create an observer specifically for the About Us section
+                const aboutUsObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // When About Us section becomes visible, add the is-visible class
+                            aboutUsSection.classList.add('is-visible');
+
+                            // Wait for the About Us animation to complete before showing the footer
+                            // Get the computed transition duration from CSS
+                            const aboutUsStyle = window.getComputedStyle(aboutUsSection);
+                            const transitionDuration = parseFloat(aboutUsStyle.transitionDuration) * 1000 || 500;
+
+                            // Add a small buffer to ensure the About Us animation completes first
+                            setTimeout(() => {
+                                socialFooter.style.opacity = '1';
+                            }, transitionDuration + 200);
+
+                            // Stop observing once triggered
+                            aboutUsObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.3 }); // Trigger when 30% of the About Us section is visible
+
+                // Start observing the About Us section
+                aboutUsObserver.observe(aboutUsSection);
+            }
+        });
     </script>
 
     <script type="module">
@@ -142,41 +356,15 @@
                     // Add each section with proper spacing and styling
                     list.forEach((s, index) => {
                         host.insertAdjacentHTML('beforeend', `
-                          <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
+                          <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
                             ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
                             <h2>${s.heading}</h2>
                             <div class="dyn-content">${s.text}</div>
                           </article>`);
                     });
-
-                    // Make sure the dynamic sections container is visible
-                    host.style.display = 'block';
-
-                    // Ensure the separator is visible
-                    document.querySelector('.dynamic-sections-separator').style.display = 'block';
-
-                    // Force layout recalculation to ensure proper positioning
-                    document.body.offsetHeight;
-
-                    // Apply observer to newly created elements
-                    document
-                        .querySelectorAll('.dyn-block.fade-in-on-scroll')
-                        .forEach(el => observer.observe(el));
-                } else {
-                    // If no dynamic sections, hide the container and separator
-                    const host = document.getElementById('dynamicSections');
-                    host.style.display = 'none';
-                    document.querySelector('.dynamic-sections-separator').style.display = 'none';
                 }
             })
-            .catch(error => {
-                console.error('Error loading dynamic sections:', error);
-                // Hide the container and separator on error
-                document.getElementById('dynamicSections').style.display = 'none';
-                document.querySelector('.dynamic-sections-separator').style.display = 'none';
-            });
+            .catch(console.error);
     </script>
-
-
 </body>
 </html>

@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <title>Tutors Alliance Scotland - Parent Zone</title>
     <link rel="icon" href="/images/bannerShield2.png" type="image/png">
-    <link rel="stylesheet" href="/style.css">
-    <script src="/responsive-helper.js"></script>
+    <link rel="stylesheet" href="/styles2.css">
+    <link rel="stylesheet" href="/header-banner.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- (Optional) JSON-LD microdata, etc. -->
+    <script src="/responsive-helper.js"></script>
+    <script src="/js/dynamic-nav.js" defer></script>
 </head>
 <body>
     <!-- Shared banner/header -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a href="index.html" class="banner-login-link login-box">Home</a>
+            <a href="/" class="banner-login-link login-box">Home</a>
             <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
         </div>
     </header>
@@ -35,128 +35,204 @@
     <!-- Rolling banner container -->
     <div class="rolling-banner">
         <div class="rolling-content" id="tutorBanner">
-            <!-- JS populates tutor names/subjects here -->
+            <!-- JS will populate tutor names/subjects here -->
         </div>
     </div>
 
     <main>
-        <!-- Mimic the same structure as your landing page -->
-        <div class="landing-container">
-            <section class="mission-row">
-                <!-- LEFT COL: Shield + Ribbons -->
-                <div class="left-col">
-                    <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
-                    <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
+        <div class="mission-row">
+            <!-- LEFT COLUMN: Shield + Ribbons -->
+            <div class="left-col">
+                <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
+                <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
+            </div>
+
+            <!-- RIGHT COLUMN: heading + about-us text -->
+            <div class="right-col">
+                <div class="about-us-landing" id="aboutUsLanding">
+                    <h1 class="mission-statement">Parent Zone</h1>
                 </div>
-
-                <!-- RIGHT COL: heading + text + (float-right) form -->
-                <div class="right-col">
-                    <!-- Parent zone content, similar to your about-us-landing on the landing page -->
-                    <div class="about-us-landing" id="aboutUsLanding">
-                        <!-- Faded-in heading (like .mission-statement) -->
-                        <h2 class="mission-statement">Parent Zone</h2>
-                        <!-- Paragraph flows around the float-right form above -->
-                        <p class="cta-text fade-later">
-                            An area for the parents of students in Scotland. Here you can find a tutor
-                            that suits your needs by using our tutor searcher. All our tutors are fully
-                            qualified teachers covered by statutory safeguarding guidelines.<br /><br />
-                            <a href="contact.html">Get in touch with us!</a>
-                        </p>
-
-
-                        <!-- Float the form on the right, so text flows around it -->
-                        <div class="form-container fade-later" style="margin-top:-12em;">
-                            <h3>Tutor Finder</h3>
-                            <form id="tutorFinderForm" action="/tutors" method="GET">
-                                <label for="subject">Subject</label>
-                                <select name="subject" id="subject">
-                                    <option value="mathematics">Mathematics</option>
-                                    <option value="english">English</option>
-                                </select>
-
-                                <label for="mode">Location</label>
-                                <select name="mode" id="mode">
-                                    <option value="online">Online</option>
-                                    <option value="in-person">In Person</option>
-                                </select>
-
-                                <div id="postcodeContainer" style="display: none;">
-                                    <label for="postcode">Postcode</label>
-                                    <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
-                                </div>
-
-                                <button type="submit">Find Tutors</button>
-                            </form>
-                        </div>
-
-                        <!-- Directory link container for restricted viewports -->
-                        <div id="directoryLinkContainer" class="directory-link-container fade-later" style="display: none; margin-top: 20px; text-align: center;">
-                            <h3>Find a Tutor</h3>
-                            <p>Browse our complete directory of qualified tutors</p>
-                            <a href="tutorDirectory.html" class="btn btn-primary btn-large">View Tutor Directory</a>
-                        </div>
-
-                    </div>
-                </div>
-            </section>
-
-            <!-- Below that, the extra sections with fade-in-on-scroll -->
-            <div class="parents-extra-sections">
-                <section class="tutor-zone-section fade-in-on-scroll">
-                    <div class="tutor-box">
-                        <div class="tutor-images">
-                            <h3>Resources</h3>
-                            <p>Helpful documents, links, and study aids for parents and students.</p>
-                            <ul>
-                                <li><a href="#">Resource A (PDF)</a></li>
-                                <li><a href="#">Resource B (Website)</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="parents-zone-section fade-in-on-scroll">
-                    <div class="parents-box">
-                        <h3>Expert Advice</h3>
-                        <p>Articles and videos from experienced educators on exam prep, learning styles, etc.</p>
-                        <a href="#" class="zone-login-btn">See our latest advice &raquo;</a>
-                    </div>
-                </section>
-
-                <section class="tutor-zone-section fade-in-on-scroll">
-                    <div class="tutor-box">
-                        <div class="tutor-images">
-                            <h3>Awareness Days</h3>
-                            <p>Keep track of important awareness days (e.g. World Book Day, STEM Week)...</p>
-                            <a href="#" class="zone-login-btn">View Calendar &raquo;</a>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="parents-zone-section fade-in-on-scroll">
-                    <div class="parents-box">
-                        <h3>FAQs</h3>
-                        <p>Common questions about finding tutors, membership, etc.</p>
-                        <ul>
-                            <li><strong>Q:</strong> How do I verify a tutor's qualifications?</li>
-                            <li>
-                                <em>A:</em> We only accept tutors who are fully qualified teachers...
-                            </li>
-                        </ul>
-                    </div>
-                </section>
             </div>
         </div>
 
-        <!-- End of main content -->
-        <div style="clear: both; width: 100%; height: 50px;"></div>
+        <!-- PARENT INFO: Two-column content -->
+        <section class="two-col-content fade-in-section">
+            <div>
+                <h2>Finding the Right Tutor</h2>
+                <p>
+                    An area for the parents of students in Scotland. Here you can find a tutor
+                    that suits your needs by using our tutor searcher. All our tutors are fully
+                    qualified teachers covered by statutory safeguarding guidelines.
+                </p>
+                <p>
+                    We understand that finding the right educational support for your child is crucial.
+                    Our directory connects you with qualified, vetted tutors who can provide the
+                    personalized attention your child needs to succeed.
+                </p>
+                <a href="tutorDirectory.html" class="button aurora">Find a Tutor</a>
+            </div>
+            <div>
+                <div class="form-container">
+                    <h3>Tutor Finder</h3>
+                    <form id="tutorFinderForm" action="/tutors" method="GET">
+                        <label for="subject">Subject</label>
+                        <select name="subject" id="subject">
+                            <option value="mathematics">Mathematics</option>
+                            <option value="english">English</option>
+                        </select>
+
+                        <label for="mode">Location</label>
+                        <select name="mode" id="mode">
+                            <option value="online">Online</option>
+                            <option value="in-person">In Person</option>
+                        </select>
+
+                        <div id="postcodeContainer" style="display: none;">
+                            <label for="postcode">Postcode</label>
+                            <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
+                        </div>
+
+                        <button type="submit" class="button aurora">Find Tutors</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARENT RESOURCES: Full-width section -->
+        <section class="parents-zone-section fade-in-section">
+            <div class="zone-gradient-bg parent-gradient-bg">
+                <div class="zone-list-row">
+                    <img src="/images/questionCurl.png" alt="Question Mark Left" class="parent-img-list parent-img-list-left">
+                    <div class="parent-box">
+                        <h2>👨‍👩‍👧‍👦 Resources for Parents</h2>
+                        <p>Helpful documents, links, and study aids for parents and students.</p>
+                        <ul class="parent-list" style="text-align:left; max-width: 500px; margin: 1rem auto;">
+                            <li>🔍 Resource A (PDF)</li>
+                            <li>✅ Resource B (Website)</li>
+                            <li>📚 Resource C (Study Guide)</li>
+                            <li>💡 Resource D (Learning Tips)</li>
+                        </ul>
+                        <div class="button-group">
+                            <a class="button aurora" href="#">View All Resources</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPERT ADVICE: Two-column content -->
+        <section class="two-col-content fade-in-section">
+            <div>
+                <h2>Expert Advice</h2>
+                <p>
+                    Articles and videos from experienced educators on exam prep, learning styles, and more.
+                    Our experts provide valuable insights to help your child succeed academically.
+                </p>
+                <a href="#" class="button aurora">See Our Latest Advice</a>
+            </div>
+            <div>
+                <img src="/images/tutor0.jpg" alt="Expert advice" />
+            </div>
+        </section>
+
+        <!-- AWARENESS DAYS: Full-width section -->
+        <section class="tutor-zone-section fade-in-section">
+            <div class="zone-gradient-bg tutor-gradient-bg">
+                <div class="zone-list-row">
+                    <div class="tutor-box">
+                        <h2>📅 Awareness Days</h2>
+                        <p>Keep track of important awareness days (e.g. World Book Day, STEM Week) that can enhance your child's learning experience.</p>
+                        <a class="button aurora" href="#">View Calendar</a>
+                    </div>
+                    <img src="/images/lego.PNG" alt="Lego Right" class="tutor-img-list tutor-img-list-right">
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ SECTION -->
+        <section class="faq-section fade-in-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <h3>How do I verify a tutor's qualifications?</h3>
+                    <p>We only accept tutors who are fully qualified teachers. All tutors on our platform have been verified and are PVG-checked for your peace of mind.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>What subjects do your tutors cover?</h3>
+                    <p>Our tutors cover a wide range of subjects including Mathematics, English, Sciences, Languages, and more. You can search for specific subjects in our tutor directory.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>How much does tutoring cost?</h3>
+                    <p>Tutoring rates vary depending on the subject, level, and tutor's experience. You can find detailed pricing information on each tutor's profile.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA BUTTONS WITH BACKGROUND -->
+        <section class="cta-banner fade-in-section">
+            <div class="cta-content">
+                <div class="cta-buttons">
+                    <a class="button aurora" href="tutorDirectory.html">Find a Tutor</a>
+                    <a class="button aurora" href="contact.html">Contact Us</a>
+                    <a class="button aurora" href="#">View Resources</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Clear separator before dynamic sections -->
+        <div class="dynamic-sections-separator"></div>
+
+        <!-- Dynamic sections will be added here -->
+        <section id="dynamicSections"></section>
     </main>
 
-    <!-- Clear separator before dynamic sections -->
-    <div class="dynamic-sections-separator"></div>
+    <!-- SOCIAL ICONS FOOTER -->
+    <footer class="site-footer fade-in-section">
+        <div class="footer-icons">
+            <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        </div>
+    </footer>
 
-    <!-- Dynamic sections will be added here -->
-    <section id="dynamicSections"></section>
+    <!-- STATIC BOTTOM FOOTER -->
+    <footer class="static-footer">
+        <div class="static-footer-container">
+            <div class="static-footer-left">
+                <h4>Extra Information</h4>
+                <ul>
+                    <li><a href="tutoring-standards.html">Our Tutoring Standards</a></li>
+                    <li><a href="faq.html">FAQ's</a></li>
+                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="safeguarding-policy.html">Safeguarding Policy</a></li>
+                    <li><a href="terms-and-conditions.html">Terms and Conditions</a></li>
+                </ul>
+                <div class="static-footer-copyright">
+                    <p>ALL RIGHTS RESERVED © Tutors Alliance Scotland 2023</p>
+                    <p>Tutors Alliance Scotland is VAT registered</p>
+                    <p>VAT No 429 8003 10</p>
+                </div>
+                <div class="static-footer-credits">
+                    <p>Website by <a href="#" target="_blank">Tutors Alliance Scotland</a></p>
+                </div>
+            </div>
+            <div class="static-footer-right">
+                <div class="business-insurance">
+                    <img src="/images/centralShield.png" alt="Business Insurance" class="insurance-logo">
+                    <p>Business Insurance provided through Tutors Alliance Scotland</p>
+                    <a href="#" class="insurance-link">View our insurance details</a>
+                </div>
+                <div class="website-url">
+                    <p>www.tutorsalliancescotland.org.uk</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Font Awesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <script>
         // Rolling banner fetch
@@ -168,33 +244,31 @@
             })
             .catch(err => console.error('Error fetching tutors:', err));
 
-        // Fade-in of .fade-later elements (like on landing page)
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.querySelectorAll('.fade-later').forEach(el => {
-                    el.classList.add('fade-in');
-                });
-            }, 1500);
-        });
+        // Fade-in animation for sections
+        const fadeEls = document.querySelectorAll('.fade-in-section');
 
-        // Intersection Observer fade-in for .fade-in-on-scroll
-        const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
+        // Set initial styles
         fadeEls.forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(20px)';
         });
 
+        // Create the Intersection Observer
         const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
+                    // Fade it in
                     entry.target.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0)';
+
+                    // Once triggered, stop observing so it doesn't re-animate if user scrolls away
                     obs.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
 
+        // Observe each fadeEl
         fadeEls.forEach(el => observer.observe(el));
 
         // Show/hide postcode container
@@ -224,9 +298,117 @@
             }
             window.location.href = `/tutors/search${queryParams}`;
         });
-    </script>
-    <!-- Load the dynamic sections script -->
-    <script type="module" src="/js/dynamic-sections.js"></script>
 
+        // Single Intersection Observer for all fade-in elements
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    fadeObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        });
+
+        // Function to observe all fade-in elements
+        function observeFadeElements() {
+            // Observe all sections with fade-in-section class
+            document.querySelectorAll('.fade-in-section').forEach(section => {
+                fadeObserver.observe(section);
+            });
+        }
+
+        // Initial observation when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            observeFadeElements();
+        });
+
+        // Watch for dynamically added content
+        const mutationObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length) {
+                    observeFadeElements();
+                }
+            });
+        });
+
+        // Start observing the document body for changes
+        mutationObserver.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    </script>
+
+    <!-- Footer fade-in is now controlled by the About Us section animation -->
+    <script>
+        // Synchronize footer fade-in with the About Us section fade-in
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get the About Us section (the first two-col-content section)
+            const aboutUsSection = document.querySelector('.two-col-content.fade-in-section');
+            const socialFooter = document.querySelector('.site-footer');
+
+            if (aboutUsSection && socialFooter) {
+                // Initially hide the social footer completely
+                socialFooter.style.opacity = '0';
+                socialFooter.style.transition = 'opacity 0.5s ease-out';
+
+                // Create an observer specifically for the About Us section
+                const aboutUsObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // When About Us section becomes visible, add the is-visible class
+                            aboutUsSection.classList.add('is-visible');
+
+                            // Wait for the About Us animation to complete before showing the footer
+                            // Get the computed transition duration from CSS
+                            const aboutUsStyle = window.getComputedStyle(aboutUsSection);
+                            const transitionDuration = parseFloat(aboutUsStyle.transitionDuration) * 1000 || 500;
+
+                            // Add a small buffer to ensure the About Us animation completes first
+                            setTimeout(() => {
+                                socialFooter.style.opacity = '1';
+                            }, transitionDuration + 200);
+
+                            // Stop observing once triggered
+                            aboutUsObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.3 }); // Trigger when 30% of the About Us section is visible
+
+                // Start observing the About Us section
+                aboutUsObserver.observe(aboutUsSection);
+            }
+        });
+    </script>
+
+    <script type="module">
+        const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
+
+        fetch(`/api/sections?page=${page}`)
+            .then(r => r.json())
+            .then(list => {
+                if (list && list.length > 0) {
+                    // Only show the dynamic sections container if there are sections to display
+                    const host = document.getElementById('dynamicSections');
+
+                    // Clear any existing content
+                    host.innerHTML = '';
+
+                    // Add each section with proper spacing and styling
+                    list.forEach((s, index) => {
+                        host.insertAdjacentHTML('beforeend', `
+                          <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
+                            ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
+                            <h2>${s.heading}</h2>
+                            <div class="dyn-content">${s.text}</div>
+                          </article>`);
+                    });
+                }
+            })
+            .catch(console.error);
+    </script>
 </body>
 </html>

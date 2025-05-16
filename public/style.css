@@ -1552,7 +1552,7 @@ body.has-dynamic-sections {
 
 /* Add a visual indicator before the dynamic sections */
 #dynamicSections::before {
-    content: 'Additional Content'; /* Text indicator */
+    content: ''; /* Text indicator */
     display: block;
     text-align: center;
     font-size: 1.1rem;
