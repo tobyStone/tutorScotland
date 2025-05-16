@@ -84,7 +84,7 @@
     <Content Include="public\contact.html">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="public\home2.html">
+    <Content Include="public\index.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\images\bannerBackground.PNG" />
@@ -121,9 +121,6 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\about-us.html">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="public\index.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\login.html">
