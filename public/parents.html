@@ -72,27 +72,31 @@
                 <a href="tutorDirectory.html" class="button aurora">Find a Tutor</a>
             </div>
             <div>
-                <div class="form-container">
-                    <h3>Tutor Finder</h3>
-                    <form id="tutorFinderForm" action="/tutors" method="GET">
-                        <label for="subject">Subject</label>
-                        <select name="subject" id="subject">
-                            <option value="mathematics">Mathematics</option>
-                            <option value="english">English</option>
-                        </select>
-
-                        <label for="mode">Location</label>
-                        <select name="mode" id="mode">
-                            <option value="online">Online</option>
-                            <option value="in-person">In Person</option>
-                        </select>
-
-                        <div id="postcodeContainer" style="display: none;">
-                            <label for="postcode">Postcode</label>
-                            <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode">
+                <div class="form-container" style="background-color: #fff; border-radius: 1rem; padding: 2rem; box-shadow: 0 2px 18px rgba(0,87,183,0.05);">
+                    <h2 style="color: #001B44; margin-bottom: 1.5rem; text-align: center;">Tutor Finder</h2>
+                    <form id="tutorFinderForm" action="/tutors" method="GET" style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div>
+                            <label for="subject" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Subject</label>
+                            <select name="subject" id="subject" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
+                                <option value="mathematics">Mathematics</option>
+                                <option value="english">English</option>
+                            </select>
                         </div>
 
-                        <button type="submit" class="button aurora">Find Tutors</button>
+                        <div>
+                            <label for="mode" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Location</label>
+                            <select name="mode" id="mode" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
+                                <option value="online">Online</option>
+                                <option value="in-person">In Person</option>
+                            </select>
+                        </div>
+
+                        <div id="postcodeContainer" style="display: none;">
+                            <label for="postcode" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Postcode</label>
+                            <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
+                        </div>
+
+                        <button type="submit" class="button aurora" style="background-color: #0057B7; color: white; padding: 1rem; border: none; border-radius: 0.5rem; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 0.5rem;">Find Tutors</button>
                     </form>
                 </div>
             </div>
@@ -102,19 +106,26 @@
         <section class="parents-zone-section fade-in-section">
             <div class="zone-gradient-bg parent-gradient-bg">
                 <div class="zone-list-row">
-                    <img src="/images/questionCurl.png" alt="Question Mark Left" class="parent-img-list parent-img-list-left">
-                    <div class="parent-box">
+                    <div class="questionmark-stack parent-stack-left">
+                        <img src="/images/questionCurl.png" alt="Question Mark Top" class="parent-img-list parent-img-list-left">
+                        <img src="/images/questionPeriod.png" alt="Question Mark Bottom" class="parent-img-list parent-img-list-left-period">
+                    </div>
+                    <div class="parent-box curve-bottom-left">
                         <h2>👨‍👩‍👧‍👦 Resources for Parents</h2>
                         <p>Helpful documents, links, and study aids for parents and students.</p>
-                        <ul class="parent-list" style="text-align:left; max-width: 500px; margin: 1rem auto;">
-                            <li>🔍 Resource A (PDF)</li>
-                            <li>✅ Resource B (Website)</li>
-                            <li>📚 Resource C (Study Guide)</li>
-                            <li>💡 Resource D (Learning Tips)</li>
+                        <ul class="parent-list" style="text-align:center; max-width: 600px; margin: 1.5rem auto; list-style-type: none; padding-left: 0;">
+                            <li style="margin-bottom: 0.8rem; padding: 0.5rem; background-color: rgba(255,255,255,0.5); border-radius: 0.5rem;">🔍 Resource A (PDF)</li>
+                            <li style="margin-bottom: 0.8rem; padding: 0.5rem; background-color: rgba(255,255,255,0.5); border-radius: 0.5rem;">✅ Resource B (Website)</li>
+                            <li style="margin-bottom: 0.8rem; padding: 0.5rem; background-color: rgba(255,255,255,0.5); border-radius: 0.5rem;">📚 Resource C (Study Guide)</li>
+                            <li style="margin-bottom: 0.8rem; padding: 0.5rem; background-color: rgba(255,255,255,0.5); border-radius: 0.5rem;">💡 Resource D (Learning Tips)</li>
                         </ul>
                         <div class="button-group">
                             <a class="button aurora" href="#">View All Resources</a>
                         </div>
+                    </div>
+                    <div class="questionmark-stack parent-stack-right">
+                        <img src="/images/questionCurl.png" alt="Question Mark Top" class="parent-img-list parent-img-list-right">
+                        <img src="/images/questionPeriod.png" alt="Question Mark Bottom" class="parent-img-list parent-img-list-right-period">
                     </div>
                 </div>
             </div>
@@ -139,7 +150,8 @@
         <section class="tutor-zone-section fade-in-section">
             <div class="zone-gradient-bg tutor-gradient-bg">
                 <div class="zone-list-row">
-                    <div class="tutor-box">
+                    <img src="/images/legoLeft.png" alt="Lego Left" class="tutor-img-list tutor-img-list-left">
+                    <div class="tutor-box curve-bottom-left">
                         <h2>📅 Awareness Days</h2>
                         <p>Keep track of important awareness days (e.g. World Book Day, STEM Week) that can enhance your child's learning experience.</p>
                         <a class="button aurora" href="#">View Calendar</a>
@@ -151,19 +163,21 @@
 
         <!-- FAQ SECTION -->
         <section class="faq-section fade-in-section">
-            <h2>Frequently Asked Questions</h2>
-            <div class="faq-container">
-                <div class="faq-item">
-                    <h3>How do I verify a tutor's qualifications?</h3>
-                    <p>We only accept tutors who are fully qualified teachers. All tutors on our platform have been verified and are PVG-checked for your peace of mind.</p>
-                </div>
-                <div class="faq-item">
-                    <h3>What subjects do your tutors cover?</h3>
-                    <p>Our tutors cover a wide range of subjects including Mathematics, English, Sciences, Languages, and more. You can search for specific subjects in our tutor directory.</p>
-                </div>
-                <div class="faq-item">
-                    <h3>How much does tutoring cost?</h3>
-                    <p>Tutoring rates vary depending on the subject, level, and tutor's experience. You can find detailed pricing information on each tutor's profile.</p>
+            <div class="faq-overlay-card curve-bottom-right">
+                <h2>❓ Frequently Asked Questions</h2>
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <h3>How do I verify a tutor's qualifications?</h3>
+                        <p>We only accept tutors who are fully qualified teachers. All tutors on our platform have been verified and are PVG-checked for your peace of mind.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>What subjects do your tutors cover?</h3>
+                        <p>Our tutors cover a wide range of subjects including Mathematics, English, Sciences, Languages, and more. You can search for specific subjects in our tutor directory.</p>
+                    </div>
+                    <div class="faq-item">
+                        <h3>How much does tutoring cost?</h3>
+                        <p>Tutoring rates vary depending on the subject, level, and tutor's experience. You can find detailed pricing information on each tutor's profile.</p>
+                    </div>
                 </div>
             </div>
         </section>

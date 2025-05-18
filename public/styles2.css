@@ -754,17 +754,11 @@ input[type="reset"] {
     position: relative;
 }
 
-/* Add a visual indicator before the dynamic sections */
+/* Remove visual indicator before the dynamic sections */
 #dynamicSections::before {
-    content: "Additional Content";
+    content: "";
     display: block;
-    text-align: center;
-    font-size: 1rem;
-    color: #0057B7;
-    opacity: 0.8;
     margin-bottom: 2rem;
-    font-style: italic;
-    font-weight: 500;
 }
 
 .dyn-block {
@@ -1128,7 +1122,7 @@ header h1 {
     background: linear-gradient(rgba(255,255,255,0.65), rgba(255,255,255,0.55)), url('/images/parentAndChild.png') center/cover no-repeat;
 }
 
-.strive-overlay-card, .testimonials-overlay-card {
+.strive-overlay-card, .testimonials-overlay-card, .faq-overlay-card {
     background: #fff;
     max-width: 900px;
     width: 90vw;
@@ -1144,19 +1138,26 @@ header h1 {
     text-align: center;
 }
 
-/* Pronounced bottom-left curve */
+/* Pronounced curves */
 .curve-bottom-left {
     border-bottom-left-radius: 5rem 7rem !important;
 }
 
+.curve-bottom-right {
+    border-bottom-right-radius: 5rem 7rem !important;
+}
+
 /* Responsive adjustments for overlay cards */
 @media (max-width: 700px) {
-    .strive-overlay-card, .testimonials-overlay-card {
+    .strive-overlay-card, .testimonials-overlay-card, .faq-overlay-card {
         padding: 1.2rem 0.5rem;
         border-radius: 1.2rem;
     }
     .curve-bottom-left {
         border-bottom-left-radius: 2.5rem 3.5rem !important;
+    }
+    .curve-bottom-right {
+        border-bottom-right-radius: 2.5rem 3.5rem !important;
     }
 }
 
@@ -1199,6 +1200,38 @@ header h1 {
     font-size: 0.98rem;
     display: block;
     margin-top: 0.7rem;
+}
+
+/* FAQ section styling */
+.faq-section {
+    margin: 3.6rem auto;
+    max-width: 1080px;
+}
+.faq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+}
+.faq-item {
+    background-color: rgba(184, 212, 255, 0.2);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    text-align: left;
+    transition: transform 0.2s ease-out;
+}
+.faq-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,87,183,0.1);
+}
+.faq-item h3 {
+    color: #0057B7;
+    margin-bottom: 0.8rem;
+    font-size: 1.2rem;
+}
+.faq-item p {
+    margin: 0;
+    line-height: 1.6;
 }
 
 /* Newsletter subscribe link lilac hover */
