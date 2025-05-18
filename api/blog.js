@@ -36,10 +36,6 @@ module.exports = async (req, res) => {
                 <section class="parents-zone-section fade-in-section">
                     <div class="zone-gradient-bg parent-gradient-bg">
                         <div class="zone-list-row">
-                            <div class="questionmark-stack parent-stack-left">
-                                <img src="/images/questionCurl.png" alt="Question Mark Top" class="parent-img-list parent-img-list-left">
-                                <img src="/images/questionPeriod.png" alt="Question Mark Bottom" class="parent-img-list parent-img-list-left-period">
-                            </div>
                             <div class="parent-box curve-bottom-left">
                                 <h2>${post.title}</h2>
                                 <p class="byline">By ${post.author}</p>
@@ -47,10 +43,6 @@ module.exports = async (req, res) => {
                                 <div style="text-align: left; margin: 1rem auto; max-width: 800px;">
                                     ${post.content}
                                 </div>
-                            </div>
-                            <div class="questionmark-stack parent-stack-right">
-                                <img src="/images/questionCurl.png" alt="Question Mark Top" class="parent-img-list parent-img-list-right">
-                                <img src="/images/questionPeriod.png" alt="Question Mark Bottom" class="parent-img-list parent-img-list-right-period">
                             </div>
                         </div>
                     </div>
@@ -62,7 +54,6 @@ module.exports = async (req, res) => {
                 <section class="tutor-zone-section fade-in-section">
                     <div class="zone-gradient-bg tutor-gradient-bg">
                         <div class="zone-list-row">
-                            <img src="/images/legoLeft.png" alt="Lego Left" class="tutor-img-list tutor-img-list-left">
                             <div class="tutor-box curve-bottom-left">
                                 <h2>${post.title}</h2>
                                 <p class="byline">By ${post.author}</p>
@@ -71,7 +62,6 @@ module.exports = async (req, res) => {
                                     ${post.content}
                                 </div>
                             </div>
-                            <img src="/images/lego.PNG" alt="Lego Right" class="tutor-img-list tutor-img-list-right">
                         </div>
                     </div>
                 </section>
