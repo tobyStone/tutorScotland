@@ -25,15 +25,59 @@ module.exports = async (req, res) => {
         // Fetch posts from DB with the optional filter, sorted by newest first
         const posts = await Blog.find(query).sort({ createdAt: -1 });
 
-        // Build HTML for each post
-        const postsHtml = posts.map(post => `
-      <section class="blog-entry">
-         ${post.imagePath ? `<img src="${post.imagePath}" alt="Blog image" class="blog-image">` : ''}
-        <h2>${post.title}</h2>
-        <p class="byline">By ${post.author}</p>
-        <p>${post.content}</p>
-      </section>
-    `).join('');
+        // Build HTML for each post with alternating styles
+        const postsHtml = posts.map((post, index) => {
+            // Alternate between parent-box and tutor-box styles
+            const isEven = index % 2 === 0;
+
+            if (isEven) {
+                return `
+                <!-- BLOG POST: Full-width section -->
+                <section class="parents-zone-section fade-in-section">
+                    <div class="zone-gradient-bg parent-gradient-bg">
+                        <div class="zone-list-row">
+                            <div class="questionmark-stack parent-stack-left">
+                                <img src="/images/questionCurl.png" alt="Question Mark Top" class="parent-img-list parent-img-list-left">
+                                <img src="/images/questionPeriod.png" alt="Question Mark Bottom" class="parent-img-list parent-img-list-left-period">
+                            </div>
+                            <div class="parent-box curve-bottom-left">
+                                <h2>${post.title}</h2>
+                                <p class="byline">By ${post.author}</p>
+                                ${post.imagePath ? `<img src="${post.imagePath}" alt="Blog image" class="blog-image" style="max-width: 100%; height: auto; margin: 1rem auto; border-radius: 0.5rem; display: block;">` : ''}
+                                <div style="text-align: left; margin: 1rem auto; max-width: 800px;">
+                                    ${post.content}
+                                </div>
+                            </div>
+                            <div class="questionmark-stack parent-stack-right">
+                                <img src="/images/questionCurl.png" alt="Question Mark Top" class="parent-img-list parent-img-list-right">
+                                <img src="/images/questionPeriod.png" alt="Question Mark Bottom" class="parent-img-list parent-img-list-right-period">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                `;
+            } else {
+                return `
+                <!-- BLOG POST: Full-width section -->
+                <section class="tutor-zone-section fade-in-section">
+                    <div class="zone-gradient-bg tutor-gradient-bg">
+                        <div class="zone-list-row">
+                            <img src="/images/legoLeft.png" alt="Lego Left" class="tutor-img-list tutor-img-list-left">
+                            <div class="tutor-box curve-bottom-left">
+                                <h2>${post.title}</h2>
+                                <p class="byline">By ${post.author}</p>
+                                ${post.imagePath ? `<img src="${post.imagePath}" alt="Blog image" class="blog-image" style="max-width: 100%; height: auto; margin: 1rem auto; border-radius: 0.5rem; display: block;">` : ''}
+                                <div style="text-align: left; margin: 1rem auto; max-width: 800px;">
+                                    ${post.content}
+                                </div>
+                            </div>
+                            <img src="/images/lego.PNG" alt="Lego Right" class="tutor-img-list tutor-img-list-right">
+                        </div>
+                    </div>
+                </section>
+                `;
+            }
+        }).join('\n\n        <!-- Add padding between sections -->\n        <div style="margin: 3.6rem 0;"></div>\n\n');
 
         // Create the full HTML page with the filter form
         const html = `
@@ -43,8 +87,11 @@ module.exports = async (req, res) => {
           <meta charset="UTF-8">
           <link rel="icon" href="/images/bannerShield2.png" type="image/png">
           <title>Tutors Alliance Scotland Blog</title>
-          <link rel="stylesheet" href="/style.css">
+          <link rel="stylesheet" href="/styles2.css">
+          <link rel="stylesheet" href="/header-banner.css">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <script src="/responsive-helper.js"></script>
+          <script src="/js/dynamic-nav.js" defer></script>
       </head>
       <body>
           <!-- Shared banner/header -->
@@ -76,19 +123,42 @@ module.exports = async (req, res) => {
           </div>
 
           <main>
+            <div class="mission-row">
+                <!-- LEFT COLUMN: Shield + Ribbons -->
+                <div class="left-col">
+                    <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
+                    <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
+                </div>
+
+                <!-- RIGHT COLUMN: heading + about-us text -->
+                <div class="right-col">
+                    <div class="about-us-landing" id="aboutUsLanding">
+                        <h1 class="mission-statement">TAS Blog</h1>
+                    </div>
+                </div>
+            </div>
+
             <!-- Filter Form -->
-            <section class="blog-filter">
-              <form id="blogFilterForm">
-                <label for="categorySelect"><strong>Filter by:</strong></label>
-                <select id="categorySelect" name="category">
-                  <option value="">(None)</option>
-                  <option value="general">General</option>
-                  <option value="parent">Parent</option>
-                  <option value="tutor">Tutor</option>
-                </select>
-                <button type="submit">Apply</button>
-              </form>
+            <section class="faq-section fade-in-section">
+                <div class="faq-overlay-card curve-bottom-right">
+                    <h2>Filter Blog Posts</h2>
+                    <form id="blogFilterForm" style="margin: 1.5rem auto; max-width: 500px;">
+                        <div style="display: flex; gap: 1rem; align-items: center; justify-content: center; flex-wrap: wrap;">
+                            <label for="categorySelect" style="font-weight: bold; font-size: 1.1rem;">Filter by category:</label>
+                            <select id="categorySelect" name="category" style="padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #ccc;">
+                                <option value="">(All Posts)</option>
+                                <option value="general">General</option>
+                                <option value="parent">Parent</option>
+                                <option value="tutor">Tutor</option>
+                            </select>
+                            <button type="submit" class="button aurora">Apply Filter</button>
+                        </div>
+                    </form>
+                </div>
             </section>
+
+            <!-- Add padding between sections -->
+            <div style="margin: 3.6rem 0;"></div>
 
             <!-- Blog posts -->
             ${postsHtml}
@@ -121,6 +191,63 @@ module.exports = async (req, res) => {
               }
               window.location.href = newUrl;
             });
+          </script>
+
+          <!-- Fade-in animation script -->
+          <script>
+              // Fade-in animation for sections
+              const fadeEls = document.querySelectorAll('.fade-in-section');
+
+              // Set initial styles
+              fadeEls.forEach(el => {
+                  el.style.opacity = '0';
+                  el.style.transform = 'translateY(20px)';
+              });
+
+              // Create the Intersection Observer
+              const observer = new IntersectionObserver((entries, obs) => {
+                  entries.forEach(entry => {
+                      if (entry.isIntersecting) {
+                          // Fade it in
+                          entry.target.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                          entry.target.style.opacity = '1';
+                          entry.target.style.transform = 'translateY(0)';
+
+                          // Once triggered, stop observing so it doesn't re-animate if user scrolls away
+                          obs.unobserve(entry.target);
+                      }
+                  });
+              }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
+
+              // Observe each fadeEl
+              fadeEls.forEach(el => observer.observe(el));
+
+              // Single Intersection Observer for all fade-in elements
+              const fadeObserver = new IntersectionObserver((entries) => {
+                  entries.forEach(entry => {
+                      if (entry.isIntersecting) {
+                          entry.target.classList.add('is-visible');
+                          fadeObserver.unobserve(entry.target);
+                      }
+                  });
+              }, {
+                  root: null,
+                  rootMargin: '0px',
+                  threshold: 0.1
+              });
+
+              // Function to observe all fade-in elements
+              function observeFadeElements() {
+                  // Observe all sections with fade-in-section class
+                  document.querySelectorAll('.fade-in-section').forEach(section => {
+                      fadeObserver.observe(section);
+                  });
+              }
+
+              // Initial observation when DOM is loaded
+              document.addEventListener('DOMContentLoaded', () => {
+                  observeFadeElements();
+              });
           </script>
       </body>
       </html>
