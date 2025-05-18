@@ -1433,6 +1433,9 @@ header h1 {
     .big-pupil-img {
         width: 60px;
     }
+    .tutor-img-list tutor-img-list-right {
+        display: none !important
+    }
 }
 
 .newsletter-gradient-bg {
