@@ -1436,6 +1436,11 @@ header h1 {
     .tutor-img-list tutor-img-list-right {
         display: none !important
     }
+    .tutor-img-list tutor-img-list-left {
+        display: none !important
+    }
+
+
 }
 
 .newsletter-gradient-bg {
