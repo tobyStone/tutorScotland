@@ -42,6 +42,11 @@ function loadDynamicSections() {
                     return;
                 }
 
+                // Add the dynamic-section-container class to the bottom container for consistency
+                if (!bottomContainer.classList.contains('dynamic-section-container')) {
+                    bottomContainer.classList.add('dynamic-section-container');
+                }
+
                 // Clear existing content
                 document.getElementById('dynamicSectionsTop').innerHTML = '';
                 document.getElementById('dynamicSectionsMiddle').innerHTML = '';
@@ -100,7 +105,32 @@ function createPositionContainer(position) {
     let insertionPoint;
 
     if (position === 'top') {
-        // Insert after the header/nav elements
+        // Find the main content area
+        const main = document.querySelector('main');
+
+        if (main && main.firstElementChild) {
+            // Insert at the beginning of main content
+            insertionPoint = main.firstElementChild;
+
+            // Create separator and container
+            const separator = document.createElement('div');
+            separator.className = 'dynamic-sections-separator-top';
+            separator.style.display = 'none';
+
+            const container = document.createElement('section');
+            container.id = 'dynamicSectionsTop';
+            container.style.display = 'none';
+            container.className = 'dynamic-section-container';
+
+            // Insert BEFORE the first element in main
+            main.insertBefore(container, main.firstElementChild);
+            main.insertBefore(separator, container);
+
+            console.log('Top container created and inserted at the beginning of main content');
+            return;
+        }
+
+        // Fallback to the old method if main is not found
         const header = document.querySelector('header');
         const nav = document.querySelector('nav');
         const rollingBanner = document.querySelector('.rolling-banner');
@@ -123,11 +153,14 @@ function createPositionContainer(position) {
 
         const container = document.createElement('section');
         container.id = 'dynamicSectionsTop';
+        container.className = 'dynamic-section-container';
         container.style.display = 'none';
 
         // Insert after the insertion point
         insertionPoint.after(separator);
         separator.after(container);
+
+        console.log('Top container created using fallback method');
     } else if (position === 'middle') {
         // Find a good middle point in the page
         const main = document.querySelector('main');
@@ -136,31 +169,64 @@ function createPositionContainer(position) {
             // Try to find a natural midpoint in the main content
             const mainChildren = Array.from(main.children);
 
+            // Create separator and container
+            const separator = document.createElement('div');
+            separator.className = 'dynamic-sections-separator-middle';
+            separator.style.display = 'none';
+
+            const container = document.createElement('section');
+            container.id = 'dynamicSectionsMiddle';
+            container.className = 'dynamic-section-container';
+            container.style.display = 'none';
+
             if (mainChildren.length >= 4) {
                 // Insert roughly in the middle
                 insertionPoint = mainChildren[Math.floor(mainChildren.length / 2) - 1];
+                insertionPoint.after(separator);
+                separator.after(container);
             } else {
                 // If not enough children, insert after the first child
-                insertionPoint = mainChildren[0] || main;
+                if (mainChildren.length > 0) {
+                    insertionPoint = mainChildren[0];
+                    insertionPoint.after(separator);
+                    separator.after(container);
+                } else {
+                    // If main is empty, just append to main
+                    main.appendChild(separator);
+                    main.appendChild(container);
+                }
             }
+
+            console.log('Middle container created and inserted in main content');
         } else {
             // Fallback to inserting after the first third of body children
             const bodyChildren = Array.from(document.body.children);
-            insertionPoint = bodyChildren[Math.floor(bodyChildren.length / 3)] || document.body.firstElementChild;
+
+            // Create separator and container
+            const separator = document.createElement('div');
+            separator.className = 'dynamic-sections-separator-middle';
+            separator.style.display = 'none';
+
+            const container = document.createElement('section');
+            container.id = 'dynamicSectionsMiddle';
+            container.className = 'dynamic-section-container';
+            container.style.display = 'none';
+
+            if (bodyChildren.length > 3) {
+                insertionPoint = bodyChildren[Math.floor(bodyChildren.length / 3)];
+                insertionPoint.after(separator);
+                separator.after(container);
+            } else if (bodyChildren.length > 0) {
+                insertionPoint = bodyChildren[0];
+                insertionPoint.after(separator);
+                separator.after(container);
+            } else {
+                document.body.appendChild(separator);
+                document.body.appendChild(container);
+            }
+
+            console.log('Middle container created using fallback method');
         }
-
-        // Create separator and container
-        const separator = document.createElement('div');
-        separator.className = 'dynamic-sections-separator-middle';
-        separator.style.display = 'none';
-
-        const container = document.createElement('section');
-        container.id = 'dynamicSectionsMiddle';
-        container.style.display = 'none';
-
-        // Insert after the insertion point
-        insertionPoint.after(separator);
-        separator.after(container);
     }
 }
 
@@ -174,7 +240,7 @@ function addSectionsToContainer(sections, containerId) {
     sections.forEach((s, index) => {
         container.insertAdjacentHTML('beforeend', `
           <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
-            ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
+            ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto 1.5rem auto; border-radius: 0.5rem;">` : ''}
             <h2>${s.heading}</h2>
             <div class="dyn-content">${s.text}</div>
           </article>`);
