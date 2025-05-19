@@ -33,9 +33,16 @@ module.exports = async (req, res) => {
         await connectToDatabase();
         console.log('Database connected successfully');
 
-        // Check if this is a request for the tutor list (for rolling banner)
-        if (req.url === '/api/tutorlist' || req.query.format === 'json') {
+        // Check if this is a request for the tutor list (for rolling banner or admin page)
+        if (req.url === '/api/tutorlist') {
+            // For the rolling banner, we don't need the _id field
             const tutors = await Tutor.find({}, 'name subjects -_id').lean();
+            return res.status(200).json(tutors);
+        }
+
+        // For the admin page, we need the _id field for deletion functionality
+        if (req.query.format === 'json') {
+            const tutors = await Tutor.find({}).lean();
             return res.status(200).json(tutors);
         }
 
@@ -81,12 +88,12 @@ module.exports = async (req, res) => {
         if (tutors.length > 0) {
             tutorsHtml = tutors.map(tutor => `
                 <section class="tutor-card">
-                    <img src="${tutor.imagePath || '/images/tutor0.jpg'}"   
+                    <img src="${tutor.imagePath || '/images/tutor0.jpg'}"
                     alt="Tutor ${tutor.name}"
                     onerror="this.src='/images/tutor0.jpg'"
-                    class="tutor-image" loading="lazy"                 
+                    class="tutor-image" loading="lazy"
                     decoding="async"
-                    width="300" height="200"    
+                    width="300" height="200"
                     style="object-fit:cover">
                     <h3>${tutor.name}</h3>
                     <p>Subjects: ${tutor.subjects.join(', ')}</p>
@@ -142,7 +149,7 @@ module.exports = async (req, res) => {
                         left: 60% !important;
                     }
 
-                    /* Make #imageBanner just below shield’s bottom edge */
+                    /* Make #imageBanner just below shieldï¿½s bottom edge */
                     .tutor-directory-page #imageBanner {
                       top: 507px !important; /* Example: you may need to tweak 25% or 28% or 30% */
                       left: 60% !important;
