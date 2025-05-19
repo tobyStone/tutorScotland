@@ -55,6 +55,8 @@
             </div>
         </div>
 
+        <section id="dynamicSections"></section>
+
         <!-- CONTACT INFO: Two-column content -->
         <section class="two-col-content fade-in-section">
             <div>
@@ -75,6 +77,8 @@
             </div>
         </section>
 
+        <section id="dynamicSections"></section>
+
         <!-- HERO: Full-width background image with overlay text -->
         <section class="hero-banner fade-in-section">
             <div class="hero-content">
@@ -89,7 +93,11 @@
 
         <!-- Dynamic sections will be added here -->
         <section id="dynamicSections"></section>
+
+        <div style="clear: both; width: 100%; height: 50px;"></div>
     </main>
+
+    <div class="dynamic-sections-separator"></div>
 
     <!-- SOCIAL ICONS FOOTER -->
     <footer class="site-footer fade-in-section">
@@ -277,11 +285,11 @@
                     // Add each section with proper spacing and styling
                     list.forEach((s, index) => {
                         host.insertAdjacentHTML('beforeend', `
-                          <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
-                            ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
-                            <h2>${s.heading}</h2>
-                            <div class="dyn-content">${s.text}</div>
-                          </article>`);
+                              <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
+                                ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
+                                <h2>${s.heading}</h2>
+                                <div class="dyn-content">${s.text}</div>
+                              </article>`);
                     });
                 }
             })
