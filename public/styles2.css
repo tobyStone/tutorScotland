@@ -410,6 +410,61 @@ input[type="reset"] {
             color: #0057B7;
         }
 
+/* Dynamic Sections Styling */
+.dynamic-section-container {
+    max-width: 1080px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.dyn-block {
+    background: #fff;
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 18px rgba(0,87,183,0.05);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.dyn-block h2 {
+    color: #0057B7;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.dyn-content {
+    margin-bottom: 1.5rem;
+}
+
+.dyn-image-container {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.dyn-image-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.dyn-image-container img:hover {
+    transform: scale(1.02);
+}
+
+.dynamic-sections-separator,
+.dynamic-sections-separator-top,
+.dynamic-sections-separator-middle {
+    height: 2rem;
+}
+
 /* Responsive tweaks */
 @media (max-width: 900px) {
     .hero-banner {
@@ -496,8 +551,23 @@ input[type="reset"] {
     }
 
     /* Responsive adjustments for dynamic sections */
+    .dynamic-section-container {
+        padding: 0 0.8rem;
+    }
+
+    .dyn-block {
+        padding: 1.5rem;
+    }
+
+    .dyn-image-container {
+        margin-bottom: 1rem;
+    }
+
     #dynamicSections,
     #dynamicSectionsTop,
+    #dynamicSectionsMiddle {
+        margin: 1.5rem auto;
+    }
     #dynamicSectionsMiddle {
         margin-top: 3rem;
         width: 100%;

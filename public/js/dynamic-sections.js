@@ -2,7 +2,8 @@
  * Dynamic Sections Loader
  *
  * This script handles loading and displaying dynamic sections for all pages.
- * It ensures that dynamic sections are properly positioned below all pre-existing content.
+ * It ensures that dynamic sections are properly positioned at the top, middle, or bottom
+ * of the page content based on the admin's selection.
  */
 
 /**
@@ -98,135 +99,103 @@ function loadDynamicSections() {
 }
 
 /**
- * Create a container for a specific position if it doesn't exist
+ * Create containers for all positions if they don't exist
+ * This function creates all three containers at once to ensure proper positioning
  */
 function createPositionContainer(position) {
-    // Find appropriate insertion point
-    let insertionPoint;
+    // Only create containers if they don't already exist
+    const main = document.querySelector('main');
+    if (!main) {
+        console.error('No main element found in the page');
+        return;
+    }
 
-    if (position === 'top') {
-        // Find the main content area
-        const main = document.querySelector('main');
+    // Remove any existing containers first to avoid duplicates
+    const existingTop = document.getElementById('dynamicSectionsTop');
+    const existingMiddle = document.getElementById('dynamicSectionsMiddle');
+    const existingBottom = document.getElementById('dynamicSections');
 
-        if (main && main.firstElementChild) {
-            // Insert at the beginning of main content
-            insertionPoint = main.firstElementChild;
+    if (existingTop) existingTop.remove();
+    if (existingMiddle) existingMiddle.remove();
+    // Don't remove the bottom container as it might be a static placeholder
 
-            // Create separator and container
-            const separator = document.createElement('div');
-            separator.className = 'dynamic-sections-separator-top';
-            separator.style.display = 'none';
+    // Get all children of main
+    const mainChildren = Array.from(main.children);
 
-            const container = document.createElement('section');
-            container.id = 'dynamicSectionsTop';
-            container.style.display = 'none';
-            container.className = 'dynamic-section-container';
+    // Create all three containers
 
-            // Insert BEFORE the first element in main
-            main.insertBefore(container, main.firstElementChild);
-            main.insertBefore(separator, container);
+    // 1. TOP CONTAINER - Insert at the very beginning of main
+    const topSeparator = document.createElement('div');
+    topSeparator.className = 'dynamic-sections-separator-top';
+    topSeparator.style.display = 'none';
 
-            console.log('Top container created and inserted at the beginning of main content');
-            return;
-        }
+    const topContainer = document.createElement('section');
+    topContainer.id = 'dynamicSectionsTop';
+    topContainer.className = 'dynamic-section-container';
+    topContainer.style.display = 'none';
 
-        // Fallback to the old method if main is not found
-        const header = document.querySelector('header');
-        const nav = document.querySelector('nav');
-        const rollingBanner = document.querySelector('.rolling-banner');
+    // Insert at the beginning of main
+    if (mainChildren.length > 0) {
+        main.insertBefore(topSeparator, mainChildren[0]);
+        main.insertBefore(topContainer, mainChildren[0]);
+    } else {
+        main.appendChild(topSeparator);
+        main.appendChild(topContainer);
+    }
 
-        if (rollingBanner) {
-            insertionPoint = rollingBanner;
-        } else if (nav) {
-            insertionPoint = nav;
-        } else if (header) {
-            insertionPoint = header;
-        } else {
-            // Fallback to the first child of body
-            insertionPoint = document.body.firstElementChild;
-        }
+    console.log('Top container created at the beginning of main');
 
-        // Create separator and container
-        const separator = document.createElement('div');
-        separator.className = 'dynamic-sections-separator-top';
-        separator.style.display = 'none';
+    // 2. MIDDLE CONTAINER - Insert in the middle of main content
+    const middleSeparator = document.createElement('div');
+    middleSeparator.className = 'dynamic-sections-separator-middle';
+    middleSeparator.style.display = 'none';
 
-        const container = document.createElement('section');
-        container.id = 'dynamicSectionsTop';
-        container.className = 'dynamic-section-container';
-        container.style.display = 'none';
+    const middleContainer = document.createElement('section');
+    middleContainer.id = 'dynamicSectionsMiddle';
+    middleContainer.className = 'dynamic-section-container';
+    middleContainer.style.display = 'none';
 
-        // Insert after the insertion point
-        insertionPoint.after(separator);
-        separator.after(container);
+    // Get updated children list after adding top container
+    const updatedChildren = Array.from(main.children);
 
-        console.log('Top container created using fallback method');
-    } else if (position === 'middle') {
-        // Find a good middle point in the page
-        const main = document.querySelector('main');
+    // Find a good middle point
+    if (updatedChildren.length >= 4) {
+        // Insert roughly in the middle, but after the top container
+        const middleIndex = Math.floor(updatedChildren.length / 2);
+        const middleElement = updatedChildren[middleIndex];
 
-        if (main) {
-            // Try to find a natural midpoint in the main content
-            const mainChildren = Array.from(main.children);
+        // Insert after the middle element
+        middleElement.after(middleSeparator);
+        middleSeparator.after(middleContainer);
+    } else {
+        // If not enough children, insert after the top container
+        topContainer.after(middleSeparator);
+        middleSeparator.after(middleContainer);
+    }
 
-            // Create separator and container
-            const separator = document.createElement('div');
-            separator.className = 'dynamic-sections-separator-middle';
-            separator.style.display = 'none';
+    console.log('Middle container created in the middle of main content');
 
-            const container = document.createElement('section');
-            container.id = 'dynamicSectionsMiddle';
-            container.className = 'dynamic-section-container';
-            container.style.display = 'none';
+    // 3. BOTTOM CONTAINER - Use existing or create new
+    if (!existingBottom) {
+        // Create a new bottom container at the end of main
+        const bottomSeparator = document.createElement('div');
+        bottomSeparator.className = 'dynamic-sections-separator';
+        bottomSeparator.style.display = 'none';
 
-            if (mainChildren.length >= 4) {
-                // Insert roughly in the middle
-                insertionPoint = mainChildren[Math.floor(mainChildren.length / 2) - 1];
-                insertionPoint.after(separator);
-                separator.after(container);
-            } else {
-                // If not enough children, insert after the first child
-                if (mainChildren.length > 0) {
-                    insertionPoint = mainChildren[0];
-                    insertionPoint.after(separator);
-                    separator.after(container);
-                } else {
-                    // If main is empty, just append to main
-                    main.appendChild(separator);
-                    main.appendChild(container);
-                }
-            }
+        const bottomContainer = document.createElement('section');
+        bottomContainer.id = 'dynamicSections';
+        bottomContainer.className = 'dynamic-section-container';
+        bottomContainer.style.display = 'none';
 
-            console.log('Middle container created and inserted in main content');
-        } else {
-            // Fallback to inserting after the first third of body children
-            const bodyChildren = Array.from(document.body.children);
+        // Append to the end of main
+        main.appendChild(bottomSeparator);
+        main.appendChild(bottomContainer);
 
-            // Create separator and container
-            const separator = document.createElement('div');
-            separator.className = 'dynamic-sections-separator-middle';
-            separator.style.display = 'none';
-
-            const container = document.createElement('section');
-            container.id = 'dynamicSectionsMiddle';
-            container.className = 'dynamic-section-container';
-            container.style.display = 'none';
-
-            if (bodyChildren.length > 3) {
-                insertionPoint = bodyChildren[Math.floor(bodyChildren.length / 3)];
-                insertionPoint.after(separator);
-                separator.after(container);
-            } else if (bodyChildren.length > 0) {
-                insertionPoint = bodyChildren[0];
-                insertionPoint.after(separator);
-                separator.after(container);
-            } else {
-                document.body.appendChild(separator);
-                document.body.appendChild(container);
-            }
-
-            console.log('Middle container created using fallback method');
-        }
+        console.log('Bottom container created at the end of main content');
+    } else {
+        // Add the dynamic-section-container class to the existing bottom container
+        existingBottom.classList.add('dynamic-section-container');
+        console.log('Using existing bottom container');
     }
 }
 
@@ -240,7 +209,7 @@ function addSectionsToContainer(sections, containerId) {
     sections.forEach((s, index) => {
         container.insertAdjacentHTML('beforeend', `
           <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
-            ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy" style="max-width: 100%; height: auto; display: block; margin: 0 auto 1.5rem auto; border-radius: 0.5rem;">` : ''}
+            ${s.image ? `<div class="dyn-image-container"><img src="${s.image}" alt="${s.heading}" loading="lazy"></div>` : ''}
             <h2>${s.heading}</h2>
             <div class="dyn-content">${s.text}</div>
           </article>`);

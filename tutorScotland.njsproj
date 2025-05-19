@@ -111,6 +111,9 @@
     <Content Include="public\images\tutor1.jpg" />
     <Content Include="public\images\tutor2.jpg" />
     <Content Include="public\images\weAreTheFuture.PNG" />
+    <Content Include="public\js\dynamic-nav.js" />
+    <Content Include="public\js\dynamic-sections-template.html" />
+    <Content Include="public\js\dynamic-sections.js" />
     <Content Include="public\js\upload-helper.js">
       <SubType>Code</SubType>
     </Content>
