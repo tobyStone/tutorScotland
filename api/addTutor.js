@@ -53,8 +53,9 @@ function verifyToken(req) {
 }
 
 module.exports = async (req, res) => {
-    if (req.method !== 'POST') {
-        res.setHeader('Allow', ['POST']);
+    // Allow both POST and DELETE methods
+    if (!['POST', 'DELETE'].includes(req.method)) {
+        res.setHeader('Allow', ['POST', 'DELETE']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 
@@ -77,6 +78,44 @@ module.exports = async (req, res) => {
         await connectToDatabase();
         console.log('Database connected successfully');
 
+        // Handle DELETE request
+        if (req.method === 'DELETE') {
+            const tutorId = req.query.id;
+
+            if (!tutorId) {
+                console.log('Missing tutor ID for deletion');
+                return res.status(400).json({
+                    message: "Missing tutor ID"
+                });
+            }
+
+            console.log(`Attempting to delete tutor with ID: ${tutorId}`);
+
+            try {
+                const deletedTutor = await Tutor.findByIdAndDelete(tutorId);
+
+                if (!deletedTutor) {
+                    console.log(`Tutor with ID ${tutorId} not found`);
+                    return res.status(404).json({
+                        message: "Tutor not found"
+                    });
+                }
+
+                console.log(`Tutor with ID ${tutorId} deleted successfully`);
+                return res.status(200).json({
+                    message: "Tutor deleted successfully",
+                    tutor: deletedTutor
+                });
+            } catch (deleteError) {
+                console.error(`Error deleting tutor with ID ${tutorId}:`, deleteError);
+                return res.status(500).json({
+                    message: "Error deleting tutor",
+                    error: deleteError.message
+                });
+            }
+        }
+
+        // Handle POST request (add tutor)
         // Log the request body for debugging
         console.log('Request body:', req.body);
 

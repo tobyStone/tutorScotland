@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>TAS Admin – Dashboard</title>
+    <title>TAS Admin – Dashboard</title>
 
     <!-- favicon & css -->
     <link rel="icon" href="/images/bannerShield2.png" type="image/png" />
@@ -58,33 +58,93 @@
             }
 
         /* small table that lists existing dynamic sections */
-        table#sectionTable {
+        table.admin-table {
             width: 100%;
             margin-top: 25px;
             border-collapse: collapse;
             font-size: .93em
         }
 
-        #sectionTable th, #sectionTable td {
+        .admin-table th, .admin-table td {
             border: 1px solid #ddd;
             padding: 6px
         }
 
-        #sectionTable th {
+        .admin-table th {
             background: #ececec;
             text-align: left
         }
 
-        #sectionTable button {
+        .admin-table button {
             background: none;
             border: 0;
             font-size: 1.2em;
-            cursor: pointer
+            cursor: pointer;
+            margin: 0 5px;
+            padding: 0;
         }
 
-            #sectionTable button:hover {
+            .admin-table button:hover {
                 color: #b00
             }
+
+        /* Tabs styling */
+        .tabs-container {
+            max-width: 700px;
+            margin: 20px auto;
+        }
+
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 0;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 12px 20px;
+            background: #E6F0FF;
+            color: #0057B7;
+            border: 1px solid #0057B7;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            font-size: 1.05em;
+            cursor: pointer;
+            transition: .25s;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .tab-button.active {
+            background: #0057B7;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Tutor table specific styles */
+        #tutorTable img {
+            max-width: 60px;
+            max-height: 60px;
+            border-radius: 4px;
+        }
+
+        .tutor-subjects {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tutor-subjects:hover {
+            white-space: normal;
+            overflow: visible;
+        }
     </style>
 </head>
 
@@ -100,12 +160,12 @@
 
     <nav class="main-nav">
         <ul>
-            <li><a href="/about-us.html">About Us</a></li>
-            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="/parents.html">Enter Parent Zone</a></li>
-            <li><a href="/contact.html">Contact Us</a></li>
+            <li><a href="/about-us.html">About Us</a></li>
+            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="/parents.html">Enter Parent Zone</a></li>
+            <li><a href="/contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
+            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
@@ -115,131 +175,166 @@
 
     <!-- ─────────────── MAIN CONTENT ─────────────── -->
     <main>
-        <!-- ░░░░░░ ADD‑TUTOR FORM ░░░░░░ -->
-        <div class="admin-form-container">
-            <h3>Add a Tutor</h3>
-
-            <!-- handled completely in JS  -->
-            <form id="tutorForm" autocomplete="off">
-                <label>Tutor Name:<input type="text" name="name" required /></label>
-
-                <label>
-                    Subjects (comma‑separated):
-                    <input type="text" name="subjects" required />
-                </label>
-
-                <label>
-                    Cost Range (e.g. __P__ for £, __P____P__ for ££):
-                    <input type="text" name="costRange" />
-                </label>
-
-                <label>
-                    Badges (comma‑separated):
-                    <input type="text" name="badges" />
-                </label>
-
-                <label>
-                    Tutor Image:
-                    <input type="file" id="imageField" accept="image/*" />
-                </label>
-
-                <label>
-                    Contact (email or website):
-                    <input type="text" name="contact" />
-                </label>
-
-                <label>Description:<textarea name="description"></textarea></label>
-
-                <label>
-                    Postcodes (comma‑separated):
-                    <input type="text" name="postcodes" />
-                </label>
-
-                <button type="submit">Add Tutor</button>
-            </form>
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="content-tab">Manage Content</button>
+                <button class="tab-button" data-tab="tutors-tab">Manage Tutors</button>
+            </div>
         </div>
 
-        <!-- ░░░░░░  ADD‑/DELETE SECTION  ░░░░░░ -->
-        <div class="admin-form-container">
-            <h3>Add a Dynamic Section</h3>
+        <!-- Content Tab -->
+        <div id="content-tab" class="tab-content active">
+            <!-- ░░░░░░  ADD‑/DELETE SECTION  ░░░░░░ -->
+            <div class="admin-form-container">
+                <h3>Add a Dynamic Section</h3>
 
-            <!-- ★ NEW – simplified form : only page, heading, paragraph, image ★ -->
-            <form id="addSection" enctype="multipart/form-data" autocomplete="off">
-                <label>
-                    Target Page:
-                    <select name="page" id="pageSelect">
-                        <!-- All HTML pages except admin.html, login.html, and blogWriter.html -->
-                        <option value="index">index</option>
-                        <option value="about-us">about-us</option>
-                        <option value="contact">contact</option>
-                        <option value="parents">parents</option>
-                        <option value="tutorConnect">tutorConnect</option>
-                        <option value="tutorDirectory">tutorDirectory</option>
-                        <option value="tutorMembership">tutorMembership</option>
-                        <option value="tutorszone">tutorszone</option>
-                    </select>
-                </label>
+                <!-- ★ NEW – simplified form : only page, heading, paragraph, image ★ -->
+                <form id="addSection" enctype="multipart/form-data" autocomplete="off">
+                    <label>
+                        Target Page:
+                        <select name="page" id="pageSelect">
+                            <!-- All HTML pages except admin.html, login.html, and blogWriter.html -->
+                            <option value="index">index</option>
+                            <option value="about-us">about-us</option>
+                            <option value="contact">contact</option>
+                            <option value="parents">parents</option>
+                            <option value="tutorConnect">tutorConnect</option>
+                            <option value="tutorDirectory">tutorDirectory</option>
+                            <option value="tutorMembership">tutorMembership</option>
+                            <option value="tutorszone">tutorszone</option>
+                        </select>
+                    </label>
 
-                <label>Heading:<input name="heading" required></label>
-                <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
-                <label>Image:<input type="file" name="image" accept="image/*"></label>
+                    <label>Heading:<input name="heading" required></label>
+                    <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
+                    <label>Image:<input type="file" name="image" accept="image/*"></label>
 
-                <label>
-                    Position on Page:
-                    <select name="position">
-                        <option value="top">Top of Page</option>
-                        <option value="middle">Middle of Page</option>
-                        <option value="bottom" selected>Bottom of Page</option>
-                    </select>
-                </label>
+                    <label>
+                        Position on Page:
+                        <select name="position">
+                            <option value="top">Top of Page</option>
+                            <option value="middle">Middle of Page</option>
+                            <option value="bottom" selected>Bottom of Page</option>
+                        </select>
+                    </label>
 
-                <button>Add Section</button>
-            </form>
+                    <button>Add Section</button>
+                </form>
 
-            <!-- ★ NEW – table of existing sections with a delete button ★ -->
-            <h3 style="margin-top:35px">Existing sections for this page</h3>
-            <table id="sectionTable">
-                <thead>
-                    <tr><th>#</th><th>Heading</th><th>Position</th><th>Image?</th><th></th></tr>
-                </thead>
-                <tbody><!-- filled by JS --></tbody>
-            </table>
+                <!-- ★ NEW – table of existing sections with a delete button ★ -->
+                <h3 style="margin-top:35px">Existing sections for this page</h3>
+                <table id="sectionTable" class="admin-table">
+                    <thead>
+                        <tr><th>#</th><th>Heading</th><th>Position</th><th>Image?</th><th></th></tr>
+                    </thead>
+                    <tbody><!-- filled by JS --></tbody>
+                </table>
+            </div>
+
+            <!-- ░░░░░░  CREATE NEW PAGE  ░░░░░░ -->
+            <div class="admin-form-container">
+                <h3>Create a New Page</h3>
+
+                <form id="pageForm" enctype="multipart/form-data" autocomplete="off">
+                    <label>
+                        Page URL (e.g., "summer-tutoring"):
+                        <input type="text" name="slug" id="pageSlug" required>
+                    </label>
+
+                    <label>Page Title:<input name="heading" required></label>
+                    <label>Page Content:<textarea name="text" rows="6" required></textarea></label>
+                    <label>Featured Image:<input type="file" name="image" id="pageImage" accept="image/*"></label>
+
+                    <label>
+                        <input type="checkbox" name="isPublished" id="isPublished" checked>
+                        Publish page immediately
+                    </label>
+
+                    <button type="submit">Create Page</button>
+                </form>
+
+                <h3 style="margin-top:35px">Existing Pages</h3>
+                <table id="pagesTable" class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>URL</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody><!-- filled by JS --></tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- ░░░░░░  CREATE NEW PAGE  ░░░░░░ -->
-        <div class="admin-form-container">
-            <h3>Create a New Page</h3>
+        <!-- Tutors Tab -->
+        <div id="tutors-tab" class="tab-content">
+            <!-- ░░░░░░ ADD‑TUTOR FORM ░░░░░░ -->
+            <div class="admin-form-container">
+                <h3>Add a Tutor</h3>
 
-            <form id="pageForm" enctype="multipart/form-data" autocomplete="off">
-                <label>
-                    Page URL (e.g., "summer-tutoring"):
-                    <input type="text" name="slug" id="pageSlug" required>
-                </label>
+                <!-- handled completely in JS  -->
+                <form id="tutorForm" autocomplete="off">
+                    <label>Tutor Name:<input type="text" name="name" required /></label>
 
-                <label>Page Title:<input name="heading" required></label>
-                <label>Page Content:<textarea name="text" rows="6" required></textarea></label>
-                <label>Featured Image:<input type="file" name="image" id="pageImage" accept="image/*"></label>
+                    <label>
+                        Subjects (comma‑separated):
+                        <input type="text" name="subjects" required />
+                    </label>
 
-                <label>
-                    <input type="checkbox" name="isPublished" id="isPublished" checked>
-                    Publish page immediately
-                </label>
+                    <label>
+                        Cost Range (e.g. __P__ for £, __P____P__ for ££):
+                        <input type="text" name="costRange" required />
+                    </label>
 
-                <button type="submit">Create Page</button>
-            </form>
+                    <label>
+                        Badges (comma‑separated):
+                        <input type="text" name="badges" />
+                    </label>
 
-            <h3 style="margin-top:35px">Existing Pages</h3>
-            <table id="pagesTable">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>URL</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody><!-- filled by JS --></tbody>
-            </table>
+                    <label>
+                        Tutor Image:
+                        <input type="file" id="imageField" accept="image/*" />
+                    </label>
+
+                    <label>
+                        Contact (email or website):
+                        <input type="text" name="contact" />
+                    </label>
+
+                    <label>Description:<textarea name="description"></textarea></label>
+
+                    <label>
+                        Postcodes (comma‑separated):
+                        <input type="text" name="postcodes" />
+                    </label>
+
+                    <button type="submit">Add Tutor</button>
+                </form>
+            </div>
+
+            <!-- ░░░░░░ MANAGE TUTORS ░░░░░░ -->
+            <div class="admin-form-container">
+                <h3>Manage Existing Tutors</h3>
+                <p>Click on a tutor's name to view details. Use the delete button to remove a tutor.</p>
+
+                <table id="tutorTable" class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Subjects</th>
+                            <th>Cost</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 
@@ -260,6 +355,23 @@
             })
             .catch(console.error);
 
+        /* ── tab switching functionality ──────────────────────────── */
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Add active class to clicked button and corresponding content
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
         /* ░░░ 1. ADD‑TUTOR WORKFLOW  ░░░ */
         tutorForm.addEventListener('submit', async e => {
             e.preventDefault();
@@ -270,7 +382,7 @@
             let imagePath = '';
             if (imageField.files[0]) {
                 const f = imageField.files[0];
-                if (f.size > 2 * 1024 * 1024) return alert('Image > 2 MB');
+                if (f.size > 2 * 1024 * 1024) return alert('Image > 2 MB');
                 try { imagePath = await uploadImage(f, 'tutors'); }
                 catch (err) { return alert(err.message); }
             }
@@ -312,11 +424,101 @@
                 console.log('Tutor added successfully');
                 alert('Tutor added successfully!');
                 tutorForm.reset();
+                loadTutors(); // Refresh the tutor list
             } catch (error) {
                 console.error('Exception while adding tutor:', error);
                 alert(`An error occurred: ${error.message}`);
             }
         });
+
+        /* ░░░ LOAD AND DELETE TUTORS ░░░ */
+        // Function to load tutors
+        async function loadTutors() {
+            try {
+                const response = await fetch('/api/tutors?format=json');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch tutors');
+                }
+
+                const tutors = await response.json();
+                const tutorTableBody = document.querySelector('#tutorTable tbody');
+                tutorTableBody.innerHTML = '';
+
+                tutors.forEach(tutor => {
+                    const row = document.createElement('tr');
+
+                    // Image cell
+                    const imageCell = document.createElement('td');
+                    if (tutor.imagePath) {
+                        const img = document.createElement('img');
+                        img.src = tutor.imagePath;
+                        img.alt = tutor.name;
+                        imageCell.appendChild(img);
+                    } else {
+                        imageCell.textContent = 'No image';
+                    }
+                    row.appendChild(imageCell);
+
+                    // Name cell
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = tutor.name;
+                    row.appendChild(nameCell);
+
+                    // Subjects cell
+                    const subjectsCell = document.createElement('td');
+                    subjectsCell.className = 'tutor-subjects';
+                    subjectsCell.textContent = tutor.subjects.join(', ');
+                    row.appendChild(subjectsCell);
+
+                    // Cost cell
+                    const costCell = document.createElement('td');
+                    costCell.textContent = tutor.costRange;
+                    row.appendChild(costCell);
+
+                    // Actions cell
+                    const actionsCell = document.createElement('td');
+                    const deleteButton = document.createElement('button');
+                    deleteButton.innerHTML = '🗑️';
+                    deleteButton.title = 'Delete Tutor';
+                    deleteButton.onclick = () => deleteTutor(tutor._id);
+                    actionsCell.appendChild(deleteButton);
+                    row.appendChild(actionsCell);
+
+                    tutorTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading tutors:', error);
+                alert('Failed to load tutors. Please try again.');
+            }
+        }
+
+        // Function to delete a tutor
+        async function deleteTutor(tutorId) {
+            if (!confirm('Are you sure you want to delete this tutor?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/addTutor?id=${tutorId}`, {
+                    method: 'DELETE',
+                    credentials: 'include' // Include cookies for authentication
+                });
+
+                if (response.ok) {
+                    alert('Tutor deleted successfully!');
+                    loadTutors(); // Refresh the tutor list
+                } else {
+                    const error = await response.text();
+                    alert(`Failed to delete tutor: ${error}`);
+                }
+            } catch (error) {
+                console.error('Error deleting tutor:', error);
+                alert('An error occurred while deleting the tutor.');
+            }
+        }
+
+        // Load tutors when the page loads
+        loadTutors();
 
         /* ░░░ 2. ADD / DELETE  SECTIONS ░░░ */
         const pageSel = document.getElementById('pageSelect');
