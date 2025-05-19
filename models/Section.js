@@ -6,6 +6,7 @@ const schema = new mongoose.Schema({
     text: String,
     image: String,                                  // Vercel?blob URL
     order: Number,                                  // sort order
+    position: { type: String, default: 'bottom' },  // 'top', 'middle', 'bottom'
     isFullPage: { type: Boolean, default: false },  // Whether this is a full page template
     slug: String,                                   // URL-friendly identifier for the page
     isPublished: { type: Boolean, default: true }   // Whether the page is live

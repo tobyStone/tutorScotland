@@ -107,12 +107,17 @@ module.exports = async (req, res) => {
                     (Array.isArray(fields.isPublished) ? fields.isPublished[0] : fields.isPublished) === 'true'
                     : true;
 
+                // Get position (top, middle, bottom)
+                const position = fields.position ?
+                    (Array.isArray(fields.position) ? fields.position[0] : fields.position).toString().toLowerCase()
+                    : 'bottom';
+
                 console.log('Creating section with data:', {
-                    page, heading, text, image, isFullPage, slug, isPublished
+                    page, heading, text, image, isFullPage, slug, isPublished, position
                 });
 
                 const doc = await Section.create({
-                    page, heading, text, image, isFullPage, slug, isPublished
+                    page, heading, text, image, isFullPage, slug, isPublished, position
                 });
                 console.log('Section created:', doc);
                 return res.status(201).json(doc);
@@ -172,7 +177,7 @@ module.exports = async (req, res) => {
                 const list = await Section.find({
                     page,
                     isFullPage: { $ne: true } // Exclude full pages from regular sections
-                }).sort({ createdAt: 1 }).lean();
+                }).sort({ position: 1, createdAt: 1 }).lean();
                 return res.status(200).json(list);
             } catch (e) {
                 console.error('SECTION_GET error', e);

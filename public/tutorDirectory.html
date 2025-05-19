@@ -61,31 +61,45 @@
                     </p>
                 </div>
 
-                <div class="form-container" style="width: 37%; background-color: #fff; border-radius: 1rem; padding: 2rem; box-shadow: 0 2px 18px rgba(0,87,183,0.05); margin-top: 2rem; ">
+                <style>
+                    /* Center heading in portrait orientation on restricted viewport devices */
+                    @media (max-width: 900px) and (orientation: portrait) {
+                        .mission-statement {
+                            text-align: center !important;
+                            margin-left: auto !important;
+                            margin-right: auto !important;
+                        }
+                        .about-us-landing p {
+                            text-align: center !important;
+                        }
+                    }
+                </style>
+
+                <div class="form-container" style="width: 80%; max-width: 500px; background-color: #fff; border-radius: 1rem; padding: 2rem; box-shadow: 0 2px 18px rgba(0,87,183,0.05); margin: 2rem auto;">
                     <h2 style="color: #001B44; margin-bottom: 1.5rem; text-align: center;">Tutor Finder</h2>
-                    <form id="tutorFinderForm" action="/tutors" method="GET" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                        <div>
-                            <label for="subject" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Subject</label>
-                            <select name="subject" id="subject" style="width: 57%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
+                    <form id="tutorFinderForm" action="/tutors" method="GET" style="display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+                        <div style="width: 100%; text-align: center;">
+                            <label for="subject" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333; text-align: center;">Subject</label>
+                            <select name="subject" id="subject" style="width: 80%; max-width: 300px; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
                                 <option value="mathematics">Mathematics</option>
                                 <option value="english">English</option>
                             </select>
                         </div>
 
-                        <div>
-                            <label for="mode" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Location</label>
-                            <select name="mode" id="mode" style="width: 57%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
+                        <div style="width: 100%; text-align: center;">
+                            <label for="mode" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333; text-align: center;">Location</label>
+                            <select name="mode" id="mode" style="width: 80%; max-width: 300px; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
                                 <option value="online">Online</option>
                                 <option value="in-person">In Person</option>
                             </select>
                         </div>
 
-                        <div id="postcodeContainer" style="display: none;">
-                            <label for="postcode" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Postcode</label>
-                            <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode" style="width: 57%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
+                        <div id="postcodeContainer" style="display: none; width: 100%; text-align: center;">
+                            <label for="postcode" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333; text-align: center;">Postcode</label>
+                            <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode" style="width: 80%; max-width: 300px; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
                         </div>
 
-                        <button type="submit" class="button aurora" style="width: 57%; background-color: #0057B7; color: white; padding: 1rem; border: none; border-radius: 0.5rem; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 0.5rem;">Find Tutors</button>
+                        <button type="submit" class="button aurora" style="width: 80%; max-width: 300px; background-color: #0057B7; color: white; padding: 1rem; border: none; border-radius: 0.5rem; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 0.5rem;">Find Tutors</button>
                     </form>
                 </div>
             </div>

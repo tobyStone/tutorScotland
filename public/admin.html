@@ -184,6 +184,15 @@
                 <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
                 <label>Image:<input type="file" name="image" accept="image/*"></label>
 
+                <label>
+                    Position on Page:
+                    <select name="position">
+                        <option value="top">Top of Page</option>
+                        <option value="middle">Middle of Page</option>
+                        <option value="bottom" selected>Bottom of Page</option>
+                    </select>
+                </label>
+
                 <button>Add Section</button>
             </form>
 
@@ -191,7 +200,7 @@
             <h3 style="margin-top:35px">Existing sections for this page</h3>
             <table id="sectionTable">
                 <thead>
-                    <tr><th>#</th><th>Heading</th><th>Image?</th><th></th></tr>
+                    <tr><th>#</th><th>Heading</th><th>Position</th><th>Image?</th><th></th></tr>
                 </thead>
                 <tbody><!-- filled by JS --></tbody>
             </table>
@@ -322,9 +331,17 @@
             sectionTbody.innerHTML = '';
             list.forEach((s, i) => {
                 const tr = document.createElement('tr');
+                // Format position for display
+                const positionDisplay = {
+                    'top': '🔝 Top',
+                    'middle': '⏺️ Middle',
+                    'bottom': '🔽 Bottom'
+                }[s.position || 'bottom'];
+
                 tr.innerHTML = `
                        <td>${i + 1}</td>
                        <td>${s.heading}</td>
+                       <td>${positionDisplay}</td>
                        <td>${s.image ? '✔︎' : ''}</td>
                        <td><button data-id="${s._id}">🗑️</button></td>`;
                 sectionTbody.appendChild(tr);
