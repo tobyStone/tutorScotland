@@ -22,35 +22,23 @@ function loadDynamicSections() {
         .then(r => r.json())
         .then(list => {
             if (list && list.length > 0) {
+                // Create containers if they don't exist
+                createPositionContainer('all');
+
                 // Get containers for different positions
                 const topContainer = document.getElementById('dynamicSectionsTop');
                 const middleContainer = document.getElementById('dynamicSectionsMiddle');
-                const bottomContainer = document.getElementById('dynamicSections'); // Legacy container
+                const bottomContainer = document.getElementById('dynamicSections');
 
-                // Check if containers exist
-                if (!topContainer) {
-                    console.log('Creating top container');
-                    createPositionContainer('top');
-                }
-
-                if (!middleContainer) {
-                    console.log('Creating middle container');
-                    createPositionContainer('middle');
-                }
-
-                if (!bottomContainer) {
-                    console.error('No bottom dynamicSections container found in the page');
+                // Verify all containers exist
+                if (!topContainer || !middleContainer || !bottomContainer) {
+                    console.error('One or more dynamic section containers not found');
                     return;
                 }
 
-                // Add the dynamic-section-container class to the bottom container for consistency
-                if (!bottomContainer.classList.contains('dynamic-section-container')) {
-                    bottomContainer.classList.add('dynamic-section-container');
-                }
-
                 // Clear existing content
-                document.getElementById('dynamicSectionsTop').innerHTML = '';
-                document.getElementById('dynamicSectionsMiddle').innerHTML = '';
+                topContainer.innerHTML = '';
+                middleContainer.innerHTML = '';
                 bottomContainer.innerHTML = '';
 
                 // Group sections by position
@@ -58,24 +46,62 @@ function loadDynamicSections() {
                 const middleSections = list.filter(s => s.position === 'middle');
                 const bottomSections = list.filter(s => s.position === 'bottom' || !s.position);
 
+                console.log(`Found ${topSections.length} top sections, ${middleSections.length} middle sections, ${bottomSections.length} bottom sections`);
+
                 // Add sections to their respective containers
-                addSectionsToContainer(topSections, 'dynamicSectionsTop');
-                addSectionsToContainer(middleSections, 'dynamicSectionsMiddle');
-                addSectionsToContainer(bottomSections, 'dynamicSections');
+                if (topSections.length > 0) {
+                    topSections.forEach((s, index) => {
+                        topContainer.insertAdjacentHTML('beforeend', `
+                          <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
+                            ${s.image ? `<div class="dyn-image-container"><img src="${s.image}" alt="${s.heading}" loading="lazy"></div>` : ''}
+                            <h2>${s.heading}</h2>
+                            <div class="dyn-content">${s.text}</div>
+                          </article>`);
+                    });
+                    topContainer.style.display = 'block';
+                    const topSeparator = document.querySelector('.dynamic-sections-separator-top');
+                    if (topSeparator) topSeparator.style.display = 'block';
+                } else {
+                    topContainer.style.display = 'none';
+                    const topSeparator = document.querySelector('.dynamic-sections-separator-top');
+                    if (topSeparator) topSeparator.style.display = 'none';
+                }
 
-                // Show/hide containers based on content
-                toggleContainerVisibility('dynamicSectionsTop', topSections.length > 0);
-                toggleContainerVisibility('dynamicSectionsMiddle', middleSections.length > 0);
-                toggleContainerVisibility('dynamicSections', bottomSections.length > 0);
+                if (middleSections.length > 0) {
+                    middleSections.forEach((s, index) => {
+                        middleContainer.insertAdjacentHTML('beforeend', `
+                          <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
+                            ${s.image ? `<div class="dyn-image-container"><img src="${s.image}" alt="${s.heading}" loading="lazy"></div>` : ''}
+                            <h2>${s.heading}</h2>
+                            <div class="dyn-content">${s.text}</div>
+                          </article>`);
+                    });
+                    middleContainer.style.display = 'block';
+                    const middleSeparator = document.querySelector('.dynamic-sections-separator-middle');
+                    if (middleSeparator) middleSeparator.style.display = 'block';
+                } else {
+                    middleContainer.style.display = 'none';
+                    const middleSeparator = document.querySelector('.dynamic-sections-separator-middle');
+                    if (middleSeparator) middleSeparator.style.display = 'none';
+                }
 
-                // Show/hide separators
-                const topSeparator = document.querySelector('.dynamic-sections-separator-top');
-                const middleSeparator = document.querySelector('.dynamic-sections-separator-middle');
-                const bottomSeparator = document.querySelector('.dynamic-sections-separator');
-
-                if (topSeparator) topSeparator.style.display = topSections.length > 0 ? 'block' : 'none';
-                if (middleSeparator) middleSeparator.style.display = middleSections.length > 0 ? 'block' : 'none';
-                if (bottomSeparator) bottomSeparator.style.display = bottomSections.length > 0 ? 'block' : 'none';
+                if (bottomSections.length > 0) {
+                    bottomSections.forEach((s, index) => {
+                        bottomContainer.insertAdjacentHTML('beforeend', `
+                          <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
+                            ${s.image ? `<div class="dyn-image-container"><img src="${s.image}" alt="${s.heading}" loading="lazy"></div>` : ''}
+                            <h2>${s.heading}</h2>
+                            <div class="dyn-content">${s.text}</div>
+                          </article>`);
+                    });
+                    bottomContainer.style.display = 'block';
+                    const bottomSeparator = document.querySelector('.dynamic-sections-separator');
+                    if (bottomSeparator) bottomSeparator.style.display = 'block';
+                } else {
+                    bottomContainer.style.display = 'none';
+                    const bottomSeparator = document.querySelector('.dynamic-sections-separator');
+                    if (bottomSeparator) bottomSeparator.style.display = 'none';
+                }
 
                 // Add a class to the body to indicate dynamic sections are present
                 document.body.classList.add('has-dynamic-sections');
@@ -110,74 +136,104 @@ function createPositionContainer(position) {
         return;
     }
 
-    // Remove any existing containers first to avoid duplicates
+    // Check for existing containers
     const existingTop = document.getElementById('dynamicSectionsTop');
     const existingMiddle = document.getElementById('dynamicSectionsMiddle');
     const existingBottom = document.getElementById('dynamicSections');
 
-    if (existingTop) existingTop.remove();
-    if (existingMiddle) existingMiddle.remove();
-    // Don't remove the bottom container as it might be a static placeholder
+    // If all containers already exist, just use them
+    if (existingTop && existingMiddle && existingBottom) {
+        console.log('All dynamic section containers already exist in the page');
+
+        // Make sure they have the correct class
+        existingTop.classList.add('dynamic-section-container');
+        existingMiddle.classList.add('dynamic-section-container');
+        existingBottom.classList.add('dynamic-section-container');
+
+        return;
+    }
 
     // Get all children of main
     const mainChildren = Array.from(main.children);
 
-    // Create all three containers
+    // Create any missing containers
 
-    // 1. TOP CONTAINER - Insert at the very beginning of main
-    const topSeparator = document.createElement('div');
-    topSeparator.className = 'dynamic-sections-separator-top';
-    topSeparator.style.display = 'none';
+    // 1. TOP CONTAINER - Create if it doesn't exist
+    if (!existingTop) {
+        const topSeparator = document.createElement('div');
+        topSeparator.className = 'dynamic-sections-separator-top';
+        topSeparator.style.display = 'none';
 
-    const topContainer = document.createElement('section');
-    topContainer.id = 'dynamicSectionsTop';
-    topContainer.className = 'dynamic-section-container';
-    topContainer.style.display = 'none';
+        const topContainer = document.createElement('section');
+        topContainer.id = 'dynamicSectionsTop';
+        topContainer.className = 'dynamic-section-container';
+        topContainer.style.display = 'none';
 
-    // Insert at the beginning of main
-    if (mainChildren.length > 0) {
-        main.insertBefore(topSeparator, mainChildren[0]);
-        main.insertBefore(topContainer, mainChildren[0]);
+        // Insert at the beginning of main
+        if (mainChildren.length > 0) {
+            main.insertBefore(topSeparator, mainChildren[0]);
+            main.insertBefore(topContainer, mainChildren[0]);
+        } else {
+            main.appendChild(topSeparator);
+            main.appendChild(topContainer);
+        }
+
+        console.log('Top container created at the beginning of main');
     } else {
-        main.appendChild(topSeparator);
-        main.appendChild(topContainer);
+        console.log('Using existing top container');
     }
 
-    console.log('Top container created at the beginning of main');
+    // 2. MIDDLE CONTAINER - Create if it doesn't exist
+    if (!existingMiddle) {
+        const middleSeparator = document.createElement('div');
+        middleSeparator.className = 'dynamic-sections-separator-middle';
+        middleSeparator.style.display = 'none';
 
-    // 2. MIDDLE CONTAINER - Insert in the middle of main content
-    const middleSeparator = document.createElement('div');
-    middleSeparator.className = 'dynamic-sections-separator-middle';
-    middleSeparator.style.display = 'none';
+        const middleContainer = document.createElement('section');
+        middleContainer.id = 'dynamicSectionsMiddle';
+        middleContainer.className = 'dynamic-section-container';
+        middleContainer.style.display = 'none';
 
-    const middleContainer = document.createElement('section');
-    middleContainer.id = 'dynamicSectionsMiddle';
-    middleContainer.className = 'dynamic-section-container';
-    middleContainer.style.display = 'none';
+        // Get updated children list
+        const updatedChildren = Array.from(main.children);
 
-    // Get updated children list after adding top container
-    const updatedChildren = Array.from(main.children);
+        // Find a good middle point - try to find after the first content section
+        const twoColContent = main.querySelector('.two-col-content');
 
-    // Find a good middle point
-    if (updatedChildren.length >= 4) {
-        // Insert roughly in the middle, but after the top container
-        const middleIndex = Math.floor(updatedChildren.length / 2);
-        const middleElement = updatedChildren[middleIndex];
+        if (twoColContent) {
+            // Insert after the two-column content section
+            twoColContent.after(middleSeparator);
+            middleSeparator.after(middleContainer);
+            console.log('Middle container created after two-column content');
+        } else if (updatedChildren.length >= 4) {
+            // Insert roughly in the middle
+            const middleIndex = Math.floor(updatedChildren.length / 2);
+            const middleElement = updatedChildren[middleIndex];
 
-        // Insert after the middle element
-        middleElement.after(middleSeparator);
-        middleSeparator.after(middleContainer);
+            // Insert after the middle element
+            middleElement.after(middleSeparator);
+            middleSeparator.after(middleContainer);
+            console.log('Middle container created at calculated middle point');
+        } else {
+            // If not enough children, insert after the first third
+            const insertIndex = Math.max(1, Math.floor(updatedChildren.length / 3));
+            const insertElement = updatedChildren[insertIndex];
+
+            if (insertElement) {
+                insertElement.after(middleSeparator);
+                middleSeparator.after(middleContainer);
+            } else {
+                main.appendChild(middleSeparator);
+                main.appendChild(middleContainer);
+            }
+            console.log('Middle container created at fallback position');
+        }
     } else {
-        // If not enough children, insert after the top container
-        topContainer.after(middleSeparator);
-        middleSeparator.after(middleContainer);
+        console.log('Using existing middle container');
     }
 
-    console.log('Middle container created in the middle of main content');
-
-    // 3. BOTTOM CONTAINER - Use existing or create new
+    // 3. BOTTOM CONTAINER - Create if it doesn't exist
     if (!existingBottom) {
-        // Create a new bottom container at the end of main
         const bottomSeparator = document.createElement('div');
         bottomSeparator.className = 'dynamic-sections-separator';
         bottomSeparator.style.display = 'none';
@@ -200,30 +256,39 @@ function createPositionContainer(position) {
 }
 
 /**
- * Add sections to a specific container
+ * Helper function to create a dynamic section element
  */
-function addSectionsToContainer(sections, containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
+function createDynamicSectionElement(section, index) {
+    const article = document.createElement('article');
+    article.className = 'dyn-block fade-in-on-scroll';
+    article.style.transitionDelay = `${index * 0.1}s`;
 
-    sections.forEach((s, index) => {
-        container.insertAdjacentHTML('beforeend', `
-          <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
-            ${s.image ? `<div class="dyn-image-container"><img src="${s.image}" alt="${s.heading}" loading="lazy"></div>` : ''}
-            <h2>${s.heading}</h2>
-            <div class="dyn-content">${s.text}</div>
-          </article>`);
-    });
-}
+    // Add image if available
+    if (section.image) {
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'dyn-image-container';
 
-/**
- * Toggle visibility of a container based on whether it has content
- */
-function toggleContainerVisibility(containerId, hasContent) {
-    const container = document.getElementById(containerId);
-    if (container) {
-        container.style.display = hasContent ? 'block' : 'none';
+        const image = document.createElement('img');
+        image.src = section.image;
+        image.alt = section.heading || 'Section image';
+        image.setAttribute('loading', 'lazy');
+
+        imageContainer.appendChild(image);
+        article.appendChild(imageContainer);
     }
+
+    // Add heading
+    const heading = document.createElement('h2');
+    heading.textContent = section.heading;
+    article.appendChild(heading);
+
+    // Add content
+    const content = document.createElement('div');
+    content.className = 'dyn-content';
+    content.innerHTML = section.text;
+    article.appendChild(content);
+
+    return article;
 }
 
 /**
