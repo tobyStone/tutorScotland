@@ -192,9 +192,11 @@ module.exports = async (req, res) => {
             }
 
             .blog-hero-overlay h1 {
-              font-size: 3rem;
+              font-size: 3.5rem;
               margin-bottom: 1rem;
-              text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+              text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+              color: white;
+              font-weight: 700;
             }
 
             .blog-hero-overlay p {
@@ -542,7 +544,8 @@ module.exports = async (req, res) => {
               }
 
               .blog-hero-overlay h1 {
-                font-size: 2.2rem;
+                font-size: 2.5rem;
+                text-shadow: 0 2px 6px rgba(0,0,0,0.6);
               }
 
               .blog-hero-overlay p {
@@ -578,7 +581,8 @@ module.exports = async (req, res) => {
               }
 
               .blog-hero-overlay h1 {
-                font-size: 1.8rem;
+                font-size: 2rem;
+                text-shadow: 0 2px 6px rgba(0,0,0,0.7);
               }
 
               .blog-image-container {
@@ -630,20 +634,6 @@ module.exports = async (req, res) => {
           </div>
 
           <main>
-            <div class="mission-row">
-                <!-- LEFT COLUMN: Shield + Ribbons -->
-                <div class="left-col">
-                    <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
-                    <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
-                </div>
-
-                <!-- RIGHT COLUMN: heading + about-us text -->
-                <div class="right-col">
-                    <div class="about-us-landing" id="aboutUsLanding">
-                        <h1 class="mission-statement">TAS Blog</h1>
-                    </div>
-                </div>
-            </div>
 
             <!-- Hidden form for category filtering -->
             <form id="blogFilterForm" style="display: none;">
@@ -711,11 +701,10 @@ module.exports = async (req, res) => {
               const targetPost = document.getElementById('post-' + targetPostId);
 
               if (targetPost) {
-                // Hide the grid, hero banner, and mission row
+                // Hide the grid and hero banner
                 document.querySelector('.blog-grid-container').style.display = 'none';
                 const heroBanner = document.querySelector('.blog-hero-banner');
                 if (heroBanner) heroBanner.style.display = 'none';
-                document.querySelector('.mission-row').style.display = 'none';
                 targetPost.style.display = 'block';
 
                 // Update the page title
@@ -740,7 +729,6 @@ module.exports = async (req, res) => {
                 document.querySelector('.blog-grid-container').style.display = 'none';
                 const heroBanner = document.querySelector('.blog-hero-banner');
                 if (heroBanner) heroBanner.style.display = 'none';
-                document.querySelector('.mission-row').style.display = 'none';
 
                 const fullPost = document.getElementById('post-' + clickedPostId);
                 if (fullPost) {
@@ -769,11 +757,10 @@ module.exports = async (req, res) => {
                   post.style.display = 'none';
                 });
 
-                // Show the grid, hero banner, and mission row
+                // Show the grid and hero banner
                 document.querySelector('.blog-grid-container').style.display = 'flex';
                 const heroBanner = document.querySelector('.blog-hero-banner');
                 if (heroBanner) heroBanner.style.display = 'flex';
-                document.querySelector('.mission-row').style.display = 'flex';
 
                 // Reset the page title
                 document.title = 'Tutors Alliance Scotland Blog';
@@ -799,7 +786,6 @@ module.exports = async (req, res) => {
                 document.querySelector('.blog-grid-container').style.display = 'none';
                 const heroBanner = document.querySelector('.blog-hero-banner');
                 if (heroBanner) heroBanner.style.display = 'none';
-                document.querySelector('.mission-row').style.display = 'none';
 
                 const targetPost = document.getElementById('post-' + targetPostId);
                 if (targetPost) {
@@ -819,7 +805,6 @@ module.exports = async (req, res) => {
                 document.querySelector('.blog-grid-container').style.display = 'flex';
                 const heroBanner = document.querySelector('.blog-hero-banner');
                 if (heroBanner) heroBanner.style.display = 'flex';
-                document.querySelector('.mission-row').style.display = 'flex';
                 document.title = 'Tutors Alliance Scotland Blog';
               }
             });

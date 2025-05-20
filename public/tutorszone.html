@@ -68,6 +68,9 @@
             </div>
         </div>
 
+        <!-- TOP dynamic sections container -->
+        <section id="dynamicSectionsTop" class="dynamic-section-container"></section>
+
         <!-- TUTOR RESOURCES: Two-column content -->
         <section class="two-col-content fade-in-section">
             <div>
@@ -85,7 +88,7 @@
                 <a href="#" class="button aurora">View All Resources</a>
             </div>
             <div>
-                <img src="/images/tutor0.jpg" alt="Tutoring resources" />
+                <img src="/images/tutorStatic1.PNG" alt="Tutoring resources" />
             </div>
         </section>
 
@@ -113,6 +116,9 @@
             </div>
         </section>
 
+        <!-- MIDDLE dynamic sections container -->
+        <section id="dynamicSectionsMiddle" class="dynamic-section-container"></section>
+
         <!-- CONNECT SECTION: Two-column content -->
         <section class="two-col-content fade-in-section">
             <div>
@@ -129,25 +135,28 @@
                 </div>
             </div>
             <div>
-                <img src="/images/mathsTutor.PNG" alt="Connect with tutors" />
+                <img src="/images/tutorStatic2.PNG" alt="Connect with tutors" />
             </div>
         </section>
 
         <!-- TUTOR HIGHLIGHT: Full-width section -->
-        <section class="tutor-highlight-section fade-in-section">
-            <div class="tutor-highlight-banner">
-                <h2>Tutor Highlight</h2>
-                <div class="tutor-highlight-content">
-                    <img src="/images/englishTutor.PNG" alt="Featured Tutor" class="tutor-highlight-img">
-                    <div class="tutor-highlight-info">
-                        <h3>Jane Doe</h3>
-                        <p class="tutor-subjects">English, Literature</p>
-                        <p class="tutor-bio">
-                            Jane has been tutoring for over 10 years and specializes in helping students
-                            improve their writing skills and critical analysis. Her students consistently
-                            achieve excellent results in their exams.
-                        </p>
-                        <a href="#" class="button aurora">View Profile</a>
+        <section class="tutor-zone-section fade-in-section">
+            <div class="zone-gradient-bg tutor-gradient-bg">
+                <div class="zone-list-row">
+                    <img src="/images/legoLeft.png" alt="Lego Left" class="tutor-img-list tutor-img-list-left">
+                    <div class="tutor-box">
+                        <h2>🌟 Tutor Highlight</h2>
+                        <div class="tutor-highlight-content">
+                            <img src="/images/tutorStatic3.PNG" alt="Featured Tutor" class="tutor-highlight-img" style="max-width: 150px; border-radius: 50%; margin: 0 auto 1rem auto; display: block;">
+                            <h3>Jane Doe</h3>
+                            <p class="tutor-subjects">English, Literature</p>
+                            <p class="tutor-bio">
+                                Jane has been tutoring for over 10 years and specializes in helping students
+                                improve their writing skills and critical analysis. Her students consistently
+                                achieve excellent results in their exams.
+                            </p>
+                            <a href="#" class="button aurora">View Profile</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -167,8 +176,8 @@
         <!-- Clear separator before dynamic sections -->
         <div class="dynamic-sections-separator"></div>
 
-        <!-- Dynamic sections will be added here -->
-        <section id="dynamicSections"></section>
+        <!-- BOTTOM dynamic sections container -->
+        <section id="dynamicSections" class="dynamic-section-container"></section>
     </main>
 
     <!-- SOCIAL ICONS FOOTER -->
@@ -341,31 +350,7 @@
         });
     </script>
 
-    <script type="module">
-        const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
-
-        fetch(`/api/sections?page=${page}`)
-            .then(r => r.json())
-            .then(list => {
-                if (list && list.length > 0) {
-                    // Only show the dynamic sections container if there are sections to display
-                    const host = document.getElementById('dynamicSections');
-
-                    // Clear any existing content
-                    host.innerHTML = '';
-
-                    // Add each section with proper spacing and styling
-                    list.forEach((s, index) => {
-                        host.insertAdjacentHTML('beforeend', `
-                          <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
-                            ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
-                            <h2>${s.heading}</h2>
-                            <div class="dyn-content">${s.text}</div>
-                          </article>`);
-                    });
-                }
-            })
-            .catch(console.error);
-    </script>
+    <!-- Load dynamic sections from the shared module -->
+    <script type="module" src="/js/dynamic-sections.js"></script>
 </body>
 </html>
