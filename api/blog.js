@@ -688,7 +688,7 @@ module.exports = async (req, res) => {
                 filterButtons.forEach(b => b.classList.remove('active'));
 
                 // Add active class to all buttons with the same category
-                document.querySelectorAll(`.category-filter-btn[data-category="${selectedCat}"]`).forEach(
+                document.querySelectorAll('.category-filter-btn[data-category="' + selectedCat + '"]').forEach(
                   matchingBtn => matchingBtn.classList.add('active')
                 );
 
@@ -713,12 +713,15 @@ module.exports = async (req, res) => {
               if (targetPost) {
                 // Hide the grid, hero banner, and mission row
                 document.querySelector('.blog-grid-container').style.display = 'none';
-                document.querySelector('.blog-hero-banner')?.style.display = 'none';
+                const heroBanner = document.querySelector('.blog-hero-banner');
+                if (heroBanner) heroBanner.style.display = 'none';
                 document.querySelector('.mission-row').style.display = 'none';
                 targetPost.style.display = 'block';
 
                 // Update the page title
-                const postTitle = targetPost.querySelector('h1')?.textContent || targetPost.querySelector('h2')?.textContent;
+                const h1Element = targetPost.querySelector('h1');
+                const h2Element = targetPost.querySelector('h2');
+                const postTitle = (h1Element && h1Element.textContent) || (h2Element && h2Element.textContent) || 'Blog Post';
                 document.title = postTitle + ' - Tutors Alliance Scotland Blog';
               }
             }
@@ -735,7 +738,8 @@ module.exports = async (req, res) => {
 
                 // Hide all posts and show the clicked one
                 document.querySelector('.blog-grid-container').style.display = 'none';
-                document.querySelector('.blog-hero-banner')?.style.display = 'none';
+                const heroBanner = document.querySelector('.blog-hero-banner');
+                if (heroBanner) heroBanner.style.display = 'none';
                 document.querySelector('.mission-row').style.display = 'none';
 
                 const fullPost = document.getElementById('post-' + clickedPostId);
@@ -743,7 +747,9 @@ module.exports = async (req, res) => {
                   fullPost.style.display = 'block';
 
                   // Update the page title
-                  const postTitle = fullPost.querySelector('h1')?.textContent || fullPost.querySelector('h2')?.textContent;
+                  const h1Element = fullPost.querySelector('h1');
+                  const h2Element = fullPost.querySelector('h2');
+                  const postTitle = (h1Element && h1Element.textContent) || (h2Element && h2Element.textContent) || 'Blog Post';
                   document.title = postTitle + ' - Tutors Alliance Scotland Blog';
 
                   // Scroll to top
@@ -765,7 +771,8 @@ module.exports = async (req, res) => {
 
                 // Show the grid, hero banner, and mission row
                 document.querySelector('.blog-grid-container').style.display = 'flex';
-                document.querySelector('.blog-hero-banner')?.style.display = 'flex';
+                const heroBanner = document.querySelector('.blog-hero-banner');
+                if (heroBanner) heroBanner.style.display = 'flex';
                 document.querySelector('.mission-row').style.display = 'flex';
 
                 // Reset the page title
@@ -790,7 +797,8 @@ module.exports = async (req, res) => {
                   post.style.display = 'none';
                 });
                 document.querySelector('.blog-grid-container').style.display = 'none';
-                document.querySelector('.blog-hero-banner')?.style.display = 'none';
+                const heroBanner = document.querySelector('.blog-hero-banner');
+                if (heroBanner) heroBanner.style.display = 'none';
                 document.querySelector('.mission-row').style.display = 'none';
 
                 const targetPost = document.getElementById('post-' + targetPostId);
@@ -798,7 +806,9 @@ module.exports = async (req, res) => {
                   targetPost.style.display = 'block';
 
                   // Update the page title
-                  const postTitle = targetPost.querySelector('h1')?.textContent || targetPost.querySelector('h2')?.textContent;
+                  const h1Element = targetPost.querySelector('h1');
+                  const h2Element = targetPost.querySelector('h2');
+                  const postTitle = (h1Element && h1Element.textContent) || (h2Element && h2Element.textContent) || 'Blog Post';
                   document.title = postTitle + ' - Tutors Alliance Scotland Blog';
                 }
               } else {
@@ -807,7 +817,8 @@ module.exports = async (req, res) => {
                   post.style.display = 'none';
                 });
                 document.querySelector('.blog-grid-container').style.display = 'flex';
-                document.querySelector('.blog-hero-banner')?.style.display = 'flex';
+                const heroBanner = document.querySelector('.blog-hero-banner');
+                if (heroBanner) heroBanner.style.display = 'flex';
                 document.querySelector('.mission-row').style.display = 'flex';
                 document.title = 'Tutors Alliance Scotland Blog';
               }

@@ -9,6 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/responsive-helper.js"></script>
     <script src="/js/dynamic-nav.js" defer></script>
+    <style>
+        /* Hide legoLeft and legoRight images in portrait orientation on restricted viewports */
+        @media (orientation: portrait) {
+            .tutor-img-list-left, .tutor-img-list-right {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Shared banner/header -->
@@ -56,6 +64,9 @@
             </div>
         </div>
 
+        <!-- TOP dynamic sections container -->
+        <section id="dynamicSectionsTop" class="dynamic-section-container"></section>
+
         <!-- PARENT INTRO: Two-column content -->
         <section class="two-col-content fade-in-section">
             <div>
@@ -95,6 +106,9 @@
                 </div>
             </div>
         </section>
+
+        <!-- MIDDLE dynamic sections container -->
+        <section id="dynamicSectionsMiddle" class="dynamic-section-container"></section>
 
         <!-- WHAT MAKES OUR TUTORS DIFFERENT: Full-width section -->
         <section class="tutor-zone-section fade-in-section">
@@ -250,8 +264,8 @@
         <!-- Clear separator before dynamic sections -->
         <div class="dynamic-sections-separator"></div>
 
-        <!-- Dynamic sections will be added here -->
-        <section id="dynamicSections"></section>
+        <!-- BOTTOM dynamic sections container -->
+        <section id="dynamicSections" class="dynamic-section-container"></section>
     </main>
 
     <!-- SOCIAL ICONS FOOTER -->
@@ -452,31 +466,7 @@
         });
     </script>
 
-    <script type="module">
-        const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
-
-        fetch(`/api/sections?page=${page}`)
-            .then(r => r.json())
-            .then(list => {
-                if (list && list.length > 0) {
-                    // Only show the dynamic sections container if there are sections to display
-                    const host = document.getElementById('dynamicSections');
-
-                    // Clear any existing content
-                    host.innerHTML = '';
-
-                    // Add each section with proper spacing and styling
-                    list.forEach((s, index) => {
-                        host.insertAdjacentHTML('beforeend', `
-                          <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
-                            ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
-                            <h2>${s.heading}</h2>
-                            <div class="dyn-content">${s.text}</div>
-                          </article>`);
-                    });
-                }
-            })
-            .catch(console.error);
-    </script>
+    <!-- Load dynamic sections from the shared module -->
+    <script type="module" src="/js/dynamic-sections.js"></script>
 </body>
 </html>
