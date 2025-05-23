@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="/styles2.css">
     <link rel="stylesheet" href="/refresh.css">
     <link rel="stylesheet" href="/header-banner.css">
-    <link rel="stylesheet" href="/css/video-player.css">
-    <script src="/js/video-player.js" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/responsive-helper.js"></script>
     <script src="/js/dynamic-nav.js" defer></script>
@@ -103,7 +101,7 @@
             </div>
         </section>
 
-
+    
 
 
         <!-- PARENT ZONE SECTION -->
@@ -328,10 +326,14 @@
             window.location.href = `login.html?role=${encodeURIComponent(role)}`;
         }
 
-        // Initialize the rolling banner using responsive-helper.js
-        document.addEventListener('DOMContentLoaded', function() {
-            initRollingBanner();
-        });
+        // Rolling banner fetch
+        fetch('/api/tutors?format=json')
+            .then(res => res.json())
+            .then(tutors => {
+                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                document.getElementById('tutorBanner').innerText = text;
+            })
+            .catch(err => console.error('Error fetching tutors:', err));
 
 
         window.addEventListener('DOMContentLoaded', () => {
