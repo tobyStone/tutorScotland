@@ -1782,12 +1782,12 @@ header h1 {
         }
 
         .testimonials-laced .testimonial-quote-card:nth-child(2) {
-            top: 35% !important;
+            top: 37% !important;
             right: 0 !important;
         }
 
         .testimonials-laced .testimonial-quote-card:nth-child(3) {
-            top: 65% !important;
+            top: 57% !important;
         }
 
         /* Portrait-specific adjustments */
