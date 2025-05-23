@@ -144,15 +144,8 @@
         <section id="dynamicSections" class="dynamic-section-container"></section>
     </main>
 
+    <script src="/js/rolling-banner.js"></script>
     <script>
-        // Rolling banner fetch
-        fetch('/api/tutors?format=json')
-            .then(res => res.json())
-            .then(tutors => {
-                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
-                document.getElementById('tutorBanner').innerText = text;
-            })
-            .catch(err => console.error('Error fetching tutors:', err));
 
         // Remove any role-based or user checks, since this is public now
         // Add a status message element

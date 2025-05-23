@@ -105,32 +105,51 @@ function initRollingBanner() {
     const rollingContent = document.querySelector('.rolling-content');
 
     if (rollingBanner && rollingContent) {
-        // If the banner doesn't have content yet, add a loading message and fetch tutors
-        if (!rollingContent.textContent.trim() || rollingContent.textContent === 'Loading tutor information...') {
-            rollingContent.textContent = 'Loading tutor information...';
+        // If the banner doesn't have content yet, add a loading message and fetch news
+        if (!rollingContent.textContent.trim() || rollingContent.textContent === 'Loading news...') {
+            rollingContent.textContent = 'Loading news...';
 
-            // Fetch tutors from the API
-            fetch('/api/tutors?format=json')
+            // First try to fetch news from sections API
+            fetch('/api/sections?page=rolling-banner')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
                     return response.json();
                 })
-                .then(tutors => {
-                    if (tutors && tutors.length > 0) {
-                        // Format tutor information
-                        const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                .then(sections => {
+                    if (sections && sections.length > 0) {
+                        // Format news information - join all text content with separator
+                        const text = sections.map(s => s.text).join(' | ');
                         rollingContent.textContent = text;
 
                         // Apply animation after content is loaded
                         animateRollingBanner(rollingContent);
                     } else {
-                        rollingContent.textContent = 'Welcome to Tutors Alliance Scotland';
+                        // Fallback to tutors if no news sections are found
+                        return fetch('/api/tutors?format=json')
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(tutors => {
+                                if (tutors && tutors.length > 0) {
+                                    // Format tutor information
+                                    const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                                    rollingContent.textContent = text;
+
+                                    // Apply animation after content is loaded
+                                    animateRollingBanner(rollingContent);
+                                } else {
+                                    rollingContent.textContent = 'Welcome to Tutors Alliance Scotland';
+                                }
+                            });
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching tutors:', error);
+                    console.error('Error fetching news:', error);
                     rollingContent.textContent = 'Welcome to Tutors Alliance Scotland';
                 });
         } else {

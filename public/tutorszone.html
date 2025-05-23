@@ -230,15 +230,8 @@
     <!-- Font Awesome for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
+    <script src="/js/rolling-banner.js"></script>
     <script>
-        // Rolling banner fetch
-        fetch('/api/tutors?format=json')
-            .then(res => res.json())
-            .then(tutors => {
-                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
-                document.getElementById('tutorBanner').innerText = text;
-            })
-            .catch(err => console.error('Error fetching tutors:', err));
 
         // Fade-in animation for sections
         const fadeEls = document.querySelectorAll('.fade-in-section');

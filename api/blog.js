@@ -139,13 +139,15 @@ module.exports = async (req, res) => {
             <section id="post-${post._id}" class="blog-full-post fade-in-section" style="display: none;">
                 <div class="blog-post-hero" style="background-image: url('${post.imagePath || heroImage}')">
                     <div class="blog-post-hero-overlay">
-                        <h1>${post.title}</h1>
-                        <p>By ${post.author}</p>
                         ${categoryDisplay ? `<span class="blog-category ${categoryClass}">${categoryDisplay}</span>` : ''}
                     </div>
                 </div>
                 <div class="blog-post-content">
                     <a href="/blog" class="blog-back-button">&larr; Back to all posts</a>
+                    <div class="blog-post-header">
+                        <h1>${post.title}</h1>
+                        <p class="blog-post-author">By ${post.author}</p>
+                    </div>
                     <div class="blog-post-text">
                         ${post.content}
                     </div>
@@ -428,6 +430,23 @@ module.exports = async (req, res) => {
               transform: translateX(-3px);
             }
 
+            .blog-post-header {
+              margin-bottom: 1.5rem;
+              text-align: center;
+            }
+
+            .blog-post-header h1 {
+              font-size: 2.5rem;
+              margin-bottom: 0.5rem;
+              color: #0057B7;
+            }
+
+            .blog-post-author {
+              font-size: 1.1rem;
+              color: #666;
+              margin-bottom: 1.5rem;
+            }
+
             .blog-post-text {
               background-color: white;
               padding: 2.5rem;
@@ -565,7 +584,7 @@ module.exports = async (req, res) => {
                 height: 350px;
               }
 
-              .blog-post-hero-overlay h1 {
+              .blog-post-header h1 {
                 font-size: 2rem;
               }
 
@@ -591,6 +610,10 @@ module.exports = async (req, res) => {
 
               .blog-post-hero {
                 height: 280px;
+              }
+
+              .blog-post-header h1 {
+                font-size: 1.7rem;
               }
 
               .blog-post-text {
@@ -647,15 +670,12 @@ module.exports = async (req, res) => {
             ${postsHtml}
           </main>
 
+          <script src="/responsive-helper.js"></script>
           <script>
-            // Fetch tutors for the rolling banner
-            fetch('/api/tutors?format=json')
-              .then(res => res.json())
-              .then(tutors => {
-                const text = tutors.map(t => \`\${t.name} (\${t.subjects.join(', ')})\`).join(' | ');
-                document.getElementById('tutorBanner').innerText = text;
-              })
-              .catch(err => console.error('Error fetching tutors:', err));
+            // Initialize the rolling banner using responsive-helper.js
+            document.addEventListener('DOMContentLoaded', function() {
+              initRollingBanner();
+            });
 
             // Set the active filter button based on the current category
             const currentCategory = '${category || ''}';

@@ -203,12 +203,21 @@
                             <option value="tutorDirectory">tutorDirectory</option>
                             <option value="tutorMembership">tutorMembership</option>
                             <option value="tutorszone">tutorszone</option>
+                            <option value="rolling-banner">rolling-banner</option>
                         </select>
                     </label>
 
-                    <label>Heading:<input name="heading" required></label>
-                    <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
-                    <label>Image:<input type="file" name="image" accept="image/*"></label>
+                    <div id="standardFields">
+                        <label>Heading:<input name="heading" required></label>
+                        <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
+                        <label>Image:<input type="file" name="image" id="sectionImage" accept="image/*"></label>
+                    </div>
+
+                    <div id="rollingBannerFields" style="display: none;">
+                        <label>News Item:<input name="heading" value="Rolling News" readonly></label>
+                        <label>News Content:<textarea name="text" rows="3" required placeholder="Enter news content to display in the rolling banner"></textarea></label>
+                        <!-- No image field for rolling banner -->
+                    </div>
 
                     <label>
                         Position on Page:
@@ -524,6 +533,26 @@
         const pageSel = document.getElementById('pageSelect');
         const sectionTbody = document.querySelector('#sectionTable tbody');
 
+        /* Toggle between standard fields and rolling banner fields */
+        function toggleFields() {
+            const standardFields = document.getElementById('standardFields');
+            const rollingBannerFields = document.getElementById('rollingBannerFields');
+            const positionLabel = document.querySelector('label[for="position"]');
+            const positionSelect = document.querySelector('select[name="position"]');
+
+            if (pageSel.value === 'rolling-banner') {
+                standardFields.style.display = 'none';
+                rollingBannerFields.style.display = 'block';
+                // Hide position selector for rolling banner
+                if (positionSelect) positionSelect.parentElement.style.display = 'none';
+            } else {
+                standardFields.style.display = 'block';
+                rollingBannerFields.style.display = 'none';
+                // Show position selector for regular sections
+                if (positionSelect) positionSelect.parentElement.style.display = 'block';
+            }
+        }
+
         /* helper loads list for current <select> value */
         async function loadSections() {
             const r = await fetch(`/api/sections?page=${pageSel.value}`);
@@ -548,6 +577,9 @@
                        <td><button data-id="${s._id}">🗑️</button></td>`;
                 sectionTbody.appendChild(tr);
             });
+
+            // Toggle fields based on selected page
+            toggleFields();
         }
         await loadSections();
         pageSel.addEventListener('change', loadSections);

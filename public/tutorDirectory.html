@@ -125,14 +125,10 @@
             window.location.href = `login.html?role=${encodeURIComponent(role)}`;
         }
 
-        // Rolling banner fetch
-        fetch('/api/tutors?format=json')
-            .then(res => res.json())
-            .then(tutors => {
-                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
-                document.getElementById('tutorBanner').innerText = text;
-            })
-            .catch(err => console.error('Error fetching tutors:', err));
+        // Initialize the rolling banner using responsive-helper.js
+        document.addEventListener('DOMContentLoaded', function() {
+            initRollingBanner();
+        });
 
 
         window.addEventListener('DOMContentLoaded', () => {
