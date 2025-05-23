@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/styles2.css">
     <link rel="stylesheet" href="/refresh.css">
     <link rel="stylesheet" href="/header-banner.css">
+    <link rel="stylesheet" href="/css/video-player.css">
+    <script src="/js/video-player.js" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/responsive-helper.js"></script>
     <script src="/js/dynamic-nav.js" defer></script>
@@ -101,6 +103,19 @@
             </div>
         </section>
 
+        <div class="tutor-video-section invisible" id="my-hidden-video">
+            <h3 class="tutor-video-title">Hidden Video</h3>
+            <p class="tutor-video-description">This section is initially hidden.</p>
+            <button class="tutor-video-button" onclick="window.tutorVideoPlayer.show('your-video-id.mp4')">
+                Watch Video
+            </button>
+        </div>
+
+        <button onclick="document.getElementById('my-hidden-video').classList.toggle('invisible')">
+            Toggle Video Section
+        </button>
+
+
         <!-- PARENT ZONE SECTION -->
         <section class="parents-zone-section fade-in-section">
             <div class="zone-gradient-bg parent-gradient-bg">
@@ -117,9 +132,11 @@
                                 <img src="/images/questionPeriod.png" alt="Question Mark Bottom" class="parent-img-list parent-img-list-right-period">
                             </div>
                         </div>
-                        <p>We understand how overwhelming it can be to find a tutor you can trust.<br>
-                        That's why we're creating a national standard so parents know what to look for and who to trust.<br>
-                        Here's how we help:</p>
+                        <p>
+                            We understand how overwhelming it can be to find a tutor you can trust.<br>
+                            That's why we're creating a national standard so parents know what to look for and who to trust.<br>
+                            Here's how we help:
+                        </p>
                         <ul class="parent-list" style="text-align:left; max-width: 500px; margin: 1rem auto;">
                             <li>✅ Signposting trusted, vetted tutors in your area or online</li>
                             <li>📖 Clear guidance on what to expect from a high-quality tutor</li>
@@ -143,8 +160,10 @@
                     <img src="/images/legoLeft.png" alt="Lego Left" class="tutor-img-list tutor-img-list-left">
                     <div class="tutor-box">
                         <h2>👩‍🏫 For Tutors – A Professional Home for Tutors in Scotland</h2>
-                        <p>Join a growing network of tutors who are committed to high standards and continuous improvement.
-                        We support teachers tutoring in Scotland to develop their skills, grow their businesses and access opportunities that make a real difference.</p>
+                        <p>
+                            Join a growing network of tutors who are committed to high standards and continuous improvement.
+                            We support teachers tutoring in Scotland to develop their skills, grow their businesses and access opportunities that make a real difference.
+                        </p>
                         <p>As a member, you'll gain access to:</p>
                         <ul class="tutor-list" style="text-align:left; max-width: 500px; margin: 1rem auto;">
                             <li>✅ Professional recognition through membership</li>

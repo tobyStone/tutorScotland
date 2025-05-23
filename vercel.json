@@ -96,6 +96,10 @@
     {
       "source": "/api/tutorConnection",
       "destination": "/api/tutorConnection.js"
+    },
+    {
+      "source": "/api/video-player",
+      "destination": "/api/video-player.js"
     }
   ]
 }

@@ -62,6 +62,9 @@
     <Content Include="api\upload-image.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\video-player.js">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="models\Blog.js">
       <SubType>Code</SubType>
     </Content>
@@ -115,6 +118,9 @@
     <Content Include="public\js\dynamic-sections-template.html" />
     <Content Include="public\js\dynamic-sections.js" />
     <Content Include="public\js\upload-helper.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\js\video-player.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\parents.html">

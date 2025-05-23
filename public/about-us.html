@@ -9,6 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/responsive-helper.js"></script>
     <script src="/js/dynamic-nav.js" defer></script>
+    <link rel="stylesheet" href="/css/video-player.css">
+    <script src="/js/video-player.js" defer></script>
     <style>
         /* Custom styles for team member images */
         .team-member img {
@@ -19,19 +21,42 @@
             transition: transform 0.3s ease;
         }
 
-        .team-member img:hover {
-            transform: scale(1.05); /* Slight zoom effect on hover */
-        }
+            .team-member img:hover {
+                transform: scale(1.05); /* Slight zoom effect on hover */
+            }
 
         /* Individual image adjustments to center faces */
-        img[alt="Karen Simpson"] { object-position: center 20%; }
-        img[alt="Martine Kelly"] { object-position: center 15%; }
-        img[alt="Mairi Brindle"] { object-position: center 15%; }
-        img[alt="Judith Munro"] { object-position: center 10%; }
-        img[alt="Jacqueline McGill"] { object-position: center 15%; }
-        img[alt="Caroline MacDonald"] { object-position: center 20%; }
-        img[alt="Karen Laird"] { object-position: center 15%; }
-        img[alt="Katy Formoy"] { object-position: center 20%; }
+        img[alt="Karen Simpson"] {
+            object-position: center 20%;
+        }
+
+        img[alt="Martine Kelly"] {
+            object-position: center 15%;
+        }
+
+        img[alt="Mairi Brindle"] {
+            object-position: center 15%;
+        }
+
+        img[alt="Judith Munro"] {
+            object-position: center 10%;
+        }
+
+        img[alt="Jacqueline McGill"] {
+            object-position: center 15%;
+        }
+
+        img[alt="Caroline MacDonald"] {
+            object-position: center 20%;
+        }
+
+        img[alt="Karen Laird"] {
+            object-position: center 15%;
+        }
+
+        img[alt="Katy Formoy"] {
+            object-position: center 20%;
+        }
     </style>
     <!-- JSON-LD microdata for the About Page -->
     <script type="application/ld+json">
