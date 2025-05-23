@@ -1702,6 +1702,101 @@ header h1 {
         }
     }
 
+    /* Portrait-specific adjustments for hero banner */
+    @media (orientation: portrait) {
+        .hero-banner {
+            width: 92%;
+            margin-left: auto;
+            margin-right: auto;
+            transform: translateX(-2%); /* Shift slightly left */
+        }
+    }
+
+    /* Portrait-specific adjustments for CTA banner */
+    @media (orientation: portrait) {
+        .cta-banner {
+            width: 92%;
+            margin-left: auto;
+            margin-right: auto;
+            transform: translateX(-2%); /* Shift slightly left */
+        }
+    }
+
+    /* Responsive testimonials for smaller screens */
+    @media (max-width: 900px) {
+        .testimonials-laced {
+            min-height: 500px; /* Increase height to accommodate stacked quotes */
+        }
+
+        .testimonial-quote-card {
+            max-width: 85%;
+            width: 85%;
+            left: 0 !important;
+            right: 0 !important;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Reposition quotes to prevent overlap */
+        .testimonials-laced .testimonial-quote-card:nth-child(1) {
+            top: 5% !important;
+        }
+
+        .testimonials-laced .testimonial-quote-card:nth-child(2) {
+            top: 35% !important;
+            right: 0 !important;
+        }
+
+        .testimonials-laced .testimonial-quote-card:nth-child(3) {
+            top: 65% !important;
+        }
+
+        /* Portrait-specific adjustments */
+        @media (orientation: portrait) {
+            .testimonials-laced {
+                min-height: 550px; /* Even more height for portrait */
+            }
+
+            .testimonial-quote-card {
+                max-width: 90%;
+                width: 90%;
+                padding: 1rem 0.9rem;
+                font-size: 1rem;
+            }
+
+            /* Further adjust positions for portrait */
+            .testimonials-laced .testimonial-quote-card:nth-child(1) {
+                top: 5% !important;
+                font-size: 0.95rem !important;
+            }
+
+            .testimonials-laced .testimonial-quote-card:nth-child(2) {
+                top: 33% !important; /* Moved up to prevent overlap */
+                font-size: 0.95rem !important;
+            }
+
+            .testimonials-laced .testimonial-quote-card:nth-child(3) {
+                top: 75% !important; /* Moved down to prevent overlap */
+                font-size: 0.95rem !important;
+            }
+        }
+    }
+
+    /* Portrait-specific adjustments for nav */
+    @media (orientation: portrait) {
+        .main-nav {
+            transform: translateX(-1.5%) !important; /* Shift slightly left */
+            width: 102% !important; /* Slightly wider to ensure it reaches the left edge */
+        }
+    }
+
+    /* Portrait-specific border adjustments */
+    @media (orientation: portrait) {
+        .main-nav ul li:nth-child(odd) {
+            border-right: 1px solid rgba(173, 216, 230, 0.3) !important;
+        }
+    }
+
     /* Landscape orientation - wider positioning */
     @media (orientation: landscape) {
         .pupil-img-list-left {
