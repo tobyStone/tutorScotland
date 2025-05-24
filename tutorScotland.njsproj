@@ -49,7 +49,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="api\page.js" />
-    <Content Include="api\parents.js">
+    <Content Include="api\publicConnection.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="api\protected.js">
@@ -123,6 +123,9 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\parents.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="public\publicConnect.html">
       <SubType>Code</SubType>
     </Content>
     <Content Include="index\config.js">

@@ -46,8 +46,8 @@
       "destination": "/api/login.js"
     },
     {
-      "source": "/api/parents",
-      "destination": "/api/parents.js"
+      "source": "/api/publicConnection",
+      "destination": "/api/publicConnection.js"
     },
     {
       "source": "/api/addTutor",
