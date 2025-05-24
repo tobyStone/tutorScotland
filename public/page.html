@@ -65,14 +65,25 @@
             window.location.href = `login.html?role=${encodeURIComponent(role)}`;
         }
 
-        // Rolling banner fetch
-        fetch('/api/tutors?format=json')
+        // Rolling banner fetch - try news first, fallback to tutors
+        fetch('/api/sections?page=rolling-banner')
             .then(res => res.json())
-            .then(tutors => {
-                const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
-                document.getElementById('tutorBanner').innerText = text;
+            .then(sections => {
+                if (sections && sections.length > 0) {
+                    // Format news information - join all text content with separator
+                    const text = sections.map(s => s.text).join(' | ');
+                    document.getElementById('tutorBanner').innerText = text;
+                } else {
+                    // Fallback to tutors if no news sections are found
+                    return fetch('/api/tutors?format=json')
+                        .then(res => res.json())
+                        .then(tutors => {
+                            const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                            document.getElementById('tutorBanner').innerText = text;
+                        });
+                }
             })
-            .catch(err => console.error('Error fetching tutors:', err));
+            .catch(err => console.error('Error fetching banner content:', err));
 
         window.addEventListener('DOMContentLoaded', () => {
             // After the heading's animation delay (say 1.5s) plus a little buffer:

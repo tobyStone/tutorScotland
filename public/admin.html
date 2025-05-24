@@ -214,8 +214,8 @@
                     </div>
 
                     <div id="rollingBannerFields" style="display: none;">
-                        <label>News Item:<input name="heading" value="Rolling News" readonly></label>
-                        <label>News Content:<textarea name="text" rows="3" required placeholder="Enter news content to display in the rolling banner"></textarea></label>
+                        <label>News Item:<input name="rollingHeading" value="Rolling News" readonly></label>
+                        <label>News Content:<textarea name="rollingText" rows="3" required placeholder="Enter news content to display in the rolling banner"></textarea></label>
                         <!-- No image field for rolling banner -->
                     </div>
 
@@ -356,11 +356,23 @@
         if (!auth.ok) { location.href = '/login.html?role=admin'; throw 0; }
 
         /* ── rolling banner text ──────────────────────────────────── */
-        fetch('/api/tutors?format=json')
+        // First try to fetch news from sections API
+        fetch('/api/sections?page=rolling-banner')
             .then(r => r.json())
-            .then(list => {
-                tutorBanner.textContent =
-                    list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+            .then(sections => {
+                if (sections && sections.length > 0) {
+                    // Format news information - join all text content with separator
+                    const text = sections.map(s => s.text).join(' | ');
+                    tutorBanner.textContent = text;
+                } else {
+                    // Fallback to tutors if no news sections are found
+                    return fetch('/api/tutors?format=json')
+                        .then(r => r.json())
+                        .then(list => {
+                            tutorBanner.textContent =
+                                list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                        });
+                }
             })
             .catch(console.error);
 
@@ -589,6 +601,25 @@
             e.preventDefault();
             const fd = new FormData(addSection);
 
+            // Handle rolling banner fields differently
+            if (pageSel.value === 'rolling-banner') {
+                const rollingHeading = document.querySelector('input[name="rollingHeading"]').value;
+                const rollingText = document.querySelector('textarea[name="rollingText"]').value;
+
+                if (!rollingText.trim()) {
+                    alert('Please enter news content for the rolling banner');
+                    return;
+                }
+
+                // Set the correct field names for the API
+                fd.set('heading', rollingHeading);
+                fd.set('text', rollingText);
+
+                // Remove rolling banner specific fields
+                fd.delete('rollingHeading');
+                fd.delete('rollingText');
+            }
+
             /* upload image first (optional) */
             const img = fd.get('image') instanceof File && fd.get('image').size ? fd.get('image') : null;
             if (img) {
@@ -604,6 +635,20 @@
             alert('Section added!');
             addSection.reset();
             loadSections();
+
+            // Refresh the rolling banner if we added news content
+            if (pageSel.value === 'rolling-banner') {
+                // Refresh the banner content
+                fetch('/api/sections?page=rolling-banner')
+                    .then(r => r.json())
+                    .then(sections => {
+                        if (sections && sections.length > 0) {
+                            const text = sections.map(s => s.text).join(' | ');
+                            tutorBanner.textContent = text;
+                        }
+                    })
+                    .catch(console.error);
+            }
         });
 
         /* delete click */
