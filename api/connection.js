@@ -1,8 +1,8 @@
-// api/tutorConnection.js
+// api/connection.js - Unified connection handler for both tutor and public connections
 const nodemailer = require('nodemailer');
 const connectToDatabase = require('./connectToDatabase');
 
-// Gmail configuration - using OAuth2 is more reliable than password
+// Gmail configuration
 const SMTP_USER = process.env.SMTP_USER || 'tobystonewriter@gmail.com';
 const SMTP_PASS = process.env.SMTP_PASS || 'your-gmail-app-password';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'tobybarrasstone@hotmail.com';
@@ -26,10 +26,19 @@ module.exports = async (req, res) => {
     try {
         await connectToDatabase(); // If you need DB, or skip if not needed
 
-        const { name, email, subjects, qualification, safeguarding } = req.body;
+        // Determine connection type based on request body fields
+        const isTutorConnection = req.body.subjects && req.body.qualification && req.body.safeguarding;
+        const isPublicConnection = req.body.phone && req.body.subject && req.body.message;
+
+        if (!isTutorConnection && !isPublicConnection) {
+            return res.status(400).json({
+                message: 'Invalid request format. Missing required fields.',
+                success: false
+            });
+        }
 
         // Create a simpler transporter for Gmail
-        let transporter = nodemailer.createTransport({
+        let transporter = nodemailer.createTransporter({
             service: 'gmail',  // Using the built-in Gmail configuration
             auth: {
                 user: SMTP_USER,
@@ -39,11 +48,17 @@ module.exports = async (req, res) => {
 
         console.log('Created transporter for Gmail');
 
-        const mailOptions = {
-            from: `"Tutor Submission" <${SMTP_USER}>`,
-            to: ADMIN_EMAIL,
-            subject: `New Tutor Submission from ${name}`,
-            text: `
+        let mailOptions;
+
+        if (isTutorConnection) {
+            // Handle tutor connection
+            const { name, email, subjects, qualification, safeguarding } = req.body;
+
+            mailOptions = {
+                from: `"Tutor Submission" <${SMTP_USER}>`,
+                to: ADMIN_EMAIL,
+                subject: `New Tutor Submission from ${name}`,
+                text: `
 A new tutor has submitted details:
 
 Name: ${name}
@@ -51,16 +66,43 @@ Email: ${email}
 Subjects: ${subjects.join(', ')}
 Qualification: ${qualification}
 Safeguarding: ${safeguarding}
-            `,
-            html: `
-              <h2>New Tutor Submission</h2>
-              <p><strong>Name:</strong> ${name}</p>
-              <p><strong>Email:</strong> ${email}</p>
-              <p><strong>Subjects:</strong> ${subjects.join(', ')}</p>
-              <p><strong>Qualification:</strong> ${qualification}</p>
-              <p><strong>Safeguarding (PVG?):</strong> ${safeguarding}</p>
-            `
-        };
+                `,
+                html: `
+                  <h2>New Tutor Submission</h2>
+                  <p><strong>Name:</strong> ${name}</p>
+                  <p><strong>Email:</strong> ${email}</p>
+                  <p><strong>Subjects:</strong> ${subjects.join(', ')}</p>
+                  <p><strong>Qualification:</strong> ${qualification}</p>
+                  <p><strong>Safeguarding (PVG?):</strong> ${safeguarding}</p>
+                `
+            };
+        } else {
+            // Handle public connection
+            const { name, email, phone, subject, message } = req.body;
+
+            mailOptions = {
+                from: `"Public Inquiry" <${SMTP_USER}>`,
+                to: ADMIN_EMAIL,
+                subject: `New Public Inquiry from ${name}`,
+                text: `
+A new public inquiry has been submitted:
+
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Subject: ${subject}
+Message: ${message}
+                `,
+                html: `
+                  <h2>New Public Inquiry</h2>
+                  <p><strong>Name:</strong> ${name}</p>
+                  <p><strong>Email:</strong> ${email}</p>
+                  <p><strong>Phone:</strong> ${phone}</p>
+                  <p><strong>Subject:</strong> ${subject}</p>
+                  <p><strong>Message:</strong> ${message}</p>
+                `
+            };
+        }
 
         // Send the email directly without verification
         try {
@@ -72,10 +114,6 @@ Safeguarding: ${safeguarding}
 
             const info = await transporter.sendMail(mailOptions);
             console.log('Email sent successfully:', info.messageId, info.response);
-
-            // Store submission in database if needed
-            // const submission = new TutorSubmission({ name, email, subjects, qualification, safeguarding });
-            // await submission.save();
 
             return res.status(200).json({
                 message: 'Email sent successfully',
@@ -89,18 +127,20 @@ Safeguarding: ${safeguarding}
             if (sendError.command) console.error('Failed command:', sendError.command);
             if (sendError.response) console.error('Server response:', sendError.response);
 
+            const connectionType = isTutorConnection ? 'tutor connection' : 'public inquiry';
             return res.status(500).json({
-                message: 'Failed to send email: ' + sendError.message,
+                message: `Failed to send ${connectionType}: ` + sendError.message,
                 success: false
             });
         }
     } catch (err) {
-        console.error('General error in tutorConnection API:', err);
+        console.error('General error in connection API:', err);
 
         // Ensure we're sending a proper JSON response even for unexpected errors
         res.setHeader('Content-Type', 'application/json');
+        const connectionType = req.body.subjects ? 'tutor connection' : 'public connection';
         return res.status(500).json({
-            message: 'Failed to process tutor connection request: ' + err.message,
+            message: `Failed to process ${connectionType} request: ` + err.message,
             success: false
         });
     }

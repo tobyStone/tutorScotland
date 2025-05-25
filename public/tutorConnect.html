@@ -197,8 +197,8 @@
             };
 
             try {
-                // POST to /api/tutorConnection
-                const response = await fetch('/api/tutorConnection', {
+                // POST to /api/connection (unified API)
+                const response = await fetch('/api/connection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)

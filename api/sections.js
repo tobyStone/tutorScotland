@@ -24,12 +24,32 @@ async function uploadToBlob(file) {
     return url;
 }
 
-// Convert formidable's callback to a promise
+// Convert formidable's callback to a promise with better error handling
 const parseForm = (req) => {
     return new Promise((resolve, reject) => {
-        const form = formidable({ keepExtensions: true, multiples: false });
+        const form = formidable({
+            keepExtensions: true,
+            multiples: false,
+            maxFileSize: MAX_UPLOAD,
+            maxFields: 20,
+            maxFieldsSize: 2 * 1024 * 1024 // 2MB for text fields
+        });
+
+        // Add timeout to prevent hanging requests
+        const timeout = setTimeout(() => {
+            reject(new Error('Form parsing timeout'));
+        }, 30000); // 30 second timeout
+
         form.parse(req, (err, fields, files) => {
-            if (err) return reject(err);
+            clearTimeout(timeout);
+            if (err) {
+                console.error('Form parsing error:', err);
+                return reject(err);
+            }
+            console.log('Form parsed successfully:', {
+                fieldCount: Object.keys(fields).length,
+                fileCount: Object.keys(files).length
+            });
             resolve({ fields, files });
         });
     });
@@ -41,8 +61,11 @@ module.exports = async (req, res) => {
 
         // CREATE
         if (req.method === 'POST') {
+            console.log('POST request received for sections API');
             try {
+                console.log('Starting form parsing...');
                 const { fields, files } = await parseForm(req);
+                console.log('Form parsing completed successfully');
 
                 // Handle different possible formats of fields
                 const page = fields.page ?
@@ -122,13 +145,29 @@ module.exports = async (req, res) => {
                 console.log('Section created:', doc);
                 return res.status(201).json(doc);
             } catch (e) {
-                console.error('SECTION_POST error', e);
-                // Log the fields received to help diagnose issues
-                console.error('Fields received:', JSON.stringify(fields, null, 2));
-                console.error('Files received:', JSON.stringify(Object.keys(files), null, 2));
-                return res.status(500).json({
-                    message: 'Server error while saving section',
-                    error: e.message // Include error message for better debugging
+                console.error('SECTION_POST error:', e);
+                console.error('Error stack:', e.stack);
+
+                // Log the request details for debugging
+                try {
+                    console.error('Request method:', req.method);
+                    console.error('Request headers:', JSON.stringify(req.headers, null, 2));
+                    console.error('Content-Type:', req.headers['content-type']);
+                } catch (logError) {
+                    console.error('Error logging request details:', logError);
+                }
+
+                // Determine if this was a form parsing error or database error
+                const isFormParsingError = e.message.includes('Form parsing') || e.message.includes('timeout');
+                const statusCode = isFormParsingError ? 400 : 500;
+                const message = isFormParsingError ?
+                    'Failed to parse form data. Please try again.' :
+                    'Server error while saving section';
+
+                return res.status(statusCode).json({
+                    message,
+                    error: e.message,
+                    timestamp: new Date().toISOString()
                 });
             }
         }

@@ -106,7 +106,7 @@
     <main>
         <h2>Get in Touch</h2>
         <p>
-            We'd love to hear from you! Whether you have questions about our services, need help finding the right educational support, 
+            We'd love to hear from you! Whether you have questions about our services, need help finding the right educational support,
             or want to learn more about what we do, please fill out the form below and we'll get back to you as soon as possible.
         </p>
 
@@ -203,8 +203,8 @@
             };
 
             try {
-                // POST to /api/publicConnection
-                const response = await fetch('/api/publicConnection', {
+                // POST to /api/connection (unified API)
+                const response = await fetch('/api/connection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)

@@ -4,30 +4,29 @@
     <meta charset="UTF-8">
     <title>Tutors Alliance Scotland - Dynamic Page</title>
     <link rel="icon" href="/images/bannerShield2.png" type="image/png">
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/styles2.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/responsive-helper.js" defer></script>
     <script src="/js/dynamic-nav.js" defer></script>
 </head>
 <body class="dynamic-page">
-    <!-- Shared banner/header -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
             <a href="/" class="banner-login-link login-box">Home</a>
-            <a href="/login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
         </div>
     </header>
 
-    <!-- Dark-blue nav below banner -->
     <nav class="main-nav">
         <ul>
-            <li><a href="/about-us.html">About Us</a></li>
-            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="/parents.html">Enter Parent Zone</a></li>
-            <li><a href="/contact.html">Contact Us</a></li>
+            <li><a href="about-us.html">About Us</a></li>
+            <li><a href="tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="parents.html">Enter Parent Zone</a></li>
+            <li><a href="partnerships.html">Partnerships</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
+            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
@@ -39,7 +38,7 @@
     </div>
 
     <main>
-        <div class="content-flex-wrapper">
+        <div class="mission-row">
             <!-- LEFT COLUMN: Shield + Ribbons -->
             <div class="left-col">
                 <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
@@ -59,6 +58,54 @@
         <!-- Dynamic sections will be added here -->
         <section id="dynamicSections"></section>
     </main>
+
+    <!-- SOCIAL ICONS FOOTER -->
+    <footer class="site-footer fade-in-section">
+        <div class="footer-icons">
+            <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        </div>
+    </footer>
+
+    <!-- STATIC BOTTOM FOOTER -->
+    <footer class="static-footer">
+        <div class="static-footer-container">
+            <div class="static-footer-left">
+                <h4>Extra Information</h4>
+                <ul>
+                    <li><a href="tutoring-standards.html">Our Tutoring Standards</a></li>
+                    <li><a href="faq.html">FAQ's</a></li>
+                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="safeguarding-policy.html">Safeguarding Policy</a></li>
+                    <li><a href="terms-and-conditions.html">Terms and Conditions</a></li>
+                </ul>
+                <div class="static-footer-copyright">
+                    <p>ALL RIGHTS RESERVED © Tutors Alliance Scotland 2023</p>
+                    <p>Tutors Alliance Scotland is VAT registered</p>
+                    <p>VAT No 429 8003 10</p>
+                </div>
+                <div class="static-footer-credits">
+                    <p>Website by <a href="#" target="_blank">Tutors Alliance Scotland</a></p>
+                </div>
+            </div>
+            <div class="static-footer-right">
+                <div class="business-insurance">
+                    <img src="/images/centralShield.png" alt="Business Insurance" class="insurance-logo">
+                    <p>Business Insurance provided through Tutors Alliance Scotland</p>
+                    <a href="#" class="insurance-link">View our insurance details</a>
+                </div>
+                <div class="website-url">
+                    <p>www.tutorsalliancescotland.org.uk</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Font Awesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <script>
         function goToLogin(role) {
@@ -96,32 +143,47 @@
     </script>
 
     <script>
-        // Fade-in animation for sections
-        const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
-
-        // Set initial styles
-        fadeEls.forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-        });
-
-        // Create the Intersection Observer
-        const observer = new IntersectionObserver((entries, obs) => {
+        // Single Intersection Observer for all fade-in elements
+        const fadeObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Fade it in
-                    entry.target.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-
-                    // Once triggered, stop observing so it doesn't re-animate if user scrolls away
-                    obs.unobserve(entry.target);
+                    entry.target.classList.add('is-visible');
+                    fadeObserver.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        });
 
-        // Observe each fadeEl
-        fadeEls.forEach(el => observer.observe(el));
+        // Function to observe all fade-in elements
+        function observeFadeElements() {
+            // Observe all sections with fade-in-section class
+            document.querySelectorAll('.fade-in-section').forEach(section => {
+                fadeObserver.observe(section);
+            });
+        }
+
+        // Initial observation when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            observeFadeElements();
+        });
+
+        // Watch for dynamically added content
+        const mutationObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length) {
+                    observeFadeElements();
+                }
+            });
+        });
+
+        // Start observing the document body for changes
+        mutationObserver.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
     </script>
 
     <script type="module">
@@ -174,7 +236,7 @@
                     // Add each section with proper spacing and styling
                     list.forEach((s, index) => {
                         host.insertAdjacentHTML('beforeend', `
-                          <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
+                          <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
                             ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
                             <h2>${s.heading}</h2>
                             <div class="dyn-content">${s.text}</div>
@@ -190,10 +252,10 @@
                     // Force layout recalculation to ensure proper positioning
                     document.body.offsetHeight;
 
-                    // Apply observer to newly created elements
-                    document
-                        .querySelectorAll('.dyn-block.fade-in-on-scroll')
-                        .forEach(el => observer.observe(el));
+                    // Observe the newly added dynamic blocks for fade-in animation
+                    document.querySelectorAll('.dyn-block').forEach(block => {
+                        fadeObserver.observe(block);
+                    });
                 } else {
                     // If no dynamic sections, hide the container and separator
                     const host = document.getElementById('dynamicSections');
