@@ -630,11 +630,26 @@
             }
 
             fd.delete('image');                       // raw file not sent to server
-            const r = await fetch('/api/sections', { method: 'POST', body: fd });
-            if (!r.ok) return alert(await r.text());
-            alert('Section added!');
-            addSection.reset();
-            loadSections();
+
+            try {
+                console.log('Submitting section form...');
+                const r = await fetch('/api/sections', { method: 'POST', body: fd });
+
+                if (!r.ok) {
+                    const errorText = await r.text();
+                    console.error('Section submission failed:', r.status, errorText);
+                    return alert(`Error adding section: ${errorText}`);
+                }
+
+                const result = await r.json();
+                console.log('Section added successfully:', result);
+                alert('Section added!');
+                addSection.reset();
+                loadSections();
+            } catch (error) {
+                console.error('Exception during section submission:', error);
+                alert(`Network error: ${error.message}`);
+            }
 
             // Refresh the rolling banner if we added news content
             if (pageSel.value === 'rolling-banner') {

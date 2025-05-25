@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
         }
 
         // Create a simpler transporter for Gmail
-        let transporter = nodemailer.createTransporter({
+        let transporter = nodemailer.createTransport({
             service: 'gmail',  // Using the built-in Gmail configuration
             auth: {
                 user: SMTP_USER,

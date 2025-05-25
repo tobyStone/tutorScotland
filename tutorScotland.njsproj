@@ -42,6 +42,7 @@
     <Content Include="api\blog.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\connection.js" />
     <Content Include="api\connectToDatabase.js">
       <SubType>Code</SubType>
     </Content>
@@ -49,16 +50,10 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="api\page.js" />
-    <Content Include="api\publicConnection.js">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="api\protected.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="api\sections.js">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="api\tutorConnection.js">
       <SubType>Code</SubType>
     </Content>
     <Content Include="api\upload-image.js">
