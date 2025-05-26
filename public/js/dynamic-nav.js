@@ -56,15 +56,15 @@ async function addCustomPagesToNav() {
                 // Create a new dropdown
                 console.log('Creating new dropdown');
                 const dropdownLi = document.createElement('li');
-                dropdownLi.className = 'custom-pages-dropdown';
+                dropdownLi.className = 'custom-pages-dropdown nav-item';
 
                 const dropdownBtn = document.createElement('a');
                 dropdownBtn.href = '#';
-                dropdownBtn.className = 'dropdown-btn';
+                dropdownBtn.className = 'dropdown-btn nav-link';
                 dropdownBtn.textContent = 'Custom Pages';
 
                 const dropdownContent = document.createElement('div');
-                dropdownContent.className = 'dropdown-content';
+                dropdownContent.className = 'dropdown-content nav-dropdown';
 
                 publishedPages.forEach(page => {
                     const link = document.createElement('a');
@@ -92,8 +92,10 @@ async function addCustomPagesToNav() {
 
                 if (!existingLink) {
                     const li = document.createElement('li');
+                    li.className = 'nav-item';
                     const a = document.createElement('a');
                     a.href = `/page/${page.slug}`;
+                    a.className = 'nav-link';
                     a.textContent = page.heading;
                     li.appendChild(a);
 

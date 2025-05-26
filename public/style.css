@@ -1644,3 +1644,192 @@ body.has-dynamic-sections {
         margin-bottom: 1.5rem;
     }
 }
+
+/* Enhanced Navigation Styling */
+.nav-item {
+    position: relative;
+    border-left: 1px solid #ADD8E6;
+    transition: background-color 0.3s ease;
+}
+
+.nav-item:first-child {
+    border-left: none;
+}
+
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+    padding: 14px 20px;
+    display: block;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: #003F8F;
+}
+
+.nav-dropdown {
+    display: none;
+    position: absolute;
+    background-color: #001B44;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1000;
+    top: 100%;
+    left: 0;
+    border-radius: 0 0 4px 4px;
+}
+
+.nav-dropdown a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    border-bottom: 1px solid #003F8F;
+    transition: background-color 0.3s ease;
+}
+
+.nav-dropdown a:hover {
+    background-color: #003F8F;
+}
+
+.custom-pages-dropdown:hover .nav-dropdown {
+    display: block;
+}
+
+/* Dynamic Page Hero Section */
+.dynamic-page {
+    position: relative;
+    min-height: 100vh;
+}
+
+.dynamic-page .hero-section {
+    position: relative;
+    min-height: 300px;
+    background-image: url('/images/bannerBackground.PNG');
+    background-repeat: repeat;
+    padding: 40px 20px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dynamic-page .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #fff;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.dynamic-page .hero-shield {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 100px;
+    height: auto;
+    z-index: 1;
+    opacity: 0.9;
+}
+
+/* Enhanced Rolling Banner for Dynamic Pages */
+.dynamic-page .rolling-banner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border: 3px solid #C8A2C8;
+    background-color: #f9f9f9;
+    height: 2.5em;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    z-index: 10;
+}
+
+.dynamic-page .rolling-content {
+    white-space: nowrap;
+    display: inline-block;
+    padding-left: 100%;
+    animation: scrollBanner 15s linear infinite;
+    font-weight: bold;
+    color: #0057B7;
+}
+
+/* Dynamic Page Content Styling */
+.dynamic-page .page-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dynamic-page .page-content h1 {
+    color: #0057B7;
+    font-size: 2.5em;
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+.dynamic-page .page-content h2 {
+    color: #C8A2C8;
+    font-size: 2em;
+    margin: 1.5em 0 1em;
+}
+
+.dynamic-page .page-content p {
+    margin-bottom: 1.5em;
+    line-height: 1.8;
+}
+
+.dynamic-page .page-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin: 1em 0;
+}
+
+/* Responsive Design for Dynamic Pages */
+@media screen and (max-width: 768px) {
+    .dynamic-page .hero-section {
+        min-height: 200px;
+        padding: 20px;
+    }
+
+    .dynamic-page .hero-shield {
+        width: 80px;
+        top: 10px;
+        left: 10px;
+    }
+
+    .dynamic-page .page-content {
+        padding: 15px;
+    }
+
+    .dynamic-page .page-content h1 {
+        font-size: 2em;
+    }
+
+    .dynamic-page .page-content h2 {
+        font-size: 1.5em;
+    }
+
+    .nav-dropdown {
+        position: static;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .custom-pages-dropdown:hover .nav-dropdown {
+        display: none;
+    }
+
+    .custom-pages-dropdown.active .nav-dropdown {
+        display: block;
+    }
+}
