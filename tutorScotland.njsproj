@@ -81,6 +81,7 @@
     <Content Include="public\contact.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\header-banner.css" />
     <Content Include="public\index.html">
       <SubType>Code</SubType>
     </Content>
