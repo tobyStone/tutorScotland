@@ -10,7 +10,7 @@
  * Load dynamic sections for the current page
  */
 function loadDynamicSections() {
-    const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
+    const page = (location.pathname.replace(/^\//, '').split('.')[0] || 'index').toLowerCase();
 
     // For pages with a slug parameter in the URL
     const urlParams = new URLSearchParams(window.location.search);
