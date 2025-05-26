@@ -1,244 +1,215 @@
 /**
- * Responsive Helper Script for Tutors Alliance Scotland
- * This script provides utility functions for responsive design and UI enhancements
+ * responsive-helper.js – Tutors Alliance Scotland
+ * -------------------------------------------------
+ * ?  Guarantees every page links the **global style bundle** _and_
+ *    `header-banner.css` so dynamic HTML never ships un?styled.
+ * ?  Adds viewport / page?type classes to <body> for CSS hooks.
+ * ?  Handles the rolling news / tutor banner with width?aware
+ *    animation.
+ * ?  Provides a single IntersectionObserver fade?in that also
+ *    watches for nodes injected later by the dynamic?sections
+ *    loader.
+ *
+ * Drop this file in `/public/js/` and reference it with
+ *   <script src="/js/responsive-helper.js" defer></script>
+ * on every page (or via your EJS layout).
+ * -------------------------------------------------
  */
 
-// Wait for DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize responsive features
-    initResponsiveFeatures();
+(() => {
+    /* -------------------------------------------------- */
+    /* 0  –  CONFIG                                        */
+    /* -------------------------------------------------- */
+    /** Stylesheets that **must** be present on every page */
+    const REQUIRED_STYLES = [
+        "/styles2.css",        // main design?system bundle
+        "/header-banner.css"   // header / nav specifics
+    ];
 
-    // Initialize rolling banner if it exists
-    initRollingBanner();
+    /** Pixels per second for the rolling banner */
+    const SCROLL_SPEED = 40;
 
-    // Add fade-in animations for elements with the fade-in class
-    initFadeInAnimations();
-});
-
-/**
- * Initialize responsive features
- */
-function initResponsiveFeatures() {
-    // Add mobile menu toggle functionality if mobile menu exists
-    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const mainNav = document.querySelector('.main-nav');
-
-    if (mobileMenuToggle && mainNav) {
-        mobileMenuToggle.addEventListener('click', function() {
-            mainNav.classList.toggle('show');
-            mobileMenuToggle.classList.toggle('active');
+    /* -------------------------------------------------- */
+    /* 1  –  UTILITY HELPERS                               */
+    /* -------------------------------------------------- */
+    /** Inject <link rel="stylesheet"> if it is missing */
+    function ensureStylesheets(hrefs) {
+        const head = document.head;
+        hrefs.forEach(href => {
+            if (!head.querySelector(`link[rel="stylesheet"][href="${href}"]`)) {
+                const link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = href;
+                head.appendChild(link);
+            }
         });
     }
 
-    // Handle viewport adjustments
-    adjustForViewport();
-    window.addEventListener('resize', adjustForViewport);
-}
+    /** throttle helper – avoids running expensive funcs each resize */
+    function throttle(fn, wait = 150) {
+        let t;
+        return function (...args) {
+            if (!t) {
+                fn.apply(this, args);
+                t = setTimeout(() => (t = null), wait);
+            }
+        };
+    }
 
-/**
- * Make adjustments based on viewport size
- */
-function adjustForViewport() {
-    const isPortrait = window.innerHeight > window.innerWidth;
-    const isNarrow = window.innerWidth < 600;
-    const isRestrictedViewport = isPortrait && isNarrow || window.innerWidth < 1200;
-    const isPortraitRestricted = isPortrait && window.innerWidth < 1200;
+    /* -------------------------------------------------- */
+    /* 2  –  RESPONSIVE FEATURES                            */
+    /* -------------------------------------------------- */
+    function adjustForViewport() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const isPortrait = h > w;
+        const isNarrow = w < 600;
+        const isRestricted = (isPortrait && isNarrow) || w < 1200;
+        const isPortraitRestricted = isPortrait && w < 1200;
 
-    // Add/remove classes based on viewport
-    document.body.classList.toggle('portrait-mode', isPortrait);
-    document.body.classList.toggle('narrow-viewport', isNarrow);
-    document.body.classList.toggle('restricted-viewport', isRestrictedViewport);
-    document.body.classList.toggle('portrait-restricted', isPortraitRestricted);
+        const body = document.body;
+        body.classList.toggle("portrait-mode", isPortrait);
+        body.classList.toggle("narrow-viewport", isNarrow);
+        body.classList.toggle("restricted-viewport", isRestricted);
+        body.classList.toggle("portrait-restricted", isPortraitRestricted);
+        body.classList.toggle("contact-page", location.pathname.includes("contact"));
 
-    // Check if we're on the contact page
-    const isContactPage = window.location.pathname.includes('contact');
-    document.body.classList.toggle('contact-page', isContactPage);
+        // Shield / Ribbons visibility & sizing ---------------------------------
+        ["imageShield", "imageBanner"].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
 
-    // Handle shield and banner images in portrait mode on restricted viewports
-    const shieldImage = document.getElementById('imageShield');
-    const bannerImage = document.getElementById('imageBanner');
-
-    if (shieldImage && bannerImage) {
-        if (isRestrictedViewport) {
-            // Hide images in portrait mode on restricted viewports
-            shieldImage.style.display = 'none';
-            bannerImage.style.display = 'none';
-        } else {
-            // Show images in other modes
-            shieldImage.style.display = '';
-            bannerImage.style.display = '';
-
-            // Adjust image sizes for small screens
-            if (isNarrow) {
-                shieldImage.style.maxWidth = '80%';
-                bannerImage.style.maxWidth = '80%';
+            if (isRestricted) {
+                el.style.display = "none";
             } else {
-                shieldImage.style.maxWidth = '';
-                bannerImage.style.maxWidth = '';
-            }
-        }
-    }
-
-    // Handle search form in parents.html
-    const searchForm = document.getElementById('tutorFinderForm');
-    const searchFormContainer = document.querySelector('.form-container');
-    const directoryLinkContainer = document.getElementById('directoryLinkContainer');
-
-    if (searchForm && searchFormContainer && directoryLinkContainer) {
-        if (isRestrictedViewport) {
-            // Hide search form and show directory link in portrait mode on restricted viewports
-            searchFormContainer.style.display = 'none';
-            directoryLinkContainer.style.display = 'block';
-        } else {
-            // Show search form and hide directory link in other modes
-            searchFormContainer.style.display = 'block';
-            directoryLinkContainer.style.display = 'none';
-        }
-    }
-}
-
-/**
- * Initialize rolling banner if it exists
- */
-function initRollingBanner() {
-    const rollingBanner = document.querySelector('.rolling-banner');
-    const rollingContent = document.querySelector('.rolling-content');
-
-    if (rollingBanner && rollingContent) {
-        // If the banner doesn't have content yet, add a loading message and fetch news
-        if (!rollingContent.textContent.trim() || rollingContent.textContent === 'Loading news...') {
-            rollingContent.textContent = 'Loading news...';
-
-            // First try to fetch news from sections API
-            fetch('/api/sections?page=rolling-banner')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(sections => {
-                    if (sections && sections.length > 0) {
-                        // Format news information - join all text content with separator
-                        const text = sections.map(s => s.text).join(' | ');
-                        rollingContent.textContent = text;
-
-                        // Apply animation after content is loaded
-                        animateRollingBanner(rollingContent);
-                    } else {
-                        // Fallback to tutors if no news sections are found
-                        return fetch('/api/tutors?format=json')
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Network response was not ok');
-                                }
-                                return response.json();
-                            })
-                            .then(tutors => {
-                                if (tutors && tutors.length > 0) {
-                                    // Format tutor information
-                                    const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
-                                    rollingContent.textContent = text;
-
-                                    // Apply animation after content is loaded
-                                    animateRollingBanner(rollingContent);
-                                } else {
-                                    rollingContent.textContent = 'Welcome to Tutors Alliance Scotland';
-                                }
-                            });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching news:', error);
-                    rollingContent.textContent = 'Welcome to Tutors Alliance Scotland';
-                });
-        } else {
-            // Content already exists, just animate it
-            animateRollingBanner(rollingContent);
-        }
-    }
-}
-
-/**
- * Animate the rolling banner content
- */
-function animateRollingBanner(element) {
-    if (!element) return;
-
-    // Only animate if content is wider than container
-    const parent = element.parentElement;
-    if (element.scrollWidth > parent.clientWidth) {
-        // Set up the animation
-        element.style.display = 'inline-block';
-        element.style.whiteSpace = 'nowrap';
-        element.style.paddingLeft = '100%';
-        element.style.animationName = 'scrollBanner';
-        element.style.animationDuration = Math.max(15, element.scrollWidth / 40) + 's';
-        element.style.animationTimingFunction = 'linear';
-        element.style.animationIterationCount = 'infinite';
-    } else {
-        // If content is not wider, center it
-        element.style.textAlign = 'center';
-        element.style.display = 'block';
-        element.style.width = '100%';
-    }
-}
-
-/**
- * Initialize fade-in animations for elements with the fade-in class
- */
-function initFadeInAnimations() {
-    const fadeElements = document.querySelectorAll('.fade-in, .fade-in-on-scroll');
-
-    if (fadeElements.length === 0) return;
-
-    // Create intersection observer for fade-in-on-scroll elements
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
+                el.style.display = "";
+                el.style.maxWidth = isNarrow ? "80%" : "";
             }
         });
-    }, { threshold: 0.1 });
 
-    // Apply to each element
-    fadeElements.forEach(el => {
-        if (el.classList.contains('fade-in-on-scroll')) {
-            // Initially hide and observe
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            observer.observe(el);
+        // parents.html – toggle search form vs directory link -------------------
+        const searchFormContainer = document.querySelector(".form-container");
+        const directoryLink = document.getElementById("directoryLinkContainer");
+
+        if (searchFormContainer && directoryLink) {
+            const showForm = !isRestricted;
+            searchFormContainer.style.display = showForm ? "block" : "none";
+            directoryLink.style.display = showForm ? "none" : "block";
+        }
+    }
+
+    function initResponsiveFeatures() {
+        // Mobile nav toggle -----------------------------------------------------
+        const toggler = document.querySelector(".mobile-menu-toggle");
+        const nav = document.querySelector(".main-nav");
+        if (toggler && nav) {
+            toggler.addEventListener("click", () => {
+                nav.classList.toggle("show");
+                toggler.classList.toggle("active");
+            });
+        }
+
+        adjustForViewport();
+        window.addEventListener("resize", throttle(adjustForViewport));
+    }
+
+    /* -------------------------------------------------- */
+    /* 3  –  ROLLING NEWS / TUTOR BANNER                    */
+    /* -------------------------------------------------- */
+    function animateRollingBanner(el) {
+        if (!el) return;
+        const parent = el.parentElement;
+
+        if (el.scrollWidth <= parent.clientWidth) {
+            // No need to scroll – centre it
+            el.style.cssText = "text-align:center;display:block;width:100%;";
+            return;
+        }
+
+        const duration = Math.max(15, el.scrollWidth / SCROLL_SPEED);
+        // inline styles keep things self?contained; class not required
+        el.style.cssText = `display:inline-block;white-space:nowrap;padding-left:100%;` +
+            `animation:tas-scroll ${duration}s linear infinite;`;
+    }
+
+    function loadBannerText() {
+        return fetch("/api/sections?page=rolling-banner")
+            .then(r => (r.ok ? r.json() : []))
+            .then(list => {
+                if (list && list.length) {
+                    return list.map(s => s.text).join(" | ");
+                }
+                // fallback: tutors
+                return fetch("/api/tutors?format=json")
+                    .then(r => (r.ok ? r.json() : []))
+                    .then(tutors => tutors.length
+                        ? tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(" | ")
+                        : "Welcome to Tutors Alliance Scotland");
+            })
+            .catch(() => "Welcome to Tutors Alliance Scotland");
+    }
+
+    function initRollingBanner() {
+        const wrapper = document.querySelector(".rolling-banner");
+        const content = document.querySelector(".rolling-content");
+        if (!wrapper || !content) return;
+
+        if (!content.textContent.trim()) {
+            content.textContent = "Loading …";
+            loadBannerText().then(text => {
+                content.textContent = text;
+                animateRollingBanner(content);
+            });
         } else {
-            // Simple fade in
-            setTimeout(() => {
-                el.classList.add('visible');
-            }, 300);
+            animateRollingBanner(content);
         }
-    });
-}
+    }
 
-// Add CSS for animations if not already in stylesheet
-if (!document.querySelector('#responsive-helper-styles')) {
-    const styleSheet = document.createElement('style');
-    styleSheet.id = 'responsive-helper-styles';
-    styleSheet.textContent = `
-        .fade-in, .fade-in-on-scroll {
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-
-        .fade-in.visible, .fade-in-on-scroll.visible {
-            opacity: 1 !important;
-            transform: translateY(0) !important;
-        }
-
-        /* Additional responsive styles */
-        @media screen and (max-width: 600px) and (orientation: portrait) {
-            body.restricted-viewport .rolling-banner {
-                height: auto;
-                padding: 8px 0;
-            }
-        }
+    /* -------------------------------------------------- */
+    /* 4  –  FADE?IN OBSERVER                               */
+    /* -------------------------------------------------- */
+    function injectFadeCss() {
+        if (document.getElementById("tas-fade-css")) return;
+        const css = document.createElement("style");
+        css.id = "tas-fade-css";
+        css.textContent = `
+      .fade-in-section,.fade-in-on-scroll{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+      .is-visible{opacity:1!important;transform:translateY(0)!important;}
+      @keyframes tas-scroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+      @media screen and (max-width:600px) and (orientation:portrait){body.restricted-viewport .rolling-banner{height:auto;padding:8px 0;}}
     `;
-    document.head.appendChild(styleSheet);
-}
+        document.head.appendChild(css);
+    }
+
+    function initFadeObserver() {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(({ isIntersecting, target }) => {
+                if (isIntersecting) {
+                    target.classList.add("is-visible");
+                    io.unobserve(target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        const observeAll = () =>
+            document.querySelectorAll(".fade-in-section,.fade-in-on-scroll").forEach(el => io.observe(el));
+
+        observeAll();
+
+        // auto?observe nodes added later (dynamic sections)
+        new MutationObserver(muts => {
+            if (muts.some(m => m.addedNodes.length)) observeAll();
+        }).observe(document.body, { childList: true, subtree: true });
+    }
+
+    /* -------------------------------------------------- */
+    /* 5  –  BOOTSTRAP                                      */
+    /* -------------------------------------------------- */
+    document.addEventListener("DOMContentLoaded", () => {
+        ensureStylesheets(REQUIRED_STYLES);
+        injectFadeCss();
+        initResponsiveFeatures();
+        initRollingBanner();
+        initFadeObserver();
+    });
+})();
