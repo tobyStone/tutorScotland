@@ -620,13 +620,15 @@
                 fd.delete('rollingText');
             }
 
-            /* upload image first (optional) */
-            const img = fd.get('image') instanceof File && fd.get('image').size ? fd.get('image') : null;
-            if (img) {
-                try {
-                    const url = await uploadImage(img, 'sections');
-                    fd.set('imagePath', url);          // server expects this field
-                } catch (err) { return alert(err.message); }
+            /* upload image first (optional) - but not for rolling banner */
+            if (pageSel.value !== 'rolling-banner') {
+                const img = fd.get('image') instanceof File && fd.get('image').size ? fd.get('image') : null;
+                if (img) {
+                    try {
+                        const url = await uploadImage(img, 'sections');
+                        fd.set('imagePath', url);          // server expects this field
+                    } catch (err) { return alert(err.message); }
+                }
             }
 
             fd.delete('image');                       // raw file not sent to server

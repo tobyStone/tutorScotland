@@ -27,12 +27,16 @@ async function uploadToBlob(file) {
 // Convert formidable's callback to a promise with better error handling
 const parseForm = (req) => {
     return new Promise((resolve, reject) => {
+        console.log('Starting form parsing with headers:', req.headers['content-type']);
+
         const form = formidable({
             keepExtensions: true,
             multiples: false,
             maxFileSize: MAX_UPLOAD,
             maxFields: 20,
-            maxFieldsSize: 2 * 1024 * 1024 // 2MB for text fields
+            maxFieldsSize: 2 * 1024 * 1024, // 2MB for text fields
+            allowEmptyFiles: true, // Allow forms without files
+            minFileSize: 0 // Allow empty files
         });
 
         // Add timeout to prevent hanging requests
@@ -44,13 +48,27 @@ const parseForm = (req) => {
             clearTimeout(timeout);
             if (err) {
                 console.error('Form parsing error:', err);
+                console.error('Error details:', {
+                    message: err.message,
+                    code: err.code,
+                    httpCode: err.httpCode
+                });
                 return reject(err);
             }
             console.log('Form parsed successfully:', {
                 fieldCount: Object.keys(fields).length,
-                fileCount: Object.keys(files).length
+                fileCount: Object.keys(files).length,
+                fields: Object.keys(fields),
+                files: Object.keys(files)
             });
             resolve({ fields, files });
+        });
+
+        // Add error handler for the form itself
+        form.on('error', (err) => {
+            console.error('Formidable error event:', err);
+            clearTimeout(timeout);
+            reject(err);
         });
     });
 };
@@ -86,7 +104,7 @@ module.exports = async (req, res) => {
                 let image = '';
 
                 // Check if imagePath is provided in fields (from client-side upload)
-                if (fields.imagePath) {
+                if (fields.imagePath && fields.imagePath !== 'undefined' && fields.imagePath !== '') {
                     image = Array.isArray(fields.imagePath) ? fields.imagePath[0] : fields.imagePath;
                     console.log('Using imagePath from fields:', image);
                 } else {
@@ -94,11 +112,14 @@ module.exports = async (req, res) => {
                     let file = files.image || files.file;
                     if (Array.isArray(file)) file = file[0];
 
-                    if (file && file.size) {
+                    if (file && file.size && file.size > 0) {
                         if (file.size > MAX_UPLOAD) {
                             return res.status(400).json({ message: 'Image larger than 4.5 MB' });
                         }
+                        console.log('Uploading file directly:', file.originalFilename, file.size);
                         image = await uploadToBlob(file);
+                    } else {
+                        console.log('No valid file found for upload');
                     }
                 }
 
