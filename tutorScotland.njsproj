@@ -117,6 +117,8 @@
     <Content Include="public\js\video-player.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\page-template.html" />
+    <Content Include="public\page.html" />
     <Content Include="public\parents.html">
       <SubType>Code</SubType>
     </Content>
