@@ -541,32 +541,31 @@
         // Load tutors when the page loads
         loadTutors();
 
-        /* ░░░ 2. ADD / DELETE  SECTIONS ░░░ */
+        /* ░░░ 2. ADD / DELETE SECTIONS ░░░ */
         const pageSel = document.getElementById('pageSelect');
         const sectionTbody = document.querySelector('#sectionTable tbody');
-        const addSectionForm = document.getElementById('addSection');        // ← explicit node
+        const addSectionForm = document.getElementById('addSection');
 
-        /* Toggle between standard fields and rolling-banner fields
-         and adjust HTML-5 required attributes */
+        /* ── show / hide fields & toggle HTML-5 “required” attrs ───────────── */
         function toggleFields() {
             const standardFields = document.getElementById('standardFields');
             const rollingBannerFields = document.getElementById('rollingBannerFields');
             const positionSelect = document.querySelector('select[name="position"]');
 
-            // inputs we switch on/off
+            /* inputs that need required ↔ not-required */
             const headingInput = document.querySelector('input[name="heading"]');
             const textTextarea = document.querySelector('textarea[name="text"]');
 
             const isBanner = pageSel.value === 'rolling-banner';
 
-            /* visual state -------------------------------------------------------- */
+            /* visibility */
             standardFields.style.display = isBanner ? 'none' : 'block';
             rollingBannerFields.style.display = isBanner ? 'block' : 'none';
             if (positionSelect) {
                 positionSelect.parentElement.style.display = isBanner ? 'none' : 'block';
             }
 
-            /* HTML-5 validation ---------------------------------------------------- */
+            /* validation */
             if (isBanner) {
                 headingInput.removeAttribute('required');
                 textTextarea.removeAttribute('required');
@@ -576,8 +575,7 @@
             }
         }
 
-
-        /* Load existing sections for the currently-selected page */
+        /* ── fetch sections for the selected page ─────────────────────────── */
         async function loadSections() {
             const r = await fetch(`/api/sections?page=${pageSel.value}`);
             if (!r.ok) { alert(await r.text()); return; }
@@ -586,95 +584,81 @@
             sectionTbody.innerHTML = '';
 
             list.forEach((s, i) => {
-                const tr = document.createElement('tr');
-                const positionDisplay = { top: '🔝 Top', middle: '⏺️ Middle', bottom: '🔽 Bottom' }[s.position || 'bottom'];
-
-                tr.innerHTML = `
-      <td>${i + 1}</td>
-      <td>${s.heading}</td>
-      <td>${positionDisplay}</td>
-      <td>${s.image ? '✔︎' : ''}</td>
-      <td><button data-id="${s._id}">🗑️</button></td>`;
-                sectionTbody.appendChild(tr);
+                const pos = { top: '🔝 Top', middle: '⏺️ Middle', bottom: '🔽 Bottom' }[s.position || 'bottom'];
+                sectionTbody.insertAdjacentHTML('beforeend', `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${s.heading}</td>
+        <td>${pos}</td>
+        <td>${s.image ? '✔︎' : ''}</td>
+        <td><button data-id="${s._id}">🗑️</button></td>
+      </tr>`);
             });
 
-            toggleFields();
+            toggleFields();     // keep form in sync with <select>
         }
 
         await loadSections();
         pageSel.addEventListener('change', loadSections);
 
-        /* ── ADD-SECTION SUBMIT ───────────────────────────────────────── */
+        /* ── ADD SECTION ──────────────────────────────────────────────────── */
         addSectionForm.addEventListener('submit', async e => {
             e.preventDefault();
             const fd = new FormData(addSectionForm);
 
             /* rolling-banner special-case */
             if (pageSel.value === 'rolling-banner') {
-                const rollingHeading = document.querySelector('input[name="rollingHeading"]').value.trim();
-                const rollingText = document.querySelector('textarea[name="rollingText"]').value.trim();
-                if (!rollingText) return alert('Please enter news content for the rolling banner');
+                const txt = fd.get('rollingText').trim();
+                if (!txt) return alert('Please enter news content for the rolling banner');
 
-                fd.set('heading', rollingHeading || 'Rolling News');
-                fd.set('text', rollingText);
+                fd.set('heading', fd.get('rollingHeading') || 'Rolling News');
+                fd.set('text', txt);
                 fd.delete('rollingHeading'); fd.delete('rollingText');
             }
 
             /* optional image upload (skip for rolling-banner) */
             if (pageSel.value !== 'rolling-banner') {
-                const img = fd.get('image') instanceof File && fd.get('image').size ? fd.get('image') : null;
-                if (img) {
+                const img = fd.get('image');
+                if (img instanceof File && img.size) {
                     try {
                         const url = await uploadImage(img, 'sections');
-                        fd.set('imagePath', url);           // server expects this field
+                        fd.set('imagePath', url);        // server expects this field
                     } catch (err) { return alert(err.message); }
                 }
             }
-            fd.delete('image');                       // never send raw file
+            fd.delete('image');                    // never send raw file
+
+            /* DEBUG – inspect payload in browser console
+               -------------------------------------------------
+               for (const [k,v] of fd.entries()) console.log('FD',k,v);
+            */
 
             /* send to API */
-            try {
-                const r = await fetch('/api/sections', { method: 'POST', body: fd });
-                if (!r.ok) {
-                    const txt = await r.text();
-                    console.error('Section submission failed:', r.status, txt);
-                    return alert(`Error adding section: ${txt}`);
-                }
+            const r = await fetch('/api/sections', { method: 'POST', body: fd });
+            if (!r.ok) { alert(await r.text()); return; }
 
+            alert('Section added!');
+            addSectionForm.reset();
+            loadSections();
 
-                alert('Section added!');
-                addSectionForm.reset();
-                loadSections();
-
-                /* refresh rolling banner instantly */
-                if (pageSel.value === 'rolling-banner') {
-                    fetch('/api/sections?page=rolling-banner')
-                        .then(r => r.json())
-                        .then(list => {
-                            if (list && list.length) {
-                                tutorBanner.textContent = list.map(s => s.text).join(' | ');
-                            }
-                        })
-                        .catch(console.error);
-                }
-            } catch (err) {
-                console.error('Exception during section submission:', err);
-                alert(`Network error: ${err.message}`);
+            /* refresh banner immediately if we just added news */
+            if (pageSel.value === 'rolling-banner') {
+                fetch('/api/sections?page=rolling-banner')
+                    .then(r => r.json())
+                    .then(list => tutorBanner.textContent = list.map(s => s.text).join(' | '))
+                    .catch(console.error);
             }
         });
 
-        /* ── DELETE SECTION ───────────────────────────────────────────── */
+        /* ── DELETE SECTION (single handler) ───────────────────────────────── */
         sectionTbody.addEventListener('click', async e => {
             const id = e.target.dataset.id;
             if (!id || !confirm('Delete this section?')) return;
 
             const r = await fetch(`/api/sections?id=${id}`, { method: 'DELETE' });
-            if (r.ok) {
-                loadSections();
-            } else {
-                alert(`Error: ${await r.text()}`);
-            }
+            if (r.ok) { loadSections(); } else { alert(await r.text()); }
         });
+
 
         /* delete click */
         sectionTbody.addEventListener('click', async e => {
