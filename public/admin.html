@@ -546,28 +546,36 @@
         const sectionTbody = document.querySelector('#sectionTable tbody');
         const addSectionForm = document.getElementById('addSection');        // ← explicit node
 
-        /* Toggle between standard fields and rolling-banner fields */
+        /* Toggle between standard fields and rolling-banner fields
+         and adjust HTML-5 required attributes */
         function toggleFields() {
             const standardFields = document.getElementById('standardFields');
             const rollingBannerFields = document.getElementById('rollingBannerFields');
             const positionSelect = document.querySelector('select[name="position"]');
 
+            // inputs we switch on/off
+            const headingInput = document.querySelector('input[name="heading"]');
+            const textTextarea = document.querySelector('textarea[name="text"]');
+
             const isBanner = pageSel.value === 'rolling-banner';
 
+            /* visual state -------------------------------------------------------- */
             standardFields.style.display = isBanner ? 'none' : 'block';
             rollingBannerFields.style.display = isBanner ? 'block' : 'none';
-            if (positionSelect) positionSelect.parentElement.style.display =
-                isBanner ? 'none' : 'block';
+            if (positionSelect) {
+                positionSelect.parentElement.style.display = isBanner ? 'none' : 'block';
+            }
+
+            /* HTML-5 validation ---------------------------------------------------- */
+            if (isBanner) {
+                headingInput.removeAttribute('required');
+                textTextarea.removeAttribute('required');
+            } else {
+                headingInput.setAttribute('required', '');
+                textTextarea.setAttribute('required', '');
+            }
         }
 
-        /* HTML-5 validation */
-        if (isBanner) {
-            headingInput.removeAttribute('required');
-            textTextarea.removeAttribute('required');
-        } else {
-            headingInput.setAttribute('required', '');
-            textTextarea.setAttribute('required', '');
-        }
 
         /* Load existing sections for the currently-selected page */
         async function loadSections() {
