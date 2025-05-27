@@ -663,16 +663,7 @@
         });
 
 
-            if (r.ok) {
-                loadSections();
-            } else {
-                try {
-                    const errorText = await r.text();
-                    alert(`Error: ${errorText}`);
-                } catch (err) {
-                    alert(`Failed to delete section. Status: ${r.status}`);
-                }
-            }
+
        
 
         /* ░░░ 3. PAGE MANAGEMENT ░░░ */
