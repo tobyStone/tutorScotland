@@ -544,127 +544,119 @@
         /* ░░░ 2. ADD / DELETE  SECTIONS ░░░ */
         const pageSel = document.getElementById('pageSelect');
         const sectionTbody = document.querySelector('#sectionTable tbody');
+        const addSectionForm = document.getElementById('addSection');        // ← explicit node
 
-        /* Toggle between standard fields and rolling banner fields */
+        /* Toggle between standard fields and rolling-banner fields */
         function toggleFields() {
             const standardFields = document.getElementById('standardFields');
             const rollingBannerFields = document.getElementById('rollingBannerFields');
-            const positionLabel = document.querySelector('label[for="position"]');
             const positionSelect = document.querySelector('select[name="position"]');
 
-            if (pageSel.value === 'rolling-banner') {
-                standardFields.style.display = 'none';
-                rollingBannerFields.style.display = 'block';
-                // Hide position selector for rolling banner
-                if (positionSelect) positionSelect.parentElement.style.display = 'none';
-            } else {
-                standardFields.style.display = 'block';
-                rollingBannerFields.style.display = 'none';
-                // Show position selector for regular sections
-                if (positionSelect) positionSelect.parentElement.style.display = 'block';
-            }
+            const isBanner = pageSel.value === 'rolling-banner';
+
+            standardFields.style.display = isBanner ? 'none' : 'block';
+            rollingBannerFields.style.display = isBanner ? 'block' : 'none';
+            if (positionSelect) positionSelect.parentElement.style.display =
+                isBanner ? 'none' : 'block';
         }
 
-        /* helper loads list for current <select> value */
+
+        /* Load existing sections for the currently-selected page */
         async function loadSections() {
             const r = await fetch(`/api/sections?page=${pageSel.value}`);
             if (!r.ok) { alert(await r.text()); return; }
-            const list = await r.json();
 
+            const list = await r.json();
             sectionTbody.innerHTML = '';
+
             list.forEach((s, i) => {
                 const tr = document.createElement('tr');
-                // Format position for display
-                const positionDisplay = {
-                    'top': '🔝 Top',
-                    'middle': '⏺️ Middle',
-                    'bottom': '🔽 Bottom'
-                }[s.position || 'bottom'];
+                const positionDisplay = { top: '🔝 Top', middle: '⏺️ Middle', bottom: '🔽 Bottom' }[s.position || 'bottom'];
 
                 tr.innerHTML = `
-                       <td>${i + 1}</td>
-                       <td>${s.heading}</td>
-                       <td>${positionDisplay}</td>
-                       <td>${s.image ? '✔︎' : ''}</td>
-                       <td><button data-id="${s._id}">🗑️</button></td>`;
+      <td>${i + 1}</td>
+      <td>${s.heading}</td>
+      <td>${positionDisplay}</td>
+      <td>${s.image ? '✔︎' : ''}</td>
+      <td><button data-id="${s._id}">🗑️</button></td>`;
                 sectionTbody.appendChild(tr);
             });
 
-            // Toggle fields based on selected page
             toggleFields();
         }
+
         await loadSections();
         pageSel.addEventListener('change', loadSections);
 
-        /* add‑section submit */
-        addSection.addEventListener('submit', async e => {
+        /* ── ADD-SECTION SUBMIT ───────────────────────────────────────── */
+        addSectionForm.addEventListener('submit', async e => {
             e.preventDefault();
-            const fd = new FormData(addSection);
+            const fd = new FormData(addSectionForm);
 
-            // Handle rolling banner fields differently
+            /* rolling-banner special-case */
             if (pageSel.value === 'rolling-banner') {
-                const rollingHeading = document.querySelector('input[name="rollingHeading"]').value;
-                const rollingText = document.querySelector('textarea[name="rollingText"]').value;
+                const rollingHeading = document.querySelector('input[name="rollingHeading"]').value.trim();
+                const rollingText = document.querySelector('textarea[name="rollingText"]').value.trim();
+                if (!rollingText) return alert('Please enter news content for the rolling banner');
 
-                if (!rollingText.trim()) {
-                    alert('Please enter news content for the rolling banner');
-                    return;
-                }
-
-                // Set the correct field names for the API
-                fd.set('heading', rollingHeading);
+                fd.set('heading', rollingHeading || 'Rolling News');
                 fd.set('text', rollingText);
-
-                // Remove rolling banner specific fields
-                fd.delete('rollingHeading');
-                fd.delete('rollingText');
+                fd.delete('rollingHeading'); fd.delete('rollingText');
             }
 
-            /* upload image first (optional) - but not for rolling banner */
+            /* optional image upload (skip for rolling-banner) */
             if (pageSel.value !== 'rolling-banner') {
                 const img = fd.get('image') instanceof File && fd.get('image').size ? fd.get('image') : null;
                 if (img) {
                     try {
                         const url = await uploadImage(img, 'sections');
-                        fd.set('imagePath', url);          // server expects this field
+                        fd.set('imagePath', url);           // server expects this field
                     } catch (err) { return alert(err.message); }
                 }
             }
+            fd.delete('image');                       // never send raw file
 
-            fd.delete('image');                       // raw file not sent to server
-
+            /* send to API */
             try {
-                console.log('Submitting section form...');
                 const r = await fetch('/api/sections', { method: 'POST', body: fd });
-
                 if (!r.ok) {
-                    const errorText = await r.text();
-                    console.error('Section submission failed:', r.status, errorText);
-                    return alert(`Error adding section: ${errorText}`);
+                    const txt = await r.text();
+                    console.error('Section submission failed:', r.status, txt);
+                    return alert(`Error adding section: ${txt}`);
                 }
 
-                const result = await r.json();
-                console.log('Section added successfully:', result);
-                alert('Section added!');
-                addSection.reset();
-                loadSections();
-            } catch (error) {
-                console.error('Exception during section submission:', error);
-                alert(`Network error: ${error.message}`);
-            }
 
-            // Refresh the rolling banner if we added news content
-            if (pageSel.value === 'rolling-banner') {
-                // Refresh the banner content
-                fetch('/api/sections?page=rolling-banner')
-                    .then(r => r.json())
-                    .then(sections => {
-                        if (sections && sections.length > 0) {
-                            const text = sections.map(s => s.text).join(' | ');
-                            tutorBanner.textContent = text;
-                        }
-                    })
-                    .catch(console.error);
+                alert('Section added!');
+                addSectionForm.reset();
+                loadSections();
+
+                /* refresh rolling banner instantly */
+                if (pageSel.value === 'rolling-banner') {
+                    fetch('/api/sections?page=rolling-banner')
+                        .then(r => r.json())
+                        .then(list => {
+                            if (list && list.length) {
+                                tutorBanner.textContent = list.map(s => s.text).join(' | ');
+                            }
+                        })
+                        .catch(console.error);
+                }
+            } catch (err) {
+                console.error('Exception during section submission:', err);
+                alert(`Network error: ${err.message}`);
+            }
+        });
+
+        /* ── DELETE SECTION ───────────────────────────────────────────── */
+        sectionTbody.addEventListener('click', async e => {
+            const id = e.target.dataset.id;
+            if (!id || !confirm('Delete this section?')) return;
+
+            const r = await fetch(`/api/sections?id=${id}`, { method: 'DELETE' });
+            if (r.ok) {
+                loadSections();
+            } else {
+                alert(`Error: ${await r.text()}`);
             }
         });
 
