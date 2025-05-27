@@ -560,6 +560,14 @@
                 isBanner ? 'none' : 'block';
         }
 
+        /* HTML-5 validation */
+        if (isBanner) {
+            headingInput.removeAttribute('required');
+            textTextarea.removeAttribute('required');
+        } else {
+            headingInput.setAttribute('required', '');
+            textTextarea.setAttribute('required', '');
+        }
 
         /* Load existing sections for the currently-selected page */
         async function loadSections() {
