@@ -122,13 +122,13 @@
 
         if (el.scrollWidth <= parent.clientWidth) {
             // No need to scroll – centre it
-            el.style.cssText = "text-align:center;display:block;width:100%;";
+            el.styles2.cssText = "text-align:center;display:block;width:100%;";
             return;
         }
 
         const duration = Math.max(15, el.scrollWidth / SCROLL_SPEED);
         // inline styles keep things self?contained; class not required
-        el.style.cssText = `display:inline-block;white-space:nowrap;padding-left:100%;` +
+        el.styles2.cssText = `display:inline-block;white-space:nowrap;padding-left:100%;` +
             `animation:tas-scroll ${duration}s linear infinite;`;
     }
 
