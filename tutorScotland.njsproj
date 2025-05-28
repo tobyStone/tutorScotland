@@ -46,6 +46,7 @@
     <Content Include="api\connectToDatabase.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\content-manager.js" />
     <Content Include="api\login.js">
       <SubType>Code</SubType>
     </Content>

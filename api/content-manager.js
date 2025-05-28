@@ -1,4 +1,4 @@
-const connectDB = require('../lib/mongodb');
+const connectDB = require('./connectToDatabase');
 const Section = require('../models/Section');
 
 module.exports = async (req, res) => {
