@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visual Editor Test - Tutors Alliance Scotland</title>
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
+    <link rel="stylesheet" href="/styles2.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/visual-editor.js" defer></script>
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .test-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+        }
+        
+        .test-image {
+            max-width: 300px;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .test-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        
+        .test-link:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header style="background: #0057B7; color: white; padding: 1rem; text-align: center;">
+        <h1>Visual Editor Test Page</h1>
+        <p>This page is for testing the live visual editor functionality</p>
+    </header>
+
+    <div class="test-container">
+        <div class="test-section">
+            <h2>Text Editing Test</h2>
+            <p>This is a sample paragraph that can be edited. Click the edit button when in edit mode to modify this text.</p>
+            <p>Here's another paragraph with <strong>bold text</strong> and <em>italic text</em> that you can edit.</p>
+        </div>
+
+        <div class="test-section">
+            <h2>Heading Editing Test</h2>
+            <h3>This is an editable heading</h3>
+            <h4>This is another editable heading</h4>
+        </div>
+
+        <div class="test-section">
+            <h2>Image Editing Test</h2>
+            <img src="/images/centralShield.png" alt="Test Image" class="test-image">
+            <p>The image above can be replaced with a new URL when in edit mode.</p>
+        </div>
+
+        <div class="test-section">
+            <h2>Link Editing Test</h2>
+            <a href="https://example.com" class="test-link">This is an editable link</a>
+            <p>The link above can have its URL and text modified.</p>
+        </div>
+
+        <div class="test-section">
+            <h2>HTML Content Test</h2>
+            <div class="html-content">
+                <p>This section contains <strong>HTML content</strong> that can be edited:</p>
+                <ul>
+                    <li>List item one</li>
+                    <li>List item two</li>
+                    <li>List item three</li>
+                </ul>
+                <p>You can modify the HTML structure when editing this content.</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Instructions</h2>
+            <div class="instructions">
+                <h3>How to use the Visual Editor:</h3>
+                <ol>
+                    <li><strong>Login as Admin:</strong> Go to <a href="/login.html">login page</a> and login with admin credentials</li>
+                    <li><strong>Enable Edit Mode:</strong> Click the "Edit Mode" button in the top-right corner or press Ctrl+E</li>
+                    <li><strong>Edit Content:</strong> Hover over any element to see edit controls, then click "Edit"</li>
+                    <li><strong>Save Changes:</strong> Use the modal to modify content and save changes</li>
+                    <li><strong>Preview:</strong> Use the preview button to see changes temporarily</li>
+                    <li><strong>Restore:</strong> Use the restore button to revert to original content</li>
+                </ol>
+                
+                <h3>Supported Content Types:</h3>
+                <ul>
+                    <li><strong>Text:</strong> Simple text content (headings, paragraphs)</li>
+                    <li><strong>HTML:</strong> Rich HTML content with formatting</li>
+                    <li><strong>Images:</strong> Image URLs and alt text</li>
+                    <li><strong>Links:</strong> Link URLs and display text</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer style="background: #f8f9fa; padding: 2rem; text-align: center; margin-top: 3rem;">
+        <p>&copy; 2024 Tutors Alliance Scotland - Visual Editor Test</p>
+        <p><a href="/">Back to Home</a> | <a href="/admin.html">Admin Panel</a></p>
+    </footer>
+</body>
+</html>

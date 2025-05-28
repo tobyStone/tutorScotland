@@ -1,13 +1,18 @@
 // api/login.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { serialize } = require('cookie');  // <-- important for setting cookies manually
+const { serialize, parse } = require('cookie');  // <-- important for setting cookies manually
 const User = require('../models/User');
 const connectToDatabase = require('./connectToDatabase');
 
 module.exports = async (req, res) => {
+    // Handle auth check requests
+    if (req.method === 'GET' && req.query.check === 'admin') {
+        return handleAdminCheck(req, res);
+    }
+
     if (req.method !== 'POST') {
-        res.setHeader('Allow', ['POST']);
+        res.setHeader('Allow', ['POST', 'GET']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 
@@ -70,3 +75,30 @@ module.exports = async (req, res) => {
         return res.status(500).json({ message: 'Server error' });
     }
 };
+
+// Function to check if user is admin
+async function handleAdminCheck(req, res) {
+    try {
+        // Parse cookies from request headers
+        const cookies = req.headers.cookie ? parse(req.headers.cookie) : {};
+        const token = cookies.token;
+
+        if (!token) {
+            return res.status(200).json({ isAdmin: false });
+        }
+
+        // Verify JWT token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Check if user is admin
+        const isAdmin = decoded.role === 'admin';
+
+        return res.status(200).json({
+            isAdmin,
+            user: { id: decoded.id, role: decoded.role }
+        });
+    } catch (error) {
+        console.error('Admin check error:', error);
+        return res.status(200).json({ isAdmin: false });
+    }
+}
