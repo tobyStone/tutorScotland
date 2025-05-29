@@ -189,7 +189,7 @@
                     io.unobserve(target);
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.5 });
 
         const observeAll = () =>
             document.querySelectorAll(".fade-in-section,.fade-in-on-scroll").forEach(el => io.observe(el));
