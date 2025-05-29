@@ -123,6 +123,7 @@ async function handleCreateOverride(req, res) {
 
         if (existingOverride) {
             // Update existing override
+            existingOverride.page = targetPage; // Satisfy schema requirement
             existingOverride.heading = heading;
             existingOverride.text = text;
             existingOverride.image = image;
@@ -136,6 +137,7 @@ async function handleCreateOverride(req, res) {
         } else {
             // Create new override
             const newOverride = new Section({
+                page: targetPage, // Satisfy schema requirement
                 isContentOverride: true,
                 targetPage,
                 targetSelector,

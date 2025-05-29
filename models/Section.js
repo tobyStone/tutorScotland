@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-    page: { type: String, required: true },          // 'index', 'about-us', �
+    page: {
+        type: String,
+        required: function() {
+            return !this.isContentOverride;
+        }
+    },          // 'index', 'about-us', etc. - only required for non-override sections
     heading: String,
     text: String,
     image: String,                                  // Vercel?blob URL

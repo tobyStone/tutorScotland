@@ -697,10 +697,16 @@ class VisualEditor {
     populateCurrentContent(element, type) {
         switch (type) {
             case 'text':
-                document.getElementById('content-text').value = element.textContent;
+                // Clone element without overlay to get clean content
+                const textClone = element.cloneNode(true);
+                textClone.querySelectorAll('.edit-overlay').forEach(n => n.remove());
+                document.getElementById('content-text').value = textClone.textContent.trim();
                 break;
             case 'html':
-                document.getElementById('content-html').value = element.innerHTML;
+                // Clone element without overlay to get clean content
+                const htmlClone = element.cloneNode(true);
+                htmlClone.querySelectorAll('.edit-overlay').forEach(n => n.remove());
+                document.getElementById('content-html').value = htmlClone.innerHTML;
                 break;
             case 'image':
                 if (element.tagName === 'IMG') {
@@ -711,7 +717,10 @@ class VisualEditor {
             case 'link':
                 if (element.tagName === 'A') {
                     document.getElementById('link-url').value = element.href;
-                    document.getElementById('link-text').value = element.textContent;
+                    // Clone to get clean text content without edit overlay
+                    const linkClone = element.cloneNode(true);
+                    linkClone.querySelectorAll('.edit-overlay').forEach(n => n.remove());
+                    document.getElementById('link-text').value = linkClone.textContent.trim();
                 }
                 break;
         }
