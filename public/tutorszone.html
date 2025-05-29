@@ -183,11 +183,8 @@
     <!-- SOCIAL ICONS FOOTER -->
     <footer class="site-footer fade-in-section">
         <div class="footer-icons">
-            <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
-            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
             <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
             <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
         </div>
     </footer>
 
@@ -197,27 +194,20 @@
             <div class="static-footer-left">
                 <h4>Extra Information</h4>
                 <ul>
-                    <li><a href="tutoring-standards.html">Our Tutoring Standards</a></li>
+                    <li><a href="tutoring-standards.html">The TAS Way: Governance and Guidance</a></li>
                     <li><a href="faq.html">FAQ's</a></li>
                     <li><a href="privacy-policy.html">Privacy Policy</a></li>
                     <li><a href="safeguarding-policy.html">Safeguarding Policy</a></li>
                     <li><a href="terms-and-conditions.html">Terms and Conditions</a></li>
                 </ul>
                 <div class="static-footer-copyright">
-                    <p>ALL RIGHTS RESERVED © Tutors Alliance Scotland 2023</p>
-                    <p>Tutors Alliance Scotland is VAT registered</p>
-                    <p>VAT No 429 8003 10</p>
+                    <p>ALL RIGHTS RESERVED © Tutors Alliance Scotland 2025</p>
                 </div>
                 <div class="static-footer-credits">
                     <p>Website by <a href="#" target="_blank">Tutors Alliance Scotland</a></p>
                 </div>
             </div>
             <div class="static-footer-right">
-                <div class="business-insurance">
-                    <img src="/images/centralShield.png" alt="Business Insurance" class="insurance-logo">
-                    <p>Business Insurance provided through Tutors Alliance Scotland</p>
-                    <a href="#" class="insurance-link">View our insurance details</a>
-                </div>
                 <div class="website-url">
                     <p>www.tutorsalliancescotland.org.uk</p>
                 </div>
@@ -301,44 +291,33 @@
         });
     </script>
 
-    <!-- Footer fade-in is now controlled by the About Us section animation -->
+    <!-- Footer fade-in controlled by second section scroll -->
     <script>
-        // Synchronize footer fade-in with the About Us section fade-in
         document.addEventListener('DOMContentLoaded', () => {
-            // Get the About Us section (the first two-col-content section)
-            const aboutUsSection = document.querySelector('.two-col-content.fade-in-section');
             const socialFooter = document.querySelector('.site-footer');
+            const sections = document.querySelectorAll('.two-col-content');
+            const secondSection = sections[1]; // Get the second section
 
-            if (aboutUsSection && socialFooter) {
+            if (secondSection && socialFooter) {
                 // Initially hide the social footer completely
                 socialFooter.style.opacity = '0';
                 socialFooter.style.transition = 'opacity 0.5s ease-out';
 
-                // Create an observer specifically for the About Us section
-                const aboutUsObserver = new IntersectionObserver((entries) => {
+                // Create an observer for the second section
+                const sectionObserver = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
-                            // When About Us section becomes visible, add the is-visible class
-                            aboutUsSection.classList.add('is-visible');
-
-                            // Wait for the About Us animation to complete before showing the footer
-                            // Get the computed transition duration from CSS
-                            const aboutUsStyle = window.getComputedStyle(aboutUsSection);
-                            const transitionDuration = parseFloat(aboutUsStyle.transitionDuration) * 1000 || 500;
-
-                            // Add a small buffer to ensure the About Us animation completes first
-                            setTimeout(() => {
-                                socialFooter.style.opacity = '1';
-                            }, transitionDuration + 200);
-
+                            // When second section becomes visible, fade in the footer
+                            socialFooter.style.opacity = '1';
+                            socialFooter.classList.add('is-visible');
                             // Stop observing once triggered
-                            aboutUsObserver.unobserve(entry.target);
+                            sectionObserver.unobserve(secondSection);
                         }
                     });
-                }, { threshold: 0.3 }); // Trigger when 30% of the About Us section is visible
+                }, { threshold: 0.3 }); // Trigger when 30% of the section is visible
 
-                // Start observing the About Us section
-                aboutUsObserver.observe(aboutUsSection);
+                // Start observing the second section
+                sectionObserver.observe(secondSection);
             }
         });
     </script>
