@@ -61,14 +61,14 @@
         <div class="mission-row">
             <!-- RIGHT COLUMN: Shield + Ribbons -->
             <div class="left-col">
-                <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
+                <img src="/images/centralShield.png" alt="Large TAS Shield" class="main-shield" id="imageShield">
                 <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
             </div>
 
             <!-- LEFT COLUMN: heading + about-us text -->
             <div class="right-col">
                 <div class="about-us-landing" id="aboutUsLanding">
-                    <h1 class="mission-statement">Welcome to the Tutors Alliance Scotland</h1>
+                    <h1 class="mission-statement">Welcome to Tutors Alliance Scotland</h1>
                     <a class="button aurora" href="tutorMembership.html">Join as a Tutor</a>
                 </div>
             </div>
@@ -100,9 +100,6 @@
                 <img src="/images/karenAndMartine.PNG" alt="Tutoring in action" />
             </div>
         </section>
-
-
-
 
         <!-- PARENT ZONE SECTION -->
         <section class="parents-zone-section fade-in-section">
@@ -232,14 +229,14 @@
                 <p>All our tutors are fully qualified teachers, PVG-checked, and committed to Scotland's highest educational standards.</p>
             </div>
             <div>
-                <img src="/images/centralShield.png" alt="STA Shield" class="confidence-img-right" />
+                <img src="/images/centralShield.png" alt="TAS Shield" class="confidence-img-right" />
             </div>
         </section>
 
         <!-- TESTIMONIALS: Card placeholders -->
         <section class="testimonials-bg-section fade-in-section testimonials-laced">
-            <div class="testimonial-quote-card" style="top:10%;left:12%;"><p>"The STA helped me connect with families who value high standards."<br><span>- Tutor, Edinburgh</span></p></div>
-            <div class="testimonial-quote-card" style="top:40%;right:10%;"><p>"I trust STA tutors because they're all qualified teachers."<br><span>- Parent, Glasgow</span></p></div>
+            <div class="testimonial-quote-card" style="top:10%;left:12%;"><p>"TAS helped me connect with families who value high standards."<br><span>- Tutor, Edinburgh</span></p></div>
+            <div class="testimonial-quote-card" style="top:40%;right:10%;"><p>"I trust TAS tutors because they're all qualified teachers."<br><span>- Parent, Glasgow</span></p></div>
             <div class="testimonial-quote-card" style="bottom:12%;left:30%;"><p>"Great community and support for tutors."<br><span>- Tutor, Aberdeen</span></p></div>
         </section>
 
@@ -274,13 +271,10 @@
     <section id="dynamicSections"></section>
 
     <!-- SOCIAL ICONS FOOTER -->
-    <footer class="site-footer fade-in-section">
+    <footer class="site-footer fade-in-section" style="opacity: 0;">
         <div class="footer-icons">
-            <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
-            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
             <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
             <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
         </div>
     </footer>
 
@@ -290,27 +284,20 @@
             <div class="static-footer-left">
                 <h4>Extra Information</h4>
                 <ul>
-                    <li><a href="tutoring-standards.html">Our Tutoring Standards</a></li>
+                    <li><a href="tutoring-standards.html">The TAS Way: Governance and Guidance</a></li>
                     <li><a href="faq.html">FAQ's</a></li>
                     <li><a href="privacy-policy.html">Privacy Policy</a></li>
                     <li><a href="safeguarding-policy.html">Safeguarding Policy</a></li>
                     <li><a href="terms-and-conditions.html">Terms and Conditions</a></li>
                 </ul>
                 <div class="static-footer-copyright">
-                    <p>ALL RIGHTS RESERVED © Tutors Alliance Scotland 2023</p>
-                    <p>Tutors Alliance Scotland is VAT registered</p>
-                    <p>VAT No 429 8003 10</p>
+                    <p>ALL RIGHTS RESERVED © Tutors Alliance Scotland 2025</p>
                 </div>
                 <div class="static-footer-credits">
                     <p>Website by <a href="#" target="_blank">Tutors Alliance Scotland</a></p>
                 </div>
             </div>
             <div class="static-footer-right">
-                <div class="business-insurance">
-                    <img src="/images/centralShield.png" alt="Business Insurance" class="insurance-logo">
-                    <p>Business Insurance provided through Tutors Alliance Scotland</p>
-                    <a href="#" class="insurance-link">View our insurance details</a>
-                </div>
                 <div class="website-url">
                     <p>www.tutorsalliancescotland.org.uk</p>
                 </div>
@@ -530,6 +517,28 @@
 
                 // Start observing the About Us section
                 aboutUsObserver.observe(aboutUsSection);
+            }
+        });
+    </script>
+    <script>
+        // Add observer for the second section to control floating footer visibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const socialFooter = document.querySelector('.site-footer');
+            const secondSection = document.querySelector('.two-col-content'); // This is the second section
+
+            if (secondSection && socialFooter) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            socialFooter.style.transition = 'opacity 0.3s ease-out';
+                            socialFooter.style.opacity = '1';
+                        } else {
+                            socialFooter.style.opacity = '0';
+                        }
+                    });
+                }, { threshold: 0.1 }); // Trigger when 10% of the section is visible
+
+                observer.observe(secondSection);
             }
         });
     </script>
