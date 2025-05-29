@@ -520,27 +520,5 @@
             }
         });
     </script>
-    <script>
-        // Add observer for the second section to control floating footer visibility
-        document.addEventListener('DOMContentLoaded', function() {
-            const socialFooter = document.querySelector('.site-footer');
-            const secondSection = document.querySelector('.two-col-content'); // This is the second section
-
-            if (secondSection && socialFooter) {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            socialFooter.style.transition = 'opacity 0.3s ease-out';
-                            socialFooter.style.opacity = '1';
-                        } else {
-                            socialFooter.style.opacity = '0';
-                        }
-                    });
-                }, { threshold: 0.1 }); // Trigger when 10% of the section is visible
-
-                observer.observe(secondSection);
-            }
-        });
-    </script>
 </body>
 </html>
