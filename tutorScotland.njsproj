@@ -121,6 +121,7 @@
     <Content Include="public\js\video-player.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\js\visual-editor.js" />
     <Content Include="public\page-template.html" />
     <Content Include="public\page.html" />
     <Content Include="public\parents.html">
@@ -149,6 +150,7 @@
     <Content Include="public\styles2.css">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\test-editor.html" />
     <Content Include="public\tutorConnect.html">
       <SubType>Code</SubType>
     </Content>

@@ -1,5 +1,5 @@
 /**
- * responsive-helper.js – Tutors Alliance Scotland
+ * responsive-helper.js ï¿½ Tutors Alliance Scotland
  * -------------------------------------------------
  * ?  Guarantees every page links the **global style bundle** _and_
  *    `header-banner.css` so dynamic HTML never ships un?styled.
@@ -18,7 +18,7 @@
 
 (() => {
     /* -------------------------------------------------- */
-    /* 0  –  CONFIG                                        */
+    /* 0  ï¿½  CONFIG                                        */
     /* -------------------------------------------------- */
     /** Stylesheets that **must** be present on every page */
     const REQUIRED_STYLES = [
@@ -30,7 +30,7 @@
     const SCROLL_SPEED = 40;
 
     /* -------------------------------------------------- */
-    /* 1  –  UTILITY HELPERS                               */
+    /* 1  ï¿½  UTILITY HELPERS                               */
     /* -------------------------------------------------- */
     /** Inject <link rel="stylesheet"> if it is missing */
     function ensureStylesheets(hrefs) {
@@ -45,7 +45,7 @@
         });
     }
 
-    /** throttle helper – avoids running expensive funcs each resize */
+    /** throttle helper ï¿½ avoids running expensive funcs each resize */
     function throttle(fn, wait = 150) {
         let t;
         return function (...args) {
@@ -57,7 +57,7 @@
     }
 
     /* -------------------------------------------------- */
-    /* 2  –  RESPONSIVE FEATURES                            */
+    /* 2  ï¿½  RESPONSIVE FEATURES                            */
     /* -------------------------------------------------- */
     function adjustForViewport() {
         const w = window.innerWidth;
@@ -87,7 +87,7 @@
             }
         });
 
-        // parents.html – toggle search form vs directory link -------------------
+        // parents.html ï¿½ toggle search form vs directory link -------------------
         const searchFormContainer = document.querySelector(".form-container");
         const directoryLink = document.getElementById("directoryLinkContainer");
 
@@ -114,21 +114,21 @@
     }
 
     /* -------------------------------------------------- */
-    /* 3  –  ROLLING NEWS / TUTOR BANNER                    */
+    /* 3  ï¿½  ROLLING NEWS / TUTOR BANNER                    */
     /* -------------------------------------------------- */
     function animateRollingBanner(el) {
         if (!el) return;
         const parent = el.parentElement;
 
         if (el.scrollWidth <= parent.clientWidth) {
-            // No need to scroll – centre it
-            el.styles2.cssText = "text-align:center;display:block;width:100%;";
+            // No need to scroll â€“ centre it
+            el.style.cssText = "text-align:center;display:block;width:100%;";
             return;
         }
 
         const duration = Math.max(15, el.scrollWidth / SCROLL_SPEED);
-        // inline styles keep things self?contained; class not required
-        el.styles2.cssText = `display:inline-block;white-space:nowrap;padding-left:100%;` +
+        // inline styles keep things self-contained; class not required
+        el.style.cssText = `display:inline-block;white-space:nowrap;padding-left:100%;` +
             `animation:tas-scroll ${duration}s linear infinite;`;
     }
 
@@ -155,7 +155,7 @@
         if (!wrapper || !content) return;
 
         if (!content.textContent.trim()) {
-            content.textContent = "Loading …";
+            content.textContent = "Loading ï¿½";
             loadBannerText().then(text => {
                 content.textContent = text;
                 animateRollingBanner(content);
@@ -166,7 +166,7 @@
     }
 
     /* -------------------------------------------------- */
-    /* 4  –  FADE?IN OBSERVER                               */
+    /* 4  ï¿½  FADE?IN OBSERVER                               */
     /* -------------------------------------------------- */
     function injectFadeCss() {
         if (document.getElementById("tas-fade-css")) return;
@@ -203,7 +203,7 @@
     }
 
     /* -------------------------------------------------- */
-    /* 5  –  BOOTSTRAP                                      */
+    /* 5  ï¿½  BOOTSTRAP                                      */
     /* -------------------------------------------------- */
     document.addEventListener("DOMContentLoaded", () => {
         ensureStylesheets(REQUIRED_STYLES);

@@ -368,11 +368,15 @@ class VisualEditor {
             animation: slideIn 0.3s ease;
         `;
 
-        document.getElementById('close-instructions').addEventListener('click', () => {
-            instructions.remove();
-        });
-
         document.body.appendChild(instructions);
+
+        // Add event listener after element is in DOM
+        const closeBtn = document.getElementById('close-instructions');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                instructions.remove();
+            });
+        }
 
         // Auto-hide after 5 seconds
         setTimeout(() => {
@@ -720,14 +724,13 @@ class VisualEditor {
         const contentData = this.getFormData(type);
 
         try {
-            // Save to database
-            const response = await fetch('/api/content-manager', {
+            // Save to database - pass operation in query string for API compatibility
+            const response = await fetch('/api/content-manager?operation=override', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    operation: 'override',
                     targetPage: this.currentPage,
                     targetSelector: selector,
                     contentType: type,

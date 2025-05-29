@@ -4,9 +4,19 @@ const Section = require('../models/Section');
 module.exports = async (req, res) => {
     try {
         await connectDB();
-        
+
         const { method, query, body } = req;
-        const { operation, page, selector, type, id } = query;
+        // Allow operation from either query string or body for robustness
+        const operation = query.operation || (body && body.operation);
+        const { page, selector, type, id } = query;
+
+        // Debug logging while testing
+        console.log('Content Manager Request:', {
+            method,
+            operation,
+            query,
+            bodyKeys: body ? Object.keys(body) : 'no body'
+        });
 
         // GET Operations
         if (method === 'GET') {
@@ -85,6 +95,8 @@ async function handleGetOverrides(req, res) {
 // Create new content override
 async function handleCreateOverride(req, res) {
     try {
+        console.log('Creating override with payload:', req.body);
+
         const {
             targetPage,
             targetSelector,
@@ -265,3 +277,6 @@ async function handleCreateBackup(req, res) {
         return res.status(500).json({ message: 'Error creating backup' });
     }
 }
+
+// Ensure this runs as a Node.js lambda in Vercel
+module.exports.config = { runtime: 'nodejs18.x' };
