@@ -291,33 +291,62 @@
         });
     </script>
 
-    <!-- Footer fade-in controlled by second section scroll -->
+    <!-- Footer fade-in controlled by scroll with delay -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const socialFooter = document.querySelector('.site-footer');
             const sections = document.querySelectorAll('.two-col-content');
             const secondSection = sections[1]; // Get the second section
+            let hasScrolled = false;
+            let scrollTimeout = null;
 
             if (secondSection && socialFooter) {
                 // Initially hide the social footer completely
                 socialFooter.style.opacity = '0';
                 socialFooter.style.transition = 'opacity 0.5s ease-out';
+                socialFooter.style.visibility = 'hidden'; // Hide it completely until scroll
+
+                // Function to handle the fade-in
+                const handleFadeIn = () => {
+                    if (!hasScrolled) {
+                        hasScrolled = true;
+                        // Wait 1 second after first scroll before starting fade-in
+                        scrollTimeout = setTimeout(() => {
+                            socialFooter.style.visibility = 'visible';
+                            socialFooter.style.opacity = '1';
+                            socialFooter.classList.add('is-visible');
+                        }, 1000);
+                    }
+                };
 
                 // Create an observer for the second section
                 const sectionObserver = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
-                            // When second section becomes visible, fade in the footer
-                            socialFooter.style.opacity = '1';
-                            socialFooter.classList.add('is-visible');
+                            // When second section becomes visible, start the fade-in process
+                            handleFadeIn();
                             // Stop observing once triggered
                             sectionObserver.unobserve(secondSection);
                         }
                     });
                 }, { threshold: 0.3 }); // Trigger when 30% of the section is visible
 
+                // Add scroll event listener
+                window.addEventListener('scroll', () => {
+                    if (!hasScrolled) {
+                        handleFadeIn();
+                    }
+                }, { passive: true });
+
                 // Start observing the second section
                 sectionObserver.observe(secondSection);
+
+                // Cleanup on page unload
+                window.addEventListener('unload', () => {
+                    if (scrollTimeout) {
+                        clearTimeout(scrollTimeout);
+                    }
+                });
             }
         });
     </script>
