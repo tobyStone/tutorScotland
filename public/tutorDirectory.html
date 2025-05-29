@@ -203,44 +203,7 @@
     <!-- Load the dynamic sections script -->
     <script type="module" src="/js/dynamic-sections.js"></script>
 
-    <!-- SOCIAL ICONS FOOTER -->
-    <footer class="site-footer fade-in-section">
-        <div class="footer-icons">
-            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-        </div>
-    </footer>
-
-    <!-- Footer fade-in controlled by second section scroll -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const socialFooter = document.querySelector('.site-footer');
-            const sections = document.querySelectorAll('.two-col-content');
-            const secondSection = sections[1]; // Get the second section
-
-            if (secondSection && socialFooter) {
-                // Initially hide the social footer completely
-                socialFooter.style.opacity = '0';
-                socialFooter.style.transition = 'opacity 0.5s ease-out';
-
-                // Create an observer for the second section
-                const sectionObserver = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            // When second section becomes visible, fade in the footer
-                            socialFooter.style.opacity = '1';
-                            socialFooter.classList.add('is-visible');
-                            // Stop observing once triggered
-                            sectionObserver.unobserve(secondSection);
-                        }
-                    });
-                }, { threshold: 0.3 }); // Trigger when 30% of the section is visible
-
-                // Start observing the second section
-                sectionObserver.observe(secondSection);
-            }
-        });
-    </script>
+ 
 
 </body>
 </html>
