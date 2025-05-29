@@ -475,50 +475,5 @@
                 document.querySelector('.dynamic-sections-separator').style.display = 'none';
             });
     </script>
-    <!-- Footer fade-in is now controlled by the About Us section animation -->
-    <script>
-        // Synchronize footer fade-in with the About Us section fade-in
-        document.addEventListener('DOMContentLoaded', () => {
-            // Get the About Us section (the first two-col-content section)
-            const aboutUsSection = document.querySelector('.two-col-content.fade-in-section');
-            const socialFooter = document.querySelector('.site-footer');
-
-            if (aboutUsSection && socialFooter) {
-                // Initially hide the social footer completely
-                socialFooter.style.opacity = '0';
-                socialFooter.style.transition = 'opacity 0.5s ease-out';
-
-                // Create an observer specifically for the About Us section
-                const aboutUsObserver = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            // When About Us section becomes visible, add the is-visible class
-                            aboutUsSection.classList.add('is-visible');
-
-                            // Wait for the About Us animation to complete before showing the footer
-                            // Get the computed transition duration from CSS
-                            const aboutUsStyle = window.getComputedStyle(aboutUsSection);
-                            const transitionDuration = parseFloat(aboutUsStyle.transitionDuration) * 1000 || 500;
-
-                            // Add a small buffer to ensure the animation completes
-                            setTimeout(() => {
-                                // Fade in the social footer
-                                socialFooter.style.opacity = '1';
-                                socialFooter.classList.add('is-visible');
-                            }, transitionDuration + 200); // Add 200ms buffer
-
-                            // Stop observing once triggered
-                            aboutUsObserver.unobserve(aboutUsSection);
-                        }
-                    });
-                }, {
-                    threshold: 0.3 // Trigger when 30% of the About Us section is visible
-                });
-
-                // Start observing the About Us section
-                aboutUsObserver.observe(aboutUsSection);
-            }
-        });
-    </script>
 </body>
 </html>
