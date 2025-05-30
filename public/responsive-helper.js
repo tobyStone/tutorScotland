@@ -166,7 +166,7 @@
     }
 
     /* -------------------------------------------------- */
-    /* 4  �  FADE?IN OBSERVER                               */
+    /* 4  �  FADE?IN OBSERVER WITH FOOTER DELAY             */
     /* -------------------------------------------------- */
     function injectFadeCss() {
         if (document.getElementById("tas-fade-css")) return;
@@ -182,20 +182,74 @@
     }
 
     function initFadeObserver() {
+        let hasScrolledDown = false;
+        let footerDelayTimeout = null;
+
         const io = new IntersectionObserver((entries) => {
             entries.forEach(({ isIntersecting, target }) => {
                 if (isIntersecting) {
+                    // Special handling for footer - don't fade in immediately
+                    if (target.classList.contains('site-footer')) {
+                        // Only fade in footer if user has scrolled down and after delay
+                        if (hasScrolledDown && !footerDelayTimeout) {
+                            footerDelayTimeout = setTimeout(() => {
+                                target.classList.add("is-visible");
+                                io.unobserve(target);
+                            }, 1000); // 1 second delay
+                        }
+                        return;
+                    }
+
+                    // Normal fade-in for all other elements
                     target.classList.add("is-visible");
                     io.unobserve(target);
                 }
             });
-        }, { 
+        }, {
             threshold: 0.4,
             rootMargin: "0px 0px -100% 0px"
         });
 
-        const observeAll = () =>
-            document.querySelectorAll(".fade-in-section,.fade-in-on-scroll").forEach(el => io.observe(el));
+        // Track scroll events to detect when user scrolls down
+        let lastScrollY = window.scrollY;
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > lastScrollY && currentScrollY > 50) {
+                hasScrolledDown = true;
+
+                // Check if footer is in view and start delay if needed
+                const footer = document.querySelector('.site-footer');
+                if (footer && !footer.classList.contains('is-visible') && !footerDelayTimeout) {
+                    const footerRect = footer.getBoundingClientRect();
+                    const isFooterVisible = footerRect.top < window.innerHeight && footerRect.bottom > 0;
+
+                    if (isFooterVisible) {
+                        footerDelayTimeout = setTimeout(() => {
+                            footer.classList.add("is-visible");
+                            io.unobserve(footer);
+                        }, 1000);
+                    }
+                }
+
+                // Remove scroll listener once we've detected downward scroll
+                window.removeEventListener('scroll', handleScroll);
+            }
+            lastScrollY = currentScrollY;
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        const observeAll = () => {
+            document.querySelectorAll(".fade-in-section,.fade-in-on-scroll").forEach(el => {
+                // Don't observe footer immediately - it will be handled by scroll detection
+                if (!el.classList.contains('site-footer')) {
+                    io.observe(el);
+                } else {
+                    // Observe footer but it won't fade in until scroll + delay
+                    io.observe(el);
+                }
+            });
+        };
 
         observeAll();
 
