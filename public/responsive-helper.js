@@ -184,6 +184,11 @@
     function initFadeObserver() {
         const io = new IntersectionObserver((entries) => {
             entries.forEach(({ isIntersecting, target }) => {
+                // Exclude the social media footer from this observer
+                if (target.classList.contains('site-footer')) {
+                    return;
+                }
+
                 if (isIntersecting) {
                     target.classList.add("is-visible");
                     io.unobserve(target);
@@ -195,14 +200,54 @@
         });
 
         const observeAll = () =>
-            document.querySelectorAll(".fade-in-section,.fade-in-on-scroll").forEach(el => io.observe(el));
+            // Exclude the social media footer from the selection
+            document.querySelectorAll(".fade-in-section:not(.site-footer),.fade-in-on-scroll").forEach(el => io.observe(el));
 
         observeAll();
 
         // auto?observe nodes added later (dynamic sections)
         new MutationObserver(muts => {
-            if (muts.some(m => m.addedNodes.length)) observeAll();
+            if (muts.some(m => m.addedNodes.length)) {
+                // Exclude the social media footer from dynamically added nodes as well
+                muts.forEach(mutation => {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === 1 && (node.classList.contains('fade-in-section') || node.classList.contains('fade-in-on-scroll')) && !node.classList.contains('site-footer')) {
+                            io.observe(node);
+                        }
+                    });
+                });
+            }
         }).observe(document.body, { childList: true, subtree: true });
+
+        // New logic for the social media footer fade-in on scroll with delay
+        const socialFooter = document.querySelector('.site-footer');
+        let scrollStarted = false;
+        let fadeTimeout = null;
+
+        if (socialFooter) {
+            const handleScroll = () => {
+                if (!scrollStarted && window.scrollY > 0) {
+                    scrollStarted = true;
+                    fadeTimeout = setTimeout(() => {
+                        socialFooter.classList.add('is-visible');
+                    }, 1000); // 1000ms = 1 second delay
+                } else if (scrollStarted && window.scrollY === 0 && fadeTimeout) {
+                    // If scrolled back to top before delay, clear timeout and reset
+                    clearTimeout(fadeTimeout);
+                    fadeTimeout = null;
+                    scrollStarted = false;
+                }
+            };
+
+            window.addEventListener('scroll', handleScroll);
+
+            // Also check scroll position on DOMContentLoaded in case user refreshes scrolled down
+            document.addEventListener('DOMContentLoaded', () => {
+                if (window.scrollY > 0) {
+                    handleScroll(); // Trigger immediately if already scrolled down
+                }
+            });
+        }
     }
 
     /* -------------------------------------------------- */
