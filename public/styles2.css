@@ -250,7 +250,7 @@ input[type="reset"] {
 
 /* Site footer with fade-in effect */
 .site-footer {
-    position: static; /* Changed from fixed to static */
+    position: fixed;
     width: 100%;
     background: rgba(0, 27, 68, 0.9); /* Semi-transparent dark blue */
     color: white;

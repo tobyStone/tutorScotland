@@ -182,21 +182,20 @@
     }
 
     function initFadeObserver() {
-        const io = new IntersectionObserver((entries) => {
+        const io = new IntersectionObserver((entries, obs) => {
             entries.forEach(({ isIntersecting, target }) => {
-                // Exclude the social media footer from this observer
-                if (target.classList.contains('site-footer')) {
-                    return;
-                }
+                // ❶ Never let this observer touch the floating footer
+                if (target.classList.contains('site-footer')) return;
 
                 if (isIntersecting) {
                     target.classList.add("is-visible");
-                    io.unobserve(target);
+                    obs.unobserve(target);
                 }
             });
-        }, { 
-            threshold: 0.4,
-            rootMargin: "0px 0px -100% 0px"
+        }, {
+            /* ❷ A gentler trigger – works for huge, full-width sections */
+            threshold: 0.15,
+            rootMargin: "0px 0px -10% 0px"
         });
 
         const observeAll = () =>
