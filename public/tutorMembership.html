@@ -10,10 +10,53 @@
     <script src="/responsive-helper.js"></script>
     <script src="/js/visual-editor.js" defer></script>
     <script src="/js/dynamic-nav.js" defer></script>
+    <script>
+        // Single Intersection Observer for all fade-in elements
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    fadeObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        });
+
+        // Function to observe all fade-in elements
+        function observeFadeElements() {
+            // Observe all sections with fade-in-section class
+            document.querySelectorAll('.fade-in-section').forEach(section => {
+                fadeObserver.observe(section);
+            });
+        }
+
+        // Initial observation when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            observeFadeElements();
+        });
+
+        // Watch for dynamically added content
+        const mutationObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length) {
+                    observeFadeElements();
+                }
+            });
+        });
+
+        // Start observing the document body for changes
+        mutationObserver.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    </script>
 </head>
 <body>
     <!-- Shared banner/header -->
-    <header>
+    <header class="fade-in-section">
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
             <a href="/" class="banner-login-link login-box">Home</a>
@@ -42,7 +85,7 @@
     </div>
 
     <main>
-        <div class="mission-row">
+        <div class="mission-row fade-in-section">
             <!-- LEFT COLUMN: Shield + Ribbons -->
             <div class="left-col">
                 <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
@@ -58,7 +101,7 @@
         </div>
 
         <!-- TOP dynamic sections container -->
-        <section id="dynamicSectionsTop" class="dynamic-section-container"></section>
+        <section id="dynamicSectionsTop" class="dynamic-section-container fade-in-section"></section>
 
         <!-- INTRO: Two-column content -->
         <section class="two-col-content fade-in-section">
@@ -98,7 +141,7 @@
         </section>
 
         <!-- MIDDLE dynamic sections container -->
-        <section id="dynamicSectionsMiddle" class="dynamic-section-container"></section>
+        <section id="dynamicSectionsMiddle" class="dynamic-section-container fade-in-section"></section>
 
         <!-- WHAT WE OFFER: Two-column content -->
         <section class="two-col-content fade-in-section">
@@ -273,11 +316,11 @@
             </div>
         </section>
 
-        <!-- Clear separator before dynamic sections -->
-        <div class="dynamic-sections-separator"></div>
+        <!-- Clear separator before bottom dynamic sections -->
+        <div class="dynamic-sections-separator fade-in-section"></div>
 
         <!-- BOTTOM dynamic sections container -->
-        <section id="dynamicSections" class="dynamic-section-container"></section>
+        <section id="dynamicSections" class="dynamic-section-container fade-in-section"></section>
     </main>
 
     <!-- SOCIAL ICONS FOOTER -->
@@ -348,51 +391,6 @@
         // Observe each fadeEl
         fadeEls.forEach(el => observer.observe(el));
 
-        // Single Intersection Observer for all fade-in elements
-        const fadeObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    fadeObserver.unobserve(entry.target);
-                }
-            });
-        }, {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        });
-
-        // Function to observe all fade-in elements
-        function observeFadeElements() {
-            // Observe all sections with fade-in-section class
-            document.querySelectorAll('.fade-in-section').forEach(section => {
-                fadeObserver.observe(section);
-            });
-        }
-
-        // Initial observation when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            observeFadeElements();
-        });
-
-        // Watch for dynamically added content
-        const mutationObserver = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.addedNodes.length) {
-                    observeFadeElements();
-                }
-            });
-        });
-
-        // Start observing the document body for changes
-        mutationObserver.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-    </script>
-
-    <!-- Footer fade-in is now controlled by the About Us section animation -->
-    <script>
         // Synchronize footer fade-in with the About Us section fade-in
         document.addEventListener('DOMContentLoaded', () => {
             // Get the About Us section (the first two-col-content section)
