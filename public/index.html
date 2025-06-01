@@ -279,6 +279,34 @@
         </div>
     </footer>
 
+    <!-- STATIC BOTTOM FOOTER -->
+    <footer class="static-footer">
+        <div class="static-footer-container">
+            <div class="static-footer-left">
+                <h4>Extra Information</h4>
+                <ul>
+                    <li><a href="tutoring-standards.html">The TAS Way: Governance and Guidance</a></li>
+                    <li><a href="faq.html">FAQ's</a></li>
+                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="safeguarding-policy.html">Safeguarding Policy</a></li>
+                    <li><a href="terms-and-conditions.html">Terms and Conditions</a></li>
+                </ul>
+                <div class="static-footer-copyright">
+                    <p>ALL RIGHTS RESERVED © Tutors Alliance Scotland 2025</p>
+                </div>
+                <div class="static-footer-credits">
+                    <p>Website by <a href="#" target="_blank">Tutors Alliance Scotland</a></p>
+                </div>
+            </div>
+            <div class="static-footer-right">
+                <div class="website-url">
+                    <p>www.tutorsalliancescotland.org.uk</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
     <!-- Font Awesome for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
@@ -339,11 +367,11 @@
                     // Add each section with proper spacing and styling
                     list.forEach((s, index) => {
                         host.insertAdjacentHTML('beforeend', `
-                          <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
-                            ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
-                            <h2>${s.heading}</h2>
-                            <div class="dyn-content">${s.text}</div>
-                          </article>`);
+                              <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
+                                ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
+                                <h2>${s.heading}</h2>
+                                <div class="dyn-content">${s.text}</div>
+                              </article>`);
                     });
 
                     // Make sure the dynamic sections container is visible
@@ -380,7 +408,6 @@
     </script>
 
     <!-- Single Intersection Observer for all fade-in elements -->
-
     <!-- Load dynamic sections from the shared module -->
     <script type="module" src="/js/dynamic-sections.js"></script>
 </body>
