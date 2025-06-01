@@ -1,5 +1,5 @@
 /**
- * responsive-helper.js � Tutors Alliance Scotland
+ * responsive-helper.js  Tutors Alliance Scotland
  * -------------------------------------------------
  * ?  Guarantees every page links the **global style bundle** _and_
  *    `header-banner.css` so dynamic HTML never ships un?styled.
@@ -206,8 +206,9 @@
                 }
             });
         }, {
-            threshold: 0.4,
-            rootMargin: "0px 0px -100% 0px"
+            /* Use gentler trigger for sections */
+            threshold: 0.15,
+            rootMargin: "0px 0px -10% 0px"
         });
 
         // Track scroll events to detect when user scrolls down
@@ -241,11 +242,8 @@
 
         const observeAll = () => {
             document.querySelectorAll(".fade-in-section,.fade-in-on-scroll").forEach(el => {
-                // Don't observe footer immediately - it will be handled by scroll detection
+                // Only observe elements that are NOT the footer with the main observer
                 if (!el.classList.contains('site-footer')) {
-                    io.observe(el);
-                } else {
-                    // Observe footer but it won't fade in until scroll + delay
                     io.observe(el);
                 }
             });
@@ -255,7 +253,16 @@
 
         // auto?observe nodes added later (dynamic sections)
         new MutationObserver(muts => {
-            if (muts.some(m => m.addedNodes.length)) observeAll();
+            if (muts.some(m => m.addedNodes.length)) {
+                muts.forEach(mutation => {
+                    mutation.addedNodes.forEach(node => {
+                         // Only observe elements that are NOT the footer with the main observer
+                        if (node.nodeType === 1 && (node.classList.contains('fade-in-section') || node.classList.contains('fade-in-on-scroll')) && !node.classList.contains('site-footer')) {
+                            io.observe(node);
+                        }
+                    });
+                });
+            }
         }).observe(document.body, { childList: true, subtree: true });
     }
 
