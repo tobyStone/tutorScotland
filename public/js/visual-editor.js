@@ -15,15 +15,17 @@ class VisualEditor {
     }
 
     async init() {
-        // Check if user is admin
-        const isAdmin = await this.checkAdminStatus();
-        if (!isAdmin) return;
-
-        // Load existing overrides
+        // Load existing overrides (always for everyone)
         await this.loadContentOverrides();
 
-        // Apply existing overrides
+        // Apply existing overrides (always for everyone)
         this.applyContentOverrides();
+
+        // Check if user is admin
+        const isAdmin = await this.checkAdminStatus();
+
+        // Stop here for non-admins - they see overrides but not editing UI
+        if (!isAdmin) return;
 
         // Create edit mode toggle
         this.createEditModeToggle();
