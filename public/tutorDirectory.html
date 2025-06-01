@@ -54,8 +54,8 @@
             <!-- RIGHT COLUMN: heading + about-us text -->
             <div class="right-col">
 
-        <!-- TOP dynamic sections container -->
-        <section id="dynamicSectionsTop" class="dynamic-section-container"></section>
+                <!-- TOP dynamic sections container -->
+                <section id="dynamicSectionsTop" class="dynamic-section-container"></section>
 
 
                 <div class="about-us-landing" id="aboutUsLanding">
@@ -74,6 +74,7 @@
                             margin-left: auto !important;
                             margin-right: auto !important;
                         }
+
                         .about-us-landing p {
                             text-align: center !important;
                         }
@@ -125,10 +126,12 @@
         function goToLogin(role) {
             window.location.href = `login.html?role=${encodeURIComponent(role)}`;
         }
+    </script>
 
-        // Initialize the rolling banner using responsive-helper.js
+    // Initialize the rolling banner using responsive-helper.js
     <script src="/js/visual-editor.js" defer></script>
-        document.addEventListener('DOMContentLoaded', function() {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
             initRollingBanner();
         });
 
@@ -172,7 +175,7 @@
 
             window.location.href = `/tutors/search${queryParams}`;
         });
-
+    </script>
     <script>
         // Fade-in animation for sections
         const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
@@ -205,7 +208,7 @@
     <!-- Load the dynamic sections script -->
     <script type="module" src="/js/dynamic-sections.js"></script>
 
- 
+
 
 </body>
 </html>
