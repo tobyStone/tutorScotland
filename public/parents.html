@@ -10,49 +10,6 @@
     <script src="/responsive-helper.js"></script>
     <script src="/js/dynamic-nav.js" defer></script>
     <script src="/js/visual-editor.js" defer></script>
-    <script>
-        // Single Intersection Observer for all fade-in elements
-        const fadeObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    fadeObserver.unobserve(entry.target);
-                }
-            });
-        }, {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        });
-
-        // Function to observe all fade-in elements
-        function observeFadeElements() {
-            // Observe all sections with fade-in-section class
-            document.querySelectorAll('.fade-in-section').forEach(section => {
-                fadeObserver.observe(section);
-            });
-        }
-
-        // Initial observation when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            observeFadeElements();
-        });
-
-        // Watch for dynamically added content
-        const mutationObserver = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.addedNodes.length) {
-                    observeFadeElements();
-                }
-            });
-        });
-
-        // Start observing the document body for changes
-        mutationObserver.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-    </script>
     <style>
         /* Hide legoLeft and legoRight images in portrait orientation on restricted viewports */
         @media (orientation: portrait) {
