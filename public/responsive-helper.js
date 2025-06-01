@@ -166,7 +166,7 @@
     }
 
     /* -------------------------------------------------- */
-    /* 4  �  FADE?IN OBSERVER                               */
+    /* 4  �  FADE?IN OBSERVER WITH FOOTER DELAY             */
     /* -------------------------------------------------- */
     function injectFadeCss() {
         if (document.getElementById("tas-fade-css")) return;
@@ -182,71 +182,81 @@
     }
 
     function initFadeObserver() {
-        const io = new IntersectionObserver((entries, obs) => {
-            entries.forEach(({ isIntersecting, target }) => {
-                // ❶ Never let this observer touch the floating footer
-                if (target.classList.contains('site-footer')) return;
+        let hasScrolledDown = false;
+        let footerDelayTimeout = null;
 
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(({ isIntersecting, target }) => {
                 if (isIntersecting) {
+                    // Special handling for footer - don't fade in immediately
+                    if (target.classList.contains('site-footer')) {
+                        // Only fade in footer if user has scrolled down and after delay
+                        if (hasScrolledDown && !footerDelayTimeout) {
+                            footerDelayTimeout = setTimeout(() => {
+                                target.classList.add("is-visible");
+                                io.unobserve(target);
+                            }, 1000); // 1 second delay
+                        }
+                        return;
+                    }
+
+                    // Normal fade-in for all other elements
                     target.classList.add("is-visible");
-                    obs.unobserve(target);
+                    io.unobserve(target);
                 }
             });
         }, {
-            /* ❷ A gentler trigger – works for huge, full-width sections */
-            threshold: 0.15,
-            rootMargin: "0px 0px -10% 0px"
+            threshold: 0.4,
+            rootMargin: "0px 0px -100% 0px"
         });
 
-        const observeAll = () =>
-            // Exclude the social media footer from the selection
-            document.querySelectorAll(".fade-in-section:not(.site-footer),.fade-in-on-scroll").forEach(el => io.observe(el));
+        // Track scroll events to detect when user scrolls down
+        let lastScrollY = window.scrollY;
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > lastScrollY && currentScrollY > 50) {
+                hasScrolledDown = true;
+
+                // Check if footer is in view and start delay if needed
+                const footer = document.querySelector('.site-footer');
+                if (footer && !footer.classList.contains('is-visible') && !footerDelayTimeout) {
+                    const footerRect = footer.getBoundingClientRect();
+                    const isFooterVisible = footerRect.top < window.innerHeight && footerRect.bottom > 0;
+
+                    if (isFooterVisible) {
+                        footerDelayTimeout = setTimeout(() => {
+                            footer.classList.add("is-visible");
+                            io.unobserve(footer);
+                        }, 1000);
+                    }
+                }
+
+                // Remove scroll listener once we've detected downward scroll
+                window.removeEventListener('scroll', handleScroll);
+            }
+            lastScrollY = currentScrollY;
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        const observeAll = () => {
+            document.querySelectorAll(".fade-in-section,.fade-in-on-scroll").forEach(el => {
+                // Don't observe footer immediately - it will be handled by scroll detection
+                if (!el.classList.contains('site-footer')) {
+                    io.observe(el);
+                } else {
+                    // Observe footer but it won't fade in until scroll + delay
+                    io.observe(el);
+                }
+            });
+        };
 
         observeAll();
 
         // auto?observe nodes added later (dynamic sections)
         new MutationObserver(muts => {
-            if (muts.some(m => m.addedNodes.length)) {
-                // Exclude the social media footer from dynamically added nodes as well
-                muts.forEach(mutation => {
-                    mutation.addedNodes.forEach(node => {
-                        if (node.nodeType === 1 && (node.classList.contains('fade-in-section') || node.classList.contains('fade-in-on-scroll')) && !node.classList.contains('site-footer')) {
-                            io.observe(node);
-                        }
-                    });
-                });
-            }
+            if (muts.some(m => m.addedNodes.length)) observeAll();
         }).observe(document.body, { childList: true, subtree: true });
-
-        // New logic for the social media footer fade-in on scroll with delay
-        const socialFooter = document.querySelector('.site-footer');
-        let scrollStarted = false;
-        let fadeTimeout = null;
-
-        if (socialFooter) {
-            const handleScroll = () => {
-                if (!scrollStarted && window.scrollY > 0) {
-                    scrollStarted = true;
-                    fadeTimeout = setTimeout(() => {
-                        socialFooter.classList.add('is-visible');
-                    }, 1000); // 1000ms = 1 second delay
-                } else if (scrollStarted && window.scrollY === 0 && fadeTimeout) {
-                    // If scrolled back to top before delay, clear timeout and reset
-                    clearTimeout(fadeTimeout);
-                    fadeTimeout = null;
-                    scrollStarted = false;
-                }
-            };
-
-            window.addEventListener('scroll', handleScroll);
-
-            // Also check scroll position on DOMContentLoaded in case user refreshes scrolled down
-            document.addEventListener('DOMContentLoaded', () => {
-                if (window.scrollY > 0) {
-                    handleScroll(); // Trigger immediately if already scrolled down
-                }
-            });
-        }
     }
 
     /* -------------------------------------------------- */

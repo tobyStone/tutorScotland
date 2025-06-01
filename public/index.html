@@ -271,7 +271,7 @@
     <section id="dynamicSections"></section>
 
     <!-- SOCIAL ICONS FOOTER -->
-    <footer class="site-footer fade-in-section">
+    <footer class="site-footer fade-in-section" style="opacity: 0;">
         <div class="footer-icons">
             <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
             <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -308,14 +308,101 @@
     <!-- Font Awesome for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-    <!-- Script for rolling banner -->
-    <script src="/js/rolling-banner.js"></script>
+    <script>
+        function goToLogin(role) {
+            window.location.href = `login.html?role=${encodeURIComponent(role)}`;
+        }
 
-    <!-- fade in logic ......................................... -->
+        // Rolling banner fetch - try news first, fallback to tutors
+        fetch('/api/sections?page=rolling-banner')
+            .then(res => res.json())
+            .then(sections => {
+                if (sections && sections.length > 0) {
+                    // Format news information - join all text content with separator
+                    const text = sections.map(s => s.text).join(' | ');
+                    document.getElementById('tutorBanner').innerText = text;
+                } else {
+                    // Fallback to tutors if no news sections are found
+                    return fetch('/api/tutors?format=json')
+                        .then(res => res.json())
+                        .then(tutors => {
+                            const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
+                            document.getElementById('tutorBanner').innerText = text;
+                        });
+                }
+            })
+            .catch(err => console.error('Error fetching banner content:', err));
 
-    <!-- Single Intersection Observer for all fade-in elements -->
 
-    <!-- Load dynamic sections from the shared module -->
-    <script type="module" src="/js/dynamic-sections.js"></script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // After the heading's animation delay (say 1.5s) plus a little buffer:
+            setTimeout(() => {
+                document.querySelectorAll('.fade-later').forEach(el => {
+                    el.classList.add('fade-in');
+                });
+            }, 1500); // or 2000 if you want a bit more buffer
+        });
+
+        // All fade-in logic is now handled centrally by responsive-helper.js
+
+
+
+    </script>
+    <!-- Fade-in animations are now handled centrally by responsive-helper.js -->
+    <script type="module">
+        const page = location.pathname.replace(/^\//, '').split('.')[0] || 'index';
+
+        fetch(`/api/sections?page=${page}`)
+            .then(r => r.json())
+            .then(list => {
+                if (list && list.length > 0) {
+                    // Only show the dynamic sections container if there are sections to display
+                    const host = document.getElementById('dynamicSections');
+
+                    // Clear any existing content
+                    host.innerHTML = '';
+
+                    // Add each section with proper spacing and styling
+                    list.forEach((s, index) => {
+                        host.insertAdjacentHTML('beforeend', `
+                          <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
+                            ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
+                            <h2>${s.heading}</h2>
+                            <div class="dyn-content">${s.text}</div>
+                          </article>`);
+                    });
+
+                    // Make sure the dynamic sections container is visible
+                    host.style.display = 'block';
+
+                    // Ensure the separator is visible
+                    document.querySelector('.dynamic-sections-separator').style.display = 'block';
+
+                    // Force layout recalculation to ensure proper positioning
+                    document.body.offsetHeight;
+
+                    // Dynamic blocks will be automatically observed by responsive-helper.js
+
+                    // Scroll to the dynamic sections if they were added via admin
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.get('scrollToNew') === 'true') {
+                        setTimeout(() => {
+                            host.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 500);
+                    }
+                } else {
+                    // If no dynamic sections, hide the container and separator
+                    const host = document.getElementById('dynamicSections');
+                    host.style.display = 'none';
+                    document.querySelector('.dynamic-sections-separator').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading dynamic sections:', error);
+                // Hide the container and separator on error
+                document.getElementById('dynamicSections').style.display = 'none';
+                document.querySelector('.dynamic-sections-separator').style.display = 'none';
+            });
+    </script>
 </body>
 </html>

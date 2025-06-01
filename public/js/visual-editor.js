@@ -156,6 +156,9 @@ class VisualEditor {
         this.scanForEditableElements();
         this.addEditOverlays();
 
+        // Disable links except in nav bar and header
+        this.disableLinks();
+
         // Add visual indicator
         document.body.style.outline = '3px dashed #007bff';
         document.body.style.outlineOffset = '-3px';
@@ -168,12 +171,55 @@ class VisualEditor {
         // Remove edit overlays
         this.removeEditOverlays();
 
+        // Re-enable links
+        this.enableLinks();
+
         // Remove visual indicators
         document.body.style.outline = '';
         document.body.style.outlineOffset = '';
 
         // Hide instructions
         this.hideEditInstructions();
+    }
+
+    disableLinks() {
+        // Disable all links except those in nav bar, header, and admin controls
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+            // Skip nav bar, header, and admin control links
+            if (link.closest('nav, header, #edit-mode-toggle, #editor-modal, .edit-overlay')) {
+                return;
+            }
+
+            // Store original href and disable link
+            link.dataset.originalHref = link.href;
+            link.href = 'javascript:void(0)';
+            link.style.cursor = 'default';
+            link.style.opacity = '0.6';
+
+            // Add click prevention
+            link.addEventListener('click', this.preventLinkClick, true);
+        });
+    }
+
+    enableLinks() {
+        // Re-enable all disabled links
+        const links = document.querySelectorAll('a[data-original-href]');
+        links.forEach(link => {
+            link.href = link.dataset.originalHref;
+            link.removeAttribute('data-original-href');
+            link.style.cursor = '';
+            link.style.opacity = '';
+
+            // Remove click prevention
+            link.removeEventListener('click', this.preventLinkClick, true);
+        });
+    }
+
+    preventLinkClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
     }
 
     scanForEditableElements() {
@@ -439,6 +485,19 @@ class VisualEditor {
                         <div class="form-group" id="image-group" style="display: none;">
                             <label for="content-image">Image URL:</label>
                             <input type="url" id="content-image" placeholder="https://example.com/image.jpg">
+
+                            <div class="upload-section">
+                                <label for="image-upload">Or upload a new image:</label>
+                                <input type="file" id="image-upload" accept="image/*">
+                                <button type="button" id="upload-btn" class="btn btn-secondary">Upload Image</button>
+                                <div id="upload-progress" style="display: none;">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill"></div>
+                                    </div>
+                                    <span class="progress-text">Uploading...</span>
+                                </div>
+                            </div>
+
                             <label for="image-alt">Alt Text:</label>
                             <input type="text" id="image-alt" placeholder="Image description">
                         </div>
@@ -605,6 +664,39 @@ class VisualEditor {
                 background: #e0a800;
             }
 
+            #editor-modal .upload-section {
+                margin: 15px 0;
+                padding: 15px;
+                border: 2px dashed #ddd;
+                border-radius: 4px;
+                background: #f8f9fa;
+            }
+
+            #editor-modal .upload-section label {
+                margin-bottom: 10px;
+            }
+
+            #editor-modal .progress-bar {
+                width: 100%;
+                height: 20px;
+                background: #e9ecef;
+                border-radius: 10px;
+                overflow: hidden;
+                margin: 10px 0 5px 0;
+            }
+
+            #editor-modal .progress-fill {
+                height: 100%;
+                background: #007bff;
+                width: 0%;
+                transition: width 0.3s ease;
+            }
+
+            #editor-modal .progress-text {
+                font-size: 12px;
+                color: #666;
+            }
+
             @keyframes slideIn {
                 from {
                     opacity: 0;
@@ -627,6 +719,7 @@ class VisualEditor {
         const saveBtn = document.getElementById('save-btn');
         const previewBtn = document.getElementById('preview-btn');
         const restoreBtn = document.getElementById('restore-btn');
+        const uploadBtn = document.getElementById('upload-btn');
 
         // Close modal events
         closeBtn.addEventListener('click', () => this.closeModal());
@@ -639,6 +732,7 @@ class VisualEditor {
         saveBtn.addEventListener('click', () => this.saveContent());
         previewBtn.addEventListener('click', () => this.previewContent());
         restoreBtn.addEventListener('click', () => this.restoreOriginal());
+        uploadBtn.addEventListener('click', () => this.uploadImage());
     }
 
     openEditor(element, selector, type) {
@@ -877,6 +971,83 @@ class VisualEditor {
                     element.textContent = originalContent.text;
                 }
                 break;
+        }
+    }
+
+    async uploadImage() {
+        const fileInput = document.getElementById('image-upload');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            this.showNotification('Please select an image file first', 'error');
+            return;
+        }
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            this.showNotification('Please select a valid image file', 'error');
+            return;
+        }
+
+        // Validate file size (4MB limit)
+        if (file.size > 4 * 1024 * 1024) {
+            this.showNotification('Image file is too large. Please select a file under 4MB', 'error');
+            return;
+        }
+
+        const progressDiv = document.getElementById('upload-progress');
+        const progressFill = progressDiv.querySelector('.progress-fill');
+        const progressText = progressDiv.querySelector('.progress-text');
+        const uploadBtn = document.getElementById('upload-btn');
+
+        try {
+            // Show progress
+            progressDiv.style.display = 'block';
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'Uploading...';
+
+            // Create FormData
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', 'content-images');
+
+            // Upload to Vercel Blob via upload-image.js API
+            const response = await fetch('/api/upload-image', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Upload failed');
+            }
+
+            const result = await response.json();
+
+            // Update progress to 100%
+            progressFill.style.width = '100%';
+            progressText.textContent = 'Upload complete!';
+
+            // Update the image URL field
+            document.getElementById('content-image').value = result.url;
+
+            // Show success message
+            this.showNotification('Image uploaded successfully!', 'success');
+
+            // Clear file input
+            fileInput.value = '';
+
+        } catch (error) {
+            console.error('Upload error:', error);
+            this.showNotification('Failed to upload image: ' + error.message, 'error');
+        } finally {
+            // Reset UI
+            setTimeout(() => {
+                progressDiv.style.display = 'none';
+                progressFill.style.width = '0%';
+                progressText.textContent = 'Uploading...';
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = 'Upload Image';
+            }, 2000);
         }
     }
 
