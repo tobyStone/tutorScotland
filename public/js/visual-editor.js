@@ -4,6 +4,8 @@
  */
 
 class VisualEditor {
+    static BUTTON_CSS = 'aurora btn btn-primary';   // adjust if you renamed the framework class
+
     constructor() {
         this.isEditMode = false;
         this.currentPage = this.getCurrentPageName();
@@ -93,6 +95,9 @@ class VisualEditor {
                 if (element.tagName === 'A') {
                     element.href = override.image; // Using image field for URL
                     element.textContent = override.text;
+                    if (override.isButton) {
+                        element.className = VisualEditor.BUTTON_CSS;
+                    }
                 }
                 break;
         }
@@ -1158,34 +1163,87 @@ class VisualEditor {
         const btn = document.createElement('a');
         btn.href = '#';
         btn.textContent = 'New Button';
-        btn.className = 've-btn btn btn-primary';
+        btn.className = `ve-btn ${VisualEditor.BUTTON_CSS}`;
         btn.style.marginLeft = '8px';
         btn.title = 'Click to edit this button';
+        btn.style.pointerEvents = 'auto';
 
         // Insert after the paragraph
         element.parentNode.insertBefore(btn, element.nextSibling);
         
-        // Add edit overlay to the new button
-        const selector = this.generateSelector(btn);
-        const overlay = this.createEditOverlay(btn, selector, 'link');
-        btn.style.position = 'relative';
-        btn.appendChild(overlay);
+        // Scan and add overlay to the new button
+        const editableButton = this.editableElements.find(item => item.element === btn);
+        if (editableButton) {
+            const overlay = this.createEditOverlay(editableButton.element, editableButton.selector, editableButton.type);
+            editableButton.element.style.position = 'relative';
+            editableButton.element.appendChild(overlay);
+        } else {
+            // If not found in editableElements (shouldn't happen if selector logic is good)
+            const selector = this.generateSelector(btn);
+            const type = this.getElementType(btn);
+            const overlay = this.createEditOverlay(btn, selector, type);
+            btn.style.position = 'relative';
+            btn.appendChild(overlay);
+        }
 
-        this.showNotification('Button added – hover over it to edit', 'success');
+        /* ---------- PERSIST ---------- */
+        const selector = this.generateSelector(btn);          // unique to THIS button
+        fetch('/api/content-manager?operation=override', {
+            method : 'POST',
+            headers: { 'Content-Type':'application/json' },
+            body   : JSON.stringify({
+                         targetPage    : this.currentPage,
+                         targetSelector: selector,
+                         contentType   : 'link', // Store as link type
+                         text          : btn.textContent,
+                         image         : btn.href, // Using image field for URL
+                         isButton      : true                // <– NEW FLAG
+                     })
+        })
+        .then(r => r.json())
+        .then(override => {
+            // keep local cache in sync so the button survives page switches
+            this.overrides.set(selector, override);
+            // remember DB id – handy for deletion later
+            btn.dataset.overrideId = override._id;
+            this.showNotification('Button added & saved ✔', 'success');
+        })
+        .catch(err => {
+            console.error(err);
+            btn.remove();                     // rollback
+            this.showNotification('Failed to save button', 'error');
+        });
     }
 
     removeButtons() {
         if (!this.activeEditor) return;
         const { element } = this.activeEditor;
-        
-        const buttons = element.parentNode.querySelectorAll('.ve-btn');
+        const buttons = element.parentNode.querySelectorAll(`.ve-btn`);
         if (buttons.length === 0) {
             this.showNotification('No buttons found to remove', 'info');
             return;
         }
 
-        buttons.forEach(btn => btn.remove());
-        this.showNotification(`${buttons.length} button${buttons.length > 1 ? 's' : ''} removed`, 'success');
+        buttons.forEach(async btn => {
+            // 1 · remove from DB if we know the id
+            if (btn.dataset.overrideId) {
+                try {
+                    const response = await fetch(`/api/content-manager?id=${btn.dataset.overrideId}`, { method:'DELETE' });
+                    if (response.ok) {
+                        this.overrides.delete(this.generateSelector(btn));
+                    } else {
+                        console.error('Failed to delete button override from DB', response.status, await response.text());
+                        this.showNotification('Warning: Could not delete button from database', 'warning');
+                    }
+                } catch (err) {
+                    console.error('Error deleting button override:', err);
+                    this.showNotification('Error: Could not delete button from database', 'error');
+                }
+            }
+            // 2 · remove from DOM
+            btn.remove();
+        });
+        this.showNotification(`${buttons.length} button${buttons.length>1?'s':''} removed`, 'success');
     }
 
     showNotification(message, type = 'info') {

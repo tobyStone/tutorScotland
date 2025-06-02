@@ -105,7 +105,8 @@ async function handleCreateOverride(req, res) {
             text,
             image,
             originalContent,
-            overrideType = 'replace'
+            overrideType = 'replace',
+            isButton = false
         } = req.body;
 
         if (!targetPage || !targetSelector || !contentType) {
@@ -122,8 +123,8 @@ async function handleCreateOverride(req, res) {
             });
         }
 
-        // Normalize content type (list and button are stored as html)
-        const normalizedType = ['list', 'button'].includes(contentType) ? 'html' : contentType;
+        // Normalize content type (list and button are stored as html or link)
+        const normalizedType = contentType === 'list' ? 'html' : contentType;
 
         // Check if override already exists
         const existingOverride = await Section.findOne({
@@ -141,6 +142,7 @@ async function handleCreateOverride(req, res) {
             existingOverride.contentType = normalizedType;
             existingOverride.overrideType = overrideType;
             existingOverride.isActive = true;
+            existingOverride.isButton = isButton;
             existingOverride.updatedAt = new Date();
 
             await existingOverride.save();
@@ -156,6 +158,7 @@ async function handleCreateOverride(req, res) {
                 heading,
                 text,
                 image,
+                isButton,
                 originalContent,
                 overrideType,
                 isActive: true,
@@ -181,6 +184,11 @@ async function handleUpdateOverride(req, res) {
 
         if (!id) {
             return res.status(400).json({ message: 'Override ID required' });
+        }
+
+        // Ensure isButton is explicitly handled if present in updateData
+        if ('isButton' in updateData) {
+            updateData.isButton = Boolean(updateData.isButton);
         }
 
         const override = await Section.findByIdAndUpdate(
