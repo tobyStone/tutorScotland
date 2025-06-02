@@ -4,7 +4,7 @@
  */
 
 class VisualEditor {
-    static BUTTON_CSS = 'aurora btn btn-primary';   // adjust if you renamed the framework class
+    static BUTTON_CSS = 'button aurora';
 
     constructor() {
         this.isEditMode = false;
@@ -95,12 +95,6 @@ class VisualEditor {
                 if (element.tagName === 'A') {
                     element.href = override.image; // Using image field for URL
                     element.textContent = override.text;
-                    if (override.isButton) {
-                        element.classList.add('ve-btn', ...VisualEditor.BUTTON_CSS.split(' '));
-                    } else {
-                        // Ensure non-button links don't have button classes
-                        element.classList.remove('ve-btn', ...VisualEditor.BUTTON_CSS.split(' '));
-                    }
                 }
                 break;
         }
@@ -1166,7 +1160,7 @@ class VisualEditor {
         const btn = document.createElement('a');
         btn.href = '#';
         btn.textContent = 'New Button';
-        btn.className = `ve-btn ${VisualEditor.BUTTON_CSS}`;
+        btn.classList.add('ve-btn', ...VisualEditor.BUTTON_CSS.split(' '));
         btn.style.marginLeft = '8px';
         btn.title = 'Click to edit this button';
         btn.style.pointerEvents = 'auto';
@@ -1183,31 +1177,31 @@ class VisualEditor {
         }
 
         /* ---------- PERSIST ---------- */
-        const selector = this.generateSelector(btn);          // unique to THIS button
+        const para      = this.activeEditor.element;          // the <p> we're editing
+        const selector  = this.generateSelector(para);        // override lives on the paragraph
+
         fetch('/api/content-manager?operation=override', {
             method : 'POST',
             headers: { 'Content-Type':'application/json' },
             body   : JSON.stringify({
-                         targetPage    : this.currentPage,
-                         targetSelector: selector,
-                         contentType   : 'link', // Store as link type
-                         text          : btn.textContent,
-                         image         : btn.href, // Using image field for URL
-                         isButton      : true                // <– NEW FLAG
-                     })
+                       targetPage    : this.currentPage,
+                       targetSelector: selector,
+                       contentType   : 'html',           // store the *whole* snippet
+                       text          : para.innerHTML    // includes the <a> we just added
+                    })
         })
         .then(r => r.json())
         .then(override => {
             // keep local cache in sync so the button survives page switches
             this.overrides.set(selector, override);
-            // remember DB id – handy for deletion later
+            // remember DB id – handy for deletion later (though less critical now)
             btn.dataset.overrideId = override._id;
-            this.showNotification('Button added & saved ✔', 'success');
+            this.showNotification('Button added & paragraph saved ✔', 'success');
         })
         .catch(err => {
             console.error(err);
             btn.remove();                     // rollback
-            this.showNotification('Failed to save button', 'error');
+            this.showNotification('Failed to save paragraph with button', 'error');
         });
     }
 
@@ -1220,26 +1214,31 @@ class VisualEditor {
             return;
         }
 
-        buttons.forEach(async btn => {
-            // 1 · remove from DB if we know the id
-            if (btn.dataset.overrideId) {
-                try {
-                    const response = await fetch(`/api/content-manager?id=${btn.dataset.overrideId}`, { method:'DELETE' });
-                    if (response.ok) {
-                        this.overrides.delete(this.generateSelector(btn));
-                    } else {
-                        console.error('Failed to delete button override from DB', response.status, await response.text());
-                        this.showNotification('Warning: Could not delete button from database', 'warning');
-                    }
-                } catch (err) {
-                    console.error('Error deleting button override:', err);
-                    this.showNotification('Error: Could not delete button from database', 'error');
-                }
-            }
-            // 2 · remove from DOM
-            btn.remove();
+        buttons.forEach(btn => btn.remove());
+
+        /* persist the new state of the paragraph */
+        const para     = this.activeEditor.element;
+        const selector = this.generateSelector(para);
+        fetch('/api/content-manager?operation=override', {
+            method :'POST',
+            headers:{ 'Content-Type':'application/json' },
+            body   : JSON.stringify({
+                        targetPage    : this.currentPage,
+                        targetSelector: selector,
+                        contentType   : 'html',
+                        text          : para.innerHTML
+                     })
+        })
+        .then(() => {
+            // No need to update local overrides here, as the page will likely reload
+            // after deleting, or the next load will pick up the new override.
+            this.showNotification(`${buttons.length} button${buttons.length>1?'s':''} removed and paragraph saved ✔`, 'success');
+        })
+        .catch(err => {
+            console.error(err);
+            this.showNotification('Failed to save paragraph after removing buttons', 'error');
+            // Optionally, could try to re-add buttons to the DOM here if save fails
         });
-        this.showNotification(`${buttons.length} button${buttons.length>1?'s':''} removed`, 'success');
     }
 
     showNotification(message, type = 'info') {
