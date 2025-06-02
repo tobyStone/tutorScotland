@@ -96,7 +96,10 @@ class VisualEditor {
                     element.href = override.image; // Using image field for URL
                     element.textContent = override.text;
                     if (override.isButton) {
-                        element.className = VisualEditor.BUTTON_CSS;
+                        element.classList.add('ve-btn', ...VisualEditor.BUTTON_CSS.split(' '));
+                    } else {
+                        // Ensure non-button links don't have button classes
+                        element.classList.remove('ve-btn', ...VisualEditor.BUTTON_CSS.split(' '));
                     }
                 }
                 break;
@@ -1177,13 +1180,6 @@ class VisualEditor {
             const overlay = this.createEditOverlay(editableButton.element, editableButton.selector, editableButton.type);
             editableButton.element.style.position = 'relative';
             editableButton.element.appendChild(overlay);
-        } else {
-            // If not found in editableElements (shouldn't happen if selector logic is good)
-            const selector = this.generateSelector(btn);
-            const type = this.getElementType(btn);
-            const overlay = this.createEditOverlay(btn, selector, type);
-            btn.style.position = 'relative';
-            btn.appendChild(overlay);
         }
 
         /* ---------- PERSIST ---------- */

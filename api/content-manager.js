@@ -123,7 +123,7 @@ async function handleCreateOverride(req, res) {
             });
         }
 
-        // Normalize content type (list and button are stored as html or link)
+        // Normalize content type (list stored as html, button as link)
         const normalizedType = contentType === 'list' ? 'html' : contentType;
 
         // Check if override already exists
