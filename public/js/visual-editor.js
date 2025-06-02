@@ -877,6 +877,21 @@ class VisualEditor {
         if (!this.activeEditor) return;
 
         const { element, selector, type } = this.activeEditor;
+
+        if (type === 'link' && element.classList.contains('ve-btn')) {
+            const para = element.closest('p');
+            try {
+                await this.saveParagraphOverride(para);
+                this.applyOverride(para, {contentType:'html', text:para.innerHTML});
+                this.closeModal();
+                this.showNotification('Button updated ✔', 'success');
+            } catch (err) {
+                console.error('Failed to save paragraph override for button', err);
+                this.showNotification('Failed to save button update', 'error');
+            }
+            return;
+        }
+
         const contentData = this.getFormData(type);
 
         try {
@@ -1177,32 +1192,14 @@ class VisualEditor {
         }
 
         /* ---------- PERSIST ---------- */
-        const para      = this.activeEditor.element;          // the <p> we're editing
-        const selector  = this.generateSelector(para);        // override lives on the paragraph
-
-        fetch('/api/content-manager?operation=override', {
-            method : 'POST',
-            headers: { 'Content-Type':'application/json' },
-            body   : JSON.stringify({
-                       targetPage    : this.currentPage,
-                       targetSelector: selector,
-                       contentType   : 'html',           // store the *whole* snippet
-                       text          : para.innerHTML    // includes the <a> we just added
-                    })
-        })
-        .then(r => r.json())
-        .then(override => {
-            // keep local cache in sync so the button survives page switches
-            this.overrides.set(selector, override);
-            // remember DB id – handy for deletion later (though less critical now)
-            btn.dataset.overrideId = override._id;
-            this.showNotification('Button added & paragraph saved ✔', 'success');
-        })
-        .catch(err => {
-            console.error(err);
-            btn.remove();                     // rollback
-            this.showNotification('Failed to save paragraph with button', 'error');
-        });
+        const para = this.activeEditor.element; // The paragraph element
+        this.saveParagraphOverride(para)
+            .then(() => this.showNotification('Button added & saved ✔', 'success'))
+            .catch(err => {
+                console.error(err);
+                btn.remove(); // rollback
+                this.showNotification('Failed to save paragraph', 'error');
+            });
     }
 
     removeButtons() {
@@ -1217,7 +1214,7 @@ class VisualEditor {
         buttons.forEach(btn => btn.remove());
 
         /* persist the new state of the paragraph */
-        const para     = this.activeEditor.element;
+        const para = this.activeEditor.element;
         const selector = this.generateSelector(para);
         fetch('/api/content-manager?operation=override', {
             method :'POST',
@@ -1269,6 +1266,23 @@ class VisualEditor {
                 setTimeout(() => notification.remove(), 300);
             }
         }, 3000);
+    }
+
+    async saveParagraphOverride(paraElm) {
+        const selector = this.generateSelector(paraElm);
+        const res = await fetch('/api/content-manager?operation=override', {
+            method : 'POST',
+            headers: { 'Content-Type':'application/json' },
+            body   : JSON.stringify({
+                       targetPage    : this.currentPage,
+                       targetSelector: selector,
+                       contentType   : 'html',
+                       text          : paraElm.innerHTML          // full snippet
+                     })
+        });
+        const override = await res.json();
+        this.overrides.set(selector, override);
+        return override;
     }
 }
 
