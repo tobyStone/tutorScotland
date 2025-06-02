@@ -231,6 +231,7 @@ class VisualEditor {
         const selectors = [
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
             'p:not(.no-edit)',
+            'ul:not(.no-edit)', 'ol:not(.no-edit)', 'li:not(.no-edit)',
             'a:not(.no-edit)',
             'img:not(.no-edit)',
             '.editable'
@@ -292,6 +293,10 @@ class VisualEditor {
             case 'h5':
             case 'h6':
                 return 'text';
+            case 'ul':
+            case 'ol':
+            case 'li':
+                return 'html';  // Always edit lists as HTML to preserve structure
             case 'p':
             case 'div':
             case 'span':
@@ -482,11 +487,15 @@ class VisualEditor {
                         <div class="form-group" id="html-group" style="display: none;">
                             <label for="content-html">HTML Content:</label>
                             <textarea id="content-html" rows="6" placeholder="Enter HTML content..."></textarea>
+                            <small class="form-text text-muted">For lists, preserve the &lt;ul&gt;, &lt;ol&gt;, and &lt;li&gt; tags.</small>
                         </div>
 
                         <div class="form-group" id="image-group" style="display: none;">
                             <label for="content-image">Image URL:</label>
                             <input type="url" id="content-image" placeholder="https://example.com/image.jpg">
+                            <div id="image-preview" class="mt-2" style="display: none;">
+                                <img src="" alt="Preview" style="max-width: 200px; max-height: 200px;">
+                            </div>
 
                             <div class="upload-section">
                                 <label for="image-upload">Or upload a new image:</label>
@@ -509,12 +518,28 @@ class VisualEditor {
                             <input type="url" id="link-url" placeholder="https://example.com">
                             <label for="link-text">Link Text:</label>
                             <input type="text" id="link-text" placeholder="Click here">
+                            <div class="form-check mt-2">
+                                <input type="checkbox" id="link-is-button" class="form-check-input">
+                                <label for="link-is-button" class="form-check-label">Style as button</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="button-group" style="display: none;">
+                            <div class="alert alert-info">
+                                <strong>Button Management</strong>
+                                <p class="mb-0">Add or remove link buttons after this paragraph.</p>
+                            </div>
+                            <div class="button-preview mt-2">
+                                <a href="#" class="ve-btn btn btn-primary">Button Preview</a>
+                            </div>
                         </div>
 
                         <div class="form-actions">
                             <button type="button" id="preview-btn" class="btn btn-secondary">Preview</button>
                             <button type="button" id="save-btn" class="btn btn-primary">Save Changes</button>
                             <button type="button" id="restore-btn" class="btn btn-warning">Restore Original</button>
+                            <button type="button" id="add-btnlink" class="btn btn-success" style="display:none">Add Link Button</button>
+                            <button type="button" id="del-btnlink" class="btn btn-danger" style="display:none">Remove Link Buttons</button>
                         </div>
                     </form>
                 </div>
@@ -722,6 +747,9 @@ class VisualEditor {
         const previewBtn = document.getElementById('preview-btn');
         const restoreBtn = document.getElementById('restore-btn');
         const uploadBtn = document.getElementById('upload-btn');
+        const addBtn = document.getElementById('add-btnlink');
+        const delBtn = document.getElementById('del-btnlink');
+        const buttonGroup = document.getElementById('button-group');
 
         // Close modal events
         closeBtn.addEventListener('click', () => this.closeModal());
@@ -735,6 +763,8 @@ class VisualEditor {
         previewBtn.addEventListener('click', () => this.previewContent());
         restoreBtn.addEventListener('click', () => this.restoreOriginal());
         uploadBtn.addEventListener('click', () => this.uploadImage());
+        addBtn.addEventListener('click', () => this.injectButton());
+        delBtn.addEventListener('click', () => this.removeButtons());
     }
 
     openEditor(element, selector, type) {
@@ -743,6 +773,9 @@ class VisualEditor {
         const modal = document.getElementById('editor-modal');
         const title = document.getElementById('modal-title');
         const contentType = document.getElementById('content-type');
+        const addBtn = document.getElementById('add-btnlink');
+        const delBtn = document.getElementById('del-btnlink');
+        const buttonGroup = document.getElementById('button-group');
 
         // Set modal title
         title.textContent = `Edit ${type.charAt(0).toUpperCase() + type.slice(1)} Content`;
@@ -750,6 +783,12 @@ class VisualEditor {
         // Set content type
         contentType.value = type;
         this.updateFormFields();
+
+        // Show/hide button management for paragraphs
+        const isPara = element.tagName.toLowerCase() === 'p';
+        addBtn.style.display = isPara ? 'inline-block' : 'none';
+        delBtn.style.display = isPara ? 'inline-block' : 'none';
+        buttonGroup.style.display = isPara ? 'block' : 'none';
 
         // Populate current content
         this.populateCurrentContent(element, type);
@@ -772,6 +811,7 @@ class VisualEditor {
         document.getElementById('html-group').style.display = 'none';
         document.getElementById('image-group').style.display = 'none';
         document.getElementById('link-group').style.display = 'none';
+        document.getElementById('button-group').style.display = 'none';
 
         // Show relevant group
         switch (type) {
@@ -786,6 +826,9 @@ class VisualEditor {
                 break;
             case 'link':
                 document.getElementById('link-group').style.display = 'block';
+                break;
+            case 'button':
+                document.getElementById('button-group').style.display = 'block';
                 break;
         }
     }
@@ -818,6 +861,12 @@ class VisualEditor {
                     linkClone.querySelectorAll('.edit-overlay').forEach(n => n.remove());
                     document.getElementById('link-text').value = linkClone.textContent.trim();
                 }
+                break;
+            case 'button':
+                // Clone to get clean text content without edit overlay
+                const buttonClone = element.cloneNode(true);
+                buttonClone.querySelectorAll('.edit-overlay').forEach(n => n.remove());
+                document.getElementById('button-preview').innerHTML = buttonClone.innerHTML;
                 break;
         }
     }
@@ -883,6 +932,8 @@ class VisualEditor {
                     image: document.getElementById('link-url').value, // Using image field for URL
                     text: document.getElementById('link-text').value
                 };
+            case 'button':
+                return { text: document.getElementById('button-preview').innerHTML };
             default:
                 return {};
         }
@@ -898,6 +949,8 @@ class VisualEditor {
                 return { src: element.src, alt: element.alt };
             case 'link':
                 return { href: element.href, text: element.textContent };
+            case 'button':
+                return document.getElementById('button-preview').innerHTML;
             default:
                 return element.outerHTML;
         }
@@ -973,6 +1026,9 @@ class VisualEditor {
                     element.textContent = originalContent.text;
                 }
                 break;
+            case 'button':
+                document.getElementById('button-preview').innerHTML = originalContent;
+                break;
         }
     }
 
@@ -997,10 +1053,18 @@ class VisualEditor {
             return;
         }
 
+        // Validate image dimensions
+        const dimensions = await this.getImageDimensions(file);
+        if (dimensions.width > 2000 || dimensions.height > 2000) {
+            this.showNotification('Image dimensions too large. Please use an image under 2000x2000 pixels', 'error');
+            return;
+        }
+
         const progressDiv = document.getElementById('upload-progress');
         const progressFill = progressDiv.querySelector('.progress-fill');
         const progressText = progressDiv.querySelector('.progress-text');
         const uploadBtn = document.getElementById('upload-btn');
+        const imagePreview = document.getElementById('image-preview');
 
         try {
             // Show progress
@@ -1013,24 +1077,43 @@ class VisualEditor {
             formData.append('file', file);
             formData.append('folder', 'content-images');
 
-            // Upload to Vercel Blob via upload-image.js API
-            const response = await fetch('/api/upload-image', {
-                method: 'POST',
-                body: formData
+            // Upload with progress tracking
+            const result = await new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/upload-image', true);
+                
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const pct = (e.loaded / e.total) * 100;
+                        progressFill.style.width = pct + '%';
+                        progressText.textContent = `Uploading... ${Math.round(pct)}%`;
+                    }
+                };
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve(JSON.parse(xhr.responseText));
+                    } else {
+                        reject(new Error('Upload failed'));
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error('Network error'));
+                xhr.send(formData);
             });
-
-            if (!response.ok) {
-                throw new Error('Upload failed');
-            }
-
-            const result = await response.json();
 
             // Update progress to 100%
             progressFill.style.width = '100%';
             progressText.textContent = 'Upload complete!';
 
-            // Update the image URL field
-            document.getElementById('content-image').value = result.url;
+            // Update the image URL field and preview
+            const imageUrl = document.getElementById('content-image');
+            imageUrl.value = result.url;
+            
+            // Show preview
+            const previewImg = imagePreview.querySelector('img');
+            previewImg.src = result.thumb || result.url;
+            imagePreview.style.display = 'block';
 
             // Show success message
             this.showNotification('Image uploaded successfully!', 'success');
@@ -1051,6 +1134,58 @@ class VisualEditor {
                 uploadBtn.textContent = 'Upload Image';
             }, 2000);
         }
+    }
+
+    getImageDimensions(file) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                URL.revokeObjectURL(img.src);
+                resolve({ width: img.width, height: img.height });
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(img.src);
+                reject(new Error('Failed to load image'));
+            };
+            img.src = URL.createObjectURL(file);
+        });
+    }
+
+    injectButton() {
+        if (!this.activeEditor) return;
+        const { element } = this.activeEditor;
+
+        const btn = document.createElement('a');
+        btn.href = '#';
+        btn.textContent = 'New Button';
+        btn.className = 've-btn btn btn-primary';
+        btn.style.marginLeft = '8px';
+        btn.title = 'Click to edit this button';
+
+        // Insert after the paragraph
+        element.parentNode.insertBefore(btn, element.nextSibling);
+        
+        // Add edit overlay to the new button
+        const selector = this.generateSelector(btn);
+        const overlay = this.createEditOverlay(btn, selector, 'link');
+        btn.style.position = 'relative';
+        btn.appendChild(overlay);
+
+        this.showNotification('Button added – hover over it to edit', 'success');
+    }
+
+    removeButtons() {
+        if (!this.activeEditor) return;
+        const { element } = this.activeEditor;
+        
+        const buttons = element.parentNode.querySelectorAll('.ve-btn');
+        if (buttons.length === 0) {
+            this.showNotification('No buttons found to remove', 'info');
+            return;
+        }
+
+        buttons.forEach(btn => btn.remove());
+        this.showNotification(`${buttons.length} button${buttons.length > 1 ? 's' : ''} removed`, 'success');
     }
 
     showNotification(message, type = 'info') {

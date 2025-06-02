@@ -114,6 +114,17 @@ async function handleCreateOverride(req, res) {
             });
         }
 
+        // Validate content type
+        const allowedTypes = ['text', 'html', 'image', 'link', 'list', 'button'];
+        if (!allowedTypes.includes(contentType)) {
+            return res.status(400).json({ 
+                message: 'Unsupported content type. Allowed types: ' + allowedTypes.join(', ')
+            });
+        }
+
+        // Normalize content type (list and button are stored as html)
+        const normalizedType = ['list', 'button'].includes(contentType) ? 'html' : contentType;
+
         // Check if override already exists
         const existingOverride = await Section.findOne({
             isContentOverride: true,
@@ -127,7 +138,7 @@ async function handleCreateOverride(req, res) {
             existingOverride.heading = heading;
             existingOverride.text = text;
             existingOverride.image = image;
-            existingOverride.contentType = contentType;
+            existingOverride.contentType = normalizedType;
             existingOverride.overrideType = overrideType;
             existingOverride.isActive = true;
             existingOverride.updatedAt = new Date();
@@ -141,7 +152,7 @@ async function handleCreateOverride(req, res) {
                 isContentOverride: true,
                 targetPage,
                 targetSelector,
-                contentType,
+                contentType: normalizedType,
                 heading,
                 text,
                 image,
