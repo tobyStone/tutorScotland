@@ -69,17 +69,9 @@ class VisualEditor {
     }
 
     applyContentOverrides() {
-        this.overrides.forEach((override, selector) => {
-            // Only apply to exact matches using our block markers
-            const elements = document.querySelectorAll(selector);
-            elements.forEach(element => {
-                // Skip if this is a button selector but the element isn't in a marked block
-                if (selector.includes('ve-btn') && !element.closest('[data-ve-block-id]')) {
-                    return;
-                }
-                this.applyOverride(element, override);
-            });
-        });
+        this.overrides.forEach((ov, sel) =>
+            document.querySelectorAll(sel).forEach(el => this.applyOverride(el, ov))
+        );
     }
 
     applyOverride(element, override) {
@@ -260,39 +252,50 @@ class VisualEditor {
     }
 
     generateSelector(element) {
-        // 1️⃣ single buttons
+        /* 1️⃣  anchor individual buttons with their attribute */
         if (element.dataset.veButtonId) {
             return `[data-ve-button-id="${element.dataset.veButtonId}"]`;
         }
 
-        // 2️⃣ block-level overrides
-        if (element.dataset.veBlockId) {
-            return `[data-ve-block-id="${element.dataset.veBlockId}"]`;
-        }
+        /* 2️⃣  build a unique static path for block-level elements */
+        const segments = [];
+        let current = element;
 
-        // Generate a unique CSS selector for the element
-        if (element.id) {
-            return `#${element.id}`;
-        }
+        while (current && current.tagName !== 'BODY') {
+            let seg = current.tagName.toLowerCase();
 
-        if (element.className) {
-            const classes = element.className.split(' ').filter(c => c.trim());
-            if (classes.length > 0) {
-                return `${element.tagName.toLowerCase()}.${classes[0]}`;
+            /* id → done */
+            if (current.id) {
+                seg = `#${current.id}`;
+                segments.unshift(seg);
+                break;
             }
-        }
 
-        // Fallback to tag name with nth-child
-        const parent = element.parentElement;
-        if (parent) {
-            const siblings = Array.from(parent.children).filter(child =>
-                child.tagName === element.tagName
-            );
-            const index = siblings.indexOf(element) + 1;
-            return `${element.tagName.toLowerCase()}:nth-of-type(${index})`;
-        }
+            /* first "real" class if any */
+            const cls = [...current.classList]
+                        .find(c => !c.startsWith('ve-') && c !== 'edit-overlay');
+            if (cls) seg += `.${cls}`;
 
-        return element.tagName.toLowerCase();
+            /* add :nth-of-type when siblings share the tag */
+            const parent = current.parentElement;
+            if (parent) {
+                const sibs = [...parent.children]
+                             .filter(ch => ch.tagName === current.tagName);
+                if (sibs.length > 1) {
+                    seg += `:nth-of-type(${sibs.indexOf(current) + 1})`;
+                }
+            }
+
+            segments.unshift(seg);
+
+            /* stop if parent has an id (unique enough) */
+            if (parent?.id) {
+                segments.unshift(`#${parent.id}`);
+                break;
+            }
+            current = parent;
+        }
+        return segments.join(' > ') || element.tagName.toLowerCase();
     }
 
     getElementType(element) {
@@ -1290,8 +1293,15 @@ class VisualEditor {
     }
 
     async saveParagraphOverride(paraElm) {
-        this.ensureBlockMarker(paraElm);        // 🔐 add data-ve-block-id once
-        const selector = this.generateSelector(paraElm);
+        this.ensureBlockMarker(paraElm);      // keeps editor happy
+        let selector = this.generateSelector(paraElm);
+
+        /* 🔒 5-line guard: if selector isn't unique, fall back to the marker */
+        if (document.querySelectorAll(selector).length !== 1) {
+            selector = `[data-ve-block-id="${paraElm.dataset.veBlockId}"]`;
+            console.warn('Selector not unique, using', selector);
+        }
+
         const res = await fetch('/api/content-manager?operation=override', {
             method : 'POST',
             headers: { 'Content-Type':'application/json' },
@@ -1299,7 +1309,7 @@ class VisualEditor {
                        targetPage    : this.currentPage,
                        targetSelector: selector,
                        contentType   : 'html',
-                       text          : paraElm.innerHTML          // full snippet
+                       text          : paraElm.innerHTML
                      })
         });
         const override = await res.json();
