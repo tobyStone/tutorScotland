@@ -337,14 +337,14 @@ async function handleListImages(req, res) {
         // Sort files
         switch (sort) {
             case 'oldest':
-                files.sort((a, b) => a.uploadedAt - b.uploadedAt);
+                files.sort((a, b) => new Date(a.uploadedAt) - new Date(b.uploadedAt));
                 break;
             case 'name':
                 files.sort((a, b) => a.pathname.localeCompare(b.pathname));
                 break;
             case 'newest':
             default:
-                files.sort((a, b) => b.uploadedAt - a.uploadedAt);
+                files.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
         }
 
         // Get total count before pagination

@@ -12,6 +12,8 @@ class VisualEditor {
         this.editableElements = [];
         this.activeEditor = null;
         this.overrides = new Map();
+        this.imgPage = 1;      // current page in browser
+        this.imgTotalPage = 1; // set after first fetch
 
         this.init();
     }
@@ -938,8 +940,6 @@ class VisualEditor {
         const prevPage = document.getElementById('prev-page');
         const nextPage = document.getElementById('next-page');
 
-        let currentPage = 1;
-        let totalPages = 1;
         let searchTimeout = null;
 
         browseBtn.addEventListener('click', () => this.openImageBrowser());
@@ -949,28 +949,28 @@ class VisualEditor {
         imageSearch.addEventListener('input', (e) => {
             if (searchTimeout) clearTimeout(searchTimeout);
             searchTimeout = setTimeout(() => {
-                currentPage = 1;
+                this.imgPage = 1;
                 this.loadImages();
             }, 300);
         });
 
         // Sort handling
         imageSort.addEventListener('change', () => {
-            currentPage = 1;
+            this.imgPage = 1;
             this.loadImages();
         });
 
         // Pagination
         prevPage.addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
+            if (this.imgPage > 1) {
+                this.imgPage--;
                 this.loadImages();
             }
         });
 
         nextPage.addEventListener('click', () => {
-            if (currentPage < totalPages) {
-                currentPage++;
+            if (this.imgPage < this.imgTotalPage) {
+                this.imgPage++;
                 this.loadImages();
             }
         });
@@ -1371,7 +1371,16 @@ class VisualEditor {
             const imageUrl = document.getElementById('content-image');
             imageUrl.value = result.url;
             
+            // Auto-set alt text if empty
+            const altInput = document.getElementById('image-alt');
+            if (!altInput.value) {
+                altInput.value = result.url.split('/').pop()
+                    .replace(/\.[^.]+$/, '')
+                    .replace(/[-_]+/g, ' ');
+            }
+            
             // Show preview
+            const imagePreview = document.getElementById('image-preview');
             const previewImg = imagePreview.querySelector('img');
             previewImg.src = result.thumb || result.url;
             imagePreview.style.display = 'block';
@@ -1557,18 +1566,23 @@ class VisualEditor {
         imageGrid.innerHTML = '<div class="loading-spinner"></div>';
 
         try {
-            const response = await fetch(`/api/content-manager?operation=list-images&page=${currentPage}&search=${searchQuery}&sort=${sortBy}`);
+            const response = await fetch(
+                `/api/content-manager?operation=list-images` +
+                `&page=${this.imgPage}` +
+                `&search=${encodeURIComponent(searchQuery)}` +
+                `&sort=${sortBy}`
+            );
             if (!response.ok) throw new Error('Failed to load images');
             
             const data = await response.json();
             const { images, total, perPage } = data;
             
-            totalPages = Math.ceil(total / perPage);
+            this.imgTotalPage = Math.ceil(total / perPage);
             
             // Update pagination
-            prevPage.disabled = currentPage === 1;
-            nextPage.disabled = currentPage === totalPages;
-            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            prevPage.disabled = this.imgPage === 1;
+            nextPage.disabled = this.imgPage === this.imgTotalPage;
+            pageInfo.textContent = `Page ${this.imgPage} of ${this.imgTotalPage}`;
 
             // Clear grid and add images
             imageGrid.innerHTML = '';
@@ -1625,7 +1639,7 @@ class VisualEditor {
     openImageBrowser() {
         const imageBrowser = document.getElementById('image-browser');
         imageBrowser.style.display = 'block';
-        currentPage = 1;
+        this.imgPage = 1;
         this.loadImages();
     }
 }
