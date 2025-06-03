@@ -281,7 +281,7 @@ module.exports = async (req, res) => {
                 return res.status(400).json({ message: 'ID parameter required' });
             }
 
-            console.log('Final ID to be used for deletion:', id);
+            console.log('Final ID to be used for deletion is:', id);
 
             try {
                 const gone = await Section.findByIdAndDelete(id);
