@@ -255,6 +255,11 @@ class VisualEditor {
     }
 
     generateSelector(element) {
+        // Highest-priority: buttons we created
+        if (element.dataset.veButtonId) {
+            return `[data-ve-button-id="${element.dataset.veButtonId}"]`;
+        }
+
         // Generate a unique CSS selector for the element
         if (element.id) {
             return `#${element.id}`;
@@ -391,9 +396,9 @@ class VisualEditor {
     }
 
     removeEditOverlays() {
-        document.querySelectorAll('.edit-overlay').forEach(overlay => {
-            overlay.remove();
-        });
+        document.querySelectorAll('.edit-overlay').forEach(o => o.remove());
+        // Reset cache – it will be rebuilt on next enableEditMode()
+        this.editableElements = [];
     }
 
     showEditInstructions() {
@@ -879,10 +884,16 @@ class VisualEditor {
         const { element, selector, type } = this.activeEditor;
 
         if (type === 'link' && element.classList.contains('ve-btn')) {
+            // 1️⃣ write the form values straight into the DOM
+            const { image: url, text: label } = this.getFormData('link');
+            element.href = url;
+            element.textContent = label;
+
+            // 2️⃣ serialize and persist the paragraph
             const para = element.closest('p');
             try {
-                await this.saveParagraphOverride(para);
-                this.applyOverride(para, {contentType:'html', text:para.innerHTML});
+                const saved = await this.saveParagraphOverride(para);
+                this.applyOverride(para, saved);           // saved == override object
                 this.closeModal();
                 this.showNotification('Button updated ✔', 'success');
             } catch (err) {
@@ -1172,6 +1183,7 @@ class VisualEditor {
         if (!this.activeEditor) return;
         const { element } = this.activeEditor;
 
+        // 1️⃣ build the anchor
         const btn = document.createElement('a');
         btn.href = '#';
         btn.textContent = 'New Button';
@@ -1180,38 +1192,40 @@ class VisualEditor {
         btn.title = 'Click to edit this button';
         btn.style.pointerEvents = 'auto';
 
-        // Insert after the paragraph
-        element.parentNode.insertBefore(btn, element.nextSibling);
-        
-        // Scan and add overlay to the new button
-        const editableButton = this.editableElements.find(item => item.element === btn);
-        if (editableButton) {
-            const overlay = this.createEditOverlay(editableButton.element, editableButton.selector, editableButton.type);
-            editableButton.element.style.position = 'relative';
-            editableButton.element.appendChild(overlay);
-        }
+        // 2️⃣ give it a rock-solid selector
+        const veId = `ve-btn-${Date.now()}`;
+        btn.setAttribute('data-ve-button-id', veId);
 
-        /* ---------- PERSIST ---------- */
-        const para = this.activeEditor.element; // The paragraph element
-        this.saveParagraphOverride(para)
-            .then(() => this.showNotification('Button added & saved ✔', 'success'))
-            .catch(err => {
-                console.error(err);
-                btn.remove(); // rollback
-                this.showNotification('Failed to save paragraph', 'error');
-            });
+        // 3️⃣ insert **inside the paragraph** so it's serialised
+        element.appendChild(btn);
+
+        // 4️⃣ register as editable
+        const selector = this.generateSelector(btn);        // now data-based
+        this.editableElements.push({ element: btn, selector, type: 'link' });
+        const overlay = this.createEditOverlay(btn, selector, 'link');
+        btn.style.position = 'relative';
+        btn.appendChild(overlay);
+
+        // 5️⃣ immediately open the link editor so the user sets label + URL first
+        this.openEditor(btn, selector, 'link');
     }
 
     removeButtons() {
         if (!this.activeEditor) return;
         const { element } = this.activeEditor;
-        const buttons = element.parentNode.querySelectorAll(`.ve-btn`);
+        const buttons = element.querySelectorAll('.ve-btn');
         if (buttons.length === 0) {
             this.showNotification('No buttons found to remove', 'info');
             return;
         }
 
-        buttons.forEach(btn => btn.remove());
+        buttons.forEach(btn => {
+            // clean up editableElements to prevent stale refs
+            this.editableElements = this.editableElements.filter(
+                item => item.element !== btn
+            );
+            btn.remove();
+        });
 
         /* persist the new state of the paragraph */
         const para = this.activeEditor.element;
@@ -1227,14 +1241,11 @@ class VisualEditor {
                      })
         })
         .then(() => {
-            // No need to update local overrides here, as the page will likely reload
-            // after deleting, or the next load will pick up the new override.
             this.showNotification(`${buttons.length} button${buttons.length>1?'s':''} removed and paragraph saved ✔`, 'success');
         })
         .catch(err => {
             console.error(err);
             this.showNotification('Failed to save paragraph after removing buttons', 'error');
-            // Optionally, could try to re-add buttons to the DOM here if save fails
         });
     }
 
@@ -1314,6 +1325,21 @@ slideAnimations.textContent = `
             opacity: 0;
             transform: translateX(-50%) translateY(-20px);
         }
+    }
+
+    .ve-btn {
+        display: inline-block;          /* isolates line-height */
+        padding: 0.5em 1.2em;
+        margin: 0 0.25em;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #fff;
+        background: #007bff;
+        transition: background 0.2s;
+    }
+    .ve-btn:hover,
+    .ve-btn:focus {
+        background: #0056b3;
     }
 `;
 document.head.appendChild(slideAnimations);
