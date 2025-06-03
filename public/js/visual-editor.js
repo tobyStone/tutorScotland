@@ -405,13 +405,16 @@ class VisualEditor {
             font-size: 11px;
         `;
 
-        // Show overlay on hover
+        // Reveal on hover of the target; let CSS keep it visible once it's shown
         element.addEventListener('mouseenter', () => {
             if (this.isEditMode) overlay.style.opacity = '1';
         });
 
-        element.addEventListener('mouseleave', () => {
-            overlay.style.opacity = '0';
+        // Hide *only* when we truly leave both the element *and* the overlay
+        overlay.addEventListener('mouseleave', (e) => {
+            if (!element.contains(e.relatedTarget)) {
+                overlay.style.opacity = '0';
+            }
         });
 
         // Edit button click
@@ -1706,6 +1709,12 @@ slideAnimations.textContent = `
     .ve-btn:hover,
     .ve-btn:focus {
         background: #0056b3;
+    }
+
+    /* keep overlay visible whenever either the target OR the overlay itself is hovered */
+    .ve-img-wrap:hover > .edit-overlay,
+    .edit-overlay:hover {
+        opacity: 1 !important;
     }
 `;
 document.head.appendChild(slideAnimations);
