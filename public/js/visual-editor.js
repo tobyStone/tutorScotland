@@ -70,8 +70,13 @@ class VisualEditor {
 
     applyContentOverrides() {
         this.overrides.forEach((override, selector) => {
+            // Only apply to exact matches using our block markers
             const elements = document.querySelectorAll(selector);
             elements.forEach(element => {
+                // Skip if this is a button selector but the element isn't in a marked block
+                if (selector.includes('ve-btn') && !element.closest('[data-ve-block-id]')) {
+                    return;
+                }
                 this.applyOverride(element, override);
             });
         });
@@ -255,9 +260,14 @@ class VisualEditor {
     }
 
     generateSelector(element) {
-        // Highest-priority: buttons we created
+        // 1️⃣ single buttons
         if (element.dataset.veButtonId) {
             return `[data-ve-button-id="${element.dataset.veButtonId}"]`;
+        }
+
+        // 2️⃣ block-level overrides
+        if (element.dataset.veBlockId) {
+            return `[data-ve-block-id="${element.dataset.veBlockId}"]`;
         }
 
         // Generate a unique CSS selector for the element
@@ -1280,6 +1290,7 @@ class VisualEditor {
     }
 
     async saveParagraphOverride(paraElm) {
+        this.ensureBlockMarker(paraElm);        // 🔐 add data-ve-block-id once
         const selector = this.generateSelector(paraElm);
         const res = await fetch('/api/content-manager?operation=override', {
             method : 'POST',
@@ -1294,6 +1305,14 @@ class VisualEditor {
         const override = await res.json();
         this.overrides.set(selector, override);
         return override;
+    }
+
+    /** Give each block we override a stable, unique selector */
+    ensureBlockMarker(el) {
+        if (!el.dataset.veBlockId) {
+            el.dataset.veBlockId = 
+                (self.crypto?.randomUUID?.() ?? `ve-block-${Date.now()}-${Math.random()}`);   // virtually collision-proof
+        }
     }
 }
 
