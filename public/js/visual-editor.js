@@ -330,9 +330,22 @@ class VisualEditor {
 
     addEditOverlays() {
         this.editableElements.forEach(({ element, selector, type }) => {
-            const overlay = this.createEditOverlay(element, selector, type);
-            element.style.position = 'relative';
-            element.appendChild(overlay);
+            /* 🖼️  images need a wrapper because they can't contain children */
+            let mount = element;                  // where the overlay will live
+            if (type === 'image') {
+                if (!element.parentElement.classList.contains('ve-img-wrap')) {
+                    const wrap = document.createElement('span');
+                    wrap.className = 've-img-wrap';
+                    wrap.style.cssText = 'display:inline-block;position:relative;';
+
+                    element.parentNode.insertBefore(wrap, element);
+                    wrap.appendChild(element);    // move img inside
+                }
+                mount = element.parentElement;    // overlay goes on the wrapper
+            }
+
+            const overlay = this.createEditOverlay(element, selector, type); // keep IMG as "target" for events
+            mount.appendChild(overlay);
         });
     }
 
@@ -482,6 +495,12 @@ class VisualEditor {
     createEditorModal() {
         const modal = document.createElement('div');
         modal.id = 'editor-modal';
+        
+        // Add CSS for image wrapper
+        const style = document.createElement('style');
+        style.textContent = '.ve-img-wrap { position:relative; display:inline-block; }';
+        document.head.appendChild(style);
+        
         modal.innerHTML = `
             <div class="modal-backdrop"></div>
             <div class="modal-content">
