@@ -60,7 +60,12 @@ module.exports = async (req, res) => {
         const timestamp = Date.now();
         const originalName = file.originalFilename || 'image';
         const ext = originalName.split('.').pop().toLowerCase();
-        const filename = `${timestamp}-${originalName}`;
+        const clean = originalName.toLowerCase()
+            .replace(/\s+/g, '-')           // Replace spaces with hyphens
+            .replace(/[^a-z0-9-.]/g, '')    // Remove special characters
+            .replace(/-+/g, '-')            // Replace multiple hyphens with single
+            .replace(/^-|-$/g, '');         // Remove leading/trailing hyphens
+        const filename = `${timestamp}-${clean}`;
         const folder = fields.folder || 'uploads';
 
         // Upload original image
@@ -72,9 +77,9 @@ module.exports = async (req, res) => {
 
         // Generate and upload thumbnail
         const thumbnailBuffer = await sharp(file.filepath)
-            .resize(240, 240, {
-                fit: 'cover',
-                position: 'center'
+            .resize(240, 240, { 
+                fit: 'cover', 
+                position: 'centre'  // Fix typo in position parameter
             })
             .toBuffer();
 

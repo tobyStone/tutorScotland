@@ -512,7 +512,10 @@ class VisualEditor {
 
                         <div class="form-group" id="image-group" style="display: none;">
                             <label for="content-image">Image URL:</label>
-                            <input type="url" id="content-image" placeholder="https://example.com/image.jpg">
+                            <div class="image-input-group">
+                                <input type="url" id="content-image" placeholder="https://example.com/image.jpg">
+                                <button type="button" id="browse-btn" class="btn btn-secondary">Browse Images</button>
+                            </div>
                             <div id="image-preview" class="mt-2" style="display: none;">
                                 <img src="" alt="Preview" style="max-width: 200px; max-height: 200px;">
                             </div>
@@ -562,6 +565,32 @@ class VisualEditor {
                             <button type="button" id="del-btnlink" class="btn btn-danger" style="display:none">Remove Link Buttons</button>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <!-- Image Browser Modal -->
+            <div id="image-browser" class="image-browser" style="display: none;">
+                <div class="image-browser-header">
+                    <h4>Browse Images</h4>
+                    <button type="button" id="close-browser" class="close-btn">×</button>
+                </div>
+                <div class="image-browser-content">
+                    <div class="image-browser-toolbar">
+                        <input type="text" id="image-search" placeholder="Search images..." class="form-control">
+                        <select id="image-sort" class="form-control">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="name">Name</option>
+                        </select>
+                    </div>
+                    <div id="image-grid" class="image-grid">
+                        <div class="loading-spinner"></div>
+                    </div>
+                    <div id="image-pagination" class="image-pagination">
+                        <button type="button" id="prev-page" class="btn btn-secondary" disabled>Previous</button>
+                        <span id="page-info">Page 1</span>
+                        <button type="button" id="next-page" class="btn btn-secondary">Next</button>
+                    </div>
                 </div>
             </div>
         `;
@@ -754,6 +783,120 @@ class VisualEditor {
                     transform: translateX(0);
                 }
             }
+
+            /* Image Browser Styles */
+            .image-browser {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                width: 90%;
+                max-width: 800px;
+                max-height: 80vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .image-browser-header {
+                padding: 20px;
+                border-bottom: 1px solid #eee;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .image-browser-content {
+                padding: 20px;
+                overflow-y: auto;
+                flex: 1;
+            }
+
+            .image-browser-toolbar {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .image-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 16px;
+                margin-bottom: 20px;
+            }
+
+            .image-item {
+                position: relative;
+                aspect-ratio: 1;
+                border-radius: 4px;
+                overflow: hidden;
+                cursor: pointer;
+                border: 2px solid transparent;
+                transition: all 0.2s ease;
+            }
+
+            .image-item:hover {
+                border-color: #007bff;
+            }
+
+            .image-item.selected {
+                border-color: #28a745;
+            }
+
+            .image-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .image-item .image-name {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 4px 8px;
+                font-size: 12px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .image-pagination {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            .loading-spinner {
+                width: 40px;
+                height: 40px;
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #007bff;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin: 20px auto;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            .image-input-group {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+
+            .image-input-group input {
+                flex: 1;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -785,6 +928,83 @@ class VisualEditor {
         uploadBtn.addEventListener('click', () => this.uploadImage());
         addBtn.addEventListener('click', () => this.injectButton());
         delBtn.addEventListener('click', () => this.removeButtons());
+
+        const browseBtn = document.getElementById('browse-btn');
+        const closeBrowser = document.getElementById('close-browser');
+        const imageBrowser = document.getElementById('image-browser');
+        const imageGrid = document.getElementById('image-grid');
+        const imageSearch = document.getElementById('image-search');
+        const imageSort = document.getElementById('image-sort');
+        const prevPage = document.getElementById('prev-page');
+        const nextPage = document.getElementById('next-page');
+
+        let currentPage = 1;
+        let totalPages = 1;
+        let searchTimeout = null;
+
+        browseBtn.addEventListener('click', () => this.openImageBrowser());
+        closeBrowser.addEventListener('click', () => imageBrowser.style.display = 'none');
+
+        // Search handling with debounce
+        imageSearch.addEventListener('input', (e) => {
+            if (searchTimeout) clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 1;
+                this.loadImages();
+            }, 300);
+        });
+
+        // Sort handling
+        imageSort.addEventListener('change', () => {
+            currentPage = 1;
+            this.loadImages();
+        });
+
+        // Pagination
+        prevPage.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                this.loadImages();
+            }
+        });
+
+        nextPage.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                this.loadImages();
+            }
+        });
+
+        // Keyboard navigation
+        imageGrid.addEventListener('keydown', (e) => {
+            const items = imageGrid.querySelectorAll('.image-item');
+            const currentIndex = Array.from(items).findIndex(item => item.classList.contains('selected'));
+            
+            switch (e.key) {
+                case 'ArrowRight':
+                    if (currentIndex < items.length - 1) {
+                        items[currentIndex].classList.remove('selected');
+                        items[currentIndex + 1].classList.add('selected');
+                        items[currentIndex + 1].focus();
+                    }
+                    break;
+                case 'ArrowLeft':
+                    if (currentIndex > 0) {
+                        items[currentIndex].classList.remove('selected');
+                        items[currentIndex - 1].classList.add('selected');
+                        items[currentIndex - 1].focus();
+                    }
+                    break;
+                case 'Enter':
+                    if (currentIndex >= 0) {
+                        items[currentIndex].click();
+                    }
+                    break;
+                case 'Escape':
+                    imageBrowser.style.display = 'none';
+                    break;
+            }
+        });
     }
 
     openEditor(element, selector, type) {
@@ -1323,6 +1543,90 @@ class VisualEditor {
             el.dataset.veBlockId = 
                 (self.crypto?.randomUUID?.() ?? `ve-block-${Date.now()}-${Math.random()}`);   // virtually collision-proof
         }
+    }
+
+    async loadImages() {
+        const imageGrid = document.getElementById('image-grid');
+        const prevPage = document.getElementById('prev-page');
+        const nextPage = document.getElementById('next-page');
+        const pageInfo = document.getElementById('page-info');
+        const searchQuery = document.getElementById('image-search').value;
+        const sortBy = document.getElementById('image-sort').value;
+
+        // Show loading state
+        imageGrid.innerHTML = '<div class="loading-spinner"></div>';
+
+        try {
+            const response = await fetch(`/api/content-manager?operation=list-images&page=${currentPage}&search=${searchQuery}&sort=${sortBy}`);
+            if (!response.ok) throw new Error('Failed to load images');
+            
+            const data = await response.json();
+            const { images, total, perPage } = data;
+            
+            totalPages = Math.ceil(total / perPage);
+            
+            // Update pagination
+            prevPage.disabled = currentPage === 1;
+            nextPage.disabled = currentPage === totalPages;
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
+            // Clear grid and add images
+            imageGrid.innerHTML = '';
+            
+            if (images.length === 0) {
+                imageGrid.innerHTML = '<p class="text-center">No images found</p>';
+                return;
+            }
+
+            images.forEach(image => {
+                const item = document.createElement('div');
+                item.className = 'image-item';
+                item.tabIndex = 0;
+                item.innerHTML = `
+                    <img src="${image.thumb || image.url}" alt="${image.name}" loading="lazy">
+                    <div class="image-name">${image.name}</div>
+                `;
+
+                // Handle image load errors
+                const img = item.querySelector('img');
+                img.onerror = () => {
+                    img.src = '/images/placeholder.png';
+                    img.alt = 'Failed to load image';
+                };
+
+                // Handle selection
+                item.addEventListener('click', () => {
+                    // Remove selection from other items
+                    imageGrid.querySelectorAll('.image-item').forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+
+                    // Update the image URL and preview
+                    const imageUrl = document.getElementById('content-image');
+                    imageUrl.value = image.url;
+                    
+                    const preview = document.getElementById('image-preview');
+                    const previewImg = preview.querySelector('img');
+                    previewImg.src = image.thumb || image.url;
+                    preview.style.display = 'block';
+
+                    // Close browser
+                    document.getElementById('image-browser').style.display = 'none';
+                });
+
+                imageGrid.appendChild(item);
+            });
+
+        } catch (error) {
+            console.error('Failed to load images:', error);
+            imageGrid.innerHTML = '<p class="text-center text-danger">Failed to load images. Please try again.</p>';
+        }
+    }
+
+    openImageBrowser() {
+        const imageBrowser = document.getElementById('image-browser');
+        imageBrowser.style.display = 'block';
+        currentPage = 1;
+        this.loadImages();
     }
 }
 

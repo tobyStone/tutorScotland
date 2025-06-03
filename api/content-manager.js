@@ -1,5 +1,8 @@
 const connectDB = require('./connectToDatabase');
 const Section = require('../models/Section');
+const { list } = require('@vercel/blob');
+
+const ITEMS_PER_PAGE = 20;
 
 module.exports = async (req, res) => {
     try {
@@ -33,6 +36,11 @@ module.exports = async (req, res) => {
             // Get original content backup
             if (operation === 'backup') {
                 return handleGetBackup(req, res);
+            }
+
+            // List images from blob storage
+            if (operation === 'list-images') {
+                return handleListImages(req, res);
             }
         }
 
@@ -296,6 +304,78 @@ async function handleCreateBackup(req, res) {
     } catch (error) {
         console.error('Create Backup Error:', error);
         return res.status(500).json({ message: 'Error creating backup' });
+    }
+}
+
+// List images from blob storage
+async function handleListImages(req, res) {
+    try {
+        const { page = 1, search = '', sort = 'newest', folder = 'content-images' } = req.query;
+        const pageNum = parseInt(page, 10);
+        const skip = (pageNum - 1) * ITEMS_PER_PAGE;
+
+        // List all blobs in the folder
+        const { blobs } = await list({ 
+            prefix: folder + '/',
+            mode: 'folded'
+        });
+
+        // Filter out thumbnails and folders
+        let files = blobs.filter(b => 
+            !b.pathname.endsWith('/') && 
+            !b.pathname.includes('/thumbnails/')
+        );
+
+        // Apply search filter if provided
+        if (search) {
+            const searchLower = search.toLowerCase();
+            files = files.filter(f => 
+                f.pathname.toLowerCase().includes(searchLower)
+            );
+        }
+
+        // Sort files
+        switch (sort) {
+            case 'oldest':
+                files.sort((a, b) => a.uploadedAt - b.uploadedAt);
+                break;
+            case 'name':
+                files.sort((a, b) => a.pathname.localeCompare(b.pathname));
+                break;
+            case 'newest':
+            default:
+                files.sort((a, b) => b.uploadedAt - a.uploadedAt);
+        }
+
+        // Get total count before pagination
+        const total = files.length;
+
+        // Apply pagination
+        files = files.slice(skip, skip + ITEMS_PER_PAGE);
+
+        // Map to response format
+        const images = files.map(f => ({
+            url: f.url,
+            thumb: f.url.replace(`/${folder}/`, `/${folder}/thumbnails/`),
+            name: f.pathname.split('/').pop().replace(/[-_]/g, ' '),
+            uploadedAt: f.uploadedAt,
+            size: f.size
+        }));
+
+        res.status(200).json({
+            images,
+            total,
+            perPage: ITEMS_PER_PAGE,
+            currentPage: pageNum,
+            totalPages: Math.ceil(total / ITEMS_PER_PAGE)
+        });
+
+    } catch (err) {
+        console.error('List images error:', err);
+        res.status(500).json({ 
+            message: 'Failed to list images',
+            error: err.message
+        });
     }
 }
 
