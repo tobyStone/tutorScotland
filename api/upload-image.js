@@ -52,7 +52,7 @@ module.exports = async (req, res) => {
         // Validate dimensions
         if (metadata.width > MAX_DIMENSIONS || metadata.height > MAX_DIMENSIONS) {
             return res.status(400).json({ 
-                message: `Image dimensions too large. Maximum size is ${MAX_DIMENSIONS}x${MAX_DIMENSIONS} pixels`
+                message: `Image dimensions too large. The Maximum size is ${MAX_DIMENSIONS}x${MAX_DIMENSIONS} pixels`
             });
         }
 
