@@ -148,7 +148,7 @@
     </style>
 </head>
 
-<body>
+<body data-page="admin">
     <!-- ─────────────── HEADER/BANNER ─────────────── -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
@@ -546,7 +546,7 @@
         const sectionTbody = document.querySelector('#sectionTable tbody');
         const addSectionForm = document.getElementById('addSection');
 
-        /* ── show / hide fields & toggle HTML-5 “required” attrs ───────────── */
+        /* ── show / hide fields & toggle HTML-5 "required" attrs ───────────── */
         function toggleFields() {
             const standardFields = document.getElementById('standardFields');
             const rollingBannerFields = document.getElementById('rollingBannerFields');
@@ -565,7 +565,7 @@
                 positionSelect.parentElement.style.display = isBanner ? 'none' : 'block';
             }
 
-            /* HTML-5 “required” attributes -------------------------------------- */
+            /* HTML-5 "required" attributes -------------------------------------- */
             if (isBanner) {
                 headingInput.removeAttribute('required');
                 textTextarea.removeAttribute('required');
@@ -774,5 +774,6 @@
             }
         });
     </script>
+    <script src="/js/dynamic-sections.js?v=20240529" type="module" defer></script>
 </body>
 </html>

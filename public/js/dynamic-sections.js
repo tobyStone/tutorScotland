@@ -358,11 +358,5 @@ function initDynamicSectionsObserver() {
     }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
 }
 
-// Initialize when the DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    initDynamicSectionsObserver();
-    loadDynamicSections();
-});
-
 // Export functions for use in other scripts
 export { loadDynamicSections, initDynamicSectionsObserver };
