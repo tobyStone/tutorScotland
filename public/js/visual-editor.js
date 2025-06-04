@@ -333,15 +333,24 @@ class VisualEditor {
             /* 🖼️  images need a wrapper because they can't contain children */
             let mount = element;                  // where the overlay will live
             if (type === 'image') {
-                if (!element.parentElement.classList.contains('ve-img-wrap')) {
+                // Dup-wrap guard: check if already wrapped
+                if (element.parentElement && element.parentElement.classList.contains('ve-img-wrap')) {
+                    mount = element.parentElement; // overlay goes on the existing wrapper
+                } else {
+                    // Create wrapper if it doesn't exist
                     const wrap = document.createElement('span');
                     wrap.className = 've-img-wrap';
                     wrap.style.cssText = 'display:inline-block;position:relative;';
 
                     element.parentNode.insertBefore(wrap, element);
                     wrap.appendChild(element);    // move img inside
+                    mount = element.parentElement;    // overlay goes on the new wrapper
                 }
-                mount = element.parentElement;    // overlay goes on the wrapper
+            }
+
+            /* 🆕 ensure each mount is a positioning context */
+            if (getComputedStyle(mount).position === 'static') {
+                mount.style.position = 'relative';
             }
 
             const overlay = this.createEditOverlay(element, selector, type); // keep IMG as "target" for events
@@ -920,6 +929,12 @@ class VisualEditor {
 
             .image-input-group input {
                 flex: 1;
+            }
+
+            /* keep overlay visible whenever either the target OR the overlay itself is hovered */
+            .ve-img-wrap:hover > .edit-overlay,
+            .edit-overlay:hover {
+                opacity: 1 !important;
             }
         `;
         document.head.appendChild(style);
@@ -1709,12 +1724,6 @@ slideAnimations.textContent = `
     .ve-btn:hover,
     .ve-btn:focus {
         background: #0056b3;
-    }
-
-    /* keep overlay visible whenever either the target OR the overlay itself is hovered */
-    .ve-img-wrap:hover > .edit-overlay,
-    .edit-overlay:hover {
-        opacity: 1 !important;
     }
 `;
 document.head.appendChild(slideAnimations);
