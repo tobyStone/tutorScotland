@@ -3,6 +3,7 @@ const { put } = require('@vercel/blob');
 const { formidable } = require('formidable');
 const fs = require('fs');
 const sharp = require('sharp');
+const { lookup } = require('mime-types');
 
 const MAX_UPLOAD = 4 * 1024 * 1024;  // 4MB
 const MAX_DIMENSIONS = 2000;  // Max width/height in pixels
@@ -35,25 +36,33 @@ module.exports = async (req, res) => {
             });
         });
 
-        const file = files.file || files.image;
-        if (!file) {
-            return res.status(400).json({ message: 'No file uploaded' });
+        const fileObj = (files.file || files.image);
+        const uploadedFile = Array.isArray(fileObj) ? fileObj[0] : fileObj;
+        if (!uploadedFile) return res.status(400).json({ message:'No file' });
+
+        let mime = uploadedFile.mimetype || '';
+        if (mime === '' || mime.toLowerCase() === 'application/octet-stream') {
+          // ② Guess from filename if browser supplied no clue
+          mime = lookup(uploadedFile.originalFilename) || '';
         }
 
-        // Validate file type
-        if (!file.mimetype || !file.mimetype.startsWith('image/')) {
-              return res.status(415).json({ message: 'Please upload an image file' });
-            }
+        if (!mime.startsWith('image/')) {
+          console.log('UPLOAD-DEBUG ► reject, mime=', mime);
+          return res.status(415).json({
+            message: `Unsupported file type. Detected: ${mime || 'unknown'}`
+          });
+        }
+        uploadedFile.mimetype = mime;     // ③ Normalise for later `put`
 
         // Validate file size
-        if (file.size > MAX_UPLOAD) {
+        if (uploadedFile.size > MAX_UPLOAD) {
             return res.status(413).json({ 
                 message: `File too large. Maximum size is ${MAX_UPLOAD / 1024 / 1024}MB`
             });
         }
 
         // Get image dimensions
-        const metadata = await sharp(file.filepath).metadata();
+        const metadata = await sharp(uploadedFile.filepath).metadata();
         
         // Validate dimensions
         if (metadata.width > MAX_DIMENSIONS || metadata.height > MAX_DIMENSIONS) {
@@ -64,7 +73,7 @@ module.exports = async (req, res) => {
 
         // Generate a unique filename
         const timestamp = Date.now();
-        const originalName = file.originalFilename || 'image';
+        const originalName = uploadedFile.originalFilename || 'image';
         const ext = originalName.split('.').pop().toLowerCase();
         const clean = originalName.toLowerCase()
             .replace(/\s+/g, '-')           // Replace spaces with hyphens
@@ -75,24 +84,24 @@ module.exports = async (req, res) => {
         const folder = fields.folder || 'uploads';
 
         // Generate and upload thumbnail
-        const thumbnailBuffer = await sharp(file.filepath)
+        const thumbnailBuffer = await sharp(uploadedFile.filepath)
             .resize(240, 240, {
                 fit: 'cover',
                 position: 'center'          // Fixed US spelling for Sharp
             })
             .toBuffer();
 
-        const putOpts = { access: 'public', contentType: file.mimetype, overwrite: true };
+        const putOpts = { access: 'public', contentType: uploadedFile.mimetype, overwrite: true };
 
         // Upload original image
-        const stream = fs.createReadStream(file.filepath);
+        const stream = fs.createReadStream(uploadedFile.filepath);
         const { url } = await put(`${folder}/${filename}`, stream, putOpts);
 
         // Generate and upload thumbnail
         const thumbnailUrl = await put(`${folder}/thumbnails/${filename}`, thumbnailBuffer, putOpts);
 
         // Clean up temp file
-        fs.unlink(file.filepath, (err) => {
+        fs.unlink(uploadedFile.filepath, (err) => {
             if (err) console.error('Error deleting temp file:', err);
         });
 
@@ -101,7 +110,7 @@ module.exports = async (req, res) => {
             thumb: thumbnailUrl,
             width: metadata.width,
             height: metadata.height,
-            type: file.mimetype
+            type: uploadedFile.mimetype
         });
 
     } catch (error) {
