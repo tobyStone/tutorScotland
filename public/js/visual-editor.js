@@ -1375,7 +1375,7 @@ class VisualEditor {
             this.showNotification('Image dimensions too large. Please use an image under 2000x2000 pixels', 'error');
             return;
         }
-
+        console.log('[DEBUG] name', file.name, 'type', file.type);
         const progressDiv = document.getElementById('upload-progress');
         const progressFill = progressDiv.querySelector('.progress-fill');
         const progressText = progressDiv.querySelector('.progress-text');
