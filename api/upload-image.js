@@ -68,25 +68,22 @@ module.exports = async (req, res) => {
         const filename = `${timestamp}-${clean}`;
         const folder = fields.folder || 'uploads';
 
-        // Upload original image
-        const stream = fs.createReadStream(file.filepath);
-        const { url } = await put(`${folder}/${filename}`, stream, {
-            access: 'public',
-            contentType: file.mimetype
-        });
-
         // Generate and upload thumbnail
         const thumbnailBuffer = await sharp(file.filepath)
-            .resize(240, 240, { 
-                fit: 'cover', 
-                position: 'centre'  // Fix typo in position parameter
+            .resize(240, 240, {
+                fit: 'cover',
+                position: 'center'          // Fixed US spelling for Sharp
             })
             .toBuffer();
 
-        const thumbnailUrl = await put(`${folder}/thumbnails/${filename}`, thumbnailBuffer, {
-            access: 'public',
-            contentType: file.mimetype
-        });
+        const putOpts = { access: 'public', contentType: file.mimetype, overwrite: true };
+
+        // Upload original image
+        const stream = fs.createReadStream(file.filepath);
+        const { url } = await put(`${folder}/${filename}`, stream, putOpts);
+
+        // Generate and upload thumbnail
+        const thumbnailUrl = await put(`${folder}/thumbnails/${filename}`, thumbnailBuffer, putOpts);
 
         // Clean up temp file
         fs.unlink(file.filepath, (err) => {

@@ -979,7 +979,25 @@ class VisualEditor {
 
         let searchTimeout = null;
 
-        browseBtn.addEventListener('click', () => this.openImageBrowser());
+        browseBtn.addEventListener('click', async () => {
+            // quick probe – ask for a single item in the standard folder
+            const hasAny = await fetch(
+                '/api/content-manager?operation=list-images&perPage=1&folder=content-images'
+            )
+            .then(r => r.ok ? r.json() : { total: 0 })
+            .then(d => d.total > 0)
+            .catch(() => false);
+
+            if (hasAny) {
+                this.openImageBrowser();
+            } else {
+                this.showNotification(
+                    'No images in the library yet – upload one first!',
+                    'info'
+                );
+            }
+        });
+
         closeBrowser.addEventListener('click', () => imageBrowser.style.display = 'none');
 
         // Search handling with debounce

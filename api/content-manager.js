@@ -310,31 +310,27 @@ async function handleCreateBackup(req, res) {
 // List images from blob storage
 async function handleListImages(req, res) {
     try {
-        const { page = 1, search = '', sort = 'newest', folder = 'content-images' } = req.query;
+        const { page = 1, search = '', sort = 'newest' } = req.query;
         const pageNum = parseInt(page, 10);
-        const skip = (pageNum - 1) * ITEMS_PER_PAGE;
+        const limit = parseInt(req.query.perPage || ITEMS_PER_PAGE, 10); // Allow perPage override
+        const offset = (pageNum - 1) * limit;
 
-        // List all blobs in the folder
-        const { blobs } = await list({ 
-            prefix: folder + '/',
-            mode: 'folded'
+        // Use Vercel Blob list function
+        const { blobs, continueCursor } = await list({
+            limit: 1000, // Fetch a larger batch to enable sorting and searching
+            prefix: search ? `content-images/${search}` : 'content-images/' // Filter by search term if present
         });
 
-        // Filter out thumbnails and folders
-        let files = blobs.filter(b => 
-            !b.pathname.endsWith('/') && 
-            !b.pathname.includes('/thumbnails/')
-        );
+        // Manually apply pagination, search, and sort as list options are limited
+        let files = blobs;
 
-        // Apply search filter if provided
+        // Filter by search (basic name contains search term)
         if (search) {
-            const searchLower = search.toLowerCase();
-            files = files.filter(f => 
-                f.pathname.toLowerCase().includes(searchLower)
-            );
+             // Filter based on the search prefix applied in the list function
+             // No further client-side filtering needed if prefix is used correctly
         }
 
-        // Sort files
+        // Apply sorting
         switch (sort) {
             case 'oldest':
                 files.sort((a, b) => new Date(a.uploadedAt) - new Date(b.uploadedAt));
@@ -345,37 +341,32 @@ async function handleListImages(req, res) {
             case 'newest':
             default:
                 files.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+                break;
         }
 
-        // Get total count before pagination
-        const total = files.length;
+        // Apply pagination manually
+        const paginatedFiles = files.slice(offset, offset + limit);
 
-        // Apply pagination
-        files = files.slice(skip, skip + ITEMS_PER_PAGE);
-
-        // Map to response format
-        const images = files.map(f => ({
-            url: f.url,
-            thumb: f.url.replace(`/${folder}/`, `/${folder}/thumbnails/`),
-            name: f.pathname.split('/').pop().replace(/[-_]/g, ' '),
-            uploadedAt: f.uploadedAt,
-            size: f.size
+        const total = files.length || 0;
+        const images = paginatedFiles.map(blob => ({
+            name: blob.pathname.split('/').pop(),
+            url: blob.url,
+            thumb: blob.url.replace('/content-images/', '/content-images/thumbnails/'), // Infer thumbnail URL
+            uploadedAt: blob.uploadedAt,
+            size: blob.size
         }));
 
-        res.status(200).json({
+        return res.status(200).json({
             images,
             total,
             perPage: ITEMS_PER_PAGE,
             currentPage: pageNum,
-            totalPages: Math.ceil(total / ITEMS_PER_PAGE)
+            totalPages: Math.max(1, Math.ceil(total / ITEMS_PER_PAGE))
         });
 
-    } catch (err) {
-        console.error('List images error:', err);
-        res.status(500).json({ 
-            message: 'Failed to list images',
-            error: err.message
-        });
+    } catch (error) {
+        console.error('List Images Error:', error);
+        return res.status(500).json({ message: 'Error listing images' });
     }
 }
 
