@@ -10,11 +10,33 @@
  * Load dynamic sections for the current page
  */
 function loadDynamicSections() {
-    const page = (location.pathname.replace(/^\//, '').split('.')[0] || 'index').toLowerCase();
+    // 1️⃣ Take whatever the <body> claims first (lets you hard-code data-page="contact")
+    // 2️⃣ Else use pathname without trailing slash or extension
+    // 3️⃣ Normalise to lower-case
+    const rawPath = location.pathname.replace(/\/$/, '');   // drop trailing /
+    let page = (document.body.dataset.page ||
+                rawPath.split('/').pop().replace(/\.html?$/, '') ||
+                'index').toLowerCase();
 
-    // For pages with a slug parameter in the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const slug = urlParams.get('slug') || page;
+    // Trust ?slug= ONLY if it exists AND is non-empty
+    const urlParams = new URLSearchParams(location.search);
+    const slug = urlParams.has('slug') && urlParams.get('slug')
+                 ? urlParams.get('slug').toLowerCase()
+                 : page;
+
+    // Debug logging
+    console.log('Dynamic Sections Debug:', {
+        rawPath,
+        dataPage: document.body.dataset.page,
+        parsedPage: page,
+        urlSlug: urlParams.get('slug'),
+        finalSlug: slug
+    });
+
+    // Warn if using URL parameter
+    if (urlParams.has('slug')) {
+        console.warn('Using ?slug= parameter for dynamic sections. This may override the intended page.');
+    }
 
     console.log(`Loading dynamic sections for page: ${page}`);
 
