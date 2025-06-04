@@ -6,7 +6,7 @@ const sharp = require('sharp');
 
 const MAX_UPLOAD = 4 * 1024 * 1024;  // 4MB
 const MAX_DIMENSIONS = 2000;  // Max width/height in pixels
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -33,11 +33,9 @@ module.exports = async (req, res) => {
         }
 
         // Validate file type
-        if (!ALLOWED_TYPES.includes(file.mimetype)) {
-            return res.status(415).json({ 
-                message: 'Invalid file type. Allowed types: ' + ALLOWED_TYPES.join(', ')
-            });
-        }
+        if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+              return res.status(415).json({ message: 'Please upload an image file' });
+            }
 
         // Validate file size
         if (file.size > MAX_UPLOAD) {
