@@ -142,8 +142,6 @@
         <div style="clear: both; width: 100%; height: 50px;"></div>
     </main>
 
-    <div class="dynamic-sections-separator"></div>
-
     <!-- SOCIAL ICONS FOOTER -->
     <footer class="site-footer fade-in-section">
         <div class="footer-icons">
@@ -182,7 +180,14 @@
     <!-- Font Awesome for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-    <script src="/js/rolling-banner.js"></script>
-    <script src="/js/dynamic-sections.js?v=20240529" type="module" defer></script>
+    <!-- order matters -- all scripts are defered so they execute in DOM order -->
+
+    <script src="/responsive-helper.js" defer></script>   <!-- defines initRollingBanner -->
+    <script src="/js/rolling-banner.js" defer></script>   <!-- *uses* initRollingBanner -->
+    <script src="/js/dynamic-nav.js" defer></script>
+    <script src="/js/visual-editor.js" defer></script>
+
+    <!-- bump the version whenever you redeploy -->
+    <script src="/js/dynamic-sections.js?v=20240530" type="module" defer></script>
 </body>
 </html>

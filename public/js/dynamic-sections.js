@@ -360,3 +360,19 @@ function initDynamicSectionsObserver() {
 
 // Export functions for use in other scripts
 export { loadDynamicSections, initDynamicSectionsObserver };
+
+/* ------------------------------------------------------------------------- */
+/*  BOOTSTRAP  ✧  runs exactly once no matter how the script was loaded      */
+function startDynamicSections() {
+  console.log('[DynSec] init');
+  initDynamicSectionsObserver();
+  loadDynamicSections();
+}
+
+if (document.readyState === 'loading') {
+  // script executed before DOMContentLoaded → wait
+  document.addEventListener('DOMContentLoaded', startDynamicSections);
+} else {
+  // DOM is already ready (defer / module scenario) → run immediately
+  startDynamicSections();
+}

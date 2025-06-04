@@ -155,7 +155,7 @@
         if (!wrapper || !content) return;
 
         if (!content.textContent.trim()) {
-            content.textContent = "Loading �";
+            content.textContent = "Loading ";
             loadBannerText().then(text => {
                 content.textContent = text;
                 animateRollingBanner(content);
@@ -165,8 +165,11 @@
         }
     }
 
+    /* make it visible to rolling-banner.js (classic script) */
+    window.initRollingBanner = initRollingBanner;
+
     /* -------------------------------------------------- */
-    /* 4  �  FADE?IN OBSERVER WITH FOOTER DELAY             */
+    /* 4    FADE?IN OBSERVER WITH FOOTER DELAY             */
     /* -------------------------------------------------- */
     function injectFadeCss() {
         if (document.getElementById("tas-fade-css")) return;

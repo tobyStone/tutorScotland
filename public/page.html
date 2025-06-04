@@ -255,6 +255,14 @@
             });
     </script>
 
-    <script type="module" src="/js/dynamic-sections.js?v=20240529"></script>
+    <!-- order matters -- all scripts are defered so they execute in DOM order -->
+
+    <script src="/responsive-helper.js" defer></script>   <!-- defines initRollingBanner -->
+    <script src="/js/rolling-banner.js" defer></script>   <!-- *uses* initRollingBanner -->
+    <script src="/js/dynamic-nav.js" defer></script>
+    <script src="/js/visual-editor.js" defer></script>
+
+    <!-- bump the version whenever you redeploy -->
+    <script src="/js/dynamic-sections.js?v=20240530" type="module" defer></script>
 </body>
 </html>
