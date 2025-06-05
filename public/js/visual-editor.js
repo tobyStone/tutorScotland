@@ -124,8 +124,11 @@ class VisualEditor {
                 break;
             case 'link':
                 if (element.tagName === 'A') {
-                    element.href = override.image; // Using image field for URL
+                    element.href = override.image;  // Using image field for URL
                     element.textContent = override.text;
+                    if (element.dataset.originalHref !== undefined) {
+                        element.dataset.originalHref = override.image;
+                    }
                 }
                 break;
         }
@@ -1186,11 +1189,19 @@ class VisualEditor {
                 break;
             case 'link':
                 if (element.tagName === 'A') {
-                    document.getElementById('link-url').value = element.href;
+                    // show the real URL (falls back to current href during preview)
+                    const realHref = element.dataset.originalHref || element.href;
+                    document.getElementById('link-url').value = realHref;
+
                     // Clone to get clean text content without edit overlay
                     const linkClone = element.cloneNode(true);
                     linkClone.querySelectorAll('.edit-overlay').forEach(n => n.remove());
                     document.getElementById('link-text').value = linkClone.textContent.trim();
+
+                    // keep the "style as button" toggle in sync
+                    const firstBtnClass = VisualEditor.BUTTON_CSS.split(/\s+/)[0]; // 'button'
+                    document.getElementById('link-is-button').checked = 
+                          element.classList.contains(firstBtnClass);
                 }
                 break;
             case 'button':
@@ -1212,6 +1223,11 @@ class VisualEditor {
             const { image: url, text: label } = this.getFormData('link');
             element.href = url;
             element.textContent = label;
+
+            // make the change persist past enableLinks()
+            if (element.dataset.originalHref !== undefined) {
+                element.dataset.originalHref = url;
+            }
 
             // 2️⃣ serialize and persist the paragraph
             const para = element.closest('p');
