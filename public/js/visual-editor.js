@@ -1126,6 +1126,9 @@ class VisualEditor {
     }
 
     openEditor(element, selector, type) {
+        if (type === 'link' && element.classList.contains('ve-btn')) {
+            selector = this.getStableLinkSelector(element);
+        }
         this.activeEditor = { element, selector, type };
 
         const modal = document.getElementById('editor-modal');
@@ -1272,7 +1275,7 @@ class VisualEditor {
 
                 /* decide up-front whether we are updating (PUT) or creating (POST)  */
                 const already = this.overrides.get(stableSel);
-                const method  = already ? 'PUT' : 'POST';
+                const method  = 'POST';                               // API only knows POST
                 const api     = '/api/content-manager?operation=override' +
                                 (already ? ('&id=' + already._id) : '');
 
@@ -1407,7 +1410,10 @@ class VisualEditor {
     async restoreOriginal() {
         if (!this.activeEditor) return;
 
-        const { element, selector, type } = this.activeEditor;
+        let { element, selector, type } = this.activeEditor;
+        if (type === 'link' && element.classList.contains('ve-btn')) {
+            selector = this.getStableLinkSelector(element);
+        }
 
         try {
             // Check if override exists
