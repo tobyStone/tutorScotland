@@ -6,6 +6,37 @@
 class VisualEditor {
     static BUTTON_CSS = 'button aurora';
 
+    /** Detect anchors that already look like site-buttons and upgrade them so
+     *  the editor can treat them exactly like the ones it inserts itself. */
+    upgradeLegacyButtons() {
+        if (!VisualEditor.BUTTON_CSS.trim()) return;  // Guard against empty CSS
+
+        const cssParts = VisualEditor.BUTTON_CSS.split(/\s+/);   // ['button','aurora']
+        document.querySelectorAll('a').forEach(a => {
+            // Skip if already processed or in navigation/header
+            if (a.classList.contains('ve-btn')) return;
+            if (a.closest('nav, header, #edit-mode-toggle, #editor-modal, .edit-overlay')) return;
+            if (a.closest('.edit-overlay')) return;  // Skip buttons being edited
+
+            // Check if it matches our button styling
+            const isBtn = cssParts.every(c => a.classList.contains(c));
+            if (!isBtn) return;
+
+            // Upgrade the button
+            a.classList.add('ve-btn');
+            if (!a.dataset.veButtonId) {
+                a.dataset.veButtonId = 
+                    (self.crypto?.randomUUID?.() ?? `ve-btn-${Date.now()}-${Math.random()}`);
+            }
+
+            // Register as editable if not already
+            const selector = this.generateSelector(a);
+            if (!this.editableElements.some(e => e.element === a)) {
+                this.editableElements.push({ element: a, selector, type: 'link' });
+            }
+        });
+    }
+
     constructor() {
         this.isEditMode = false;
         this.currentPage = this.getCurrentPageName();
@@ -16,6 +47,7 @@ class VisualEditor {
         this.imgTotalPage = 1; // set after first fetch
 
         this.init();
+        this.upgradeLegacyButtons();  // Initial upgrade of legacy buttons
     }
 
     async init() {
@@ -227,7 +259,8 @@ class VisualEditor {
 
     scanForEditableElements() {
         this.editableElements = [];
-
+        this.upgradeLegacyButtons();  // Ensure legacy buttons are upgraded during scan
+        
         // Define editable selectors
         const selectors = [
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
