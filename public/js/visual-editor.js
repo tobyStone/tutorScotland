@@ -1229,19 +1229,48 @@ class VisualEditor {
                 element.dataset.originalHref = url;
             }
 
-            // 2️⃣ serialize and persist the paragraph
-            const para = element.closest('p');
-            try {
-                const saved = await this.saveParagraphOverride(para);
-                this.applyOverride(para, saved);           // saved == override object
-                this.closeModal();
-                this.showNotification('Button updated ✔', 'success');
-            } catch (err) {
-                console.error('Failed to save paragraph override for button', err);
-                this.showNotification('Failed to save button update', 'error');
-            }
+                /* 2️⃣ persist – paragraph when available, otherwise the anchor itself */
+                    const para = element.closest('p');
+            
+                    if (para) {
+                            try {
+                                    const saved = await this.saveParagraphOverride(para);
+                                    this.applyOverride(para, saved);
+                                    this.closeModal();
+                                    this.showNotification('Button updated ✔', 'success');
+                                } catch (err) {
+                                        console.error('Failed to save paragraph override for button', err);
+                                        this.showNotification('Failed to save button update', 'error');
+                                    }
+                        } else {
+                        /* fall-back: create / replace a normal link override */
+                            try {
+                                    const resp = await fetch('/api/content-manager?operation=override', {
+                                            method : 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body   : JSON.stringify({
+                                            targetPage    : this.currentPage,
+                                            targetSelector: selector,     // already unique `[data-ve-button-id="…"]`
+                                            contentType   : 'link',
+                                            image         : url,
+                                            text          : label,
+                                            originalContent: this.getOriginalContent(element, 'link')
+                                        })
+                                    });
+                        if (!resp.ok) throw new Error('network');
+            
+                            const ov = await resp.json();
+                        this.overrides.set(selector, ov);
+                        this.applyOverride(element, ov);
+                        this.closeModal();
+                        this.showNotification('Button updated ✔', 'success');
+                    } catch (err) {
+                            console.error('Failed to save link override for standalone button', err);
+                            this.showNotification('Failed to save button update', 'error');
+                        }
+                    }
             return;
-        }
+         }
 
         const contentData = this.getFormData(type);
 
