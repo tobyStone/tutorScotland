@@ -252,9 +252,12 @@ class VisualEditor {
     }
 
     preventLinkClick(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
+            // Allow clicks that originate in the visual-editor overlay
+                if (e.target.closest('.edit-overlay')) return;
+        
+                e.preventDefault();
+            e.stopPropagation();
+            return false;
     }
 
     scanForEditableElements() {
