@@ -129,8 +129,7 @@ body {
     border-radius: 1.5rem;
     overflow: hidden;
     box-shadow: 0 6px 36px rgba(0,87,183,0.06);
-    background: linear-gradient(rgba(0, 27, 68, 0.6), rgba(0, 87, 183, 0.6)),
-                url('/images/childStudy.png') center/cover no-repeat;
+    background: linear-gradient(rgba(0, 27, 68, 0.6), rgba(0, 87, 183, 0.6));
     display: flex;
     align-items: center;
     justify-content: center;
