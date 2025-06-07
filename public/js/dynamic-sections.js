@@ -134,6 +134,15 @@ function loadDynamicSections() {
                         .querySelectorAll('.dyn-block.fade-in-on-scroll')
                         .forEach(el => window.dynamicSectionsObserver.observe(el));
                 }
+
+                // Re-apply saved overrides for EVERYONE, then refresh overlays for admins
+                if (window.visualEditorInstance) {
+                    window.visualEditorInstance.applyContentOverrides();
+                    if (window.visualEditorInstance.isEditMode) {
+                        console.log('[VE] dynamic-sections → refresh overlays');
+                        window.visualEditorInstance.refreshEditableElements();
+                    }
+                }
             } else {
                 // If no dynamic sections, hide all containers and separators
                 hideAllContainers();

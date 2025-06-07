@@ -87,6 +87,17 @@ async function loadDynamicPage() {
             loadDynamicSections();
         }
 
+        // Re-apply overrides and refresh editor if needed
+        if (window.visualEditorInstance) {
+            setTimeout(() => {      // DOM must finish innerHTML patch first
+                window.visualEditorInstance.applyContentOverrides();
+                if (window.visualEditorInstance.isEditMode) {
+                    console.log('[VE] dynamic-page → refresh overlays');
+                    window.visualEditorInstance.refreshEditableElements();
+                }
+            }, 50);
+        }
+
     } catch (error) {
         console.error('Error loading dynamic page:', error);
         // Show error message to user

@@ -1242,23 +1242,81 @@ class VisualEditor {
 
     async saveContent() {
         if (!this.activeEditor) return;
-
         const { element, selector, type } = this.activeEditor;
 
+        // 1. Handle dynamic sections first
+        const sectionRoot = element.closest('[data-section-id]');
+        if (sectionRoot) {
+            const id = sectionRoot.dataset.sectionId;
+            if (!id) {
+                console.error('Dynamic section element found without data-section-id');
+                this.showNotification('Error: Could not identify dynamic section', 'error');
+                this.closeModal();
+                return;
+            }
+
+            try {
+                const formData = this.getFormData(type);
+                const body = {};
+                
+                // Map editor data to Section fields
+                if (type === 'image') {
+                    body.image = formData.image;
+                } else if (element.tagName.match(/^H[1-6]$/)) {
+                    body.heading = formData.text;
+                } else {
+                    body.text = formData.text;
+                }
+
+                if (Object.keys(body).length === 0) {
+                    this.showNotification('No changes detected for this element type', 'info');
+                    this.closeModal();
+                    return;
+                }
+
+                const res = await fetch(`/api/sections?id=${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.message || 'network error');
+                }
+
+                // Update DOM immediately
+                if (type === 'image' && element.tagName === 'IMG') {
+                    element.src = body.image;
+                } else if (body.heading !== undefined) {
+                    element.textContent = body.heading;
+                } else if (body.text !== undefined) {
+                    element.innerHTML = body.text;
+                }
+
+                this.closeModal();
+                this.showNotification('Section updated ✔', 'success');
+                return;
+            } catch (err) {
+                console.error('Section PATCH failed', err);
+                this.showNotification('Failed to update Section: ' + err.message, 'error');
+                return;
+            }
+        }
+
+        // 2. Handle button/link content
         if (type === 'link' && element.classList.contains('ve-btn')) {
-            // 1️⃣ write the form values straight into the DOM
             const { image: url, text: label } = this.getFormData('link');
+            
+            // Update DOM immediately
             element.href = url;
             element.textContent = label;
-
-            // make the change persist past enableLinks()
             if (element.dataset.originalHref !== undefined) {
                 element.dataset.originalHref = url;
             }
 
-            /* 2️⃣ persist – paragraph when available, otherwise the anchor itself */
+            // Save to database
             const para = element.closest('p');
-
             if (para) {
                 try {
                     const saved = await this.saveParagraphOverride(para);
@@ -1270,52 +1328,45 @@ class VisualEditor {
                     this.showNotification('Failed to save button update', 'error');
                 }
             } else {
-                /* fall-back: create / replace a normal link override */
                 const stableSel = this.getStableLinkSelector(element);
-
-                /* decide up-front whether we are updating (PUT) or creating (POST)  */
                 const already = this.overrides.get(stableSel);
-                const method  = 'POST';                               // API only knows POST
-                const api     = '/api/content-manager?operation=override' +
-                                (already ? ('&id=' + already._id) : '');
-
-                try{
-                    const resp = await fetch(api, {
+                const method = already ? 'PUT' : 'POST';
+                
+                try {
+                    const resp = await fetch('/api/content-manager?operation=override' + 
+                        (already ? ('&id=' + already._id) : ''), {
                         method,
-                        headers:{ 'Content-Type':'application/json' },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            targetPage    : this.currentPage,
+                            targetPage: this.currentPage,
                             targetSelector: stableSel,
-                            contentType   : 'link',
-                            image         : url,
-                            text          : label,
-                            originalContent: this.getOriginalContent(element,'link')
+                            contentType: 'link',
+                            image: url,
+                            text: label,
+                            originalContent: this.getOriginalContent(element, 'link')
                         })
                     });
-                    if(!resp.ok) throw new Error('network');
-
+                    
+                    if (!resp.ok) throw new Error('network');
                     const ov = await resp.json();
-                    this.overrides.set(stableSel, ov);        // idempotent
+                    this.overrides.set(stableSel, ov);
                     this.applyOverride(element, ov);
                     this.closeModal();
                     this.showNotification('Button updated ✔', 'success');
-                }catch(err){
-                    console.error('Failed to save link override for standalone button',err);
-                    this.showNotification('Failed to save button update','error');
+                } catch (err) {
+                    console.error('Failed to save link override for standalone button', err);
+                    this.showNotification('Failed to save button update', 'error');
                 }
             }
             return;
         }
 
+        // 3. Handle regular content overrides
         const contentData = this.getFormData(type);
-
         try {
-            // Save to database - pass operation in query string for API compatibility
             const response = await fetch('/api/content-manager?operation=override', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     targetPage: this.currentPage,
                     targetSelector: selector,
@@ -1327,17 +1378,9 @@ class VisualEditor {
 
             if (response.ok) {
                 const override = await response.json();
-
-                // Apply changes to element
                 this.applyOverride(element, override);
-
-                // Update local overrides
                 this.overrides.set(selector, override);
-
-                // Close modal
                 this.closeModal();
-
-                // Show success message
                 this.showNotification('Content saved successfully!', 'success');
             } else {
                 throw new Error('Failed to save content');
@@ -1820,7 +1863,8 @@ class VisualEditor {
 
 // Initialize visual editor when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new VisualEditor();
+    // exactly ONE editor, globally reachable
+    window.visualEditorInstance = new VisualEditor();
 });
 
 // Add slide animations
