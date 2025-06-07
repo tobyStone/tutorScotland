@@ -365,11 +365,11 @@
                     // Add each section with proper spacing and styling
                     list.forEach((s, index) => {
                         host.insertAdjacentHTML('beforeend', `
-                              <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
-                                ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
-                                <h2>${s.heading}</h2>
-                                <div class="dyn-content">${s.text}</div>
-                              </article>`);
+                                  <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
+                                    ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
+                                    <h2>${s.heading}</h2>
+                                    <div class="dyn-content">${s.text}</div>
+                                  </article>`);
                     });
 
                     // Make sure the dynamic sections container is visible
@@ -382,7 +382,7 @@
                     document.body.offsetHeight;
 
                     // Dynamic blocks will be automatically observed by responsive-helper.js
-                    
+
                     // Scroll to the dynamic sections if they were added via admin
                     const urlParams = new URLSearchParams(window.location.search);
                     if (urlParams.get('scrollToNew') === 'true') {
