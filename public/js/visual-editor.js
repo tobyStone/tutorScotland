@@ -3,6 +3,42 @@
  * Allows in-place editing of website content with visual overlays
  */
 
+// 150×150 light-grey square SVG (≈ 280 bytes)
+const PLACEHOLDER_IMAGE_URI =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Crect width='100%25' height='100%25' fill='%23e0e0e0'/%3E%3C/svg%3E";
+
+// Helper to safely handle image loading errors
+function safeImg(img) {
+  if (!img) return null;
+  img.onerror = function () {
+    if (this.dataset.fallbackApplied) return;    // idempotent
+    this.dataset.fallbackApplied = "1";
+    this.onerror = null;                         // belt & braces
+    this.src = PLACEHOLDER_IMAGE_URI;
+    this.alt = "Image failed to load";
+  };
+  return img;
+}
+
+// Basic state validation helper
+function validateEditorState(editor) {
+  if (!editor.activeEditor) return false;
+  if (!editor.activeEditor.element || !editor.activeEditor.element.isConnected) {
+    editor.activeEditor = null;
+    return false;
+  }
+  return true;
+}
+
+// Simple error recovery
+function recoverFromError(editor) {
+  if (editor.activeEditor) {
+    editor.closeModal();
+    editor.activeEditor = null;
+  }
+  editor.showNotification('Operation recovered from error', 'info');
+}
+
 class VisualEditor {
     static BUTTON_CSS = 'button aurora';
 
@@ -45,6 +81,7 @@ class VisualEditor {
         this.overrides = new Map();
         this.imgPage = 1;      // current page in browser
         this.imgTotalPage = 1; // set after first fetch
+        this._eventListeners = new Map(); // Track event listeners
 
         this.init();
         this.upgradeLegacyButtons();  // Initial upgrade of legacy buttons
@@ -1160,8 +1197,13 @@ class VisualEditor {
 
     closeModal() {
         const modal = document.getElementById('editor-modal');
-        modal.style.display = 'none';
-        this.activeEditor = null;
+        if (modal) {
+            modal.style.display = 'none';
+            this.cleanupEventListeners();
+            if (!validateEditorState(this)) {
+                recoverFromError(this);
+            }
+        }
     }
 
     updateFormFields() {
@@ -1408,7 +1450,10 @@ class VisualEditor {
     }
 
     async restoreOriginal() {
-        if (!this.activeEditor) return;
+        if (!validateEditorState(this)) {
+            recoverFromError(this);
+            return;
+        }
 
         let { element, selector, type } = this.activeEditor;
         if (type === 'link' && element.classList.contains('ve-btn')) {
@@ -1416,20 +1461,14 @@ class VisualEditor {
         }
 
         try {
-            // Check if override exists
             const override = this.overrides.get(selector);
             if (override) {
-                // Delete override from database
                 const response = await fetch(`/api/content-manager?id=${override._id}`, {
                     method: 'DELETE'
                 });
 
                 if (response.ok) {
-                    // Remove from local overrides
                     this.overrides.delete(selector);
-
-                    // Restore original content (would need to be stored)
-                    // For now, reload the page
                     window.location.reload();
                 } else {
                     throw new Error('Failed to restore content');
@@ -1438,6 +1477,7 @@ class VisualEditor {
         } catch (error) {
             console.error('Restore error:', error);
             this.showNotification('Failed to restore content', 'error');
+            recoverFromError(this);
         }
     }
 
@@ -1729,85 +1769,46 @@ class VisualEditor {
     }
 
     async loadImages() {
-        const imageGrid = document.getElementById('image-grid');
-        const prevPage = document.getElementById('prev-page');
-        const nextPage = document.getElementById('next-page');
-        const pageInfo = document.getElementById('page-info');
-        const searchQuery = document.getElementById('image-search').value;
-        const sortBy = document.getElementById('image-sort').value;
+        const grid = document.getElementById('image-grid');
+        if (!grid) return;
 
-        // Show loading state
-        imageGrid.innerHTML = '<div class="loading-spinner"></div>';
+        // Clear existing content
+        grid.innerHTML = '<div class="loading-spinner"></div>';
 
-        try {
-            const response = await fetch(
-                `/api/content-manager?operation=list-images` +
-                `&page=${this.imgPage}` +
-                `&search=${encodeURIComponent(searchQuery)}` +
-                `&sort=${sortBy}`
-            );
-            if (!response.ok) throw new Error('Failed to load images');
-            
-            const data = await response.json();
-            const { images, total, perPage } = data;
-            
-            this.imgTotalPage = Math.ceil(total / perPage);
-            
-            // Update pagination
-            prevPage.disabled = this.imgPage === 1;
-            nextPage.disabled = this.imgPage === this.imgTotalPage;
-            pageInfo.textContent = `Page ${this.imgPage} of ${this.imgTotalPage}`;
+        // Fetch images
+        fetch(`/api/content-manager?operation=list-images&page=${this.imgPage}&search=${this.imgSearch}&sort=${this.imgSort}`)
+            .then(res => res.json())
+            .then(data => {
+                this.imgTotalPage = data.totalPages;
+                grid.innerHTML = '';
 
-            // Clear grid and add images
-            imageGrid.innerHTML = '';
-            
-            if (images.length === 0) {
-                imageGrid.innerHTML = '<p class="text-center">No images found</p>';
-                return;
-            }
-
-            images.forEach(image => {
-                const item = document.createElement('div');
-                item.className = 'image-item';
-                item.tabIndex = 0;
-                item.innerHTML = `
-                    <img src="${image.thumb || image.url}" alt="${image.name}" loading="lazy">
-                    <div class="image-name">${image.name}</div>
-                `;
-
-                // Handle image load errors
-                const img = item.querySelector('img');
-                img.onerror = () => {
-                    img.src = '/images/placeholder.png';
-                    img.alt = 'Failed to load image';
-                };
-
-                // Handle selection
-                item.addEventListener('click', () => {
-                    // Remove selection from other items
-                    imageGrid.querySelectorAll('.image-item').forEach(i => i.classList.remove('selected'));
-                    item.classList.add('selected');
-
-                    // Update the image URL and preview
-                    const imageUrl = document.getElementById('content-image');
-                    imageUrl.value = image.url;
+                data.images.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'image-item';
                     
-                    const preview = document.getElementById('image-preview');
-                    const previewImg = preview.querySelector('img');
-                    previewImg.src = image.thumb || image.url;
-                    preview.style.display = 'block';
-
-                    // Close browser
-                    document.getElementById('image-browser').style.display = 'none';
+                    // Use safeImg helper
+                    const img = safeImg(document.createElement('img'));
+                    img.src = item.thumb;
+                    img.alt = item.name;
+                    img.dataset.fullUrl = item.url;
+                    
+                    div.appendChild(img);
+                    grid.appendChild(div);
                 });
 
-                imageGrid.appendChild(item);
+                // Update pagination
+                const prevPage = document.getElementById('prev-page');
+                const nextPage = document.getElementById('next-page');
+                const pageInfo = document.getElementById('page-info');
+                
+                if (prevPage) prevPage.disabled = this.imgPage <= 1;
+                if (nextPage) nextPage.disabled = this.imgPage >= this.imgTotalPage; // Fixed comparison
+                if (pageInfo) pageInfo.textContent = `Page ${this.imgPage}`;
+            })
+            .catch(error => {
+                console.error('Error loading images:', error);
+                grid.innerHTML = '<div class="error-message">Failed to load images</div>';
             });
-
-        } catch (error) {
-            console.error('Failed to load images:', error);
-            imageGrid.innerHTML = '<p class="text-center text-danger">Failed to load images. Please try again.</p>';
-        }
     }
 
     openImageBrowser() {
@@ -1815,6 +1816,31 @@ class VisualEditor {
         imageBrowser.style.display = 'block';
         this.imgPage = 1;
         this.loadImages();
+    }
+
+    // Add event listener tracking
+    addTrackedListener(element, event, handler) {
+        if (!this._eventListeners.has(element)) {
+            this._eventListeners.set(element, new Map());
+        }
+        const elementListeners = this._eventListeners.get(element);
+        if (!elementListeners.has(event)) {
+            elementListeners.set(event, new Set());
+        }
+        elementListeners.get(event).add(handler);
+        element.addEventListener(event, handler);
+    }
+
+    // Cleanup event listeners
+    cleanupEventListeners() {
+        this._eventListeners.forEach((eventMap, element) => {
+            eventMap.forEach((handlers, event) => {
+                handlers.forEach(handler => {
+                    element.removeEventListener(event, handler);
+                });
+            });
+        });
+        this._eventListeners.clear();
     }
 }
 

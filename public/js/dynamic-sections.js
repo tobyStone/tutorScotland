@@ -290,7 +290,8 @@ function createDynamicSectionElement(section, index) {
         const imageContainer = document.createElement('div');
         imageContainer.className = 'dyn-image-container';
 
-        const image = document.createElement('img');
+        // Use safeImg helper for error handling
+        const image = safeImg(document.createElement('img'));
         image.src = section.image;
         image.alt = section.heading || 'Section image';
         image.setAttribute('loading', 'lazy');

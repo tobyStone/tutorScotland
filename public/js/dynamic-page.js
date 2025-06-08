@@ -22,7 +22,8 @@ async function loadDynamicPage() {
         const heroSection = document.createElement('section');
         heroSection.className = 'hero-section';
         
-        const heroShield = document.createElement('img');
+        // Use safeImg helper for hero shield
+        const heroShield = safeImg(document.createElement('img'));
         heroShield.src = '/images/bannerShield2.png';
         heroShield.className = 'hero-shield';
         heroShield.alt = 'TAS Shield';
@@ -55,7 +56,8 @@ async function loadDynamicPage() {
         if (page.image) {
             const imageContainer = document.createElement('div');
             imageContainer.className = 'page-featured-image';
-            const image = document.createElement('img');
+            // Use safeImg helper for featured image
+            const image = safeImg(document.createElement('img'));
             image.src = page.image;
             image.alt = page.heading;
             imageContainer.appendChild(image);
