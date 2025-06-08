@@ -1517,8 +1517,6 @@ header h1 {
     .tutor-img-list tutor-img-list-left {
         display: none !important
     }
-
-
 }
 
 .newsletter-gradient-bg {
@@ -2251,5 +2249,25 @@ header h1 {
     .dyn-block h2 {
         font-size: 1.5rem;
     }
+}
+
+/* ======================================================================
+   Mobile viewport hot-fix for full-bleed sections
+   ====================================================================== */
+@media (max-width: 900px) and (orientation: portrait) {
+  /*
+   * The original 100vw width + –50vw margins push the section's
+   * bounding box outside the visual viewport on narrow screens.
+   * That prevents our IntersectionObserver from adding `is-visible`.
+   * Constraining the block to normal flow fixes the problem.
+   */
+  .strive-bg-section {
+    width: 100%;        /* use parent's natural width            */
+    position: relative; /* cancel the earlier 'left: 50%' trick   */
+    left: auto;
+    right: auto;
+    margin-left: auto;  /* reset any negative margins             */
+    margin-right: auto;
+  }
 }
 
