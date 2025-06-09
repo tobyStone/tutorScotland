@@ -40,7 +40,7 @@ function recoverFromError(editor) {
 }
 
 class VisualEditor {
-    static BUTTON_CSS = 've-btn';
+    static BUTTON_CSS = 'button aurora';
     static EDIT_ACTIVE_CLASS = 've-edit-active';
 
     /** Detect anchors that already look like site-buttons and upgrade them so
