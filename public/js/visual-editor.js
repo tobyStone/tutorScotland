@@ -36,7 +36,7 @@ function recoverFromError(editor) {
     editor.closeModal();
     editor.activeEditor = null;
   }
-  editor.showNotification('Operation recovered from error', 'info');
+  editor.showNotification('Operation recovered from errors', 'info');
 }
 
 class VisualEditor {
