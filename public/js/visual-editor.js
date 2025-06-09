@@ -40,7 +40,8 @@ function recoverFromError(editor) {
 }
 
 class VisualEditor {
-    static BUTTON_CSS = 'button aurora';
+    static BUTTON_CSS = 've-btn';
+    static EDIT_ACTIVE_CLASS = 've-edit-active';
 
     /** Detect anchors that already look like site-buttons and upgrade them so
      *  the editor can treat them exactly like the ones it inserts itself. */
@@ -75,53 +76,78 @@ class VisualEditor {
 
     constructor() {
         this.isEditMode = false;
-        this.currentPage = this.getCurrentPageName();
+        this.currentPage = location.pathname;
         this.editableElements = [];
         this.activeEditor = null;
         this.overrides = new Map();
-        this.imgPage = 1;      // current page in browser
-        this.imgTotalPage = 1; // set after first fetch
-        this._eventListeners = new Map(); // Track event listeners
+        this.imgPage = 1;
+        this.imgTotalPage = 1;
+        this._eventListeners = new Map();
+        this._adminCheckInterval = null;
 
-        this.init();
-        this.upgradeLegacyButtons();  // Initial upgrade of legacy buttons
+        // Initialize after DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.initialize());
+        } else {
+            this.initialize();
+        }
     }
 
-    async init() {
+    async initialize() {
         // Load existing overrides (always for everyone)
         await this.loadContentOverrides();
-
-        // Apply existing overrides (always for everyone)
         this.applyContentOverrides();
 
-        // Check if user is admin
+        // Initial admin check
         const isAdmin = await this.checkAdminStatus();
-
-        // Stop here for non-admins - they see overrides but not editing UI
-        if (!isAdmin) return;
-
-        // Create edit mode toggle
-        this.createEditModeToggle();
-
-        // Create editor modal
-        this.createEditorModal();
-
-        // Setup keyboard shortcuts
-        this.setupKeyboardShortcuts();
+        if (isAdmin) {
+            this.loadEditorStyles();
+            this.createEditModeToggle();
+            this.createEditorModal();
+            this.setupKeyboardShortcuts();
+            
+            // Start polling for admin status every 10 minutes
+            this._adminCheckInterval = setInterval(() => this.checkAdminStatus(), 600000);
+        }
     }
 
-    getCurrentPageName() {
-        const path = window.location.pathname;
-        return path.split('/').pop() || 'index.html';
+    loadEditorStyles() {
+        if (document.getElementById('ve-style')) return;
+        const link = document.createElement('link');
+        link.id = 've-style';
+        link.rel = 'stylesheet';
+        link.href = '/editor.css';
+        document.head.appendChild(link);
     }
 
     async checkAdminStatus() {
         try {
-            const response = await fetch('/api/login?check=admin');
+            const response = await fetch('/api/login?check=admin', {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            });
             const data = await response.json();
-            return data.isAdmin || false;
+            const isAdmin = data.isAdmin || false;
+
+            // If we were in edit mode but lost admin status, disable it
+            if (!isAdmin && this.isEditMode) {
+                this.disableEditMode();
+                this.isEditMode = false;
+                this.updateEditToggle();
+            }
+
+            return isAdmin;
         } catch (error) {
             console.error('Admin check failed:', error);
+            if (this.isEditMode) {
+                this.disableEditMode();
+                this.isEditMode = false;
+                this.updateEditToggle();
+            }
             return false;
         }
     }
@@ -184,57 +210,41 @@ class VisualEditor {
     }
 
     createEditModeToggle() {
-        const toggle = document.createElement('div');
-        toggle.id = 'edit-mode-toggle';
-        toggle.innerHTML = `
-            <button id="toggle-edit-btn" class="edit-toggle-btn">
-                <span class="edit-icon">✏️</span>
-                <span class="edit-text">Edit Mode</span>
-            </button>
-        `;
-
-        toggle.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            background: #007bff;
-            border-radius: 25px;
-            padding: 5px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        `;
-
-        const button = toggle.querySelector('#toggle-edit-btn');
-        button.style.cssText = `
-            background: none;
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        `;
-
+        const button = document.createElement('button');
+        button.id = 'edit-mode-toggle';
+        button.className = VisualEditor.BUTTON_CSS;
+        button.textContent = 'Edit Mode';
+        button.setAttribute('aria-pressed', 'false');
+        button.setAttribute('role', 'switch');
+        button.setAttribute('aria-label', 'Toggle edit mode');
+        
         button.addEventListener('click', () => this.toggleEditMode());
-        document.body.appendChild(toggle);
+        document.body.appendChild(button);
+    }
+
+    updateEditToggle() {
+        const button = document.getElementById('edit-mode-toggle');
+        if (button) {
+            button.setAttribute('aria-pressed', this.isEditMode.toString());
+            button.textContent = this.isEditMode ? 'Exit Edit' : 'Edit Mode';
+            button.style.background = this.isEditMode ? '#28a745' : '#007bff';
+        }
     }
 
     toggleEditMode() {
         this.isEditMode = !this.isEditMode;
-        const button = document.getElementById('toggle-edit-btn');
+        document.body.classList.toggle(VisualEditor.EDIT_ACTIVE_CLASS, this.isEditMode);
+        this.updateEditToggle();
 
         if (this.isEditMode) {
-            this.enableEditMode();
-            button.style.background = '#28a745';
-            button.querySelector('.edit-text').textContent = 'Exit Edit';
+            this.scanForEditableElements();
+            this.addEditOverlays();
+            this.disableLinks();
+            document.body.style.outline = '3px dashed #007bff';
+            document.body.style.outlineOffset = '-3px';
+            this.showEditInstructions();
         } else {
             this.disableEditMode();
-            button.style.background = 'none';
-            button.querySelector('.edit-text').textContent = 'Edit Mode';
         }
     }
 
@@ -430,30 +440,25 @@ class VisualEditor {
 
     addEditOverlays() {
         this.editableElements.forEach(({ element, selector, type }) => {
-            /* 🖼️  images need a wrapper because they can't contain children */
-            let mount = element;                  // where the overlay will live
+            let mount = element;
             if (type === 'image') {
-                // Dup-wrap guard: check if already wrapped
-                if (element.parentElement && element.parentElement.classList.contains('ve-img-wrap')) {
-                    mount = element.parentElement; // overlay goes on the existing wrapper
+                if (element.parentElement?.classList.contains('ve-img-wrap')) {
+                    mount = element.parentElement;
                 } else {
-                    // Create wrapper if it doesn't exist
                     const wrap = document.createElement('span');
                     wrap.className = 've-img-wrap';
-                    wrap.style.cssText = 'display:inline-block;position:relative;';
-
                     element.parentNode.insertBefore(wrap, element);
-                    wrap.appendChild(element);    // move img inside
-                    mount = element.parentElement;    // overlay goes on the new wrapper
+                    wrap.appendChild(element);
+                    mount = wrap;
                 }
             }
 
-            /* 🆕 ensure each mount is a positioning context */
+            // Ensure mount is a positioning context
             if (getComputedStyle(mount).position === 'static') {
                 mount.style.position = 'relative';
             }
 
-            const overlay = this.createEditOverlay(element, selector, type); // keep IMG as "target" for events
+            const overlay = this.createEditOverlay(element, selector, type);
             mount.appendChild(overlay);
         });
     }

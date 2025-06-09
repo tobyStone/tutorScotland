@@ -1,0 +1,237 @@
+/* ===== Visual Editor UI - Loaded only for admins ===== */
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Overlays: Always in DOM, never change layout */
+.edit-overlay {
+    position: absolute;
+    inset: 0;  /* cover parent */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 9990;
+    background: rgba(0, 123, 255, 0.1);
+    border: 2px dashed transparent;
+}
+
+/* Active state */
+body.ve-edit-active .edit-overlay {
+    pointer-events: auto;
+}
+
+body.ve-edit-active .ve-img-wrap:hover > .edit-overlay,
+body.ve-edit-active .edit-overlay:hover {
+    opacity: 1;
+    border-color: #007bff;
+}
+
+/* Modal hidden until JS opens it */
+#editor-modal {
+    display: none;
+}
+
+body.ve-edit-active #editor-modal[style*="display: block"] {
+    display: block;
+}
+
+/* Edit mode toggle button */
+#edit-mode-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10000;
+    padding: 0.5em 1.2em;
+    border-radius: 4px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#edit-mode-toggle:hover,
+#edit-mode-toggle:focus {
+    background: #0056b3;
+    outline: none;
+}
+
+#edit-mode-toggle[aria-pressed="true"] {
+    background: #28a745;
+}
+
+/* Image wrapper */
+.ve-img-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+/* Edit instructions */
+#edit-instructions {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    padding: 15px 25px;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    z-index: 10001;
+    animation: slideDown 0.3s ease;
+}
+
+/* Modal styles */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 10002;
+}
+
+.modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    z-index: 10003;
+    max-width: 90%;
+    width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Form elements */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: #fff;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: #fff;
+}
+
+.btn-warning {
+    background: #ffc107;
+    color: #000;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: #fff;
+}
+
+/* Image browser */
+.image-browser {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    z-index: 10004;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.image-item {
+    position: relative;
+    aspect-ratio: 1;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.image-item:hover {
+    border-color: #007bff;
+}
+
+.image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Loading spinner */
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.ve-btn {
+    display: inline-block;
+    padding: 0.5em 1.2em;
+    margin: 0.25em;
+    border-radius: 4px;
+    background: #007bff;
+    color: #fff;
+    transition: background 0.2s;
+}
+
+.ve-btn:hover,
+.ve-btn:focus {
+    background: #0056b3;
+} 
