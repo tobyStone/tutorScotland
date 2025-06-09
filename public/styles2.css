@@ -2283,7 +2283,14 @@ header h1 {
       position:relative;
       left:auto;
       margin:0;
-      overflow-x:hidden;    /* stop horizontal scroll bar          */
+
+      /* keep horizontal safety-net               */
+      overflow-x:hidden;
+      /* ✅ let the section grow vertically       */
+      overflow-y:visible;
+
+      /* (optional) don't pin it to 800 px either */
+      min-height:auto;
   }
 
   /* 2️⃣  The card now drives the fade-in, so keep it inside the viewport */
