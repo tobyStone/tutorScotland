@@ -2254,12 +2254,13 @@ header h1 {
 /* ======================================================================
    Mobile viewport hot-fix for full-bleed sections
    ====================================================================== */
-@media (max-width: 900px) and (orientation: portrait) {
+@media (max-width: 1200px) and (orientation: portrait) {
   /*
    * The original 100vw width + –50vw margins push the section's
    * bounding box outside the visual viewport on narrow screens.
    * That prevents our IntersectionObserver from adding `is-visible`.
    * Constraining the block to normal flow fixes the problem.
+   * Extended to 1200px to match restricted viewport definition in JS.
    */
   .strive-bg-section {
     width: 100%;        /* use parent's natural width            */
