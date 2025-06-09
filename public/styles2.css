@@ -2272,3 +2272,23 @@ header h1 {
   }
 }
 
+/* ------------------------------
+   Restricted portrait hot-fix
+   ------------------------------ */
+@media (max-width:1200px) and (orientation:portrait){
+
+  /* 1️⃣  Keep the background full-width but cancel the old trickery */
+  .strive-bg-section{
+      width:100%;           /* logical width = visual width        */
+      position:relative;
+      left:auto;
+      margin:0;
+      overflow-x:hidden;    /* stop horizontal scroll bar          */
+  }
+
+  /* 2️⃣  The card now drives the fade-in, so keep it inside the viewport */
+  .strive-overlay-card{
+      max-width:92vw;       /* same optical margin you already use */
+  }
+}
+
