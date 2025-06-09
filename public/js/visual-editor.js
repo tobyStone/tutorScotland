@@ -1706,7 +1706,7 @@ class VisualEditor {
         })
         .catch(err => {
             console.error(err);
-            this.showNotification('Failed to save paragraph after removing buttons', 'error');
+            this.showNotification('Failed to save paragraph after removing button', 'error');
         });
     }
 
