@@ -234,4 +234,26 @@ body.ve-edit-active #editor-modal[style*="display: block"] {
 .ve-btn:hover,
 .ve-btn:focus {
     background: #0056b3;
+}
+
+/* === Visual-editor fixes for the circular team-member photos ================ */
+
+/* 1) Put the edit toolbox in the dead-centre of the picture */
+.team-member .ve-img-wrap .edit-controls {
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;  /* centre it */
+}
+
+/* 2) Make sure the toolbox isn't cropped by the img mask */
+.team-member .ve-img-wrap {        /* only the extra span we inject */
+    overflow: visible !important;  /* keeps the outer circle clipping intact */
+}
+
+/* 3) Optional: Tweak the button's appearance for better visibility */
+.team-member .ve-img-wrap .edit-btn {
+    font-size: 11px;           /* a shade smaller */
+    padding: 2px 6px;
+    background: #20c997;       /* teal stands out, but pick any */
+    opacity: 0.95;             /* subtle transparency */
 } 
