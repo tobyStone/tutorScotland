@@ -1052,6 +1052,30 @@ class VisualEditor {
             .edit-overlay:hover {
                 opacity: 1 !important;
             }
+
+            /* Visual feedback for selected images */
+            .image-item.selected {
+                position: relative;
+                border: 3px solid #28a745;
+                border-radius: 4px;
+            }
+
+            .image-item.selected::after {
+                content: '✓';
+                position: absolute;
+                right: 6px;
+                top: 4px;
+                font-size: 20px;
+                color: #28a745;
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 50%;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -1802,14 +1826,41 @@ class VisualEditor {
                 data.images.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'image-item';
-                    
+
                     // Use safeImg helper
                     const img = safeImg(document.createElement('img'));
                     img.src = item.thumb;
                     img.alt = item.name;
                     img.dataset.fullUrl = item.url;
-                    
+
                     div.appendChild(img);
+
+                    // 🟢  NEW – choose this image when clicked
+                    div.addEventListener('click', () => {
+                        /* 1️⃣ visual feedback */
+                        grid.querySelectorAll('.image-item.selected')
+                            .forEach(el => el.classList.remove('selected'));
+                        div.classList.add('selected');
+
+                        /* 2️⃣ write into the form */
+                        document.getElementById('content-image').value = item.url;
+                        const previewBox = document.getElementById('image-preview');
+                        const previewImg = previewBox.querySelector('img');
+                        previewImg.src = item.thumb || item.url;
+                        previewBox.style.display = 'block';
+
+                        /* 3️⃣ fill alt automatically if empty */
+                        const altInput = document.getElementById('image-alt');
+                        if (!altInput.value) {
+                            altInput.value = item.name
+                                .replace(/\.[^.]+$/, '')
+                                .replace(/[-_]+/g, ' ');
+                        }
+
+                        /* 4️⃣ close the browser for convenience */
+                        document.getElementById('image-browser').style.display = 'none';
+                    });
+
                     grid.appendChild(div);
                 });
 
