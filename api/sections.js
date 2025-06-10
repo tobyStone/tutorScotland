@@ -15,7 +15,7 @@ async function uploadToBlob(file) {
     console.log('Uploading image', file.originalFilename, file.size);
     const tempPath = file.filepath || file.path;
     const stream = fs.createReadStream(tempPath);
-    const key = `sections/${Date.now()}-${file.originalFilename}`;
+    const key = `content-images/${Date.now()}-${file.originalFilename}`;
     const { url } = await put(key, stream, {
         access: 'public',
         contentType: file.mimetype

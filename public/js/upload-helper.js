@@ -1,5 +1,5 @@
 // /public/js/upload-helper.js (client side)
-export async function uploadImage(file, folder = 'misc') {
+export async function uploadImage(file, folder = 'content-images') {
     console.log('uploadImage called with:', { fileName: file.name, size: file.size, folder });
 
     /* hard stop at 4.5MB - Vercel limit */

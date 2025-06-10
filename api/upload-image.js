@@ -81,7 +81,7 @@ module.exports = async (req, res) => {
             .replace(/-+/g, '-')            // Replace multiple hyphens with single
             .replace(/^-|-$/g, '');         // Remove leading/trailing hyphens
         const filename = `${timestamp}-${clean}`;
-        const folder = fields.folder || 'uploads';
+        const folder = fields.folder || 'content-images';
 
         // Generate and upload thumbnail
         const thumbnailBuffer = await sharp(uploadedFile.filepath)

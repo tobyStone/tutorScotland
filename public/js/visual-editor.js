@@ -85,6 +85,10 @@ class VisualEditor {
         this._eventListeners = new Map();
         this._adminCheckInterval = null;
 
+        /** Image‑browser state */
+        this.imgSearch = "";   // ⇠ non‑undefined defaults
+        this.imgSort   = "newest";
+
         // Initialize after DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.initialize());
@@ -1107,15 +1111,14 @@ class VisualEditor {
 
         // Search handling with debounce
         imageSearch.addEventListener('input', (e) => {
-            if (searchTimeout) clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                this.imgPage = 1;
-                this.loadImages();
-            }, 300);
+            clearTimeout(searchTimeout);
+            this.imgSearch = imageSearch.value.trim(); // keep state in sync 🔑
+            searchTimeout = setTimeout(() => { this.imgPage = 1; this.loadImages(); }, 300);
         });
 
         // Sort handling
         imageSort.addEventListener('change', () => {
+            this.imgSort = imageSort.value || "newest";
             this.imgPage = 1;
             this.loadImages();
         });
@@ -1780,8 +1783,10 @@ class VisualEditor {
         // Clear existing content
         grid.innerHTML = '<div class="loading-spinner"></div>';
 
-        // Fetch images
-        fetch(`/api/content-manager?operation=list-images&page=${this.imgPage}&search=${this.imgSearch}&sort=${this.imgSort}`)
+        // Build the fetch URL with safe parameters
+        const search = encodeURIComponent(this.imgSearch || "");
+        const sort   = this.imgSort || "newest";
+        fetch(`/api/content-manager?operation=list-images&page=${this.imgPage}&search=${search}&sort=${sort}`)
             .then(res => res.json())
             .then(data => {
                 this.imgTotalPage = data.totalPages;

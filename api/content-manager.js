@@ -310,15 +310,19 @@ async function handleCreateBackup(req, res) {
 // List images from blob storage
 async function handleListImages(req, res) {
     try {
-        const { page = 1, search = '', sort = 'newest' } = req.query;
+        const clean = (v) => (!v || v === "undefined" || v === "null") ? "" : String(v);
+
+        const { page = 1 } = req.query;
+        const search = clean(req.query.search);
+        const sort   = clean(req.query.sort) || 'newest';
         const pageNum = parseInt(page, 10);
         const limit = parseInt(req.query.perPage || ITEMS_PER_PAGE, 10); // Allow perPage override
         const offset = (pageNum - 1) * limit;
 
         // Use Vercel Blob list function
         const { blobs, continueCursor } = await list({
-            limit: 1000, // Fetch a larger batch to enable sorting and searching
-            prefix: search ? `content-images/${search}` : 'content-images/' // Filter by search term if present
+            limit : 1000,
+            prefix: 'content-images/'   // 📌 always this folder – search handled client‑side
         });
 
         // Manually apply pagination, search, and sort as list options are limited
