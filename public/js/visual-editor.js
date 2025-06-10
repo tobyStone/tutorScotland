@@ -449,6 +449,55 @@ class VisualEditor {
         }
     }
 
+    getOriginalContent(element, type) {
+        switch (type) {
+            case 'image':
+                return {
+                    src: element.src,
+                    alt: element.alt || ''
+                };
+            case 'link':
+                return {
+                    href: element.href,
+                    text: element.textContent
+                };
+            case 'text':
+                return {
+                    text: element.textContent
+                };
+            case 'html':
+                return {
+                    html: element.innerHTML
+                };
+            default:
+                return {
+                    text: element.textContent
+                };
+        }
+    }
+
+    restoreElementContent(element, type, original) {
+        switch (type) {
+            case 'image':
+                element.src = original.src;
+                element.alt = original.alt;
+                break;
+            case 'link':
+                element.href = original.href;
+                element.textContent = original.text;
+                break;
+            case 'text':
+                element.textContent = original.text;
+                break;
+            case 'html':
+                element.innerHTML = original.html;
+                break;
+            default:
+                element.textContent = original.text;
+                break;
+        }
+    }
+
     addEditOverlays() {
         this.editableElements.forEach(({ element, selector, type }) => {
             let mount = element;
@@ -1205,7 +1254,12 @@ class VisualEditor {
         if (type === 'link' && element.classList.contains('ve-btn')) {
             selector = this.getStableLinkSelector(element);
         }
-        this.activeEditor = { element, selector, type };
+        this.activeEditor = {
+            element,
+            selector,
+            type,
+            original: this.getOriginalContent(element, type)   // 🆕
+        };
 
         const modal = document.getElementById('editor-modal');
         const title = document.getElementById('modal-title');
@@ -1229,6 +1283,12 @@ class VisualEditor {
 
         // Populate current content
         this.populateCurrentContent(element, type);
+
+        // Set restore button state
+        const restoreBtn = document.getElementById('restore-btn');
+        if (restoreBtn) {
+            restoreBtn.disabled = !this.overrides.has(selector);
+        }
 
         // Show modal
         modal.style.display = 'block';
@@ -1494,39 +1554,49 @@ class VisualEditor {
             return;
         }
 
-        let { element, selector, type } = this.activeEditor;
+        let { element, selector, type, original } = this.activeEditor;
         if (type === 'link' && element.classList.contains('ve-btn')) {
             selector = this.getStableLinkSelector(element);
         }
 
-        try {
-            const override = this.overrides.get(selector);
-            if (override) {
+        const override = this.overrides.get(selector);
+
+        /* ---------- case 1: an override exists, delete it ---------- */
+        if (override) {
+            try {
                 const response = await fetch(`/api/content-manager?id=${override._id}`, {
                     method: 'DELETE'
                 });
 
                 if (response.ok) {
                     this.overrides.delete(selector);
+                    this.showNotification('Content restored successfully', 'success');
                     window.location.reload();
+                    return;
                 } else {
-                    throw new Error('Failed to restore content');
+                    this.showNotification('Failed to restore content', 'error');
+                    return;
                 }
+            } catch (error) {
+                console.error('Restore error:', error);
+                this.showNotification('Failed to restore content', 'error');
+                return;
             }
-        } catch (error) {
-            console.error('Restore error:', error);
-            this.showNotification('Failed to restore content', 'error');
-            recoverFromError(this);
         }
+
+        /* ---------- case 2: no override – just roll back the edit ---------- */
+        this.restoreElementContent(element, type, original);
+        this.closeModal();
+        this.showNotification('Changes discarded', 'success');
     }
 
     restoreElementContent(element, type, originalContent) {
         switch (type) {
             case 'text':
-                element.textContent = originalContent;
+                element.textContent = originalContent.text;
                 break;
             case 'html':
-                element.innerHTML = originalContent;
+                element.innerHTML = originalContent.html;
                 break;
             case 'image':
                 if (element.tagName === 'IMG') {
@@ -1541,7 +1611,7 @@ class VisualEditor {
                 }
                 break;
             case 'button':
-                document.getElementById('button-preview').innerHTML = originalContent;
+                document.getElementById('button-preview').innerHTML = originalContent.text;
                 break;
         }
     }
