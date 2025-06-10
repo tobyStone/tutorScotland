@@ -320,18 +320,19 @@ async function handleListImages(req, res) {
         const offset = (pageNum - 1) * limit;
 
         // Use Vercel Blob list function
-        const { blobs, continueCursor } = await list({
+        const { blobs } = await list({
             limit : 1000,
-            prefix: 'content-images/'   // 📌 always this folder – search handled client‑side
+            prefix: 'content-images/'          // always the top folder
         });
 
-        // Manually apply pagination, search, and sort as list options are limited
-        let files = blobs;
+        // 1) drop any file that *is already* a thumbnail
+        let files = blobs.filter(b => !b.pathname.startsWith('content-images/thumbnails/'));
 
-        // Filter by search (basic name contains search term)
+        // 2) search by simple substring on the filename (case-insensitive)
         if (search) {
-             // Filter based on the search prefix applied in the list function
-             // No further client-side filtering needed if prefix is used correctly
+            files = files.filter(b =>
+                b.pathname.toLowerCase().includes(search.toLowerCase())
+            );
         }
 
         // Apply sorting
@@ -352,13 +353,19 @@ async function handleListImages(req, res) {
         const paginatedFiles = files.slice(offset, offset + limit);
 
         const total = files.length || 0;
-        const images = paginatedFiles.map(blob => ({
-            name: blob.pathname.split('/').pop(),
-            url: blob.url,
-            thumb: blob.url.replace('/content-images/', '/content-images/thumbnails/'), // Infer thumbnail URL
-            uploadedAt: blob.uploadedAt,
-            size: blob.size
-        }));
+        const images = paginatedFiles.map(blob => {
+            const thumb = blob.url.replace(
+                '/content-images/',
+                '/content-images/thumbnails/'
+            );
+            return {
+                name : blob.pathname.split('/').pop(),
+                url  : blob.url,
+                thumb,                            // always points to companion thumb
+                uploadedAt: blob.uploadedAt,
+                size: blob.size
+            };
+        });
 
         return res.status(200).json({
             images,

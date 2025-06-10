@@ -81,7 +81,7 @@ module.exports = async (req, res) => {
             .replace(/-+/g, '-')            // Replace multiple hyphens with single
             .replace(/^-|-$/g, '');         // Remove leading/trailing hyphens
         const filename = `${timestamp}-${clean}`;
-        const folder = fields.folder || 'content-images';
+        const folder = (fields.folder && String(fields.folder)) || 'content-images';
 
         // Generate and upload thumbnail
         const thumbnailBuffer = await sharp(uploadedFile.filepath)
@@ -93,12 +93,15 @@ module.exports = async (req, res) => {
 
         const putOpts = { access: 'public', contentType: uploadedFile.mimetype, overwrite: true };
 
+        const mainKey  = `${folder}/${filename}`;
+        const thumbKey = `${folder}/thumbnails/${filename}`;
+
         // Upload original image
         const stream = fs.createReadStream(uploadedFile.filepath);
-        const { url } = await put(`${folder}/${filename}`, stream, putOpts);
+        const { url } = await put(mainKey, stream, putOpts);
 
         // Generate and upload thumbnail
-        const thumbnailUrl = await put(`${folder}/thumbnails/${filename}`, thumbnailBuffer, putOpts);
+        const { url: thumbnailUrl } = await put(thumbKey, thumbnailBuffer, putOpts);
 
         // Clean up temp file
         fs.unlink(uploadedFile.filepath, (err) => {

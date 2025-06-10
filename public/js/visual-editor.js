@@ -11,11 +11,18 @@ const PLACEHOLDER_IMAGE_URI =
 function safeImg(img) {
   if (!img) return null;
   img.onerror = function () {
-    if (this.dataset.fallbackApplied) return;    // idempotent
-    this.dataset.fallbackApplied = "1";
-    this.onerror = null;                         // belt & braces
-    this.src = PLACEHOLDER_IMAGE_URI;
-    this.alt = "Image failed to load";
+    // first retry with the full-res URL
+    if (!this.dataset.fallbackAttempted && this.dataset.fullUrl) {
+      this.dataset.fallbackAttempted = '1';
+      this.src = this.dataset.fullUrl;
+      return;
+    }
+    // second failure → placeholder
+    if (!this.dataset.fallbackApplied) {
+      this.dataset.fallbackApplied = '1';
+      this.src = PLACEHOLDER_IMAGE_URI;
+      this.alt = 'Image failed to load';
+    }
   };
   return img;
 }
