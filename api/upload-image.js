@@ -119,7 +119,7 @@ module.exports = async (req, res) => {
     } catch (error) {
         console.error('Upload error:', error);
         return res.status(500).json({ 
-            message: 'Upload failed',
+            message: 'Upload has failed',
             error: error.message
         });
     }
