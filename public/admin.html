@@ -216,6 +216,17 @@
                                 <input type="checkbox" name="removeImage" value="true" style="width: auto; margin-right: 5px;"> Remove Image
                             </label>
                         </div>
+
+                        <!-- ★ NEW: Add button fields -->
+                        <hr style="border-top: 1px solid #b3a1b3; margin: 20px 0;">
+                        <label>Button Label (Optional): <input name="buttonLabel" placeholder="e.g. Learn More"></label>
+                        <label>Button URL (Optional): <input name="buttonUrl" type="url" placeholder="https://example.com"></label>
+
+                        <!-- ★ NEW: Checkbox to remove button, shown only during edit -->
+                        <label id="removeButtonRow" style="display:none; align-items:center; margin-top: 10px;">
+                          <input type="checkbox" name="removeButton" value="true" style="width:auto; margin-right:8px;">
+                          Remove Button
+                        </label>
                     </div>
 
                     <div id="rollingBannerFields" style="display: none;">
@@ -242,7 +253,7 @@
                 <h3 style="margin-top:35px">Existing sections for this page</h3>
                 <table id="sectionTable" class="admin-table">
                     <thead>
-                        <tr><th>#</th><th>Heading</th><th>Position</th><th>Image?</th><th>Actions</th></tr>
+                        <tr><th>#</th><th>Heading</th><th>Position</th><th>Image?</th><th>Button?</th><th>Actions</th></tr>
                     </thead>
                     <tbody><!-- filled by JS --></tbody>
                 </table>
@@ -558,6 +569,7 @@
         const submitSectionBtn   = document.getElementById('submitSectionBtn');
         const cancelEditBtn      = document.getElementById('cancelEditBtn');
         const currentImagePreview= document.getElementById('currentImagePreview');
+        const removeButtonRow    = document.getElementById('removeButtonRow');
 
         /* ── populate dropdown from the central list ───────────────────────── */
         pageSel.innerHTML = PAGES.map(p => `<option value="${p}">${p}</option>`).join('');
@@ -584,6 +596,12 @@
           cancelEditBtn.style.display    = 'none';
           currentImagePreview.style.display = 'none';
           document.querySelector('input[name="removeImage"]').checked = false;
+
+          // Add reset logic for button fields
+          document.querySelector('[name="buttonLabel"]').value = '';
+          document.querySelector('[name="buttonUrl"]').value   = '';
+          document.querySelector('[name="removeButton"]').checked = false;
+          removeButtonRow.style.display = 'none';
 
           toggleFields();                    // (function already defined earlier)
           updatePageLink(slug);
@@ -635,7 +653,7 @@
             const pos = { top:'🔝 Top', middle:'⏺️ Middle', bottom:'🔽 Bottom' }[s.position||'bottom'];
             sectionTbody.insertAdjacentHTML('beforeend', `
               <tr>
-                <td>${i+1}</td><td>${s.heading}</td><td>${pos}</td><td>${s.image?'✔︎':''}</td>
+                <td>${i+1}</td><td>${s.heading}</td><td>${pos}</td><td>${s.image?'✔︎':''}</td><td>${s.buttonLabel?'✔︎':''}</td>
                 <td>
                   <button class="edit"   data-id="${s._id}" title="Edit">✏️</button>
                   <button class="delete" data-id="${s._id}" title="Delete">🗑️</button>
@@ -749,6 +767,13 @@
                     currentImagePreview.style.display = 'none';
                 }
                 document.querySelector('input[name="removeImage"]').checked = false;
+
+                // Pre-fill button fields
+                addSectionForm.querySelector('[name="buttonLabel"]').value = section.buttonLabel || '';
+                addSectionForm.querySelector('[name="buttonUrl"]').value   = section.buttonUrl   || '';
+
+                // Show the 'Remove Button' checkbox only if a button exists
+                removeButtonRow.style.display = section.buttonLabel ? 'flex' : 'none';
 
                 // Update UI for editing
                 sectionFormHeading.textContent = 'Edit Dynamic Section';

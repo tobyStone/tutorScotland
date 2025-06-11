@@ -7,6 +7,17 @@
  */
 
 /**
+ * Helper function to generate button HTML if button data exists
+ */
+function buttonHtml(s) {
+    return s.buttonLabel && s.buttonUrl
+        ? `<div class="button-group" style="margin-top:1rem;">
+             <a class="button aurora" href="${s.buttonUrl}">${s.buttonLabel}</a>
+           </div>`
+        : '';
+}
+
+/**
  * Load dynamic sections for the current page
  */
 function loadDynamicSections() {
@@ -78,6 +89,7 @@ function loadDynamicSections() {
                             ${s.image ? `<div class="dyn-image-container"><img src="${s.image}" alt="${s.heading}" loading="lazy"></div>` : ''}
                             <h2>${s.heading}</h2>
                             <div class="dyn-content">${s.text}</div>
+                            ${buttonHtml(s)}
                           </article>`);
                     });
                     topContainer.style.display = 'block';
@@ -96,6 +108,7 @@ function loadDynamicSections() {
                             ${s.image ? `<div class="dyn-image-container"><img src="${s.image}" alt="${s.heading}" loading="lazy"></div>` : ''}
                             <h2>${s.heading}</h2>
                             <div class="dyn-content">${s.text}</div>
+                            ${buttonHtml(s)}
                           </article>`);
                     });
                     middleContainer.style.display = 'block';
@@ -114,6 +127,7 @@ function loadDynamicSections() {
                             ${s.image ? `<div class="dyn-image-container"><img src="${s.image}" alt="${s.heading}" loading="lazy"></div>` : ''}
                             <h2>${s.heading}</h2>
                             <div class="dyn-content">${s.text}</div>
+                            ${buttonHtml(s)}
                           </article>`);
                     });
                     bottomContainer.style.display = 'block';

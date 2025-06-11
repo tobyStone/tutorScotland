@@ -99,6 +99,16 @@ module.exports = async (req, res) => {
                     if (fields.text) updateData.text = getField('text').trim();
                     if (fields.position) updateData.position = getField('position').toLowerCase();
 
+                    // Add button update logic
+                    if (fields.buttonLabel) updateData.buttonLabel = getField('buttonLabel').trim();
+                    if (fields.buttonUrl) updateData.buttonUrl = getField('buttonUrl').trim();
+
+                    // Handle explicit button removal
+                    if (getField('removeButton') === 'true') {
+                        updateData.buttonLabel = '';
+                        updateData.buttonUrl = '';
+                    }
+
                     // Handle image: Use new image if uploaded, otherwise keep the old one.
                     // An explicit 'removeImage' flag can clear it.
                     if (getField('imagePath') && getField('imagePath') !== 'undefined') {
@@ -196,12 +206,20 @@ module.exports = async (req, res) => {
                     (Array.isArray(fields.position) ? fields.position[0] : fields.position).toString().toLowerCase()
                     : 'bottom';
 
+                // Get button fields
+                const buttonLabel = fields.buttonLabel ?
+                    (Array.isArray(fields.buttonLabel) ? fields.buttonLabel[0] : fields.buttonLabel).toString().trim()
+                    : '';
+                const buttonUrl = fields.buttonUrl ?
+                    (Array.isArray(fields.buttonUrl) ? fields.buttonUrl[0] : fields.buttonUrl).toString().trim()
+                    : '';
+
                 console.log('Creating section with data:', {
                     page, heading, text, image, isFullPage, slug, isPublished, position
                 });
 
                 const doc = await Section.create({
-                    page, heading, text, image, isFullPage, slug, isPublished, position
+                    page, heading, text, image, isFullPage, slug, isPublished, position, buttonLabel, buttonUrl
                 });
                 console.log('Section created:', doc);
                 return res.status(201).json(doc);
