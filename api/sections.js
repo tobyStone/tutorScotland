@@ -85,6 +85,46 @@ module.exports = async (req, res) => {
                 const { fields, files } = await parseForm(req);
                 console.log('Form parsing completed successfully');
 
+                // Helper to get a single value from a field that might be an array
+                const getField = (name) => Array.isArray(fields[name]) ? fields[name][0] : fields[name];
+
+                // ★★★ UPDATE LOGIC ★★★
+                // If an editId is present, we perform an update.
+                const editId = getField('editId');
+                if (editId) {
+                    console.log('Update operation detected for ID:', editId);
+                    const updateData = { updatedAt: new Date() };
+
+                    if (fields.heading) updateData.heading = getField('heading').trim();
+                    if (fields.text) updateData.text = getField('text').trim();
+                    if (fields.position) updateData.position = getField('position').toLowerCase();
+
+                    // Handle image: Use new image if uploaded, otherwise keep the old one.
+                    // An explicit 'removeImage' flag can clear it.
+                    if (getField('imagePath') && getField('imagePath') !== 'undefined') {
+                        updateData.image = getField('imagePath');
+                        console.log('Updating image to:', updateData.image);
+                    } else if (getField('removeImage') === 'true') {
+                        updateData.image = ''; // Set image to empty string to remove it
+                        console.log('Removing image from section');
+                    }
+
+                    if (Object.keys(updateData).length === 1) { // Only contains updatedAt
+                        return res.status(400).json({ message: 'No fields to update provided' });
+                    }
+
+                    const updatedDoc = await Section.findByIdAndUpdate(editId, updateData, { new: true });
+                    if (!updatedDoc) {
+                        return res.status(404).json({ message: 'Section not found for update' });
+                    }
+                    console.log('Section updated successfully:', updatedDoc);
+                    return res.status(200).json(updatedDoc);
+                }
+
+                // ★★★ CREATE LOGIC ★★★
+                // If no editId, we proceed with creating a new section.
+                console.log('Create operation detected');
+
                 // Handle different possible formats of fields
                 const page = fields.page ?
                     (Array.isArray(fields.page) ? fields.page[0] : fields.page).toString().toLowerCase().trim()
