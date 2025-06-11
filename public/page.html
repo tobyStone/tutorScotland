@@ -15,19 +15,19 @@
         <h1>Tutors Alliance Scotland</h1>
         <div class="header-links">
             <a href="/" class="banner-login-link login-box">Home</a>
-            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a href="/login.html?role=admin" class="banner-login-link login-box">Login</a>
         </div>
     </header>
 
     <nav class="main-nav">
         <ul>
-            <li><a href="about-us.html">About Us</a></li>
-            <li><a href="tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="parents.html">Enter Parent Zone</a></li>
-            <li><a href="partnerships.html">Partnerships</a></li>
-            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="/about-us.html">About Us</a></li>
+            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
+            <li><a href="/parents.html">Enter Parent Zone</a></li>
+            <li><a href="/partnerships.html">Partnerships</a></li>
+            <li><a href="/contact.html">Contact Us</a></li>
             <li><a href="/blog">Blog</a></li>
-            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
@@ -110,7 +110,7 @@
 
     <script>
         function goToLogin(role) {
-            window.location.href = `login.html?role=${encodeURIComponent(role)}`;
+            window.location.href = `/login.html?role=${encodeURIComponent(role)}`;
         }
 
         // Rolling banner is now handled by rolling-banner.js
