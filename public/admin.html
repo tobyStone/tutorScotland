@@ -199,17 +199,9 @@
                     <label>
                         Target Page:
                         <select name="page" id="pageSelect">
-                            <!-- All HTML pages except admin.html, login.html, and blogWriter.html -->
-                            <option value="index">index</option>
-                            <option value="about-us">about-us</option>
-                            <option value="contact">contact</option>
-                            <option value="parents">parents</option>
-                            <option value="tutorconnect">tutorConnect</option>
-                            <option value="tutordirectory">tutorDirectory</option>
-                            <option value="tutormembership">tutorMembership</option>
-                            <option value="tutorszone">tutorszone</option>
-                            <option value="rolling-banner">rolling-banner</option>
+                            <!-- Generated dynamically from pages.js -->
                         </select>
+                        <a id="viewPageLink" href="/" target="_blank" style="margin-left:12px;font-size:.9em">🔗 Open Page</a>
                     </label>
 
                     <div id="standardFields">
@@ -365,6 +357,7 @@
     <!-- ───────────────  MODULE SCRIPT  ─────────────── -->
     <script type="module">
         import { uploadImage } from '/js/upload-helper.js';
+        import { PAGES } from '/js/pages.js';
 
         /* ── page‑guard: only admins allowed ───────────────────────── */
         const auth = await fetch('/api/protected?role=admin');
@@ -558,12 +551,18 @@
 
         /* ░░░ 2. ADD / EDIT / DELETE SECTIONS ░░░ */
         const pageSel = document.getElementById('pageSelect');
+        const viewPageLink = document.getElementById('viewPageLink');
         const sectionTbody = document.querySelector('#sectionTable tbody');
         const addSectionForm = document.getElementById('addSection');
         const sectionFormHeading = document.getElementById('sectionFormHeading');
         const submitSectionBtn = document.getElementById('submitSectionBtn');
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const currentImagePreview = document.getElementById('currentImagePreview');
+
+        // Generate the dropdown from the central page list
+        pageSel.innerHTML = PAGES
+            .map(p => `<option value="${p}">${p}</option>`)
+            .join('');
 
         // State variables for editing
         let currentSections = []; // To store the fetched sections for the current page
@@ -642,8 +641,18 @@
         pageSel.addEventListener('change', () => {
             loadSections();
             resetSectionForm();
+            const slug = pageSel.value;
+            if (slug === 'rolling-banner') {
+                viewPageLink.style.display = 'none';
+            } else {
+                viewPageLink.href = slug === 'index' ? '/' : `/${slug}.html`;
+                viewPageLink.style.display = 'inline-block';
+            }
         });
         cancelEditBtn.addEventListener('click', resetSectionForm);
+
+        /* fire once so the link is correct on first paint */
+        pageSel.dispatchEvent(new Event('change'));
 
         // Handles form submission for both ADD and UPDATE
         addSectionForm.addEventListener('submit', async e => {
