@@ -193,6 +193,10 @@
                     <h1>${page.heading}</h1>
                     ${page.image ? `<img src="${page.image}" alt="${page.heading}" class="page-featured-image">` : ''}
                     <div class="page-content">${page.text}</div>
+                    ${page.buttonLabel && page.buttonUrl ?
+                        `<div style="text-align:center;margin:2rem 0;">
+                           <a class="button aurora" href="${page.buttonUrl}">${page.buttonLabel}</a>
+                         </div>` : ''}
                 `;
             })
             .catch(error => {

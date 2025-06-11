@@ -271,14 +271,41 @@
 
                     <label>Page Title:<input name="heading" required></label>
                     <label>Page Content:<textarea name="text" rows="6" required></textarea></label>
+
+                    <!-- ★ NEW: Add button fields -->
+                    <hr style="border-top:1px solid #b3a1b3;margin:20px 0">
+                    <label>
+                      Button Label (optional):
+                      <input name="buttonLabel" placeholder="e.g. Get Started">
+                    </label>
+                    <label>
+                      Button URL (optional):
+                      <input type="url" name="buttonUrl" placeholder="https://…">
+                    </label>
+
                     <label>Featured Image:<input type="file" name="image" id="pageImage" accept="image/*"></label>
+
+                    <div id="currentPageImagePreview" style="display:none;margin-top:10px"></div>
 
                     <label>
                         <input type="checkbox" name="isPublished" id="isPublished" checked>
                         Publish page immediately
                     </label>
 
-                    <button type="submit">Create Page</button>
+                    <!-- shown only while editing -->
+                    <div id="pageEditOptions" style="display:none;margin-top:10px">
+                      <label style="display:flex;align-items:center">
+                        <input type="checkbox" name="removeButton" value="true" style="width:auto;margin-right:8px">
+                        Remove Button
+                      </label>
+                      <label style="display:flex;align-items:center;margin-top:5px">
+                        <input type="checkbox" name="removeImage" value="true" style="width:auto;margin-right:8px">
+                        Remove Image
+                      </label>
+                    </div>
+
+                    <button type="submit" id="submitPageBtn">Create Page</button>
+                    <button type="button" id="cancelPageEditBtn" class="cancel-btn" style="display:none">Cancel Edit</button>
                 </form>
 
                 <h3 style="margin-top:35px">Existing Pages</h3>
@@ -788,112 +815,144 @@
        
 
         /* ░░░ 3. PAGE MANAGEMENT ░░░ */
-        const pagesTbody = document.querySelector('#pagesTable tbody');
+        const pagesTbody             = document.querySelector('#pagesTable tbody');
+        const pageForm               = document.getElementById('pageForm');
+        const submitPageBtn          = document.getElementById('submitPageBtn');
+        const cancelPageEditBtn      = document.getElementById('cancelPageEditBtn');
+        const pageEditOptions        = document.getElementById('pageEditOptions');
+        const currentPageImagePreview= document.getElementById('currentPageImagePreview');
 
-        /* Load existing pages */
+        let allPages = [];
+
+        /* helper – clear & restore "create" state */
+        function resetPageForm() {
+          pageForm.reset();
+          delete pageForm.dataset.editId;
+          pageForm.querySelector('h3').textContent = 'Create a New Page';
+          submitPageBtn.textContent = 'Create Page';
+          cancelPageEditBtn.style.display = 'none';
+          pageEditOptions.style.display   = 'none';
+          currentPageImagePreview.style.display = 'none';
+          currentPageImagePreview.innerHTML = '';
+        }
+
+        /* list pages */
         async function loadPages() {
-            const r = await fetch('/api/sections?isFullPage=true');
-            if (!r.ok) {
-                alert('Error loading pages: ' + await r.text());
-                return;
-            }
-
-            const pages = await r.json();
-            pagesTbody.innerHTML = '';
-
-            pages.forEach(page => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${page.heading}</td>
-                    <td><a href="/page/${page.slug}" target="_blank">/page/${page.slug}</a></td>
-                    <td>${page.isPublished ? '✅ Published' : '⏸️ Draft'}</td>
-                    <td>
-                        <button class="edit-page" data-id="${page._id}">✏️</button>
-                        <button class="toggle-page" data-id="${page._id}" data-published="${page.isPublished}">
-                            ${page.isPublished ? '⏸️' : '▶️'}
-                        </button>
-                        <button class="delete-page" data-id="${page._id}">🗑️</button>
-                    </td>
-                `;
-                pagesTbody.appendChild(tr);
-            });
+          const r = await fetch('/api/sections?isFullPage=true');
+          if (!r.ok) return alert('Error loading pages: ' + await r.text());
+          allPages = await r.json();
+          pagesTbody.innerHTML = '';
+          allPages.forEach(p => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${p.heading}</td>
+              <td><a href="/page/${p.slug}" target="_blank">/page/${p.slug}</a></td>
+              <td>${p.isPublished ? '✅ Published' : '⏸️ Draft'}</td>
+              <td>
+                <button class="edit-page"    data-id="${p._id}">✏️</button>
+                <button class="toggle-page"  data-id="${p._id}" data-pub="${p.isPublished}">${p.isPublished?'⏸️':'▶️'}</button>
+                <button class="delete-page"  data-id="${p._id}">🗑️</button>
+              </td>`;
+            pagesTbody.appendChild(row);
+          });
         }
 
         // Load pages on init
         await loadPages();
 
-        /* Create new page */
+        /* create OR update */
         pageForm.addEventListener('submit', async e => {
-            e.preventDefault();
-            const fd = new FormData(pageForm);
+          e.preventDefault();
+          const fd    = new FormData(pageForm);
+          const editId= pageForm.dataset.editId;
 
-            // Set isFullPage flag
-            fd.append('isFullPage', 'true');
+          fd.append('isFullPage','true');
+          fd.set('isPublished', document.getElementById('isPublished').checked?'true':'false');
+          fd.set('buttonLabel', fd.get('buttonLabel') || '');
+          fd.set('buttonUrl',   fd.get('buttonUrl')   || '');
 
-            // Handle checkbox
-            fd.set('isPublished', document.getElementById('isPublished').checked ? 'true' : 'false');
+          /* remove flags */
+          if (fd.get('removeButton')) fd.set('removeButton','true');
+          if (fd.get('removeImage'))  fd.set('removeImage','true');
 
-            // Upload image if provided
-            const img = document.getElementById('pageImage').files[0];
-            if (img) {
-                try {
-                    const url = await uploadImage(img, 'pages');
-                    fd.set('imagePath', url);
-                } catch (err) {
-                    return alert('Image upload failed: ' + err.message);
-                }
-            }
+          /* upload replacement image */
+          const img = document.getElementById('pageImage').files[0];
+          if (img) {
+            try { fd.set('imagePath', await uploadImage(img,'pages')); }
+            catch(err){ return alert('Image upload failed: '+err.message); }
+          }
+          fd.delete('image');
 
-            // Remove the raw file from FormData
-            fd.delete('image');
+          if (editId) fd.append('editId', editId);
 
-            // Submit the form
-            const r = await fetch('/api/sections', {
-                method: 'POST',
-                body: fd
-            });
+          const r = await fetch('/api/sections', { method:'POST', body:fd });
+          if (!r.ok) return alert(await r.text());
 
-            if (!r.ok) {
-                return alert('Error creating page: ' + await r.text());
-            }
-
-            alert('Page created successfully!');
-            pageForm.reset();
-            await loadPages();
+          alert(`Page ${editId?'updated':'created'} successfully!`);
+          resetPageForm();
+          loadPages();
         });
 
-        /* Handle page actions: edit, toggle publish status, delete */
+        /* table actions */
         pagesTbody.addEventListener('click', async e => {
-            const target = e.target;
-            const id = target.dataset.id;
+          const btn = e.target.closest('button');
+          if (!btn) return;
+          const id  = btn.dataset.id;
 
-            if (!id) return;
+          /* DELETE */
+          if (btn.classList.contains('delete-page')) {
+            if (!confirm('Delete this page?')) return;
+            const r = await fetch(`/api/sections?id=${id}`, {method:'DELETE'});
+            if (!r.ok) return alert(await r.text());
+            loadPages(); return;
+          }
 
-            // Delete page
-            if (target.classList.contains('delete-page')) {
-                if (!confirm('Are you sure you want to delete this page? This cannot be undone.')) return;
+          /* TOGGLE publish */
+          if (btn.classList.contains('toggle-page')) {
+            const current = btn.dataset.pub === 'true';
+            const r = await fetch('/api/sections', {
+              method:'POST',
+              body: new URLSearchParams({editId:id,isPublished:(!current).toString()})
+            });
+            if (!r.ok) return alert(await r.text());
+            loadPages(); return;
+          }
 
-                const r = await fetch(`/api/sections?id=${id}`, {
-                    method: 'DELETE'
-                });
+          /* EDIT */
+          if (btn.classList.contains('edit-page')) {
+            const p = allPages.find(x=>x._id===id);
+            if (!p) return alert('Page not found.');
 
-                if (r.ok) {
-                    await loadPages();
-                } else {
-                    alert('Error deleting page: ' + await r.text());
-                }
+            /* populate form */
+            pageForm.dataset.editId = id;
+            pageForm.querySelector('[name="slug"]').value   = p.slug;
+            pageForm.querySelector('[name="heading"]').value= p.heading;
+            pageForm.querySelector('[name="text"]').value   = p.text;
+            pageForm.querySelector('[name="buttonLabel"]').value = p.buttonLabel || '';
+            pageForm.querySelector('[name="buttonUrl"]').value   = p.buttonUrl   || '';
+            pageForm.querySelector('[name="isPublished"]').checked = p.isPublished;
+
+            if (p.image) {
+              currentPageImagePreview.innerHTML =
+                `<p style="margin-bottom:5px">Current Image:</p>
+                 <img src="${p.image}" style="max-width:120px;border-radius:4px">`;
+              currentPageImagePreview.style.display='block';
             }
 
-            // Toggle publish status (future enhancement)
-            if (target.classList.contains('toggle-page')) {
-                alert('Toggle publish status functionality will be implemented in a future update.');
-            }
-
-            // Edit page (future enhancement)
-            if (target.classList.contains('edit-page')) {
-                alert('Edit page functionality will be implemented in a future update.');
-            }
+            pageForm.querySelector('h3').textContent = 'Edit Page';
+            submitPageBtn.textContent = 'Update Page';
+            cancelPageEditBtn.style.display = 'inline-block';
+            pageEditOptions.style.display   = 'block';
+            pageForm.scrollIntoView({behavior:'smooth'});
+          }
         });
+
+        /* cancel */
+        cancelPageEditBtn.addEventListener('click', resetPageForm);
+
+        /* initial */
+        await loadPages();
+        resetPageForm();          // just in case
     </script>
 </body>
 </html>
