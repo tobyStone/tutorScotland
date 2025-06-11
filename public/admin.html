@@ -550,33 +550,43 @@
         loadTutors();
 
         /* ░░░ 2. ADD / EDIT / DELETE SECTIONS ░░░ */
-        const pageSel = document.getElementById('pageSelect');
-        const viewPageLink = document.getElementById('viewPageLink');
-        const sectionTbody = document.querySelector('#sectionTable tbody');
-        const addSectionForm = document.getElementById('addSection');
+        const pageSel            = document.getElementById('pageSelect');
+        const viewPageLink       = document.getElementById('viewPageLink');
+        const sectionTbody       = document.querySelector('#sectionTable tbody');
+        const addSectionForm     = document.getElementById('addSection');
         const sectionFormHeading = document.getElementById('sectionFormHeading');
-        const submitSectionBtn = document.getElementById('submitSectionBtn');
-        const cancelEditBtn = document.getElementById('cancelEditBtn');
-        const currentImagePreview = document.getElementById('currentImagePreview');
+        const submitSectionBtn   = document.getElementById('submitSectionBtn');
+        const cancelEditBtn      = document.getElementById('cancelEditBtn');
+        const currentImagePreview= document.getElementById('currentImagePreview');
 
-        // Generate the dropdown from the central page list
-        pageSel.innerHTML = PAGES
-            .map(p => `<option value="${p}">${p}</option>`)
-            .join('');
+        /* ── populate dropdown from the central list ───────────────────────── */
+        pageSel.innerHTML = PAGES.map(p => `<option value="${p}">${p}</option>`).join('');
 
-        // State variables for editing
-        let currentSections = []; // To store the fetched sections for the current page
+        /* ── helper: keep 🔗 link consistent ────────────────────────────────── */
+        function updatePageLink(slug) {
+          if (slug === 'rolling-banner') {
+            viewPageLink.style.display = 'none';
+          } else {
+            viewPageLink.href = slug === 'index' ? '/' : `/${slug}.html`;
+            viewPageLink.style.display = 'inline-block';
+          }
+        }
 
-        // Resets the form to its "Add New" state
+        /* ── helper: reset form but KEEP page selection ────────────────────── */
         function resetSectionForm() {
-            addSectionForm.reset();
-            delete addSectionForm.dataset.editId;
-            sectionFormHeading.textContent = 'Add a Dynamic Section';
-            submitSectionBtn.textContent = 'Add Section';
-            cancelEditBtn.style.display = 'none';
-            currentImagePreview.style.display = 'none';
-            document.querySelector('input[name="removeImage"]').checked = false;
-            toggleFields();
+          const slug = pageSel.value;        // remember
+          addSectionForm.reset();            // native reset (clears <select> too)
+          pageSel.value = slug;              // restore
+
+          delete addSectionForm.dataset.editId;
+          sectionFormHeading.textContent = 'Add a Dynamic Section';
+          submitSectionBtn.textContent   = 'Add Section';
+          cancelEditBtn.style.display    = 'none';
+          currentImagePreview.style.display = 'none';
+          document.querySelector('input[name="removeImage"]').checked = false;
+
+          toggleFields();                    // (function already defined earlier)
+          updatePageLink(slug);
         }
 
         /* ── show / hide fields & toggle HTML-5 "required" attrs ───────────── */
@@ -611,48 +621,43 @@
         }
 
 
-        // Fetches and displays sections for the selected page
+        /* ── fetch & render sections for current slug ──────────────────────── */
+        let currentSections = [];            // cache for edit/delete clicks
+
         async function loadSections() {
-            const r = await fetch(`/api/sections?page=${pageSel.value}`);
-            if (!r.ok) { return alert(await r.text()); }
+          const r = await fetch(`/api/sections?page=${pageSel.value}`);
+          if (!r.ok) return alert(await r.text());
 
-            currentSections = await r.json();
-            sectionTbody.innerHTML = '';
+          currentSections      = await r.json();
+          sectionTbody.innerHTML = '';
 
-            currentSections.forEach((s, i) => {
-                const pos = { top: '🔝 Top', middle: '⏺️ Middle', bottom: '🔽 Bottom' }[s.position || 'bottom'];
-                sectionTbody.insertAdjacentHTML('beforeend', `
-                  <tr>
-                    <td>${i + 1}</td>
-                    <td>${s.heading}</td>
-                    <td>${pos}</td>
-                    <td>${s.image ? '✔︎' : ''}</td>
-                    <td>
-                        <button class="edit" data-id="${s._id}" title="Edit Section">✏️</button>
-                        <button class="delete" data-id="${s._id}" title="Delete Section">🗑️</button>
-                    </td>
-                  </tr>`);
-            });
-            toggleFields();
+          currentSections.forEach((s, i) => {
+            const pos = { top:'🔝 Top', middle:'⏺️ Middle', bottom:'🔽 Bottom' }[s.position||'bottom'];
+            sectionTbody.insertAdjacentHTML('beforeend', `
+              <tr>
+                <td>${i+1}</td><td>${s.heading}</td><td>${pos}</td><td>${s.image?'✔︎':''}</td>
+                <td>
+                  <button class="edit"   data-id="${s._id}" title="Edit">✏️</button>
+                  <button class="delete" data-id="${s._id}" title="Delete">🗑️</button>
+                </td>
+              </tr>`);
+          });
+          toggleFields();
         }
 
-        // Initial load and event listeners
-        await loadSections();
+        /* ── dropdown change ───────────────────────────────────────────────── */
         pageSel.addEventListener('change', () => {
-            loadSections();
-            resetSectionForm();
-            const slug = pageSel.value;
-            if (slug === 'rolling-banner') {
-                viewPageLink.style.display = 'none';
-            } else {
-                viewPageLink.href = slug === 'index' ? '/' : `/${slug}.html`;
-                viewPageLink.style.display = 'inline-block';
-            }
+          loadSections();
+          resetSectionForm();                // preserves the just-chosen slug
+          updatePageLink(pageSel.value);
         });
+
+        /* ── cancel button ─────────────────────────────────────────────────── */
         cancelEditBtn.addEventListener('click', resetSectionForm);
 
-        /* fire once so the link is correct on first paint */
-        pageSel.dispatchEvent(new Event('change'));
+        /* ── initial boot ──────────────────────────────────────────────────── */
+        await loadSections();
+        pageSel.dispatchEvent(new Event('change'));   // sets initial link
 
         // Handles form submission for both ADD and UPDATE
         addSectionForm.addEventListener('submit', async e => {
