@@ -3,8 +3,10 @@
  * This script handles mobile menu toggle, dropdown interactions, and adds custom pages
  */
 
-// Initialize navigation functionality when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+/* ============================= NAV INTERACTIONS ============================= */
+// Wait for navigation to be loaded by nav-loader.js
+document.addEventListener('nav:loaded', function() {
+    console.log('Initializing navigation interactions...');
     initializeNavigation();
     addCustomPagesToNav();
 });
@@ -12,15 +14,20 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initialize navigation interactions
 function initializeNavigation() {
     const nav = document.querySelector('.main-nav');
-    const navToggle = document.querySelector('.nav-toggle');
-    const submenuLinks = document.querySelectorAll('.has-submenu > a');
+    const navToggle = nav.querySelector('.nav-toggle');
+    const submenuLinks = nav.querySelectorAll('.has-submenu > a');
 
-    // Mobile menu toggle
-    if (navToggle) {
-        navToggle.addEventListener('click', function() {
-            nav.classList.toggle('nav-open');
-        });
+    if (!nav || !navToggle) {
+        console.error('Navigation elements not found');
+        return;
     }
+
+    // Hamburger menu toggle
+    navToggle.addEventListener('click', function() {
+        const isOpen = nav.classList.toggle('nav-open');
+        navToggle.setAttribute('aria-expanded', isOpen);
+        console.log('Mobile menu toggled:', isOpen ? 'open' : 'closed');
+    });
 
     // Mobile accordion functionality for submenus
     submenuLinks.forEach(link => {
@@ -30,16 +37,28 @@ function initializeNavigation() {
                 e.preventDefault();
                 const parentLi = this.parentElement;
                 parentLi.classList.toggle('open');
+                console.log('Mobile submenu toggled:', parentLi.classList.contains('open') ? 'open' : 'closed');
             }
         });
     });
 
     // Close mobile menu when clicking outside
     document.addEventListener('click', function(e) {
-        if (!nav.contains(e.target) && nav.classList.contains('nav-open')) {
+        if (nav && !nav.contains(e.target) && nav.classList.contains('nav-open')) {
             nav.classList.remove('nav-open');
+            navToggle.setAttribute('aria-expanded', 'false');
         }
     });
+
+    // Close mobile menu on window resize if it gets too wide
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 900 && nav.classList.contains('nav-open')) {
+            nav.classList.remove('nav-open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    console.log('✅ Navigation interactions initialized');
 }
 
 // Function to add custom pages to the navigation menu
