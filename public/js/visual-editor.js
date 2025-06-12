@@ -341,7 +341,8 @@ class VisualEditor {
         const selectors = [
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
             'p:not(.no-edit)',
-            'ul:not(.no-edit)', 'ol:not(.no-edit)', 'li:not(.no-edit)',
+            /* Lists now opt-in via .editable */
+            'ul.editable', 'ol.editable',
             'a:not(.no-edit)',
             'img:not(.no-edit)',
             '.editable'
@@ -501,6 +502,9 @@ class VisualEditor {
     addEditOverlays() {
         this.editableElements.forEach(({ element, selector, type }) => {
             let mount = element;
+            if (type === 'link') {
+                mount = element.closest('li') || element;
+            }
             if (type === 'image') {
                 if (element.parentElement?.classList.contains('ve-img-wrap')) {
                     mount = element.parentElement;
