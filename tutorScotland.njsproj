@@ -82,6 +82,7 @@
     <Content Include="public\contact.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\css\nav.css" />
     <Content Include="public\header-banner.css" />
     <Content Include="public\index.html">
       <SubType>Code</SubType>
@@ -127,6 +128,7 @@
     <Content Include="public\parents.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\partials\main-nav.html" />
     <Content Include="public\publicConnect.html">
       <SubType>Code</SubType>
     </Content>
@@ -186,8 +188,10 @@
     <Folder Include="api\" />
     <Folder Include="models\" />
     <Folder Include="public\" />
+    <Folder Include="public\css\" />
     <Folder Include="public\images\" />
     <Folder Include="public\js\" />
+    <Folder Include="public\partials\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
