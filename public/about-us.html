@@ -92,14 +92,50 @@
 
     <!-- Dark-blue nav below banner -->
     <nav class="main-nav">
-        <ul>
-            <li><a href="about-us.html">About Us</a></li>
-            <li><a href="tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="parents.html">Enter Parent Zone</a></li>
-            <li><a href="partnerships.html">Partnerships</a></li>
+        <button class="nav-toggle" aria-expanded="false" aria-controls="primary-menu">
+            <span class="sr-only">Toggle navigation</span>
+            ☰
+        </button>
+        <ul id="primary-menu">
+            <!-- For Tutors Dropdown -->
+            <li class="has-submenu">
+                <a href="tutorMembership.html" aria-haspopup="true">For Tutors</a>
+                <ul class="submenu">
+                    <li><a href="tutorMembership.html">Why Join</a></li>
+                    <li><a href="tutorMembership.html#benefits">Membership Benefits</a></li>
+                    <li><a href="tutoring-standards.html">CPD & Training</a></li>
+                    <li><a href="tutoring-standards.html#code-of-conduct">Code of Conduct</a></li>
+                    <li><a href="tutorDirectory.html">Tutor Directory</a></li>
+                </ul>
+            </li>
+
+            <!-- For Parents Dropdown -->
+            <li class="has-submenu">
+                <a href="parents.html" aria-haspopup="true">For Parents</a>
+                <ul class="submenu">
+                    <li><a href="parents.html#why-choose">Why Choose a TAS Tutor</a></li>
+                    <li><a href="tutorDirectory.html">Search for a Tutor</a></li>
+                    <li><a href="safeguarding-policy.html">Safeguarding & Complaints</a></li>
+                    <li><a href="faq.html">FAQs</a></li>
+                    <li><a href="parent-events.html">Parent Events / Workshops</a></li>
+                </ul>
+            </li>
+
+            <!-- About TAS Dropdown (includes dynamic pages) -->
+            <li class="has-submenu">
+                <a href="about-us.html" aria-haspopup="true">About TAS</a>
+                <ul class="submenu" id="about-tas-submenu">
+                    <li><a href="about-us.html">About Us</a></li>
+                    <li><a href="about-us.html#team">Meet the Team</a></li>
+                    <li><a href="about-us.html#impact">Our Impact</a></li>
+                    <li><a href="/blog">News & Media</a></li>
+                    <li><a href="partnerships.html">Partnerships</a></li>
+                    <!-- Dynamic pages will be added here by JavaScript -->
+                </ul>
+            </li>
+
+            <!-- Standalone Contact Link -->
             <li><a href="contact.html">Contact Us</a></li>
-            <li><a href="/blog">Blog</a></li>
-            <li><a href="tutorDirectory.html">Tutor Directory</a></li>
         </ul>
     </nav>
 
@@ -147,7 +183,7 @@
         </section>
 
         <!-- TEAM SECTION: Full-width background only -->
-        <section class="strive-bg-section">
+        <section id="team" class="strive-bg-section">
             <div class="strive-overlay-card curve-bottom-left fade-in-section">
                 <h2>👥 Meet the TAS Team</h2>
 
@@ -259,7 +295,7 @@
         </section>
 
         <!-- SUPPORTING PUPILS: Full-width section -->
-        <section class="parents-zone-section fade-in-section">
+        <section id="impact" class="parents-zone-section fade-in-section">
             <div class="zone-gradient-bg parent-gradient-bg" style="background: linear-gradient(135deg, #0057B7 0%, #003A7A 100%);">
                 <div class="zone-list-row">
                     <div class="parent-box curve-bottom-left">

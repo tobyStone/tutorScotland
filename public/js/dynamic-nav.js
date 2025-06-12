@@ -1,7 +1,46 @@
 /**
- * dynamic-nav.js - Adds custom pages to the navigation menu
- * This script fetches all published custom pages and adds them to the navigation menu
+ * dynamic-nav.js - Enhanced navigation with dropdown support and mobile functionality
+ * This script handles mobile menu toggle, dropdown interactions, and adds custom pages
  */
+
+// Initialize navigation functionality when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeNavigation();
+    addCustomPagesToNav();
+});
+
+// Initialize navigation interactions
+function initializeNavigation() {
+    const nav = document.querySelector('.main-nav');
+    const navToggle = document.querySelector('.nav-toggle');
+    const submenuLinks = document.querySelectorAll('.has-submenu > a');
+
+    // Mobile menu toggle
+    if (navToggle) {
+        navToggle.addEventListener('click', function() {
+            nav.classList.toggle('nav-open');
+        });
+    }
+
+    // Mobile accordion functionality for submenus
+    submenuLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Only prevent default and toggle on mobile
+            if (window.innerWidth <= 900) {
+                e.preventDefault();
+                const parentLi = this.parentElement;
+                parentLi.classList.toggle('open');
+            }
+        });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!nav.contains(e.target) && nav.classList.contains('nav-open')) {
+            nav.classList.remove('nav-open');
+        }
+    });
+}
 
 // Function to add custom pages to the navigation menu
 async function addCustomPagesToNav() {
@@ -27,90 +66,120 @@ async function addCustomPagesToNav() {
             return;
         }
 
-        // Get the navigation menu
-        const navMenu = document.querySelector('.main-nav ul');
-        if (!navMenu) {
-            console.error('Navigation menu not found');
+        // Target the "About TAS" submenu specifically
+        const aboutTasSubmenu = document.querySelector('#about-tas-submenu');
+        if (!aboutTasSubmenu) {
+            console.error('About TAS submenu not found - falling back to legacy method');
+            addCustomPagesLegacy(publishedPages);
             return;
         }
 
-        // Create a dropdown container for custom pages if there are more than 2
-        if (publishedPages.length > 2) {
-            console.log('Creating dropdown for multiple pages');
-            // Check if we already have a custom pages dropdown
-            const existingDropdown = document.querySelector('.custom-pages-dropdown');
-            if (existingDropdown) {
-                // Update the existing dropdown
-                console.log('Updating existing dropdown');
-                const dropdownContent = existingDropdown.querySelector('.dropdown-content');
-                dropdownContent.innerHTML = '';
+        // Add each published page as a link in the "About TAS" dropdown
+        publishedPages.forEach(page => {
+            // Check if the link already exists
+            const existingLink = Array.from(aboutTasSubmenu.querySelectorAll('a')).find(
+                link => link.href.endsWith(`/page/${page.slug}`)
+            );
 
-                publishedPages.forEach(page => {
-                    const link = document.createElement('a');
-                    link.href = `/page/${page.slug}`;
-                    link.textContent = page.heading;
-                    dropdownContent.appendChild(link);
-                    console.log(`Added link to dropdown: ${page.heading} -> /page/${page.slug}`);
-                });
+            if (!existingLink) {
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = `/page/${page.slug}`;
+                link.textContent = page.heading;
+                listItem.appendChild(link);
+                aboutTasSubmenu.appendChild(listItem);
+                console.log(`Added custom page to About TAS dropdown: ${page.heading} -> /page/${page.slug}`);
             } else {
-                // Create a new dropdown
-                console.log('Creating new dropdown');
-                const dropdownLi = document.createElement('li');
-                dropdownLi.className = 'custom-pages-dropdown nav-item';
-
-                const dropdownBtn = document.createElement('a');
-                dropdownBtn.href = '#';
-                dropdownBtn.className = 'dropdown-btn nav-link';
-                dropdownBtn.textContent = 'Custom Pages';
-
-                const dropdownContent = document.createElement('div');
-                dropdownContent.className = 'dropdown-content nav-dropdown';
-
-                publishedPages.forEach(page => {
-                    const link = document.createElement('a');
-                    link.href = `/page/${page.slug}`;
-                    link.textContent = page.heading;
-                    dropdownContent.appendChild(link);
-                    console.log(`Added link to dropdown: ${page.heading} -> /page/${page.slug}`);
-                });
-
-                dropdownLi.appendChild(dropdownBtn);
-                dropdownLi.appendChild(dropdownContent);
-
-                // Add the dropdown to the navigation menu before the last item
-                navMenu.insertBefore(dropdownLi, navMenu.lastElementChild);
-                console.log('Dropdown added to navigation menu');
+                console.log(`Link already exists in About TAS dropdown: ${page.heading}`);
             }
-        } else {
-            // Add individual links for each page
-            console.log('Adding individual links for pages');
-            publishedPages.forEach(page => {
-                // Check if the link already exists
-                const existingLink = Array.from(navMenu.querySelectorAll('a')).find(
-                    link => link.href.endsWith(`/page/${page.slug}`)
-                );
+        });
 
-                if (!existingLink) {
-                    const li = document.createElement('li');
-                    li.className = 'nav-item';
-                    const a = document.createElement('a');
-                    a.href = `/page/${page.slug}`;
-                    a.className = 'nav-link';
-                    a.textContent = page.heading;
-                    li.appendChild(a);
+        console.info(`✅ Successfully added ${publishedPages.length} custom page(s) to the About TAS dropdown.`);
 
-                    // Add the link to the navigation menu before the last item
-                    navMenu.insertBefore(li, navMenu.lastElementChild);
-                    console.log(`Added link to menu: ${page.heading} -> /page/${page.slug}`);
-                } else {
-                    console.log(`Link already exists for: ${page.heading}`);
-                }
-            });
-        }
     } catch (error) {
         console.error('Error adding custom pages to navigation:', error);
     }
 }
 
-// Call the function when the DOM is loaded
-document.addEventListener('DOMContentLoaded', addCustomPagesToNav);
+// Legacy fallback function for adding custom pages (maintains backward compatibility)
+function addCustomPagesLegacy(publishedPages) {
+    const navMenu = document.querySelector('.main-nav ul');
+    if (!navMenu) {
+        console.error('Navigation menu not found');
+        return;
+    }
+
+    // Create a dropdown container for custom pages if there are more than 2
+    if (publishedPages.length > 2) {
+        console.log('Creating legacy dropdown for multiple pages');
+        // Check if we already have a custom pages dropdown
+        const existingDropdown = document.querySelector('.custom-pages-dropdown');
+        if (existingDropdown) {
+            // Update the existing dropdown
+            console.log('Updating existing legacy dropdown');
+            const dropdownContent = existingDropdown.querySelector('.dropdown-content');
+            dropdownContent.innerHTML = '';
+
+            publishedPages.forEach(page => {
+                const link = document.createElement('a');
+                link.href = `/page/${page.slug}`;
+                link.textContent = page.heading;
+                dropdownContent.appendChild(link);
+                console.log(`Added link to legacy dropdown: ${page.heading} -> /page/${page.slug}`);
+            });
+        } else {
+            // Create a new dropdown
+            console.log('Creating new legacy dropdown');
+            const dropdownLi = document.createElement('li');
+            dropdownLi.className = 'custom-pages-dropdown nav-item';
+
+            const dropdownBtn = document.createElement('a');
+            dropdownBtn.href = '#';
+            dropdownBtn.className = 'dropdown-btn nav-link';
+            dropdownBtn.textContent = 'Custom Pages';
+
+            const dropdownContent = document.createElement('div');
+            dropdownContent.className = 'dropdown-content nav-dropdown';
+
+            publishedPages.forEach(page => {
+                const link = document.createElement('a');
+                link.href = `/page/${page.slug}`;
+                link.textContent = page.heading;
+                dropdownContent.appendChild(link);
+                console.log(`Added link to legacy dropdown: ${page.heading} -> /page/${page.slug}`);
+            });
+
+            dropdownLi.appendChild(dropdownBtn);
+            dropdownLi.appendChild(dropdownContent);
+
+            // Add the dropdown to the navigation menu before the last item
+            navMenu.insertBefore(dropdownLi, navMenu.lastElementChild);
+            console.log('Legacy dropdown added to navigation menu');
+        }
+    } else {
+        // Add individual links for each page
+        console.log('Adding individual legacy links for pages');
+        publishedPages.forEach(page => {
+            // Check if the link already exists
+            const existingLink = Array.from(navMenu.querySelectorAll('a')).find(
+                link => link.href.endsWith(`/page/${page.slug}`)
+            );
+
+            if (!existingLink) {
+                const li = document.createElement('li');
+                li.className = 'nav-item';
+                const a = document.createElement('a');
+                a.href = `/page/${page.slug}`;
+                a.className = 'nav-link';
+                a.textContent = page.heading;
+                li.appendChild(a);
+
+                // Add the link to the navigation menu before the last item
+                navMenu.insertBefore(li, navMenu.lastElementChild);
+                console.log(`Added legacy link to menu: ${page.heading} -> /page/${page.slug}`);
+            } else {
+                console.log(`Legacy link already exists for: ${page.heading}`);
+            }
+        });
+    }
+}
