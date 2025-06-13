@@ -167,8 +167,10 @@ module.exports = async (req, res) => {
           <title>Tutors Alliance Scotland Blog</title>
           <link rel="stylesheet" href="/styles2.css">
           <link rel="stylesheet" href="/header-banner.css">
+          <link rel="stylesheet" href="/css/nav.css">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <script src="/responsive-helper.js"></script>
+          <script src="/js/nav-loader.js" defer></script>
           <script src="/js/dynamic-nav.js" defer></script>
           <style>
             /* Blog Hero Banner */
@@ -637,17 +639,7 @@ module.exports = async (req, res) => {
               </div>
           </header>
 
-          <!-- Dark-blue nav below banner -->
-          <nav class="main-nav">
-              <ul>
-                  <li><a href="about-us.html">About Us</a></li>
-                  <li><a href="tutorMembership.html">Tutor Membership</a></li>
-                  <li><a href="parents.html">Enter Parent Zone</a></li>
-                  <li><a href="contact.html">Contact Us</a></li>
-                  <li><a href="/blog">Blog</a></li>
-                  <li><a href="tutorDirectory.html">Tutor Directory</a></li>
-              </ul>
-          </nav>
+          <!-- Navigation will be loaded here by nav-loader.js -->
 
           <!-- Rolling banner container -->
           <div class="rolling-banner">

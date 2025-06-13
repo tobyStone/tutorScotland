@@ -137,9 +137,9 @@
         display: block;
     }
 
-    /* Hide menu by default on mobile */
-    .main-nav .menu {
-        display: none;
+    /* Hide menu by default on mobile - using more specific selector */
+    .main-nav ul#primary-menu {
+        display: none !important;
         flex-direction: column;
         position: absolute;
         top: 100%;
@@ -149,9 +149,9 @@
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
 
-    /* Show menu when nav-open class is applied */
-    .main-nav.nav-open .menu {
-        display: flex;
+    /* Show menu when nav-open class is applied - using more specific selector */
+    .main-nav.nav-open ul#primary-menu {
+        display: flex !important;
     }
 
     /* Mobile menu item styling */

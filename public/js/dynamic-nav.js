@@ -50,13 +50,26 @@ function initializeNavigation() {
         }
     });
 
-    // Close mobile menu on window resize if it gets too wide
+    // Function to ensure menu is collapsed on mobile viewports
+    const collapseIfMobile = () => {
+        if (window.innerWidth <= 900 && nav.classList.contains('nav-open')) {
+            nav.classList.remove('nav-open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        }
+    };
+
+    // Close mobile menu on window resize and handle viewport changes
     window.addEventListener('resize', function() {
         if (window.innerWidth > 900 && nav.classList.contains('nav-open')) {
             nav.classList.remove('nav-open');
             navToggle.setAttribute('aria-expanded', 'false');
         }
+        // Also ensure proper mobile state
+        collapseIfMobile();
     });
+
+    // Run collapse check on initial load to handle edge cases
+    collapseIfMobile();
 
     console.log('✅ Navigation interactions initialized');
 }
