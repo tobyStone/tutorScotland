@@ -22,6 +22,15 @@ const schema = new mongoose.Schema({
     showInNav: { type: Boolean, default: false },    // Whether to show in navigation
     navAnchor: { type: String, default: '' },        // URL-friendly anchor for linking
 
+    // ★ NEW: Add fields for layout types
+    layout: { type: String, default: 'standard' },   // 'standard' | 'team'
+    team: [{
+        name: String,
+        role: String,
+        bio: String,
+        image: String   // URL
+    }],
+
     isFullPage: { type: Boolean, default: false },  // Whether this is a full page template
     slug: String,                                   // URL-friendly identifier for the page
     isPublished: { type: Boolean, default: true },   // Whether the page is live

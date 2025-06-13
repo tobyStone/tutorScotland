@@ -198,6 +198,13 @@
                         <a id="viewPageLink" href="/" target="_blank" style="margin-left:12px;font-size:.9em">🔗 Open Page</a>
                     </label>
 
+                    <label>Layout:
+                        <select name="layout" id="sectionLayout">
+                            <option value="standard" selected>Standard</option>
+                            <option value="team">Team Members Grid</option>
+                        </select>
+                    </label>
+
                     <div id="standardFields">
                         <label>Heading:<input name="heading" required></label>
                         <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
@@ -237,6 +244,14 @@
                             <option value="about" selected>About TAS</option>
                           </select>
                         </label>
+                    </div>
+
+                    <!-- Team builder fields -->
+                    <div id="teamBuilder" style="display:none; margin-top:15px;">
+                        <label>Section Heading: <input name="teamHeading" placeholder="e.g. Our Team"></label>
+                        <button type="button" id="addMemberBtn">➕ Add Team Member</button>
+                        <div id="teamMemberList"></div>
+                        <input type="hidden" name="team" id="teamData">
                     </div>
 
                     <div id="rollingBannerFields" style="display: none;">
@@ -729,6 +744,96 @@
             navCatRow.style.display = showInNav.checked ? 'block' : 'none';
         });
 
+        /* ── layout controls logic ──────────────────────────────────────────── */
+        const sectionLayout = document.getElementById('sectionLayout');
+        const standardFields = document.getElementById('standardFields');
+        const teamBuilder = document.getElementById('teamBuilder');
+        const addMemberBtn = document.getElementById('addMemberBtn');
+        const teamMemberList = document.getElementById('teamMemberList');
+        const teamData = document.getElementById('teamData');
+
+        let teamMembers = [];
+
+        // Show/hide fields based on layout selection
+        sectionLayout.addEventListener('change', () => {
+            const isTeam = sectionLayout.value === 'team';
+            standardFields.style.display = isTeam ? 'none' : 'block';
+            teamBuilder.style.display = isTeam ? 'block' : 'none';
+
+            // Update required attributes
+            const headingInput = standardFields.querySelector('[name="heading"]');
+            const textTextarea = standardFields.querySelector('[name="text"]');
+            const teamHeadingInput = teamBuilder.querySelector('[name="teamHeading"]');
+
+            if (isTeam) {
+                headingInput.removeAttribute('required');
+                textTextarea.removeAttribute('required');
+                teamHeadingInput.setAttribute('required', '');
+            } else {
+                headingInput.setAttribute('required', '');
+                textTextarea.setAttribute('required', '');
+                teamHeadingInput.removeAttribute('required');
+            }
+        });
+
+        // Add team member functionality
+        addMemberBtn.addEventListener('click', () => {
+            const memberIndex = teamMembers.length;
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'team-member-form';
+            memberDiv.style.cssText = 'border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; background: #f9f9f9;';
+
+            memberDiv.innerHTML = `
+                <h4>Team Member ${memberIndex + 1}</h4>
+                <label>Name: <input type="text" class="member-name" required></label>
+                <label>Role: <input type="text" class="member-role" required></label>
+                <label>Bio: <textarea class="member-bio" rows="2" required></textarea></label>
+                <label>Image: <input type="file" class="member-image" accept="image/*"></label>
+                <button type="button" class="remove-member" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-top: 10px;">Remove</button>
+            `;
+
+            teamMemberList.appendChild(memberDiv);
+
+            // Add remove functionality
+            memberDiv.querySelector('.remove-member').addEventListener('click', () => {
+                memberDiv.remove();
+                updateTeamData();
+            });
+
+            // Add change listeners to update team data
+            memberDiv.querySelectorAll('input, textarea').forEach(input => {
+                input.addEventListener('change', updateTeamData);
+            });
+        });
+
+        // Update team data in hidden field
+        async function updateTeamData() {
+            teamMembers = [];
+            const memberForms = teamMemberList.querySelectorAll('.team-member-form');
+
+            for (const form of memberForms) {
+                const name = form.querySelector('.member-name').value;
+                const role = form.querySelector('.member-role').value;
+                const bio = form.querySelector('.member-bio').value;
+                const imageFile = form.querySelector('.member-image').files[0];
+
+                let imagePath = '';
+                if (imageFile) {
+                    try {
+                        imagePath = await uploadImage(imageFile, 'team');
+                    } catch (err) {
+                        console.error('Error uploading team member image:', err);
+                    }
+                }
+
+                if (name && role && bio) {
+                    teamMembers.push({ name, role, bio, image: imagePath });
+                }
+            }
+
+            teamData.value = JSON.stringify(teamMembers);
+        }
+
         /* ── initial boot ──────────────────────────────────────────────────── */
         await loadSections();
         pageSel.dispatchEvent(new Event('change'));   // sets initial link
@@ -741,6 +846,17 @@
             // Add navigation fields
             fd.set('showInNav', showInNav.checked ? 'true' : 'false');
             fd.set('navCategory', sectionNavCategory.value || 'about');
+
+            // Add layout field
+            fd.set('layout', sectionLayout.value || 'standard');
+
+            // Handle team layout
+            if (sectionLayout.value === 'team') {
+                await updateTeamData(); // Ensure team data is current
+                fd.set('heading', document.querySelector('[name="teamHeading"]').value);
+                fd.set('text', 'Team members section'); // Placeholder text
+                fd.set('team', teamData.value);
+            }
 
             const editId = addSectionForm.dataset.editId;
             if (editId) {

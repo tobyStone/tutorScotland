@@ -124,6 +124,16 @@ module.exports = async (req, res) => {
                     // If heading changes, update navAnchor
                     if (fields.heading) updateData.navAnchor = slugify(getField('heading').trim());
 
+                    // Add layout update logic
+                    if (fields.layout) updateData.layout = getField('layout').toLowerCase();
+                    if (fields.team) {
+                        try {
+                            updateData.team = JSON.parse(getField('team'));
+                        } catch (e) {
+                            console.error('Error parsing team data for update:', e);
+                        }
+                    }
+
                     // Handle image: Use new image if uploaded, otherwise keep the old one.
                     // An explicit 'removeImage' flag can clear it.
                     if (getField('imagePath') && getField('imagePath') !== 'undefined') {
@@ -238,13 +248,30 @@ module.exports = async (req, res) => {
                     : false;
                 const navAnchor = slugify(heading);
 
+                // Get layout fields
+                const layout = fields.layout ?
+                    (Array.isArray(fields.layout) ? fields.layout[0] : fields.layout).toString().toLowerCase()
+                    : 'standard';
+
+                let team = [];
+                if (layout === 'team' && fields.team) {
+                    try {
+                        const teamData = Array.isArray(fields.team) ? fields.team[0] : fields.team;
+                        team = JSON.parse(teamData);
+                        console.log('Parsed team data:', team);
+                    } catch (e) {
+                        console.error('Error parsing team data:', e);
+                        team = [];
+                    }
+                }
+
                 console.log('Creating section with data:', {
-                    page, heading, text, image, isFullPage, slug, isPublished, position, navCategory, showInNav, navAnchor
+                    page, heading, text, image, isFullPage, slug, isPublished, position, navCategory, showInNav, navAnchor, layout, team
                 });
 
                 const doc = await Section.create({
                     page, heading, text, image, isFullPage, slug, isPublished, position, buttonLabel, buttonUrl,
-                    navCategory, showInNav, navAnchor
+                    navCategory, showInNav, navAnchor, layout, team
                 });
                 console.log('Section created:', doc);
                 return res.status(201).json(doc);

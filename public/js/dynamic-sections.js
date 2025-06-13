@@ -310,6 +310,46 @@ function createDynamicSectionElement(section, index) {
             .replace(/\s+/g, '-');
     }
 
+    // Ensure unique IDs to prevent conflicts
+    if (article.id && document.getElementById(article.id)) {
+        article.id = article.id + '-' + Date.now().toString(36);
+    }
+
+    // Handle team layout
+    if (section.layout === 'team') {
+        article.classList.add('team-grid');
+
+        // Add heading
+        if (section.heading) {
+            const heading = document.createElement('h2');
+            heading.textContent = section.heading;
+            article.appendChild(heading);
+        }
+
+        // Create team members grid
+        const grid = document.createElement('div');
+        grid.className = 'team-members';
+
+        if (section.team && section.team.length > 0) {
+            section.team.forEach(member => {
+                const card = document.createElement('div');
+                card.className = 'team-member';
+                card.innerHTML = `
+                    <div class="avatar">
+                        <img src="${member.image || '/images/default-avatar.png'}" alt="${member.name}" loading="lazy">
+                    </div>
+                    <h3>${member.name}</h3>
+                    <h4>${member.role}</h4>
+                    <p>${member.bio}</p>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        article.appendChild(grid);
+        return article; // Skip the standard flow
+    }
+
     // Add image if available
     if (section.image) {
         const imageContainer = document.createElement('div');

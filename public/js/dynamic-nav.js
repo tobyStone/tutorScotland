@@ -18,7 +18,10 @@ document.addEventListener('nav:loaded', async function() {
     /* 2️⃣ Wire up hamburger / accordion */
     initializeNavigation();
 
-    /* 3️⃣ Inject content — order does not matter now */
+    /* 3️⃣ Add smooth anchor navigation */
+    setupSmoothAnchorNavigation();
+
+    /* 4️⃣ Inject content — order does not matter now */
     await addCustomPagesToNav();
     await addSectionAnchors();
 });
@@ -287,6 +290,38 @@ async function addSectionAnchors() {
     } catch (error) {
         console.error('Error adding section anchors to navigation:', error);
     }
+}
+
+// Function to setup smooth anchor navigation
+function setupSmoothAnchorNavigation() {
+    const nav = document.querySelector('.main-nav');
+    if (!nav) return;
+
+    nav.addEventListener('click', e => {
+        const a = e.target.closest('a');
+        if (!a) return;
+
+        const url = new URL(a.href, location.href);
+        const samePage = url.pathname.replace(/\/index\.html?$/, '/')
+                        === location.pathname.replace(/\/index\.html?$/, '/');
+
+        if (samePage && url.hash) {
+            e.preventDefault(); // 🛑 stop full reload
+
+            // Close menus in mobile view
+            nav.classList.remove('nav-open');
+
+            // Tiny timeout lets nav close before scroll
+            setTimeout(() => {
+                const target = document.getElementById(url.hash.slice(1));
+                if (target) {
+                    target.scrollIntoView({behavior: 'smooth', block: 'start'});
+                    // Also push state so link is shareable
+                    history.pushState(null, '', url.hash);
+                }
+            }, 100);
+        }
+    });
 }
 
 // Legacy fallback function for adding custom pages (maintains backward compatibility)
