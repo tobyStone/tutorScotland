@@ -16,6 +16,13 @@ function initializeNavigation() {
     const nav = document.querySelector('.main-nav');
     const navToggle = nav.querySelector('.nav-toggle');
     const submenuLinks = nav.querySelectorAll('.has-submenu > a');
+
+    // Initialize navigation buckets after DOM is ready
+    window.navBuckets = {
+        tutors: document.getElementById('tutors-submenu'),
+        parents: document.getElementById('parents-submenu'),
+        about: document.getElementById('about-tas-submenu')
+    };
     let menuTimeout = null;
     let isHovering = false;
     let lastScrollY = window.scrollY;
@@ -179,18 +186,18 @@ async function addCustomPagesToNav() {
             return;
         }
 
-        // Target the "About TAS" submenu specifically
-        const aboutTasSubmenu = document.querySelector('#about-tas-submenu');
-        if (!aboutTasSubmenu) {
-            console.error('About TAS submenu not found - falling back to legacy method');
-            addCustomPagesLegacy(publishedPages);
-            return;
-        }
-
-        // Add each published page as a link in the "About TAS" dropdown
+        // Add each published page to the appropriate navigation bucket
         publishedPages.forEach(page => {
+            const category = (page.navCategory || 'about').toLowerCase();
+            const targetSubmenu = window.navBuckets[category] || window.navBuckets.about;
+
+            if (!targetSubmenu) {
+                console.error(`Navigation bucket not found for category: ${category}`);
+                return;
+            }
+
             // Check if the link already exists
-            const existingLink = Array.from(aboutTasSubmenu.querySelectorAll('a')).find(
+            const existingLink = Array.from(targetSubmenu.querySelectorAll('a')).find(
                 link => link.href.endsWith(`/page/${page.slug}`)
             );
 
@@ -200,17 +207,78 @@ async function addCustomPagesToNav() {
                 link.href = `/page/${page.slug}`;
                 link.textContent = page.heading;
                 listItem.appendChild(link);
-                aboutTasSubmenu.appendChild(listItem);
-                console.log(`Added custom page to About TAS dropdown: ${page.heading} -> /page/${page.slug}`);
+                targetSubmenu.appendChild(listItem);
+                console.log(`Added custom page to ${category} dropdown: ${page.heading} -> /page/${page.slug}`);
             } else {
-                console.log(`Link already exists in About TAS dropdown: ${page.heading}`);
+                console.log(`Link already exists in ${category} dropdown: ${page.heading}`);
             }
         });
 
-        console.info(`✅ Successfully added ${publishedPages.length} custom page(s) to the About TAS dropdown.`);
+        console.info(`✅ Successfully added ${publishedPages.length} custom page(s) to navigation dropdowns.`);
+
+        // After adding pages, add section anchors
+        await addSectionAnchors();
 
     } catch (error) {
         console.error('Error adding custom pages to navigation:', error);
+    }
+}
+
+// Function to add section anchors to navigation
+async function addSectionAnchors() {
+    try {
+        console.log('Fetching sections for navigation anchors...');
+        const response = await fetch('/api/sections?showInNav=true');
+        if (!response.ok) {
+            console.log('No sections with navigation links found');
+            return;
+        }
+
+        const sections = await response.json();
+        const navSections = sections.filter(section => section.showInNav && !section.isFullPage);
+
+        if (navSections.length === 0) {
+            console.log('No sections configured for navigation display');
+            return;
+        }
+
+        console.log(`Found ${navSections.length} sections to add to navigation`);
+
+        navSections.forEach(section => {
+            const category = (section.navCategory || 'about').toLowerCase();
+            const targetSubmenu = window.navBuckets[category] || window.navBuckets.about;
+
+            if (!targetSubmenu) {
+                console.error(`Navigation bucket not found for section category: ${category}`);
+                return;
+            }
+
+            // Determine the URL base
+            const urlBase = section.page === 'index' ? '/' : `/${section.page}.html`;
+            const href = `${urlBase}#${section.navAnchor || section.heading.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-')}`;
+
+            // Check if link already exists
+            const existingLink = Array.from(targetSubmenu.querySelectorAll('a')).find(
+                link => link.getAttribute('href') === href
+            );
+
+            if (!existingLink) {
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = href;
+                link.textContent = section.heading;
+                listItem.appendChild(link);
+                targetSubmenu.appendChild(listItem);
+                console.log(`Added section anchor to ${category} dropdown: ${section.heading} -> ${href}`);
+            } else {
+                console.log(`Section anchor already exists in ${category} dropdown: ${section.heading}`);
+            }
+        });
+
+        console.info(`✅ Successfully added ${navSections.length} section anchor(s) to navigation dropdowns.`);
+
+    } catch (error) {
+        console.error('Error adding section anchors to navigation:', error);
     }
 }
 

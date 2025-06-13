@@ -299,6 +299,17 @@ function createDynamicSectionElement(section, index) {
     article.className = 'dyn-block fade-in-on-scroll';
     article.style.transitionDelay = `${index * 0.1}s`;
 
+    // Add anchor ID for navigation linking
+    if (section.navAnchor) {
+        article.id = section.navAnchor;
+    } else if (section.heading) {
+        // Fallback: create anchor from heading if navAnchor doesn't exist
+        article.id = section.heading.toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-');
+    }
+
     // Add image if available
     if (section.image) {
         const imageContainer = document.createElement('div');

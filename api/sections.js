@@ -10,6 +10,14 @@ const connectDB = require('./connectToDatabase');
 
 const MAX_UPLOAD = 4.5 * 1024 * 1024;  // 4.5 MB
 
+// Utility function to create URL-friendly slugs
+const slugify = (str) => {
+    return str.toString().toLowerCase()
+        .replace(/[^\w\s-]/g, '')        // remove symbols
+        .trim()
+        .replace(/\s+/g, '-');           // spaces → dashes
+};
+
 // Helper: Vercel Blob upload
 async function uploadToBlob(file) {
     console.log('Uploading image', file.originalFilename, file.size);
@@ -108,6 +116,13 @@ module.exports = async (req, res) => {
                         updateData.buttonLabel = '';
                         updateData.buttonUrl = '';
                     }
+
+                    // Add navigation update logic
+                    if (fields.showInNav) updateData.showInNav = getField('showInNav') === 'true';
+                    if (fields.navCategory) updateData.navCategory = getField('navCategory').toLowerCase();
+
+                    // If heading changes, update navAnchor
+                    if (fields.heading) updateData.navAnchor = slugify(getField('heading').trim());
 
                     // Handle image: Use new image if uploaded, otherwise keep the old one.
                     // An explicit 'removeImage' flag can clear it.
@@ -214,12 +229,22 @@ module.exports = async (req, res) => {
                     (Array.isArray(fields.buttonUrl) ? fields.buttonUrl[0] : fields.buttonUrl).toString().trim()
                     : '';
 
+                // Get navigation fields
+                const navCategory = fields.navCategory ?
+                    (Array.isArray(fields.navCategory) ? fields.navCategory[0] : fields.navCategory).toString().toLowerCase()
+                    : 'about';
+                const showInNav = fields.showInNav ?
+                    (Array.isArray(fields.showInNav) ? fields.showInNav[0] : fields.showInNav) === 'true'
+                    : false;
+                const navAnchor = slugify(heading);
+
                 console.log('Creating section with data:', {
-                    page, heading, text, image, isFullPage, slug, isPublished, position
+                    page, heading, text, image, isFullPage, slug, isPublished, position, navCategory, showInNav, navAnchor
                 });
 
                 const doc = await Section.create({
-                    page, heading, text, image, isFullPage, slug, isPublished, position, buttonLabel, buttonUrl
+                    page, heading, text, image, isFullPage, slug, isPublished, position, buttonLabel, buttonUrl,
+                    navCategory, showInNav, navAnchor
                 });
                 console.log('Section created:', doc);
                 return res.status(201).json(doc);
@@ -253,6 +278,24 @@ module.exports = async (req, res) => {
 
         // READ
         if (req.method === 'GET') {
+            // Check if we're requesting sections for navigation
+            if (req.query.showInNav === 'true') {
+                try {
+                    const sections = await Section.find({
+                        showInNav: true,
+                        isPublished: true
+                    }).sort({ navCategory: 1, heading: 1 }).lean();
+
+                    return res.status(200).json(sections);
+                } catch (e) {
+                    console.error('SECTION_GET_NAV error', e);
+                    return res.status(500).json({
+                        message: 'Error retrieving navigation sections',
+                        error: e.message
+                    });
+                }
+            }
+
             // Check if we're requesting full pages
             if (req.query.isFullPage === 'true') {
                 try {

@@ -221,6 +221,22 @@
                           <input type="checkbox" name="removeButton" value="true" style="width:auto; margin-right:8px;">
                           Remove Button
                         </label>
+
+                        <!-- ★ NEW: Navigation integration controls -->
+                        <hr style="border-top: 1px solid #b3a1b3; margin: 20px 0;">
+                        <label style="display:flex; align-items:center;">
+                          <input type="checkbox" name="showInNav" id="showInNav" style="width:auto; margin-right:8px;">
+                          <span>Add a link to the navigation bar</span>
+                        </label>
+
+                        <label id="navCatRow" style="margin-top:10px; display:none;">
+                          Show under:
+                          <select name="navCategory" id="sectionNavCategory">
+                            <option value="tutors">For Tutors</option>
+                            <option value="parents">For Parents</option>
+                            <option value="about" selected>About TAS</option>
+                          </select>
+                        </label>
                     </div>
 
                     <div id="rollingBannerFields" style="display: none;">
@@ -265,6 +281,15 @@
 
                     <label>Page Title:<input name="heading" required></label>
                     <label>Page Content:<textarea name="text" rows="6" required></textarea></label>
+
+                    <label>
+                        Show in Navigation Menu:
+                        <select name="navCategory" id="pageNavCategory">
+                            <option value="tutors">For Tutors</option>
+                            <option value="parents">For Parents</option>
+                            <option value="about" selected>About TAS</option>
+                        </select>
+                    </label>
 
                     <!-- ★ NEW: Add button fields -->
                     <hr style="border-top:1px solid #b3a1b3;margin:20px 0">
@@ -694,6 +719,16 @@
         /* ── cancel button ─────────────────────────────────────────────────── */
         cancelEditBtn.addEventListener('click', resetSectionForm);
 
+        /* ── navigation controls logic ──────────────────────────────────────── */
+        const showInNav = document.getElementById('showInNav');
+        const navCatRow = document.getElementById('navCatRow');
+        const sectionNavCategory = document.getElementById('sectionNavCategory');
+
+        // Show/hide navigation category selector based on checkbox
+        showInNav.addEventListener('change', () => {
+            navCatRow.style.display = showInNav.checked ? 'block' : 'none';
+        });
+
         /* ── initial boot ──────────────────────────────────────────────────── */
         await loadSections();
         pageSel.dispatchEvent(new Event('change'));   // sets initial link
@@ -702,6 +737,10 @@
         addSectionForm.addEventListener('submit', async e => {
             e.preventDefault();
             const fd = new FormData(addSectionForm);
+
+            // Add navigation fields
+            fd.set('showInNav', showInNav.checked ? 'true' : 'false');
+            fd.set('navCategory', sectionNavCategory.value || 'about');
 
             const editId = addSectionForm.dataset.editId;
             if (editId) {
@@ -796,6 +835,11 @@
                 // Show the 'Remove Button' checkbox only if a button exists
                 removeButtonRow.style.display = section.buttonLabel ? 'flex' : 'none';
 
+                // Pre-fill navigation fields
+                showInNav.checked = !!section.showInNav;
+                sectionNavCategory.value = section.navCategory || 'about';
+                navCatRow.style.display = showInNav.checked ? 'block' : 'none';
+
                 // Update UI for editing
                 sectionFormHeading.textContent = 'Edit Dynamic Section';
                 submitSectionBtn.textContent = 'Update Section';
@@ -861,6 +905,10 @@
           const editId= pageForm.dataset.editId;
 
           fd.append('isFullPage','true');
+
+          // Add navigation category for pages
+          const pageNavCategory = document.getElementById('pageNavCategory');
+          fd.set('navCategory', pageNavCategory.value || 'about');
           fd.set('isPublished', document.getElementById('isPublished').checked?'true':'false');
           fd.set('buttonLabel', fd.get('buttonLabel') || '');
           fd.set('buttonUrl',   fd.get('buttonUrl')   || '');
