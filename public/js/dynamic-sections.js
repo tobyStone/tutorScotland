@@ -6,6 +6,11 @@
  * of the page content based on the admin's selection.
  */
 
+// Helper function to create URL-friendly slugs
+function slugify(str) {
+    return str.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
+}
+
 /**
  * Helper function to generate button HTML if button data exists
  */
@@ -147,6 +152,14 @@ function loadDynamicSections() {
                     document
                         .querySelectorAll('.dyn-block.fade-in-on-scroll')
                         .forEach(el => window.dynamicSectionsObserver.observe(el));
+                }
+
+                // If we arrived with #hash, jump once sections are in the DOM
+                if (location.hash) {
+                    const target = document.getElementById(location.hash.slice(1));
+                    if (target) {
+                        target.scrollIntoView({behavior: 'smooth', block: 'start'});
+                    }
                 }
             } else {
                 // If no dynamic sections, hide all containers and separators
@@ -301,18 +314,9 @@ function createDynamicSectionElement(section, index) {
 
     // Add anchor ID for navigation linking
     if (section.navAnchor) {
-        article.id = section.navAnchor;
+        article.id = section.navAnchor;  // ✅ ALWAYS use server-side anchor
     } else if (section.heading) {
-        // Fallback: create anchor from heading if navAnchor doesn't exist
-        article.id = section.heading.toString().toLowerCase()
-            .replace(/[^\w\s-]/g, '')
-            .trim()
-            .replace(/\s+/g, '-');
-    }
-
-    // Ensure unique IDs to prevent conflicts
-    if (article.id && document.getElementById(article.id)) {
-        article.id = article.id + '-' + Date.now().toString(36);
+        article.id = slugify(section.heading);  // fallback for legacy rows
     }
 
     // Handle team layout

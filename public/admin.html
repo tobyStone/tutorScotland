@@ -664,6 +664,12 @@
           document.querySelector('[name="removeButton"]').checked = false;
           removeButtonRow.style.display = 'none';
 
+          // Add reset logic for team fields
+          teamBuilder.style.display = 'none';
+          teamMemberList.innerHTML = '';
+          teamMembers = [];
+          teamData.value = '[]';
+
           toggleFields();                    // (function already defined earlier)
           updatePageLink(slug);
         }
@@ -770,9 +776,14 @@
                 textTextarea.removeAttribute('required');
                 teamHeadingInput.setAttribute('required', '');
             } else {
+                // Switching back to Standard - cleanup team data
                 headingInput.setAttribute('required', '');
                 textTextarea.setAttribute('required', '');
                 teamHeadingInput.removeAttribute('required');
+                teamBuilder.style.display = 'none';
+                teamMemberList.innerHTML = '';
+                teamMembers = [];
+                teamData.value = '[]';
             }
         });
 
@@ -804,6 +815,9 @@
             memberDiv.querySelectorAll('input, textarea').forEach(input => {
                 input.addEventListener('change', updateTeamData);
             });
+
+            // Also add listener for image file input
+            memberDiv.querySelector('.member-image').addEventListener('change', updateTeamData);
         });
 
         // Update team data in hidden field
@@ -853,6 +867,11 @@
             // Handle team layout
             if (sectionLayout.value === 'team') {
                 await updateTeamData(); // Ensure team data is current
+
+                if (!teamData.value || teamData.value === '[]') {
+                    return alert('Please add at least one team member');
+                }
+
                 fd.set('heading', document.querySelector('[name="teamHeading"]').value);
                 fd.set('text', 'Team members section'); // Placeholder text
                 fd.set('team', teamData.value);

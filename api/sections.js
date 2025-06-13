@@ -122,7 +122,24 @@ module.exports = async (req, res) => {
                     if (fields.navCategory) updateData.navCategory = getField('navCategory').toLowerCase();
 
                     // If heading changes, update navAnchor
-                    if (fields.heading) updateData.navAnchor = slugify(getField('heading').trim());
+                    if (fields.heading) {
+                        let newAnchor = slugify(getField('heading').trim());
+
+                        // Ensure uniqueness within the same page
+                        const currentDoc = await Section.findById(editId);
+                        if (currentDoc) {
+                            const collision = await Section.exists({
+                                page: currentDoc.page,
+                                navAnchor: newAnchor,
+                                _id: { $ne: editId }
+                            });
+                            if (collision) {
+                                newAnchor += '-' + Date.now().toString(36);
+                            }
+                        }
+
+                        updateData.navAnchor = newAnchor;
+                    }
 
                     // Add layout update logic
                     if (fields.layout) updateData.layout = getField('layout').toLowerCase();
@@ -246,7 +263,13 @@ module.exports = async (req, res) => {
                 const showInNav = fields.showInNav ?
                     (Array.isArray(fields.showInNav) ? fields.showInNav[0] : fields.showInNav) === 'true'
                     : false;
-                const navAnchor = slugify(heading);
+                let navAnchor = slugify(heading);
+
+                // Ensure uniqueness within the same page
+                const collision = await Section.exists({ page, navAnchor });
+                if (collision) {
+                    navAnchor += '-' + Date.now().toString(36);
+                }
 
                 // Get layout fields
                 const layout = fields.layout ?
