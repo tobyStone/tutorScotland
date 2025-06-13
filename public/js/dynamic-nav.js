@@ -5,10 +5,22 @@
 
 /* ============================= NAV INTERACTIONS ============================= */
 // Wait for navigation to be loaded by nav-loader.js
-document.addEventListener('nav:loaded', function() {
-    console.log('Initializing navigation interactions...');
+document.addEventListener('nav:loaded', async function() {
+    console.log('Initializing navigation interactions…');
+
+    /* 1️⃣ Create bucket map immediately */
+    window.navBuckets = {
+        tutors: document.getElementById('tutors-submenu'),
+        parents: document.getElementById('parents-submenu'),
+        about: document.getElementById('about-tas-submenu')
+    };
+
+    /* 2️⃣ Wire up hamburger / accordion */
     initializeNavigation();
-    addCustomPagesToNav();
+
+    /* 3️⃣ Inject content — order does not matter now */
+    await addCustomPagesToNav();
+    await addSectionAnchors();
 });
 
 // Initialize navigation interactions
@@ -16,13 +28,6 @@ function initializeNavigation() {
     const nav = document.querySelector('.main-nav');
     const navToggle = nav.querySelector('.nav-toggle');
     const submenuLinks = nav.querySelectorAll('.has-submenu > a');
-
-    // Initialize navigation buckets after DOM is ready
-    window.navBuckets = {
-        tutors: document.getElementById('tutors-submenu'),
-        parents: document.getElementById('parents-submenu'),
-        about: document.getElementById('about-tas-submenu')
-    };
     let menuTimeout = null;
     let isHovering = false;
     let lastScrollY = window.scrollY;
@@ -216,9 +221,6 @@ async function addCustomPagesToNav() {
 
         console.info(`✅ Successfully added ${publishedPages.length} custom page(s) to navigation dropdowns.`);
 
-        // After adding pages, add section anchors
-        await addSectionAnchors();
-
     } catch (error) {
         console.error('Error adding custom pages to navigation:', error);
     }
@@ -228,6 +230,8 @@ async function addCustomPagesToNav() {
 async function addSectionAnchors() {
     try {
         console.log('Fetching sections for navigation anchors...');
+        console.log('Available navBuckets:', window.navBuckets);
+
         const response = await fetch('/api/sections?showInNav=true');
         if (!response.ok) {
             console.log('No sections with navigation links found');
@@ -235,7 +239,10 @@ async function addSectionAnchors() {
         }
 
         const sections = await response.json();
+        console.log('All sections from API:', sections);
+
         const navSections = sections.filter(section => section.showInNav && !section.isFullPage);
+        console.log('Filtered nav sections:', navSections);
 
         if (navSections.length === 0) {
             console.log('No sections configured for navigation display');

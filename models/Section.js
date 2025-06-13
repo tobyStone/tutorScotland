@@ -17,6 +17,11 @@ const schema = new mongoose.Schema({
     buttonLabel: { type: String, default: '' },     // Button text
     buttonUrl:   { type: String, default: '' },     // Button destination URL
 
+    // ★ NEW: Add fields for navigation integration
+    navCategory: { type: String, default: 'about' }, // 'tutors', 'parents', 'about'
+    showInNav: { type: Boolean, default: false },    // Whether to show in navigation
+    navAnchor: { type: String, default: '' },        // URL-friendly anchor for linking
+
     isFullPage: { type: Boolean, default: false },  // Whether this is a full page template
     slug: String,                                   // URL-friendly identifier for the page
     isPublished: { type: Boolean, default: true },   // Whether the page is live

@@ -304,7 +304,7 @@ function createDynamicSectionElement(section, index) {
         article.id = section.navAnchor;
     } else if (section.heading) {
         // Fallback: create anchor from heading if navAnchor doesn't exist
-        article.id = section.heading.toLowerCase()
+        article.id = section.heading.toString().toLowerCase()
             .replace(/[^\w\s-]/g, '')
             .trim()
             .replace(/\s+/g, '-');
