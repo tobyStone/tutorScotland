@@ -114,7 +114,7 @@
     cursor: pointer;
     position: absolute;
     right: 15px;
-    z-index: 1002; /* Ensure it's above other elements */
+    z-index: 1002;
 }
 
 /* Screen reader only text */
@@ -135,20 +135,20 @@
     /* Show hamburger button and position it below rolling banner */
     .nav-toggle {
         display: block;
-        top: calc(2.5em + 20px); /* Position below rolling banner (2.5em height + margin) */
+        top: calc(2.5em + 20px);
     }
 
     /* Hide menu by default on mobile */
     .main-nav ul#primary-menu {
         display: none !important;
         flex-direction: column;
-        position: fixed; /* Change to fixed for better mobile UX */
-        top: calc(2.5em + 60px); /* Position below hamburger */
+        position: fixed;
+        top: calc(2.5em + 60px);
         left: 0;
         width: 100%;
-        background: #001B44;
+        background: #001B44; /* Dark blue from tartan header */
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        max-height: calc(100vh - 2.5em - 60px); /* Prevent menu from going off screen */
+        max-height: calc(100vh - 2.5em - 60px);
         overflow-y: auto;
         z-index: 1001;
         transition: transform 0.3s ease-out;
@@ -164,7 +164,7 @@
     /* Main menu items */
     .main-nav .menu-item {
         border-left: none;
-        border-bottom: 1px solid #ADD8E6;
+        border-bottom: 1px solid #003F8F; /* Slightly lighter blue for borders */
         width: 100%;
     }
 
@@ -176,28 +176,43 @@
         padding: 15px 20px;
         text-align: left;
         width: 100%;
+        color: #fff;
+        background: #001B44; /* Ensure consistent background */
+        transition: background-color 0.2s ease;
     }
 
-    /* Submenu styling */
+    .main-nav a:hover {
+        background: #003F8F; /* Lighter blue for hover */
+    }
+
+    /* Submenu styling - hidden by default */
     .main-nav ul ul {
         position: static;
-        background: rgba(0,0,0,0.25);
+        background: #002B5C; /* Slightly lighter than parent for hierarchy */
         border-radius: 0;
         box-shadow: none;
         border-top: none;
         min-width: auto;
-        display: none; /* Hide submenus by default */
-        transform: none !important; /* Prevent transform inheritance */
+        display: none !important; /* Force hide by default */
+        transform: none !important;
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
 
-    /* Show submenu when parent is open */
+    /* Show submenu only when parent is explicitly open */
     .has-submenu.open > ul {
         display: block !important;
+        opacity: 1;
     }
 
     .main-nav ul ul a {
         padding-left: 40px;
         font-size: 0.9em;
+        background: #002B5C; /* Match parent submenu background */
+    }
+
+    .main-nav ul ul a:hover {
+        background: #003F8F; /* Lighter blue for hover */
     }
 
     /* Mobile accordion indicators */
@@ -209,6 +224,11 @@
 
     .has-submenu.open > a::after {
         transform: rotate(90deg);
+    }
+
+    /* Ensure submenus are hidden on initial load */
+    .main-nav ul ul {
+        display: none !important;
     }
 
     /* Hide desktop-only items on mobile */

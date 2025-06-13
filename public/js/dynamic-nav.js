@@ -18,18 +18,38 @@ function initializeNavigation() {
     const submenuLinks = nav.querySelectorAll('.has-submenu > a');
     let menuTimeout = null;
     let isHovering = false;
+    let lastScrollY = window.scrollY;
 
     if (!nav || !navToggle) {
         console.error('Navigation elements not found');
         return;
     }
 
+    // Function to check if menu should be closed based on scroll position
+    const shouldCloseMenu = () => {
+        if (!nav.classList.contains('nav-open')) return false;
+        
+        const menuBottom = nav.getBoundingClientRect().bottom;
+        const viewportHeight = window.innerHeight;
+        const scrollThreshold = 2.5 * 16; // 2.5rem in pixels
+        
+        // Only close if we've scrolled past the menu by 2.5rem
+        return menuBottom < (viewportHeight - scrollThreshold);
+    };
+
     // Hamburger menu toggle
     navToggle.addEventListener('click', function() {
         const isOpen = nav.classList.toggle('nav-open');
         navToggle.setAttribute('aria-expanded', isOpen);
         
-        // Clear any existing timeout when manually toggling
+        // Close all submenus when toggling main menu
+        if (!isOpen) {
+            nav.querySelectorAll('.has-submenu.open').forEach(menu => {
+                menu.classList.remove('open');
+            });
+        }
+        
+        // Clear any existing timeout
         if (menuTimeout) {
             clearTimeout(menuTimeout);
             menuTimeout = null;
@@ -50,43 +70,45 @@ function initializeNavigation() {
         // Only start timeout if we're in mobile view
         if (window.innerWidth <= 900) {
             menuTimeout = setTimeout(() => {
-                if (!isHovering) {
+                if (!isHovering && shouldCloseMenu()) {
                     nav.classList.remove('nav-open');
                     navToggle.setAttribute('aria-expanded', 'false');
+                    // Also close any open submenus
+                    nav.querySelectorAll('.has-submenu.open').forEach(menu => {
+                        menu.classList.remove('open');
+                    });
                 }
-            }, 1000); // 1 second delay before closing
+            }, 1000);
         }
     });
 
     // Mobile accordion functionality for submenus
     submenuLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            // Only prevent default and toggle on mobile
+            // Only handle on mobile
             if (window.innerWidth <= 900) {
                 e.preventDefault();
                 const parentLi = this.parentElement;
                 
                 // Close other open submenus
-                if (!parentLi.classList.contains('open')) {
-                    nav.querySelectorAll('.has-submenu.open').forEach(openMenu => {
-                        if (openMenu !== parentLi) {
-                            openMenu.classList.remove('open');
-                        }
-                    });
-                }
+                nav.querySelectorAll('.has-submenu.open').forEach(openMenu => {
+                    if (openMenu !== parentLi) {
+                        openMenu.classList.remove('open');
+                    }
+                });
                 
+                // Toggle current submenu
                 parentLi.classList.toggle('open');
             }
         });
     });
 
     // Close mobile menu on scroll
-    let lastScrollY = window.scrollY;
     const handleScroll = () => {
         if (window.innerWidth <= 900) {
             const currentScrollY = window.scrollY;
             // Only close if scrolling down and not hovering
-            if (currentScrollY > lastScrollY && !isHovering) {
+            if (currentScrollY > lastScrollY && !isHovering && shouldCloseMenu()) {
                 nav.classList.remove('nav-open');
                 navToggle.setAttribute('aria-expanded', 'false');
                 // Also close any open submenus
