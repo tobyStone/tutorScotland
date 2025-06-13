@@ -11,6 +11,14 @@ function slugify(str) {
     return str.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-');
 }
 
+// Helper function to generate button HTML
+function buttonHtml(section) {
+    if (!section.buttonLabel || !section.buttonUrl) return '';
+    return `<div class="dyn-button-container">
+        <a href="${section.buttonUrl}" class="dyn-button">${section.buttonLabel}</a>
+    </div>`;
+}
+
 /**
  * Helper function to generate button HTML if button data exists
  */
@@ -89,13 +97,7 @@ function loadDynamicSections() {
                 // Add sections to their respective containers
                 if (topSections.length > 0) {
                     topSections.forEach((s, index) => {
-                        topContainer.insertAdjacentHTML('beforeend', `
-                          <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
-                            ${s.image ? `<div class="dyn-image-container"><img src="${s.image}" alt="${s.heading}" loading="lazy"></div>` : ''}
-                            <h2>${s.heading}</h2>
-                            <div class="dyn-content">${s.text}</div>
-                            ${buttonHtml(s)}
-                          </article>`);
+                        topContainer.appendChild(createDynamicSectionElement(s, index));
                     });
                     topContainer.style.display = 'block';
                     const topSeparator = document.querySelector('.dynamic-sections-separator-top');
@@ -108,13 +110,7 @@ function loadDynamicSections() {
 
                 if (middleSections.length > 0) {
                     middleSections.forEach((s, index) => {
-                        middleContainer.insertAdjacentHTML('beforeend', `
-                          <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
-                            ${s.image ? `<div class="dyn-image-container"><img src="${s.image}" alt="${s.heading}" loading="lazy"></div>` : ''}
-                            <h2>${s.heading}</h2>
-                            <div class="dyn-content">${s.text}</div>
-                            ${buttonHtml(s)}
-                          </article>`);
+                        middleContainer.appendChild(createDynamicSectionElement(s, index));
                     });
                     middleContainer.style.display = 'block';
                     const middleSeparator = document.querySelector('.dynamic-sections-separator-middle');
@@ -127,13 +123,7 @@ function loadDynamicSections() {
 
                 if (bottomSections.length > 0) {
                     bottomSections.forEach((s, index) => {
-                        bottomContainer.insertAdjacentHTML('beforeend', `
-                          <article class="dyn-block fade-in-on-scroll" style="transition-delay: ${index * 0.1}s">
-                            ${s.image ? `<div class="dyn-image-container"><img src="${s.image}" alt="${s.heading}" loading="lazy"></div>` : ''}
-                            <h2>${s.heading}</h2>
-                            <div class="dyn-content">${s.text}</div>
-                            ${buttonHtml(s)}
-                          </article>`);
+                        bottomContainer.appendChild(createDynamicSectionElement(s, index));
                     });
                     bottomContainer.style.display = 'block';
                     const bottomSeparator = document.querySelector('.dynamic-sections-separator');
@@ -351,6 +341,12 @@ function createDynamicSectionElement(section, index) {
         }
 
         article.appendChild(grid);
+
+        // Add button if available
+        if (section.buttonLabel && section.buttonUrl) {
+            article.insertAdjacentHTML('beforeend', buttonHtml(section));
+        }
+
         return article; // Skip the standard flow
     }
 
