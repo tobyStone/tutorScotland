@@ -16,6 +16,8 @@ function initializeNavigation() {
     const nav = document.querySelector('.main-nav');
     const navToggle = nav.querySelector('.nav-toggle');
     const submenuLinks = nav.querySelectorAll('.has-submenu > a');
+    let menuTimeout = null;
+    let isHovering = false;
 
     if (!nav || !navToggle) {
         console.error('Navigation elements not found');
@@ -26,7 +28,34 @@ function initializeNavigation() {
     navToggle.addEventListener('click', function() {
         const isOpen = nav.classList.toggle('nav-open');
         navToggle.setAttribute('aria-expanded', isOpen);
-        console.log('Mobile menu toggled:', isOpen ? 'open' : 'closed');
+        
+        // Clear any existing timeout when manually toggling
+        if (menuTimeout) {
+            clearTimeout(menuTimeout);
+            menuTimeout = null;
+        }
+    });
+
+    // Handle menu hover states
+    nav.addEventListener('mouseenter', () => {
+        isHovering = true;
+        if (menuTimeout) {
+            clearTimeout(menuTimeout);
+            menuTimeout = null;
+        }
+    });
+
+    nav.addEventListener('mouseleave', () => {
+        isHovering = false;
+        // Only start timeout if we're in mobile view
+        if (window.innerWidth <= 900) {
+            menuTimeout = setTimeout(() => {
+                if (!isHovering) {
+                    nav.classList.remove('nav-open');
+                    navToggle.setAttribute('aria-expanded', 'false');
+                }
+            }, 1000); // 1 second delay before closing
+        }
     });
 
     // Mobile accordion functionality for submenus
@@ -36,39 +65,69 @@ function initializeNavigation() {
             if (window.innerWidth <= 900) {
                 e.preventDefault();
                 const parentLi = this.parentElement;
+                
+                // Close other open submenus
+                if (!parentLi.classList.contains('open')) {
+                    nav.querySelectorAll('.has-submenu.open').forEach(openMenu => {
+                        if (openMenu !== parentLi) {
+                            openMenu.classList.remove('open');
+                        }
+                    });
+                }
+                
                 parentLi.classList.toggle('open');
-                console.log('Mobile submenu toggled:', parentLi.classList.contains('open') ? 'open' : 'closed');
             }
         });
     });
 
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', function(e) {
-        if (nav && !nav.contains(e.target) && nav.classList.contains('nav-open')) {
-            nav.classList.remove('nav-open');
-            navToggle.setAttribute('aria-expanded', 'false');
-        }
-    });
-
-    // Function to ensure menu is collapsed on mobile viewports
-    const collapseIfMobile = () => {
-        if (window.innerWidth <= 900 && nav.classList.contains('nav-open')) {
-            nav.classList.remove('nav-open');
-            navToggle.setAttribute('aria-expanded', 'false');
+    // Close mobile menu on scroll
+    let lastScrollY = window.scrollY;
+    const handleScroll = () => {
+        if (window.innerWidth <= 900) {
+            const currentScrollY = window.scrollY;
+            // Only close if scrolling down and not hovering
+            if (currentScrollY > lastScrollY && !isHovering) {
+                nav.classList.remove('nav-open');
+                navToggle.setAttribute('aria-expanded', 'false');
+                // Also close any open submenus
+                nav.querySelectorAll('.has-submenu.open').forEach(menu => {
+                    menu.classList.remove('open');
+                });
+            }
+            lastScrollY = currentScrollY;
         }
     };
 
-    // Close mobile menu on window resize and handle viewport changes
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 900 && nav.classList.contains('nav-open')) {
+    // Use passive scroll listener for better performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Function to ensure menu is collapsed on mobile viewports
+    const collapseIfMobile = () => {
+        if (window.innerWidth <= 900) {
             nav.classList.remove('nav-open');
             navToggle.setAttribute('aria-expanded', 'false');
+            // Also close any open submenus
+            nav.querySelectorAll('.has-submenu.open').forEach(menu => {
+                menu.classList.remove('open');
+            });
+        }
+    };
+
+    // Close mobile menu on window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 900) {
+            nav.classList.remove('nav-open');
+            navToggle.setAttribute('aria-expanded', 'false');
+            // Reset all submenus
+            nav.querySelectorAll('.has-submenu.open').forEach(menu => {
+                menu.classList.remove('open');
+            });
         }
         // Also ensure proper mobile state
         collapseIfMobile();
     });
 
-    // Run collapse check on initial load to handle edge cases
+    // Run collapse check on initial load
     collapseIfMobile();
 
     console.log('✅ Navigation interactions initialized');

@@ -113,8 +113,8 @@
     padding: 0.5rem 1rem;
     cursor: pointer;
     position: absolute;
-    top: 10px;
     right: 15px;
+    z-index: 1002; /* Ensure it's above other elements */
 }
 
 /* Screen reader only text */
@@ -132,29 +132,36 @@
 
 /* === MOBILE RESPONSIVE STYLES ======================================= */
 @media (max-width: 900px) {
-    /* Show hamburger button */
+    /* Show hamburger button and position it below rolling banner */
     .nav-toggle {
         display: block;
+        top: calc(2.5em + 20px); /* Position below rolling banner (2.5em height + margin) */
     }
 
-    /* Hide menu by default on mobile - using more specific selector */
+    /* Hide menu by default on mobile */
     .main-nav ul#primary-menu {
         display: none !important;
         flex-direction: column;
-        position: absolute;
-        top: 100%;
+        position: fixed; /* Change to fixed for better mobile UX */
+        top: calc(2.5em + 60px); /* Position below hamburger */
         left: 0;
         width: 100%;
         background: #001B44;
         box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        max-height: calc(100vh - 2.5em - 60px); /* Prevent menu from going off screen */
+        overflow-y: auto;
+        z-index: 1001;
+        transition: transform 0.3s ease-out;
+        transform: translateY(-100%);
     }
 
-    /* Show menu when nav-open class is applied - using more specific selector */
+    /* Show menu when nav-open class is applied */
     .main-nav.nav-open ul#primary-menu {
         display: flex !important;
+        transform: translateY(0);
     }
 
-    /* Mobile menu item styling */
+    /* Main menu items */
     .main-nav .menu-item {
         border-left: none;
         border-bottom: 1px solid #ADD8E6;
@@ -171,6 +178,28 @@
         width: 100%;
     }
 
+    /* Submenu styling */
+    .main-nav ul ul {
+        position: static;
+        background: rgba(0,0,0,0.25);
+        border-radius: 0;
+        box-shadow: none;
+        border-top: none;
+        min-width: auto;
+        display: none; /* Hide submenus by default */
+        transform: none !important; /* Prevent transform inheritance */
+    }
+
+    /* Show submenu when parent is open */
+    .has-submenu.open > ul {
+        display: block !important;
+    }
+
+    .main-nav ul ul a {
+        padding-left: 40px;
+        font-size: 0.9em;
+    }
+
     /* Mobile accordion indicators */
     .has-submenu > a::after {
         content: ' ▸';
@@ -180,21 +209,6 @@
 
     .has-submenu.open > a::after {
         transform: rotate(90deg);
-    }
-
-    /* Mobile submenus become in-flow lists */
-    .main-nav ul ul {
-        position: static;
-        background: rgba(0,0,0,0.25);
-        border-radius: 0;
-        box-shadow: none;
-        border-top: none;
-        min-width: auto;
-    }
-
-    .main-nav ul ul a {
-        padding-left: 40px;
-        font-size: 0.9em;
     }
 
     /* Hide desktop-only items on mobile */
