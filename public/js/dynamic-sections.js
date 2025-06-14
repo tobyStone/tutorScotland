@@ -326,7 +326,7 @@ function createDynamicSectionElement(section, index) {
                     </div>
                     <div class="tm-content">
                         <p class="tm-bio">${m.bio}</p>
-                        ${m.quote ? `<p class="tm-quote">"${m.quote}"</p>` : ''}
+                        ${m.quote ? `<p class="tm-quote">${m.quote}</p>` : ''}
                     </div>
                 </div>
             `).join('');

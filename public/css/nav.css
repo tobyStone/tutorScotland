@@ -344,29 +344,26 @@
 }
 
 .team-member .tm-quote {
-    font-style: italic;
-    color: #0057B7;
-    margin: 0;
-    padding: 0.5rem 1rem;
     position: relative;
-}
-
-.team-member .tm-quote::before,
-.team-member .tm-quote::after {
-    content: '"';
-    color: #0057B7;
-    font-size: 1.2em;
-    position: absolute;
+    padding: 0 1em;
 }
 
 .team-member .tm-quote::before {
-    left: 0;
-    top: 0;
+    content: '"';
+    position: absolute;
+    left: -0.25em;
+    top: -0.25em;
+    font-size: 1.2em;
+    color: var(--accent-color, #666);
 }
 
 .team-member .tm-quote::after {
-    right: 0;
-    bottom: 0;
+    content: '"';
+    position: absolute;
+    right: -0.25em;
+    bottom: -0.25em;
+    font-size: 1.2em;
+    color: var(--accent-color, #666);
 }
 
 .team-grid .no-members {
@@ -405,5 +402,86 @@
     .team-member .avatar {
         width: 100px;
         height: 100px;
+    }
+}
+
+/* ================= DYNAMIC WIDTH CONSTRAINT =============== */
+.dynamic-section-container,
+.dyn-block {
+    max-width: 920px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    overflow-x: hidden; /* Prevent horizontal scroll on very narrow screens */
+}
+
+/* ================= SAMSUNG NESTED ELEMENTS FIX =============== */
+@media (max-width: 768px) and (orientation: portrait) {
+    .fix-nested {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+    .fix-nested {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+}
+
+/* ================= TEAM MEMBER CENTERING =============== */
+@media (max-width: 480px) and (orientation: portrait) {
+    .team-grid .team-members {
+        justify-content: center;
+        grid-template-columns: minmax(280px, 1fr);
+    }
+    
+    .team-member {
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+        max-width: 320px; /* Prevent cards from getting too wide */
+    }
+}
+
+/* ================= SOCIAL MEDIA FOOTER =============== */
+@media (max-width: 768px) {
+    .floating-footer {
+        display: flex;
+        justify-content: center;
+        gap: 1.2rem;
+        padding: 0.5rem;
+        width: 100%;
+    }
+
+    .floating-footer .soc {
+        margin: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Fallback for older browsers */
+    .floating-footer .soc + .soc {
+        margin-left: 1.2rem !important;
+    }
+}
+
+/* ================= LOGIN FORM CENTERING =============== */
+.login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    box-sizing: border-box;
+}
+
+@media (max-width: 767px) {
+    .login-wrapper {
+        display: block;
+        min-height: auto;
+        padding: 1.5rem 1rem;
     }
 }
