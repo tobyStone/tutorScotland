@@ -25,10 +25,25 @@ const schema = new mongoose.Schema({
     // ★ NEW: Add fields for layout types
     layout: { type: String, default: 'standard' },   // 'standard' | 'team'
     team: [{
-        name: String,
-        role: String,
-        bio: String,
-        image: String   // URL
+        name: { 
+            type: String,
+            required: [true, 'Name and role are required']
+        },
+        bio: { 
+            type: String,
+            required: [true, 'Bio is required']
+        },
+        quote: { 
+            type: String,
+            default: ''
+        },
+        image: String,
+        validate: {
+            validator: function(v) {
+                return v.name && v.bio;
+            },
+            message: 'Name and bio are required for team members'
+        }
     }],
 
     isFullPage: { type: Boolean, default: false },  // Whether this is a full page template

@@ -302,32 +302,36 @@ function createDynamicSectionElement(section, index) {
     // Handle team layout
     if (section.layout === 'team') {
         article.classList.add('team-grid');
+        article.setAttribute('role', 'region');
+        article.setAttribute('aria-label', 'Team Members');
 
-        // Add heading
         if (section.heading) {
             const heading = document.createElement('h2');
             heading.textContent = section.heading;
             article.appendChild(heading);
         }
 
-        // Create team members grid
         const grid = document.createElement('div');
         grid.className = 'team-members';
+        grid.setAttribute('role', 'list');
 
-        if (section.team && section.team.length > 0) {
-            section.team.forEach(member => {
-                const card = document.createElement('div');
-                card.className = 'team-member';
-                card.innerHTML = `
-                    <div class="avatar">
-                        <img src="${member.image || '/images/default-avatar.png'}" alt="${member.name}" loading="lazy">
+        if (section.team?.length) {
+            grid.innerHTML = section.team.map(m => `
+                <div class="team-member" role="listitem">
+                    <h3 class="tm-title">${m.name}</h3>
+                    <div class="avatar" role="img" aria-label="${m.name}'s photo">
+                        <img src="${m.image || '/images/default-avatar.png'}"
+                             alt=""
+                             loading="lazy">
                     </div>
-                    <h3>${member.name}</h3>
-                    <h4>${member.role}</h4>
-                    <p>${member.bio}</p>
-                `;
-                grid.appendChild(card);
-            });
+                    <div class="tm-content">
+                        <p class="tm-bio">${m.bio}</p>
+                        ${m.quote ? `<p class="tm-quote">"${m.quote}"</p>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            grid.innerHTML = '<p class="no-members">No team members to display</p>';
         }
 
         article.appendChild(grid);
@@ -336,15 +340,6 @@ function createDynamicSectionElement(section, index) {
         if (section.buttonLabel && section.buttonUrl) {
             article.insertAdjacentHTML('beforeend', buttonHtml(section));
         }
-
-        // Add debug logging
-        console.log('Creating dynamic section:', {
-            layout: section.layout,
-            heading: section.heading,
-            hasTeam: section.team?.length > 0,
-            hasImage: !!section.image,
-            hasButton: !!(section.buttonLabel && section.buttonUrl)
-        });
 
         return article;
     }

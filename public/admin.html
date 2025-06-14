@@ -789,64 +789,129 @@
         });
 
         // Add team member functionality
-        addMemberBtn.addEventListener('click', () => {
-            const memberIndex = teamMembers.length;
+        function addTeamMember() {
+            const memberIndex = teamMemberList.children.length;
             const memberDiv = document.createElement('div');
             memberDiv.className = 'team-member-form';
-            memberDiv.style.cssText = 'border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; background: #f9f9f9;';
-
             memberDiv.innerHTML = `
                 <h4>Team Member ${memberIndex + 1}</h4>
-                <label>Name: <input type="text" class="member-name" required></label>
-                <label>Role: <input type="text" class="member-role" required></label>
-                <label>Bio: <textarea class="member-bio" rows="2" required></textarea></label>
-                <label>Image: <input type="file" class="member-image" accept="image/*"></label>
-                <button type="button" class="remove-member" style="background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-top: 10px;">Remove</button>
+                
+                <label>Name & Role:
+                    <input type="text"
+                           class="member-nameRole"
+                           placeholder="e.g. Karen Simpson – Director"
+                           required
+                           aria-required="true">
+                    <span class="validation-message"></span>
+                </label>
+
+                <label>Bio:
+                    <textarea class="member-bio" 
+                              rows="3" 
+                              required
+                              aria-required="true"></textarea>
+                    <span class="validation-message"></span>
+                </label>
+
+                <label>Quote (Optional):
+                    <textarea class="member-quote"
+                              rows="2"
+                              placeholder="e.g. "Tutoring changes lives…""
+                              aria-label="Optional quote"></textarea>
+                </label>
+
+                <label>Image:
+                    <input type="file" 
+                           class="member-image" 
+                           accept="image/*"
+                           aria-label="Team member photo">
+                    <div class="image-preview"></div>
+                </label>
+
+                <button type="button" 
+                        class="remove-member"
+                        aria-label="Remove team member">Remove</button>
             `;
 
+            // Add validation
+            const nameInput = memberDiv.querySelector('.member-nameRole');
+            const bioInput = memberDiv.querySelector('.member-bio');
+            
+            function validateMember() {
+                let isValid = true;
+                if (!nameInput.value.trim()) {
+                    nameInput.nextElementSibling.textContent = 'Name and role are required';
+                    isValid = false;
+                } else {
+                    nameInput.nextElementSibling.textContent = '';
+                }
+                if (!bioInput.value.trim()) {
+                    bioInput.nextElementSibling.textContent = 'Bio is required';
+                    isValid = false;
+                } else {
+                    bioInput.nextElementSibling.textContent = '';
+                }
+                return isValid;
+            }
+
+            nameInput.addEventListener('input', validateMember);
+            bioInput.addEventListener('input', validateMember);
+
+            // Add image preview
+            const imageInput = memberDiv.querySelector('.member-image');
+            const preview = memberDiv.querySelector('.image-preview');
+            
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width:100px;max-height:100px;object-fit:cover;">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
             teamMemberList.appendChild(memberDiv);
+            return validateMember;
+        }
 
-            // Add remove functionality
-            memberDiv.querySelector('.remove-member').addEventListener('click', () => {
-                memberDiv.remove();
-                updateTeamData();
-            });
-
-            // Add change listeners to update team data
-            memberDiv.querySelectorAll('input, textarea').forEach(input => {
-                input.addEventListener('change', updateTeamData);
-            });
-
-            // Also add listener for image file input
-            memberDiv.querySelector('.member-image').addEventListener('change', updateTeamData);
-        });
-
-        // Update team data in hidden field
+        // Update the team data collection function
         async function updateTeamData() {
             teamMembers = [];
-            const memberForms = teamMemberList.querySelectorAll('.team-member-form');
+            const cards = teamMemberList.querySelectorAll('.team-member-form');
+            let isValid = true;
 
-            for (const form of memberForms) {
-                const name = form.querySelector('.member-name').value;
-                const role = form.querySelector('.member-role').value;
-                const bio = form.querySelector('.member-bio').value;
-                const imageFile = form.querySelector('.member-image').files[0];
+            for (const c of cards) {
+                const name = c.querySelector('.member-nameRole').value.trim();
+                const bio = c.querySelector('.member-bio').value.trim();
+                const quote = c.querySelector('.member-quote').value.trim();
+                const file = c.querySelector('.member-image').files[0];
+                let imagePath = c.dataset.existingImage || '';
 
-                let imagePath = '';
-                if (imageFile) {
+                if (file) {
                     try {
-                        imagePath = await uploadImage(imageFile, 'team');
-                    } catch (err) {
-                        console.error('Error uploading team member image:', err);
+                        imagePath = await uploadImage(file, 'team');
+                    } catch (e) {
+                        console.error('Image upload failed:', e);
+                        c.querySelector('.member-image').nextElementSibling.textContent = 'Image upload failed';
+                        isValid = false;
+                        continue;
                     }
                 }
 
-                if (name && role && bio) {
-                    teamMembers.push({ name, role, bio, image: imagePath });
+                if (name && bio) {
+                    teamMembers.push({ name, bio, quote, image: imagePath });
+                } else {
+                    isValid = false;
                 }
             }
 
-            teamData.value = JSON.stringify(teamMembers);
+            if (isValid) {
+                teamData.value = JSON.stringify(teamMembers);
+                return true;
+            }
+            return false;
         }
 
         /* ── initial boot ──────────────────────────────────────────────────── */
