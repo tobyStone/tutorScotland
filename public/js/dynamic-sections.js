@@ -289,7 +289,7 @@ function createPositionContainer(position) {
  */
 function createDynamicSectionElement(section, index) {
     const article = document.createElement('article');
-    article.className = 'dyn-block fade-in-on-scroll';
+    article.className = 'dyn-block fade-in-on-scroll fix-nested';
     article.style.transitionDelay = `${index * 0.1}s`;
 
     // Add anchor ID for navigation linking

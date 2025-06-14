@@ -2208,6 +2208,7 @@ header h1 {
     width: 100%;
     max-width: 1080px;
     margin: 2rem auto;
+    box-sizing: border-box;
 }
 
 .dyn-block {
@@ -2216,6 +2217,48 @@ header h1 {
     box-shadow: 0 2px 18px rgba(0,87,183,0.05);
     padding: 2rem;
     margin-bottom: 2rem;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+/* Additional responsive constraints for dynamic content */
+@media (max-width: 768px) {
+    .dynamic-section-container {
+        margin: 1rem auto;
+        padding: 0 1rem;
+    }
+
+    .dyn-block {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) and (orientation: portrait) {
+    .dynamic-section-container {
+        margin: 0.5rem auto;
+        padding: 0 0.5rem;
+    }
+
+    .dyn-block {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 1rem;
+    }
+
+    .dyn-block h1,
+    .dyn-block h2,
+    .dyn-block h3 {
+        font-size: 1.2em;
+        line-height: 1.3;
+    }
+
+    .dyn-block img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+    }
 }
 
 .dyn-block img {

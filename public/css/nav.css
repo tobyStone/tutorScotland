@@ -351,19 +351,19 @@
 .team-member .tm-quote::before {
     content: '"';
     position: absolute;
-    left: -0.25em;
-    top: -0.25em;
+    left: -0.1em;
+    top: -0.1em;
     font-size: 1.2em;
-    color: var(--accent-color, #666);
+    color: #0057B7;
 }
 
 .team-member .tm-quote::after {
     content: '"';
     position: absolute;
-    right: -0.25em;
-    bottom: -0.25em;
+    right: -0.1em;
+    bottom: -0.1em;
     font-size: 1.2em;
-    color: var(--accent-color, #666);
+    color: #0057B7;
 }
 
 .team-grid .no-members {
@@ -413,6 +413,29 @@
     margin-left: auto;
     margin-right: auto;
     overflow-x: hidden; /* Prevent horizontal scroll on very narrow screens */
+    box-sizing: border-box;
+}
+
+/* Additional constraints for very narrow viewports */
+@media (max-width: 480px) and (orientation: portrait) {
+    .dynamic-section-container,
+    .dyn-block {
+        max-width: 100%;
+        margin: 0 auto 2rem auto;
+        padding: 1rem;
+    }
+
+    .dyn-block h1,
+    .dyn-block h2,
+    .dyn-block h3 {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .dyn-block img {
+        max-width: 100%;
+        height: auto;
+    }
 }
 
 /* ================= SAMSUNG NESTED ELEMENTS FIX =============== */
@@ -433,38 +456,50 @@
 /* ================= TEAM MEMBER CENTERING =============== */
 @media (max-width: 480px) and (orientation: portrait) {
     .team-grid .team-members {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         justify-content: center;
-        grid-template-columns: minmax(280px, 1fr);
+        gap: 20px;
     }
-    
+
     .team-member {
         margin-left: auto;
         margin-right: auto;
         width: 100%;
         max-width: 320px; /* Prevent cards from getting too wide */
+        text-align: center;
     }
 }
 
 /* ================= SOCIAL MEDIA FOOTER =============== */
 @media (max-width: 768px) {
-    .floating-footer {
+    .site-footer .footer-icons {
         display: flex;
         justify-content: center;
-        gap: 1.2rem;
-        padding: 0.5rem;
+        align-items: center;
+        gap: 2rem;
+        padding: 1rem;
         width: 100%;
     }
 
-    .floating-footer .soc {
+    .site-footer .footer-icons a {
         margin: 0 !important;
         display: flex;
         align-items: center;
         justify-content: center;
+        font-size: 1.5rem;
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+
+    .site-footer .footer-icons a:hover {
+        color: #FFD700;
     }
 
     /* Fallback for older browsers */
-    .floating-footer .soc + .soc {
-        margin-left: 1.2rem !important;
+    .site-footer .footer-icons a + a {
+        margin-left: 2rem !important;
     }
 }
 
@@ -478,10 +513,23 @@
     box-sizing: border-box;
 }
 
+.login-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
 @media (max-width: 767px) {
     .login-wrapper {
         display: block;
         min-height: auto;
         padding: 1.5rem 1rem;
+    }
+
+    .login-container {
+        margin-top: 2rem;
     }
 }
