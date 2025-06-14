@@ -1,5 +1,22 @@
 const mongoose = require('mongoose');
 
+// Define team member sub-schema
+const teamMemberSchema = new mongoose.Schema({
+    name: { 
+        type: String, 
+        required: true 
+    },
+    bio: { 
+        type: String, 
+        required: true 
+    },
+    quote: { 
+        type: String, 
+        default: '' 
+    },
+    image: String
+}, { _id: false });
+
 const schema = new mongoose.Schema({
     page: {
         type: String,
@@ -24,27 +41,14 @@ const schema = new mongoose.Schema({
 
     // ★ NEW: Add fields for layout types
     layout: { type: String, default: 'standard' },   // 'standard' | 'team'
-    team: [{
-        name: { 
-            type: String,
-            required: [true, 'Name and role are required']
-        },
-        bio: { 
-            type: String,
-            required: [true, 'Bio is required']
-        },
-        quote: { 
-            type: String,
-            default: ''
-        },
-        image: String,
+    team: {
+        type: [teamMemberSchema],
+        default: [],
         validate: {
-            validator: function(v) {
-                return v.name && v.bio;
-            },
-            message: 'Name and bio are required for team members'
+            validator: arr => arr.every(m => m.name && m.bio),
+            message: 'Each team member must include name & bio'
         }
-    }],
+    },
 
     isFullPage: { type: Boolean, default: false },  // Whether this is a full page template
     slug: String,                                   // URL-friendly identifier for the page
