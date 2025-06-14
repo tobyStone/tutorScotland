@@ -12,16 +12,6 @@ function slugify(str) {
 }
 
 // Helper function to generate button HTML
-function buttonHtml(section) {
-    if (!section.buttonLabel || !section.buttonUrl) return '';
-    return `<div class="dyn-button-container">
-        <a href="${section.buttonUrl}" class="dyn-button">${section.buttonLabel}</a>
-    </div>`;
-}
-
-/**
- * Helper function to generate button HTML if button data exists
- */
 function buttonHtml(s) {
     return s.buttonLabel && s.buttonUrl
         ? `<div class="button-group" style="margin-top:1rem;">
@@ -347,22 +337,28 @@ function createDynamicSectionElement(section, index) {
             article.insertAdjacentHTML('beforeend', buttonHtml(section));
         }
 
-        return article; // Skip the standard flow
+        // Add debug logging
+        console.log('Creating dynamic section:', {
+            layout: section.layout,
+            heading: section.heading,
+            hasTeam: section.team?.length > 0,
+            hasImage: !!section.image,
+            hasButton: !!(section.buttonLabel && section.buttonUrl)
+        });
+
+        return article;
     }
 
     // Add image if available
     if (section.image) {
-        const imageContainer = document.createElement('div');
-        imageContainer.className = 'dyn-image-container';
-
-        // Use safeImg helper for error handling
-        const image = safeImg(document.createElement('img'));
-        image.src = section.image;
-        image.alt = section.heading || 'Section image';
-        image.setAttribute('loading', 'lazy');
-
-        imageContainer.appendChild(image);
-        article.appendChild(imageContainer);
+        article.insertAdjacentHTML(
+            'beforeend',
+            `<div class="dyn-image-container">
+                <img src="${section.image}"
+                     alt="${section.heading || 'Section image'}"
+                     loading="lazy">
+             </div>`
+        );
     }
 
     // Add heading
@@ -375,6 +371,20 @@ function createDynamicSectionElement(section, index) {
     content.className = 'dyn-content';
     content.innerHTML = section.text;
     article.appendChild(content);
+
+    // Add button rendering for standard sections before return article:
+    if (section.buttonLabel && section.buttonUrl) {
+        article.insertAdjacentHTML('beforeend', buttonHtml(section));
+    }
+
+    // Add debug logging
+    console.log('Creating dynamic section:', {
+        layout: section.layout,
+        heading: section.heading,
+        hasTeam: section.team?.length > 0,
+        hasImage: !!section.image,
+        hasButton: !!(section.buttonLabel && section.buttonUrl)
+    });
 
     return article;
 }
