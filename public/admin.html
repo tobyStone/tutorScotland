@@ -279,7 +279,7 @@
                 <h3 style="margin-top:35px">Existing sections for this page</h3>
                 <table id="sectionTable" class="admin-table">
                     <thead>
-                        <tr><th>#</th><th>Heading</th><th>Position</th><th>Image?</th><th>Button?</th><th>Actions</th></tr>
+                        <tr><th>#</th><th>Heading</th><th>Layout</th><th>Position</th><th>Image?</th><th>Button?</th><th>Actions</th></tr>
                     </thead>
                     <tbody><!-- filled by JS --></tbody>
                 </table>
@@ -719,9 +719,10 @@
 
           currentSections.forEach((s, i) => {
             const pos = { top:'🔝 Top', middle:'⏺️ Middle', bottom:'🔽 Bottom' }[s.position||'bottom'];
+            const layout = s.layout === 'team' ? 'Team Grid' : 'Standard';
             sectionTbody.insertAdjacentHTML('beforeend', `
               <tr>
-                <td>${i+1}</td><td>${s.heading}</td><td>${pos}</td><td>${s.image?'✔︎':''}</td><td>${s.buttonLabel?'✔︎':''}</td>
+                <td>${i+1}</td><td>${s.heading}</td><td>${layout}</td><td>${pos}</td><td>${s.image?'✔︎':''}</td><td>${s.buttonLabel?'✔︎':''}</td>
                 <td>
                   <button class="edit"   data-id="${s._id}" title="Edit">✏️</button>
                   <button class="delete" data-id="${s._id}" title="Delete">🗑️</button>
@@ -1015,6 +1016,7 @@
                 } else {
                     alert(await r.text());
                 }
+                return; // Stop execution after delete
             }
 
             // Handle EDIT
@@ -1022,35 +1024,65 @@
                 const section = currentSections.find(s => s._id === id);
                 if (!section) return alert('Section not found. Please refresh.');
 
-                // Set state and populate form
+                // ---- Set state and trigger UI update ----
                 addSectionForm.dataset.editId = id;
-                addSectionForm.querySelector('[name="heading"]').value = section.heading;
-                addSectionForm.querySelector('[name="text"]').value = section.text;
-                addSectionForm.querySelector('[name="position"]').value = section.position || 'bottom';
+                sectionLayout.value = section.layout || 'standard';
+                sectionLayout.dispatchEvent(new Event('change')); // This shows/hides the correct field blocks
 
-                // Show current image preview
-                if (section.image) {
-                    currentImagePreview.querySelector('img').src = section.image;
-                    currentImagePreview.style.display = 'block';
-                } else {
-                    currentImagePreview.style.display = 'none';
+                // ---- Populate form based on layout ----
+                if (section.layout === 'team') {
+                    sectionFormHeading.textContent = 'Edit Team Section'; // UI Nicety
+                    teamBuilder.querySelector('[name="teamHeading"]').value = section.heading || '';
+
+                    // Rebuild team member cards
+                    teamMemberList.innerHTML = '';
+                    teamMembers = [];
+
+                    (section.team || []).forEach((member, index) => {
+                        const card = createTeamMemberCard(teamMemberList.children.length);
+
+                        // Pre-fill fields from the section data
+                        card.querySelector('.member-nameRole').value = member.name || '';
+                        card.querySelector('.member-bio').value = member.bio || '';
+                        card.querySelector('.member-quote').value = member.quote || '';
+
+                        // Remember and display the existing image
+                        if (member.image) {
+                            card.dataset.existingImage = member.image; // This prevents the image from being lost on update
+                            const previewDiv = card.querySelector('.image-preview');
+                            const previewImg = previewDiv.querySelector('img');
+                            previewImg.src = member.image;
+                            previewDiv.style.display = 'block';
+                        }
+                        teamMemberList.appendChild(card);
+                    });
+                    updateTeamData(); // Sync the populated data to the hidden input
+
+                } else { // It's a 'standard' layout
+                    sectionFormHeading.textContent = 'Edit Dynamic Section'; // UI Nicety
+                    addSectionForm.querySelector('[name="heading"]').value = section.heading;
+                    addSectionForm.querySelector('[name="text"]').value = section.text;
+
+                    if (section.image) {
+                        currentImagePreview.querySelector('img').src = section.image;
+                        currentImagePreview.style.display = 'block';
+                    } else {
+                        currentImagePreview.style.display = 'none';
+                    }
+                    document.querySelector('input[name="removeImage"]').checked = false;
+
+                    addSectionForm.querySelector('[name="buttonLabel"]').value = section.buttonLabel || '';
+                    addSectionForm.querySelector('[name="buttonUrl"]').value = section.buttonUrl || '';
+                    removeButtonRow.style.display = section.buttonLabel ? 'flex' : 'none';
                 }
-                document.querySelector('input[name="removeImage"]').checked = false;
 
-                // Pre-fill button fields
-                addSectionForm.querySelector('[name="buttonLabel"]').value = section.buttonLabel || '';
-                addSectionForm.querySelector('[name="buttonUrl"]').value   = section.buttonUrl   || '';
-
-                // Show the 'Remove Button' checkbox only if a button exists
-                removeButtonRow.style.display = section.buttonLabel ? 'flex' : 'none';
-
-                // Pre-fill navigation fields
+                // ---- Populate common fields for ALL layouts ----
+                addSectionForm.querySelector('[name="position"]').value = section.position || 'bottom';
                 showInNav.checked = !!section.showInNav;
                 sectionNavCategory.value = section.navCategory || 'about';
                 navCatRow.style.display = showInNav.checked ? 'block' : 'none';
 
-                // Update UI for editing
-                sectionFormHeading.textContent = 'Edit Dynamic Section';
+                // ---- Final UI updates for editing ----
                 submitSectionBtn.textContent = 'Update Section';
                 cancelEditBtn.style.display = 'inline-block';
                 addSectionForm.scrollIntoView({ behavior: 'smooth' });

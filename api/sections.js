@@ -145,7 +145,14 @@ module.exports = async (req, res) => {
                     if (fields.layout) updateData.layout = getField('layout').toLowerCase();
                     if (fields.team) {
                         try {
-                            updateData.team = JSON.parse(getField('team'));
+                            const parsedTeam = JSON.parse(getField('team'));
+                            // Only update the team array if it's a non-empty array
+                            if (Array.isArray(parsedTeam) && parsedTeam.length > 0) {
+                                updateData.team = parsedTeam;
+                                console.log('Team data updated with:', parsedTeam);
+                            } else {
+                                console.log('Skipping team update because parsed data is empty or invalid.');
+                            }
                         } catch (e) {
                             console.error('Error parsing team data for update:', e);
                         }
