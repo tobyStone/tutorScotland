@@ -900,7 +900,7 @@
         }
 
         async function updateTeamData() {
-            teamMembers = []; // Reset array
+            teamMembers = [];          // reset
 
             for (const form of teamMemberList.querySelectorAll('.team-member-form')) {
                 const name = form.querySelector('.member-nameRole').value.trim();
@@ -908,35 +908,34 @@
                 const quote = form.querySelector('.member-quote').value.trim();
                 const file = form.querySelector('.member-image').files[0];
 
-                // Skip incomplete cards
-                if (!name || !bio) {
-                    console.warn('Skipping incomplete team member card');
-                    continue;
-                }
+                // skip incomplete cards
+                if (!name || !bio) continue;
 
-                // Handle image upload with guard to prevent spam
+                // existing / newly-uploaded picture
                 let imagePath = form.dataset.existingImage || '';
-                if (file && !form.dataset.imageUploaded && file.size) {
+
+                // 👇 guard against multiple concurrent uploads
+                if (file && !form.dataset.imageUploaded && !form.dataset.uploading) {
+                    form.dataset.uploading = 'true';
                     try {
-                        form.dataset.imageUploaded = 'true'; // Prevent repeated uploads
                         imagePath = await uploadImage(file, 'team');
-                        form.dataset.existingImage = imagePath; // Store for future reference
-                        console.log('Image uploaded successfully:', imagePath);
-                    } catch (e) {
-                        console.error('Image upload failed:', e);
-                        form.dataset.imageUploaded = ''; // Reset flag on failure
-                        alert('Failed to upload image. Please try again.');
-                        continue;
+                        form.dataset.imageUploaded = 'true';
+                        form.dataset.existingImage = imagePath;
+                    } catch (err) {
+                        console.error('Image upload failed:', err);
+                        alert('Could not upload image – please try again.');
+                    } finally {
+                        delete form.dataset.uploading;   // always clear
                     }
                 }
 
                 teamMembers.push({ name, bio, quote, image: imagePath });
             }
 
-            // Update hidden input
             teamData.value = JSON.stringify(teamMembers);
-            console.log('Team data updated:', teamMembers);
+            console.log('Team data updated', teamMembers);
         }
+
 
         // Wire up the add member button
         addMemberBtn.addEventListener('click', addTeamMember);
