@@ -287,7 +287,7 @@
 
             <!-- ░░░░░░  CREATE NEW PAGE  ░░░░░░ -->
             <div class="admin-form-container">
-                <h3>Create a New Page</h3>
+                <h3 id="pageFormHeading">Create a New Page</h3>
 
                 <form id="pageForm" enctype="multipart/form-data" autocomplete="off">
                     <label>
@@ -720,9 +720,16 @@
           currentSections.forEach((s, i) => {
             const pos = { top:'🔝 Top', middle:'⏺️ Middle', bottom:'🔽 Bottom' }[s.position||'bottom'];
             const layout = s.layout === 'team' ? 'Team Grid' : 'Standard';
+
+            // For team sections, check if any team members have images
+            let hasImage = s.image ? true : false;
+            if (s.layout === 'team' && s.team && Array.isArray(s.team)) {
+                hasImage = s.team.some(member => member.image);
+            }
+
             sectionTbody.insertAdjacentHTML('beforeend', `
               <tr>
-                <td>${i+1}</td><td>${s.heading}</td><td>${layout}</td><td>${pos}</td><td>${s.image?'✔︎':''}</td><td>${s.buttonLabel?'✔︎':''}</td>
+                <td>${i+1}</td><td>${s.heading}</td><td>${layout}</td><td>${pos}</td><td>${hasImage?'✔︎':''}</td><td>${s.buttonLabel?'✔︎':''}</td>
                 <td>
                   <button class="edit"   data-id="${s._id}" title="Edit">✏️</button>
                   <button class="delete" data-id="${s._id}" title="Delete">🗑️</button>
@@ -849,6 +856,8 @@
             imageInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (file) {
+                    // Reset upload flag when new file is selected
+                    el.dataset.imageUploaded = '';
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         previewImg.src = e.target.result;
@@ -899,14 +908,17 @@
                     continue;
                 }
 
-                // Handle image upload
+                // Handle image upload with guard to prevent spam
                 let imagePath = form.dataset.existingImage || '';
-                if (file) {
+                if (file && !form.dataset.imageUploaded) {
                     try {
+                        form.dataset.imageUploaded = 'true'; // Prevent repeated uploads
                         imagePath = await uploadImage(file, 'team');
+                        form.dataset.existingImage = imagePath; // Store for future reference
                         console.log('Image uploaded successfully:', imagePath);
                     } catch (e) {
                         console.error('Image upload failed:', e);
+                        form.dataset.imageUploaded = ''; // Reset flag on failure
                         alert('Failed to upload image. Please try again.');
                         continue;
                     }
@@ -1107,7 +1119,7 @@
         function resetPageForm() {
           pageForm.reset();
           delete pageForm.dataset.editId;
-          pageForm.querySelector('h3').textContent = 'Create a New Page';
+          document.getElementById('pageFormHeading').textContent = 'Create a New Page';
           submitPageBtn.textContent = 'Create Page';
           cancelPageEditBtn.style.display = 'none';
           pageEditOptions.style.display   = 'none';
@@ -1222,7 +1234,7 @@
               currentPageImagePreview.style.display='block';
             }
 
-            pageForm.querySelector('h3').textContent = 'Edit Page';
+            document.getElementById('pageFormHeading').textContent = 'Edit Page';
             submitPageBtn.textContent = 'Update Page';
             cancelPageEditBtn.style.display = 'inline-block';
             pageEditOptions.style.display   = 'block';

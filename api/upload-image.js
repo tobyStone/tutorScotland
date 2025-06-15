@@ -118,12 +118,15 @@ module.exports = async (req, res) => {
 
     } catch (error) {
         console.error('Upload error:', error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             message: 'Upload has unfortunately failed',
             error: error.message
         });
     }
-};
+}
+
+// Pin runtime for Sharp compatibility
+module.exports.config = { runtime: 'nodejs18.x' };;
 
 // Tell Vercel we need the Node runtime
 module.exports.config = { runtime: 'nodejs18.x' };
