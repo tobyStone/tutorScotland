@@ -769,13 +769,15 @@
 
         let teamMembers = [];
 
-        // Show/hide fields based on layout selection
+        // Show / hide blocks & (un)set required attrs whenever layout flips
         sectionLayout.addEventListener('change', () => {
             const isTeam = sectionLayout.value === 'team';
+
+            // 1. toggle visibility
             standardFields.style.display = isTeam ? 'none' : 'block';
             teamBuilder.style.display = isTeam ? 'block' : 'none';
 
-            // Update required attributes
+            // 2. section-level heading inputs
             const headingInput = standardFields.querySelector('[name="heading"]');
             const textTextarea = standardFields.querySelector('[name="text"]');
             const teamHeadingInput = teamBuilder.querySelector('[name="teamHeading"]');
@@ -785,16 +787,20 @@
                 textTextarea.removeAttribute('required');
                 teamHeadingInput.setAttribute('required', '');
             } else {
-                // Switching back to Standard - cleanup team data
                 headingInput.setAttribute('required', '');
                 textTextarea.setAttribute('required', '');
                 teamHeadingInput.removeAttribute('required');
-                teamBuilder.style.display = 'none';
-                teamMemberList.innerHTML = '';
-                teamMembers = [];
-                teamData.value = '[]';
             }
+
+            // 3. card-level fields (name + bio)
+            teamMemberList
+                .querySelectorAll('.member-nameRole, .member-bio')
+                .forEach(el => isTeam
+                    ? el.setAttribute('required', '')
+                    : el.removeAttribute('required'));
         });
+
+
 
         // Add team member functionality
         function createTeamMemberCard(index) {
@@ -910,7 +916,7 @@
 
                 // Handle image upload with guard to prevent spam
                 let imagePath = form.dataset.existingImage || '';
-                if (file && !form.dataset.imageUploaded) {
+                if (file && !form.dataset.imageUploaded && file.size) {
                     try {
                         form.dataset.imageUploaded = 'true'; // Prevent repeated uploads
                         imagePath = await uploadImage(file, 'team');
