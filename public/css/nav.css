@@ -343,21 +343,23 @@
     margin: 0;
 }
 
-.team-member .tm-quote {
-    font-style: italic;
-    color: #0057B7;
-    margin: 0;
-    padding: 0.5rem 1rem;
-    position: relative;
-}
-
-    .team-member .tm-quote::before,
-    .team-member .tm-quote::after {
-        content: '"';
+    .team-member .tm-quote {
+        font-style: italic;
         color: #0057B7;
-        font-size: 1.2em;
-        position: absolute;
+        margin: 0;
+        padding: 0;
+        position: relative;
+        display: inline-block;
     }
+
+        .team-member .tm-quote::before,
+        .team-member .tm-quote::after {
+            font-style: normal; /* quotes themselves not italic   */
+            font-size: 1.2em;
+            line-height: 0; /* sits on the cap-height         */
+            position: absolute;
+            color: var(--accent-color,#666);
+        }
 
     .team-member .tm-quote::before {
         left: 0;
