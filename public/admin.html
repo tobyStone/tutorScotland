@@ -703,6 +703,10 @@
                 headingInput.setAttribute('required', '');
                 textTextarea.setAttribute('required', '');
                 rollingTextarea.removeAttribute('required');
+                /* FULL reset of the hidden team-builder so no zombie <input type="file"> remains */
+                teamMemberList.innerHTML = '';    // ← this was the missing line
+                teamMembers =[];
+                teamData.value = '[]';
             }
         }
 
