@@ -423,3 +423,32 @@
         height: 100px;
     }
 }
+/* ─── Quote styling identical to hard-coded cards ─────────────── */
+.team-member .tm-quote {
+    font-style: italic;
+    color: #0057B7;
+    display: inline-block; /* hugs the text */
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+    .team-member .tm-quote::before,
+    .team-member .tm-quote::after {
+        font-size: 1.15em; /* a touch bigger */
+        line-height: 0; /* ➜ superscript  */
+        position: absolute;
+        color: #0057B7;
+    }
+
+    .team-member .tm-quote::before { /* opening “ */
+        content: "“";
+        left: -0.25em;
+        top: -0.30em;
+    }
+
+    .team-member .tm-quote::after { /* closing ” */
+        content: "”";
+        right: -0.25em;
+        bottom: -0.30em;
+    }
