@@ -220,10 +220,14 @@
                         </select>
                     </label>
 
+                    <!-- ★ ONE shared heading field, outside the per-layout wrappers -->
+                    <label id="mainHeadingLabel">Heading:<input name="heading" required></label>
+
                     <div id="standardFields">
-                        <label>Heading:<input name="heading" required></label>
-                        <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
-                        <label>Image:<input type="file" name="image" id="sectionImage" accept="image/*"></label>
+                        <!-- ★ Wrapper holds only the controls that belong to the Standard layout -->
+                        <div id="standardOnlyFields">
+                            <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
+                            <label>Image:<input type="file" name="image" id="sectionImage" accept="image/*"></label>
                         <!-- To show current image and allow removal -->
                         <div id="currentImagePreview" style="margin-top: 10px; display: none;">
                             <p style="margin-bottom: 5px;">Current Image:</p>
@@ -238,18 +242,17 @@
                         <label>Button Label (Optional): <input name="buttonLabel" placeholder="e.g. Learn More"></label>
                         <label>Button URL (Optional): <input name="buttonUrl" type="url" placeholder="https://example.com"></label>
 
-                        <!-- ★ NEW: Checkbox to remove button, shown only during edit -->
-                        <label id="removeButtonRow" style="display:none; align-items:center; margin-top: 10px;">
-                          <input type="checkbox" name="removeButton" value="true" style="width:auto; margin-right:8px;">
-                          Remove Button
-                        </label>
-
-
+                            <!-- ★ NEW: Checkbox to remove button, shown only during edit -->
+                            <label id="removeButtonRow" style="display:none; align-items:center; margin-top: 10px;">
+                              <input type="checkbox" name="removeButton" value="true" style="width:auto; margin-right:8px;">
+                              Remove Button
+                            </label>
+                        </div><!-- /standardOnlyFields -->
                     </div>
 
                     <!-- Team builder fields -->
                     <div id="teamBuilder" style="display:none; margin-top:15px;">
-                        <label>Section Heading: <input name="teamHeading" placeholder="e.g. Our Team"></label>
+                        <!-- heading removed – we now reuse the global one -->
                         <button type="button" id="addMemberBtn">➕ Add Team Member</button>
                         <div id="teamMemberList"></div>
                         <input type="hidden" name="team" id="teamData">
@@ -672,12 +675,15 @@
           teamData.value = '[]';
 
           toggleFields();                    // (function already defined earlier)
+          // ensure layout-specific visibility is reapplied
+          sectionLayout.dispatchEvent(new Event('change'));
           updatePageLink(slug);
         }
 
         /* ── show / hide fields & toggle HTML-5 "required" attrs ───────────── */
         function toggleFields() {
-            const standardFields = document.getElementById('standardFields');
+            const standardOnlyFields = document.getElementById('standardOnlyFields');
+            const mainHeadingLabel = document.getElementById('mainHeadingLabel');
             const rollingBannerFields = document.getElementById('rollingBannerFields');
             const positionSelect = document.querySelector('select[name="position"]');
 
@@ -688,7 +694,8 @@
             const isBanner = pageSel.value === 'rolling-banner';
 
             /* show / hide blocks ------------------------------------------------ */
-            standardFields.style.display = isBanner ? 'none' : 'block';
+            standardOnlyFields.style.display = isBanner ? 'none' : 'block';
+            mainHeadingLabel.style.display = isBanner ? 'none' : 'block';
             rollingBannerFields.style.display = isBanner ? 'block' : 'none';
             if (positionSelect) {
                 positionSelect.parentElement.style.display = isBanner ? 'none' : 'block';
@@ -708,6 +715,9 @@
                 teamMembers =[];
                 teamData.value = '[]';
             }
+
+            // force layout logic to rerun after banner switch / reset
+            sectionLayout.dispatchEvent(new Event('change'));
         }
 
 
@@ -774,34 +784,31 @@
         let teamMembers = [];
 
         // Show / hide blocks & (un)set required attrs whenever layout flips
+        const standardOnlyFields = document.getElementById('standardOnlyFields');
         sectionLayout.addEventListener('change', () => {
             const isTeam = sectionLayout.value === 'team';
 
-            // 1. toggle visibility
-            standardFields.style.display = isTeam ? 'none' : 'block';
+            /* visibility ---------------------------------------------------- */
+            standardOnlyFields.style.display = isTeam ? 'none' : 'block';
             teamBuilder.style.display = isTeam ? 'block' : 'none';
 
-            // 2. section-level heading inputs
-            const headingInput = standardFields.querySelector('[name="heading"]');
-            const textTextarea = standardFields.querySelector('[name="text"]');
-            const teamHeadingInput = teamBuilder.querySelector('[name="teamHeading"]');
+            /* required attributes ------------------------------------------- */
+            const para = standardOnlyFields.querySelector('[name="text"]');
+            isTeam ? para.removeAttribute('required')
+                   : para.setAttribute('required', '');
 
-            if (isTeam) {
-                headingInput.removeAttribute('required');
-                textTextarea.removeAttribute('required');
-                teamHeadingInput.setAttribute('required', '');
-            } else {
-                headingInput.setAttribute('required', '');
-                textTextarea.setAttribute('required', '');
-                teamHeadingInput.removeAttribute('required');
-            }
-
-            // 3. card-level fields (name + bio)
+            // team-card fields
             teamMemberList
                 .querySelectorAll('.member-nameRole, .member-bio')
-                .forEach(el => isTeam
-                    ? el.setAttribute('required', '')
-                    : el.removeAttribute('required'));
+                .forEach(el => isTeam ? el.setAttribute('required', '')
+                                       : el.removeAttribute('required'));
+
+            // Cleanup when switching away from team
+            if (!isTeam) {
+                teamMemberList.innerHTML = '';
+                teamMembers = [];
+                teamData.value = '[]';
+            }
         });
 
 
@@ -968,9 +975,11 @@
                     return alert('Please add at least one team member');
                 }
 
-                fd.set('heading', document.querySelector('[name="teamHeading"]').value);
                 fd.set('text', 'Team members section'); // Placeholder text
                 fd.set('team', teamData.value);
+
+                // make absolutely sure a stray top-level file never travels
+                fd.delete('image');
             }
 
             const editId = addSectionForm.dataset.editId;
@@ -1050,10 +1059,12 @@
                 sectionLayout.value = section.layout || 'standard';
                 sectionLayout.dispatchEvent(new Event('change')); // This shows/hides the correct field blocks
 
+                // ---- Populate common heading field for ALL layouts ----
+                addSectionForm.querySelector('[name="heading"]').value = section.heading;
+
                 // ---- Populate form based on layout ----
                 if (section.layout === 'team') {
                     sectionFormHeading.textContent = 'Edit Team Section'; // UI Nicety
-                    teamBuilder.querySelector('[name="teamHeading"]').value = section.heading || '';
 
                     // Rebuild team member cards
                     teamMemberList.innerHTML = '';
@@ -1081,7 +1092,6 @@
 
                 } else { // It's a 'standard' layout
                     sectionFormHeading.textContent = 'Edit Dynamic Section'; // UI Nicety
-                    addSectionForm.querySelector('[name="heading"]').value = section.heading;
                     addSectionForm.querySelector('[name="text"]').value = section.text;
 
                     if (section.image) {
