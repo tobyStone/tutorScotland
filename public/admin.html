@@ -691,39 +691,62 @@
         /* ── show / hide fields & toggle HTML-5 "required" attrs ───────────── */
         function toggleFields() {
             const isBanner = pageSel.value === 'rolling-banner';
+            const addSectionForm = document.getElementById('addSection'); // Get reference to the form
 
             // blocks
             document.getElementById('metaControls').style.display     = isBanner ? 'none'  : 'block';
             document.getElementById('rollingBannerFields').style.display = isBanner ? 'block' : 'none';
 
-            // required handling ─ loop over every clone that might exist
-            const headingInputs   = document.querySelectorAll('input[name="heading"]');
-            const textTextareas   = document.querySelectorAll('textarea[name="text"]');
+            // required handling
+            const headingInput = document.querySelector('#mainHeadingLabel input[name="heading"]'); // Specific heading input
+            const standardTextarea = document.querySelector('#standardOnlyFields textarea[name="text"]'); // Specifically the one for standard layout
             const rollingTextarea = document.querySelector('textarea[name="rollingText"]');
 
+            console.log('--- toggleFields DEBUG START ---');
+            console.log('isBanner =', isBanner);
+            console.log('addSectionForm novalidate BEFORE:', addSectionForm.hasAttribute('novalidate'));
+
+            if (standardTextarea) {
+                console.log('standardTextarea element:', standardTextarea);
+                console.log('standardTextarea BEFORE: required =', standardTextarea.hasAttribute('required'));
+            }
+            if (rollingTextarea) {
+                console.log('rollingTextarea element:', rollingTextarea);
+                console.log('rollingTextarea BEFORE: required =', rollingTextarea.hasAttribute('required'));
+            }
+
             if (isBanner) {
-                headingInputs .forEach(el => el.removeAttribute('required'));
-                textTextareas.forEach(el => el.removeAttribute('required'));
+                addSectionForm.setAttribute('novalidate', ''); // Prevent native HTML5 validation for banner form
+                if (headingInput) headingInput.removeAttribute('required');
+                if (standardTextarea) {
+                    standardTextarea.removeAttribute('required');
+                    console.log('standardTextarea AFTER removeAttribute: required =', standardTextarea.hasAttribute('required'));
+                }
                 if (rollingTextarea) rollingTextarea.setAttribute('required', '');
-                // hard reset of team UI
-                teamBuilder.style.display = 'none';
-                teamMemberList.innerHTML = '';
-                teamMembers = [];
-                teamData.value = '[]';
             } else {
-                headingInputs .forEach(el => el.setAttribute('required', ''));
+                addSectionForm.removeAttribute('novalidate'); // Re-enable native HTML5 validation for other forms
+                if (headingInput) headingInput.setAttribute('required', '');
                 // paragraph only required for Standard layout
-                textTextareas.forEach(el => {
-                    if (sectionLayout.value === 'standard') el.setAttribute('required','');
-                    else                                    el.removeAttribute('required');
-                });
+                if (standardTextarea) {
+                    if (sectionLayout.value === 'standard') standardTextarea.setAttribute('required','');
+                    else standardTextarea.removeAttribute('required');
+                    console.log('standardTextarea AFTER set/removeAttribute: required =', standardTextarea.hasAttribute('required'));
+                }
                 if (rollingTextarea) rollingTextarea.removeAttribute('required');
             }
-            
+
+            console.log('addSectionForm novalidate AFTER:', addSectionForm.hasAttribute('novalidate'));
+            if (standardTextarea) {
+                console.log('standardTextarea FINAL: required =', standardTextarea.hasAttribute('required'), 'display =', standardTextarea.style.display);
+            }
+            if (rollingTextarea) {
+                console.log('rollingTextarea FINAL: required =', rollingTextarea.hasAttribute('required'), 'display =', rollingTextarea.style.display);
+            }
+            console.log('--- toggleFields DEBUG END ---');
+
             // ensure layout-specific visibility is reapplied
             sectionLayout.dispatchEvent(new Event('change'));
         }
-
 
         /* ── fetch & render sections for current slug ──────────────────────── */
         let currentSections = [];            // cache for edit/delete clicks
@@ -814,8 +837,6 @@
                 teamData.value = '[]';
             }
         });
-
-
 
         // Add team member functionality
         function createTeamMemberCard(index) {
@@ -959,7 +980,6 @@
             teamData.value = JSON.stringify(teamMembers);
             console.log('Team data updated', teamMembers);
         }
-
 
         // Wire up the add member button
         addMemberBtn.addEventListener('click', addTeamMember);
@@ -1152,10 +1172,6 @@
                 addSectionForm.scrollIntoView({ behavior: 'smooth' });
             }
         });
-
-
-
-       
 
         /* ░░░ 3. PAGE MANAGEMENT ░░░ */
         const pagesTbody             = document.querySelector('#pagesTable tbody');
