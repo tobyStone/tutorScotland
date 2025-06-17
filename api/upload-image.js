@@ -16,6 +16,12 @@ const fsPromises = require('fs/promises');
 
 const MAX_UPLOAD = 4 * 1024 * 1024;  // 4MB
 const MAX_DIMENSIONS = 2000;  // Max width/height in pixels
+const ALLOWED_MIME = [
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'image/gif'
+];
 
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
@@ -47,9 +53,9 @@ module.exports = async (req, res) => {
             mime = lookup(uploadedFile.originalFilename) || '';
         }
 
-        if (!mime.startsWith('image/')) {
+        if (!ALLOWED_MIME.includes(mime.toLowerCase())) {
             return res.status(415).json({
-                message: `Unsupported file type. Detected: ${mime || 'unknown'}`
+                message: 'Unsupported image type. Please use JPG, PNG, WebP, or GIF.'
             });
         }
         uploadedFile.mimetype = mime; // Normalise for later `put`
@@ -69,7 +75,10 @@ module.exports = async (req, res) => {
             .replace(/-+/g, '-')
             .replace(/^-|-$/g, '');
         const filename = `${timestamp}-${clean}`;
-        const folder = (fields.folder && String(fields.folder[0])) || 'content-images';
+
+        // Robust folder parsing - handles both 'team' and ['team'] formats
+        const folderField = Array.isArray(fields.folder) ? fields.folder[0] : fields.folder;
+        const folder = (folderField || 'content-images').trim();
 
         /* -------------------------------------------------------------
             1️⃣  Read the *fully-flushed* temp file into RAM once
@@ -86,9 +95,10 @@ module.exports = async (req, res) => {
         try {
             metadata = await img.metadata();
         } catch (e) {
-            console.warn('Metadata read failed, attempting safe re-encode.', e.message);
-            const tmp = await img.png().toBuffer(); // safe re-encode
-            metadata = await sharp(tmp).metadata(); // retry
+            console.warn('[upload-image] Sharp metadata failed:', e.message);
+            return res.status(400).json({
+                message: 'Unable to process image – it may be corrupt or in an unsupported colour-space.'
+            });
         }
 
         if (metadata.width > MAX_DIMENSIONS || metadata.height > MAX_DIMENSIONS) {
@@ -126,9 +136,9 @@ module.exports = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Upload error:', error);
+        console.error('[upload-image] Unexpected error:', error);
         return res.status(500).json({
-            message: 'Upload has unfortunately failed',
+            message: 'Upload failed unexpectedly',
             error: error.message
         });
     }

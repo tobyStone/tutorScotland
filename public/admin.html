@@ -870,20 +870,45 @@
             const previewDiv = el.querySelector('.image-preview');
             const previewImg = previewDiv.querySelector('img');
 
-            imageInput.addEventListener('change', (e) => {
+            imageInput.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
                 if (file) {
-                    // Reset upload flag when new file is selected
-                    el.dataset.imageUploaded = '';
+                    // Reset upload flags when new file is selected
+                    delete el.dataset.imageUploaded;
+                    delete el.dataset.existingImage;
+
+                    // Show preview immediately
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         previewImg.src = e.target.result;
                         previewDiv.style.display = 'block';
                     };
                     reader.readAsDataURL(file);
+
+                    // Upload immediately to prevent race conditions
+                    if (!el.dataset.uploading) {
+                        el.dataset.uploading = 'true';
+                        try {
+                            const imagePath = await uploadImage(file, 'team');
+                            el.dataset.imageUploaded = 'true';
+                            el.dataset.existingImage = imagePath;
+                            console.log('Team member image uploaded successfully:', imagePath);
+                        } catch (err) {
+                            console.error('Team member image upload failed:', err);
+                            alert('Image upload failed: ' + err.message);
+                            // Clear the file input on failure
+                            imageInput.value = '';
+                            previewDiv.style.display = 'none';
+                        } finally {
+                            delete el.dataset.uploading;
+                        }
+                    }
                 } else {
                     previewDiv.style.display = 'none';
+                    delete el.dataset.imageUploaded;
+                    delete el.dataset.existingImage;
                 }
+                // Only update team data after upload is complete
                 updateTeamData();
             });
 
@@ -910,35 +935,19 @@
             updateTeamData();
         }
 
-        async function updateTeamData() {
+        function updateTeamData() {
             teamMembers = [];          // reset
 
             for (const form of teamMemberList.querySelectorAll('.team-member-form')) {
                 const name = form.querySelector('.member-nameRole').value.trim();
                 const bio = form.querySelector('.member-bio').value.trim();
                 const quote = form.querySelector('.member-quote').value.trim();
-                const file = form.querySelector('.member-image').files[0];
 
                 // skip incomplete cards
                 if (!name || !bio) continue;
 
-                // existing / newly-uploaded picture
-                let imagePath = form.dataset.existingImage || '';
-
-                // 👇 guard against multiple concurrent uploads
-                if (file && !form.dataset.imageUploaded && !form.dataset.uploading) {
-                    form.dataset.uploading = 'true';
-                    try {
-                        imagePath = await uploadImage(file, 'team');
-                        form.dataset.imageUploaded = 'true';
-                        form.dataset.existingImage = imagePath;
-                    } catch (err) {
-                        console.error('Image upload failed:', err);
-                        alert('Could not upload image – please try again.');
-                    } finally {
-                        delete form.dataset.uploading;   // always clear
-                    }
-                }
+                // Use existing uploaded image path (upload happens per-card now)
+                const imagePath = form.dataset.existingImage || '';
 
                 teamMembers.push({ name, bio, quote, image: imagePath });
             }
@@ -969,7 +978,7 @@
 
             // Handle team layout
             if (sectionLayout.value === 'team') {
-                await updateTeamData(); // Ensure team data is current
+                updateTeamData(); // Ensure team data is current
 
                 if (!teamData.value || teamData.value === '[]') {
                     return alert('Please add at least one team member');
