@@ -697,7 +697,7 @@
             const positionSelect = document.querySelector('select[name="position"]');
 
             const headingInput = document.querySelector('input[name="heading"]');
-            const textTextarea = document.querySelector('textarea[name="text"]');
+            const textTextareas = document.querySelectorAll('textarea[name="text"]');
             const rollingTextarea = document.querySelector('textarea[name="rollingText"]');
 
             const isBanner = pageSel.value === 'rolling-banner';
@@ -713,13 +713,12 @@
 
             /* HTML-5 "required" attributes -------------------------------------- */
             if (isBanner) {
-                // Remove required from all hidden fields
                 if (headingInput) headingInput.removeAttribute('required');
-                if (textTextarea) textTextarea.removeAttribute('required');
+                textTextareas.forEach(t => t.removeAttribute('required'));
                 if (rollingTextarea) rollingTextarea.setAttribute('required', '');
             } else {
                 if (headingInput) headingInput.setAttribute('required', '');
-                if (textTextarea) textTextarea.setAttribute('required', '');
+                textTextareas.forEach(t => t.setAttribute('required', ''));
                 if (rollingTextarea) rollingTextarea.removeAttribute('required');
                 // FULL reset of the hidden team-builder so no zombie <input type="file"> remains
                 teamMemberList.innerHTML = '';
