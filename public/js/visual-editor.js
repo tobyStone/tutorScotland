@@ -364,6 +364,10 @@ class VisualEditor {
     }
 
     generateSelector(element) {
+        // Prefer a stable block id if present
+        if (element.dataset.veBlockId) {
+            return `[data-ve-block-id="${element.dataset.veBlockId}"]`;
+        }
         /* 1️⃣  anchor individual buttons with their attribute */
         if (element.dataset.veButtonId) {
             return `[data-ve-button-id="${element.dataset.veButtonId}"]`;
@@ -1388,7 +1392,7 @@ class VisualEditor {
     async saveContent() {
         if (!this.activeEditor) return;
 
-        const { element, selector, type } = this.activeEditor;
+        let { element, selector, type } = this.activeEditor;
 
         if (type === 'link' && element.classList.contains('ve-btn')) {
             // 1️⃣ write the form values straight into the DOM
@@ -1452,6 +1456,11 @@ class VisualEditor {
             return;
         }
 
+        let targetSel = selector;
+        if (type !== 'link') {
+            targetSel = this.getStableSelector(element);
+        }
+
         const contentData = this.getFormData(type);
 
         try {
@@ -1463,7 +1472,7 @@ class VisualEditor {
                 },
                 body: JSON.stringify({
                     targetPage: this.currentPage,
-                    targetSelector: selector,
+                    targetSelector: targetSel,
                     contentType: type,
                     ...contentData,
                     originalContent: this.getOriginalContent(element, type)
@@ -1477,7 +1486,7 @@ class VisualEditor {
                 this.applyOverride(element, override);
 
                 // Update local overrides
-                this.overrides.set(selector, override);
+                this.overrides.set(targetSel, override);
 
                 // Close modal
                 this.closeModal();
@@ -1561,6 +1570,8 @@ class VisualEditor {
         let { element, selector, type, original } = this.activeEditor;
         if (type === 'link' && element.classList.contains('ve-btn')) {
             selector = this.getStableLinkSelector(element);
+        } else if (type !== 'link' && element.dataset.veBlockId) {
+            selector = `[data-ve-block-id="${element.dataset.veBlockId}"]`;
         }
 
         const override = this.overrides.get(selector);
@@ -1876,9 +1887,18 @@ class VisualEditor {
     /** Give each block we override a stable, unique selector */
     ensureBlockMarker(el) {
         if (!el.dataset.veBlockId) {
-            el.dataset.veBlockId = 
+            el.dataset.veBlockId =
                 (self.crypto?.randomUUID?.() ?? `ve-block-${Date.now()}-${Math.random()}`);   // virtually collision-proof
         }
+    }
+
+    getStableSelector(el) {
+        if (!el) return '';
+        if (!el.dataset.veBlockId) {
+            el.dataset.veBlockId =
+                (self.crypto?.randomUUID?.() ?? `ve-block-${Date.now()}-${Math.random()}`);
+        }
+        return `[data-ve-block-id="${el.dataset.veBlockId}"]`;
     }
 
     async loadImages() {
