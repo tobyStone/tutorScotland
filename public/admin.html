@@ -713,16 +713,17 @@
 
             /* HTML-5 "required" attributes -------------------------------------- */
             if (isBanner) {
-                headingInput.removeAttribute('required');
-                textTextarea.removeAttribute('required');
-                rollingTextarea.setAttribute('required', '');
+                // Remove required from all hidden fields
+                if (headingInput) headingInput.removeAttribute('required');
+                if (textTextarea) textTextarea.removeAttribute('required');
+                if (rollingTextarea) rollingTextarea.setAttribute('required', '');
             } else {
-                headingInput.setAttribute('required', '');
-                textTextarea.setAttribute('required', '');
-                rollingTextarea.removeAttribute('required');
-                /* FULL reset of the hidden team-builder so no zombie <input type="file"> remains */
-                teamMemberList.innerHTML = '';    // ← this was the missing line
-                teamMembers =[];
+                if (headingInput) headingInput.setAttribute('required', '');
+                if (textTextarea) textTextarea.setAttribute('required', '');
+                if (rollingTextarea) rollingTextarea.removeAttribute('required');
+                // FULL reset of the hidden team-builder so no zombie <input type="file"> remains
+                teamMemberList.innerHTML = '';
+                teamMembers = [];
                 teamData.value = '[]';
             }
 
