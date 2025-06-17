@@ -101,6 +101,26 @@ module.exports = async (req, res) => {
                 const editId = getField('editId');
                 if (editId) {
                     console.log('Update operation detected for ID:', editId);
+                    
+                    // Get the current section to check if it's rolling-banner
+                    const currentDoc = await Section.findById(editId);
+                    if (!currentDoc) {
+                        return res.status(404).json({ message: 'Section not found for update' });
+                    }
+                    
+                    // 💡 Safety net: Strip irrelevant fields for rolling-banner updates
+                    if (currentDoc.page === 'rolling-banner') {
+                        delete fields.layout;
+                        delete fields.buttonLabel;
+                        delete fields.buttonUrl;
+                        delete fields.imagePath;
+                        delete fields.showInNav;
+                        delete fields.navCategory;
+                        delete fields.position;
+                        delete fields.team;
+                        console.log('Stripped irrelevant fields for rolling-banner update');
+                    }
+                    
                     const updateData = { updatedAt: new Date() };
 
                     if (fields.heading) updateData.heading = getField('heading').trim();
@@ -126,16 +146,13 @@ module.exports = async (req, res) => {
                         let newAnchor = slugify(getField('heading').trim());
 
                         // Ensure uniqueness within the same page
-                        const currentDoc = await Section.findById(editId);
-                        if (currentDoc) {
-                            const collision = await Section.exists({
-                                page: currentDoc.page,
-                                navAnchor: newAnchor,
-                                _id: { $ne: editId }
-                            });
-                            if (collision) {
-                                newAnchor += '-' + Date.now().toString(36);
-                            }
+                        const collision = await Section.exists({
+                            page: currentDoc.page,
+                            navAnchor: newAnchor,
+                            _id: { $ne: editId }
+                        });
+                        if (collision) {
+                            newAnchor += '-' + Date.now().toString(36);
                         }
 
                         updateData.navAnchor = newAnchor;
@@ -188,6 +205,20 @@ module.exports = async (req, res) => {
                 const page = fields.page ?
                     (Array.isArray(fields.page) ? fields.page[0] : fields.page).toString().toLowerCase().trim()
                     : 'index';
+
+                // 💡 Safety net: Strip irrelevant fields for rolling-banner
+                if (page === 'rolling-banner') {
+                    delete fields.layout;
+                    delete fields.buttonLabel;
+                    delete fields.buttonUrl;
+                    delete fields.imagePath;
+                    delete fields.showInNav;
+                    delete fields.navCategory;
+                    delete fields.position;
+                    delete fields.team;
+                    console.log('Stripped irrelevant fields for rolling-banner submission');
+                }
+
                 const heading = fields.heading ?
                     (Array.isArray(fields.heading) ? fields.heading[0] : fields.heading).toString().trim()
                     : '';

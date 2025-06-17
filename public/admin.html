@@ -198,80 +198,84 @@
                         <a id="viewPageLink" href="/" target="_blank" style="margin-left:12px;font-size:.9em">🔗 Open Page</a>
                     </label>
 
-                    <label>Layout:
-                        <select name="layout" id="sectionLayout">
-                            <option value="standard" selected>Standard</option>
-                            <option value="team">Team Members Grid</option>
-                        </select>
-                    </label>
+                    <!-- ▸▸▸ Rolling-banner ONLY fields (stays visible at all times) -->
+                    <div id="rollingBannerFields" style="display:none;">
+                        <label>News Content:
+                            <textarea name="rollingText" rows="3" required placeholder="Enter news content to display in the rolling banner"></textarea>
+                        </label>
+                    </div>
 
-                    <!-- ★ Navigation integration controls (always visible) -->
-                    <label style="display:flex; align-items:center;">
-                        <input type="checkbox" name="showInNav" id="showInNav" style="width:auto; margin-right:8px;">
-                        <span>Add a link to the navigation bar</span>
-                    </label>
+                    <!-- ▸▸▸ Meta controls – hidden for banner -->
+                    <div id="metaControls">
+                        <label>Layout:
+                            <select name="layout" id="sectionLayout">
+                                <option value="standard" selected>Standard</option>
+                                <option value="team">Team Members Grid</option>
+                            </select>
+                        </label>
 
-                    <label id="navCatRow" style="margin-top:10px; display:none;">
-                        Show under:
-                        <select name="navCategory" id="sectionNavCategory">
-                            <option value="tutors">For Tutors</option>
-                            <option value="parents">For Parents</option>
-                            <option value="about" selected>About TAS</option>
-                        </select>
-                    </label>
+                        <!-- ★ Navigation integration controls (always visible) -->
+                        <label style="display:flex; align-items:center;">
+                            <input type="checkbox" name="showInNav" id="showInNav" style="width:auto; margin-right:8px;">
+                            <span>Add a link to the navigation bar</span>
+                        </label>
 
-                    <!-- ★ ONE shared heading field, outside the per-layout wrappers -->
-                    <label id="mainHeadingLabel">Heading:<input name="heading" required></label>
+                        <label id="navCatRow" style="margin-top:10px; display:none;">
+                            Show under:
+                            <select name="navCategory" id="sectionNavCategory">
+                                <option value="tutors">For Tutors</option>
+                                <option value="parents">For Parents</option>
+                                <option value="about" selected>About TAS</option>
+                            </select>
+                        </label>
 
-                    <div id="standardFields">
-                        <!-- ★ Wrapper holds only the controls that belong to the Standard layout -->
-                        <div id="standardOnlyFields">
-                            <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
-                            <label>Image:<input type="file" name="image" id="sectionImage" accept="image/*"></label>
-                        <!-- To show current image and allow removal -->
-                        <div id="currentImagePreview" style="margin-top: 10px; display: none;">
-                            <p style="margin-bottom: 5px;">Current Image:</p>
-                            <img src="" alt="Current Image" style="max-width: 100px; max-height: 100px; border-radius: 4px;">
-                            <label style="display: inline-flex; align-items: center; margin-left: 15px;">
-                                <input type="checkbox" name="removeImage" value="true" style="width: auto; margin-right: 5px;"> Remove Image
-                            </label>
+                        <!-- ★ ONE shared heading field, outside the per-layout wrappers -->
+                        <label id="mainHeadingLabel">Heading:<input name="heading" required></label>
+
+                        <div id="standardFields">
+                            <!-- ★ Wrapper holds only the controls that belong to the Standard layout -->
+                            <div id="standardOnlyFields">
+                                <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
+                                <label>Image:<input type="file" name="image" id="sectionImage" accept="image/*"></label>
+                            <!-- To show current image and allow removal -->
+                            <div id="currentImagePreview" style="margin-top: 10px; display: none;">
+                                <p style="margin-bottom: 5px;">Current Image:</p>
+                                <img src="" alt="Current Image" style="max-width: 100px; max-height: 100px; border-radius: 4px;">
+                                <label style="display: inline-flex; align-items: center; margin-left: 15px;">
+                                    <input type="checkbox" name="removeImage" value="true" style="width: auto; margin-right: 5px;"> Remove Image
+                                </label>
+                            </div>
+
+                            <!-- ★ NEW: Add button fields -->
+                            <hr style="border-top: 1px solid #b3a1b3; margin: 20px 0;">
+                            <label>Button Label (Optional): <input name="buttonLabel" placeholder="e.g. Learn More"></label>
+                            <label>Button URL (Optional): <input name="buttonUrl" type="url" placeholder="https://example.com"></label>
+
+                                <!-- ★ NEW: Checkbox to remove button, shown only during edit -->
+                                <label id="removeButtonRow" style="display:none; align-items:center; margin-top: 10px;">
+                                  <input type="checkbox" name="removeButton" value="true" style="width:auto; margin-right:8px;">
+                                  Remove Button
+                                </label>
+                            </div><!-- /standardOnlyFields -->
                         </div>
 
-                        <!-- ★ NEW: Add button fields -->
-                        <hr style="border-top: 1px solid #b3a1b3; margin: 20px 0;">
-                        <label>Button Label (Optional): <input name="buttonLabel" placeholder="e.g. Learn More"></label>
-                        <label>Button URL (Optional): <input name="buttonUrl" type="url" placeholder="https://example.com"></label>
+                        <!-- Team builder fields -->
+                        <div id="teamBuilder" style="display:none; margin-top:15px;">
+                            <!-- heading removed – we now reuse the global one -->
+                            <button type="button" id="addMemberBtn">➕ Add Team Member</button>
+                            <div id="teamMemberList"></div>
+                            <input type="hidden" name="team" id="teamData">
+                        </div>
 
-                            <!-- ★ NEW: Checkbox to remove button, shown only during edit -->
-                            <label id="removeButtonRow" style="display:none; align-items:center; margin-top: 10px;">
-                              <input type="checkbox" name="removeButton" value="true" style="width:auto; margin-right:8px;">
-                              Remove Button
-                            </label>
-                        </div><!-- /standardOnlyFields -->
-                    </div>
-
-                    <!-- Team builder fields -->
-                    <div id="teamBuilder" style="display:none; margin-top:15px;">
-                        <!-- heading removed – we now reuse the global one -->
-                        <button type="button" id="addMemberBtn">➕ Add Team Member</button>
-                        <div id="teamMemberList"></div>
-                        <input type="hidden" name="team" id="teamData">
-                    </div>
-
-                    <div id="rollingBannerFields" style="display: none;">
-                        <label>News Item:<input name="rollingHeading" value="Rolling News" readonly></label>
-                        <label>News Content:<textarea name="rollingText" rows="3" required placeholder="Enter news content to display in the rolling banner"></textarea></label>
-                        <!-- No image field for rolling banner -->
-                    </div>
-
-                    <label>
-                        Position on Page:
-                        <select name="position">
-                            <option value="top">Top of Page</option>
-                            <option value="middle">Middle of Page</option>
-                            <option value="bottom" selected>Bottom of Page</option>
-                        </select>
-                    </label>
+                        <label>
+                            Position on Page:
+                            <select name="position">
+                                <option value="top">Top of Page</option>
+                                <option value="middle">Middle of Page</option>
+                                <option value="bottom" selected>Bottom of Page</option>
+                            </select>
+                        </label>
+                    </div><!-- /metaControls -->
 
                     <!-- Buttons will be managed by JS -->
                     <button type="submit" id="submitSectionBtn">Add Section</button>
@@ -674,6 +678,10 @@
           teamMembers = [];
           teamData.value = '[]';
 
+          // Reset navigation controls
+          showInNav.checked = false;
+          navCatRow.style.display = 'none';
+
           toggleFields();                    // (function already defined earlier)
           // ensure layout-specific visibility is reapplied
           sectionLayout.dispatchEvent(new Event('change'));
@@ -682,6 +690,7 @@
 
         /* ── show / hide fields & toggle HTML-5 "required" attrs ───────────── */
         function toggleFields() {
+            const metaControls = document.getElementById('metaControls');
             const standardOnlyFields = document.getElementById('standardOnlyFields');
             const mainHeadingLabel = document.getElementById('mainHeadingLabel');
             const rollingBannerFields = document.getElementById('rollingBannerFields');
@@ -694,6 +703,7 @@
             const isBanner = pageSel.value === 'rolling-banner';
 
             /* show / hide blocks ------------------------------------------------ */
+            metaControls.style.display = isBanner ? 'none' : 'block';
             standardOnlyFields.style.display = isBanner ? 'none' : 'block';
             mainHeadingLabel.style.display = isBanner ? 'none' : 'block';
             rollingBannerFields.style.display = isBanner ? 'block' : 'none';
@@ -1001,9 +1011,15 @@
                 const txt = fd.get('rollingText').trim();
                 if (!txt) return alert('Please enter news content for the rolling banner');
 
-                fd.set('heading', fd.get('rollingHeading') || 'Rolling News');
+                fd.set('heading', 'Rolling News');
                 fd.set('text', txt);
-                fd.delete('rollingHeading'); fd.delete('rollingText');
+
+                /* 💡 remove fields we never want for banner rows */
+                ['layout','showInNav','navCategory','imagePath',
+                 'buttonLabel','buttonUrl','position','team'
+                ].forEach(key => fd.delete(key));
+
+                fd.delete('rollingText');
             }
 
             /* optional image upload (skip for rolling-banner) */
@@ -1065,62 +1081,76 @@
 
                 // ---- Set state and trigger UI update ----
                 addSectionForm.dataset.editId = id;
-                sectionLayout.value = section.layout || 'standard';
-                sectionLayout.dispatchEvent(new Event('change')); // This shows/hides the correct field blocks
+                
+                // Handle rolling-banner sections differently
+                if (pageSel.value === 'rolling-banner') {
+                    sectionFormHeading.textContent = 'Edit Rolling Banner News';
+                    
+                    // For rolling-banner, populate the rolling text field
+                    addSectionForm.querySelector('[name="rollingText"]').value = section.text || '';
+                    
+                    // Hide all meta controls for rolling-banner
+                    document.getElementById('metaControls').style.display = 'none';
+                    document.getElementById('rollingBannerFields').style.display = 'block';
+                } else {
+                    // Handle regular sections
+                    sectionLayout.value = section.layout || 'standard';
+                    sectionLayout.dispatchEvent(new Event('change')); // This shows/hides the correct field blocks
 
-                // ---- Populate common heading field for ALL layouts ----
-                addSectionForm.querySelector('[name="heading"]').value = section.heading;
+                    // ---- Populate common heading field for ALL layouts ----
+                    addSectionForm.querySelector('[name="heading"]').value = section.heading;
 
-                // ---- Populate form based on layout ----
-                if (section.layout === 'team') {
-                    sectionFormHeading.textContent = 'Edit Team Section'; // UI Nicety
+                    // ---- Populate form based on layout ----
+                    if (section.layout === 'team') {
+                        sectionFormHeading.textContent = 'Edit Team Section'; // UI Nicety
 
-                    // Rebuild team member cards
-                    teamMemberList.innerHTML = '';
-                    teamMembers = [];
+                        // Rebuild team member cards
+                        teamMemberList.innerHTML = '';
+                        teamMembers = [];
 
-                    (section.team || []).forEach((member, index) => {
-                        const card = createTeamMemberCard(teamMemberList.children.length);
+                        (section.team || []).forEach((member, index) => {
+                            const card = createTeamMemberCard(teamMemberList.children.length);
 
-                        // Pre-fill fields from the section data
-                        card.querySelector('.member-nameRole').value = member.name || '';
-                        card.querySelector('.member-bio').value = member.bio || '';
-                        card.querySelector('.member-quote').value = member.quote || '';
+                            // Pre-fill fields from the section data
+                            card.querySelector('.member-nameRole').value = member.name || '';
+                            card.querySelector('.member-bio').value = member.bio || '';
+                            card.querySelector('.member-quote').value = member.quote || '';
 
-                        // Remember and display the existing image
-                        if (member.image) {
-                            card.dataset.existingImage = member.image; // This prevents the image from being lost on update
-                            const previewDiv = card.querySelector('.image-preview');
-                            const previewImg = previewDiv.querySelector('img');
-                            previewImg.src = member.image;
-                            previewDiv.style.display = 'block';
+                            // Remember and display the existing image
+                            if (member.image) {
+                                card.dataset.existingImage = member.image; // This prevents the image from being lost on update
+                                const previewDiv = card.querySelector('.image-preview');
+                                const previewImg = previewDiv.querySelector('img');
+                                previewImg.src = member.image;
+                                previewDiv.style.display = 'block';
+                            }
+                            teamMemberList.appendChild(card);
+                        });
+                        updateTeamData(); // Sync the populated data to the hidden input
+
+                    } else { // It's a 'standard' layout
+                        sectionFormHeading.textContent = 'Edit Dynamic Section'; // UI Nicety
+                        addSectionForm.querySelector('[name="text"]').value = section.text;
+
+                        if (section.image) {
+                            currentImagePreview.querySelector('img').src = section.image;
+                            currentImagePreview.style.display = 'block';
+                        } else {
+                            currentImagePreview.style.display = 'none';
                         }
-                        teamMemberList.appendChild(card);
-                    });
-                    updateTeamData(); // Sync the populated data to the hidden input
+                        document.querySelector('input[name="removeImage"]').checked = false;
 
-                } else { // It's a 'standard' layout
-                    sectionFormHeading.textContent = 'Edit Dynamic Section'; // UI Nicety
-                    addSectionForm.querySelector('[name="text"]').value = section.text;
-
-                    if (section.image) {
-                        currentImagePreview.querySelector('img').src = section.image;
-                        currentImagePreview.style.display = 'block';
-                    } else {
-                        currentImagePreview.style.display = 'none';
+                        addSectionForm.querySelector('[name="buttonLabel"]').value = section.buttonLabel || '';
+                        addSectionForm.querySelector('[name="buttonUrl"]').value = section.buttonUrl || '';
+                        removeButtonRow.style.display = section.buttonLabel ? 'flex' : 'none';
                     }
-                    document.querySelector('input[name="removeImage"]').checked = false;
 
-                    addSectionForm.querySelector('[name="buttonLabel"]').value = section.buttonLabel || '';
-                    addSectionForm.querySelector('[name="buttonUrl"]').value = section.buttonUrl || '';
-                    removeButtonRow.style.display = section.buttonLabel ? 'flex' : 'none';
+                    // ---- Populate common fields for ALL layouts ----
+                    addSectionForm.querySelector('[name="position"]').value = section.position || 'bottom';
+                    showInNav.checked = !!section.showInNav;
+                    sectionNavCategory.value = section.navCategory || 'about';
+                    navCatRow.style.display = showInNav.checked ? 'block' : 'none';
                 }
-
-                // ---- Populate common fields for ALL layouts ----
-                addSectionForm.querySelector('[name="position"]').value = section.position || 'bottom';
-                showInNav.checked = !!section.showInNav;
-                sectionNavCategory.value = section.navCategory || 'about';
-                navCatRow.style.display = showInNav.checked ? 'block' : 'none';
 
                 // ---- Final UI updates for editing ----
                 submitSectionBtn.textContent = 'Update Section';
