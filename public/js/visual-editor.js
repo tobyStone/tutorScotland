@@ -60,6 +60,7 @@ class VisualEditor {
             // Skip if already processed or in navigation/header
             if (a.classList.contains('ve-btn')) return;
             if (a.closest('nav, header, #edit-mode-toggle, #editor-modal, .edit-overlay')) return;
+            if (a.closest('.ve-no-edit')) return;
             if (a.closest('.edit-overlay')) return;  // Skip buttons being edited
 
             // Check if it matches our button styling
@@ -353,6 +354,8 @@ class VisualEditor {
             elements.forEach(element => {
                 // Skip elements inside admin controls
                 if (!element.closest('#edit-mode-toggle, #editor-modal, .edit-overlay')) {
+                    // Skip anything that sits inside a dynamic section
+                    if (element.closest('.ve-no-edit')) return;
                     this.editableElements.push({
                         element,
                         selector: this.generateSelector(element),
