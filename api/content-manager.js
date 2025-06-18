@@ -108,6 +108,7 @@ async function handleCreateOverride(req, res) {
         const {
             targetPage,
             targetSelector,
+            stableSelector,
             contentType,
             heading,
             text,
@@ -149,6 +150,7 @@ async function handleCreateOverride(req, res) {
             existingOverride.image = image;
             existingOverride.contentType = normalizedType;
             existingOverride.overrideType = overrideType;
+            existingOverride.stableSelector = stableSelector;
             existingOverride.isActive = true;
             existingOverride.isButton = isButton;
             existingOverride.updatedAt = new Date();
@@ -162,6 +164,7 @@ async function handleCreateOverride(req, res) {
                 isContentOverride: true,
                 targetPage,
                 targetSelector,
+                stableSelector,
                 contentType: normalizedType,
                 heading,
                 text,

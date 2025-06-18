@@ -58,6 +58,7 @@ const schema = new mongoose.Schema({
     isContentOverride: { type: Boolean, default: false }, // Whether this is a content override
     targetPage: String,                             // Page this override applies to
     targetSelector: String,                         // CSS selector for the element to override
+    stableSelector: String,                         // Fallback selector without VE ids
     contentType: {
         type: String,
         enum: ['text', 'html', 'image', 'link'],

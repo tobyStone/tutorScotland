@@ -177,9 +177,18 @@ class VisualEditor {
     }
 
     applyContentOverrides() {
-        this.overrides.forEach((ov, sel) =>
-            document.querySelectorAll(sel).forEach(el => this.applyOverride(el, ov))
-        );
+        this.overrides.forEach((ov, sel) => {
+            const els = document.querySelectorAll(sel);
+            if (els.length) {
+                els.forEach(el => this.applyOverride(el, ov));
+            } else if (ov.stableSelector) {
+                document.querySelectorAll(ov.stableSelector).forEach(el => {
+                    const m = sel.match(/data-ve-block-id="([^"]+)"/);
+                    if (m) el.dataset.veBlockId = m[1];
+                    this.applyOverride(el, ov);
+                });
+            }
+        });
     }
 
     applyOverride(element, override) {
@@ -1460,6 +1469,7 @@ class VisualEditor {
         if (type !== 'link') {
             targetSel = this.getStableSelector(element);
         }
+        const stableSel = this.generateSelector(element);
 
         const contentData = this.getFormData(type);
 
@@ -1473,6 +1483,7 @@ class VisualEditor {
                 body: JSON.stringify({
                     targetPage: this.currentPage,
                     targetSelector: targetSel,
+                    stableSelector: stableSel,
                     contentType: type,
                     ...contentData,
                     originalContent: this.getOriginalContent(element, type)
@@ -1861,7 +1872,8 @@ class VisualEditor {
 
     async saveParagraphOverride(paraElm) {
         this.ensureBlockMarker(paraElm);      // keeps editor happy
-        let selector = this.generateSelector(paraElm);
+        let stableSel = this.generateSelector(paraElm);
+        let selector = stableSel;
 
         /* 🔒 5-line guard: if selector isn't unique, fall back to the marker */
         if (document.querySelectorAll(selector).length !== 1) {
@@ -1875,6 +1887,7 @@ class VisualEditor {
             body   : JSON.stringify({
                        targetPage    : this.currentPage,
                        targetSelector: selector,
+                       stableSelector: stableSel,
                        contentType   : 'html',
                        text          : paraElm.innerHTML
                      })
