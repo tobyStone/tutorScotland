@@ -18,7 +18,7 @@ export async function uploadImage(file, folder = 'content-images') {
     if (file.size > 1.5 * 1024 * 1024) {     // larger than 1.5MB? shrink it
         console.log('Resizing large image...');
         file = await resizeImage(file, 1280);  // 1280px long side
-        console.log('Image resized to:', file.size);
+        console.log('Image resized to size:', file.size);
     }
 
     const fd = new FormData();
