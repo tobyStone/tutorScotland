@@ -342,8 +342,9 @@ class VisualEditor {
         const selectors = [
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
             'p:not(.no-edit)',
-            /* Lists now opt-in via .editable */
-            'ul.editable', 'ol.editable',
+            /* Lists: make every UL/OL editable unless explicitly opted-out */
+            'ul:not(.no-edit):not(.ve-no-edit)',
+            'ol:not(.no-edit):not(.ve-no-edit)',
             'a:not(.no-edit)',
             'img:not(.no-edit)',
             '.editable'
