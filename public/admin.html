@@ -198,6 +198,17 @@
                         <a id="viewPageLink" href="/" target="_blank" style="margin-left:12px;font-size:.9em">🔗 Open Page</a>
                     </label>
 
+                    <!-- [MOVE-SECTION] ▸ Hidden unless editing -->
+                    <label id="movePageRow" style="display:none;margin-top:10px;padding:8px;background:#f0f8ff;border-radius:4px;border-left:3px solid #4a90e2;">
+                        <span style="font-weight:500;color:#2c5aa0;">📍 Move this section to:</span>
+                        <select name="targetPage" id="movePageSelect" style="margin-left:8px;">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <small style="display:block;margin-top:4px;color:#666;font-style:italic;">
+                            Section will be moved to the selected page and admin view will switch automatically
+                        </small>
+                    </label>
+
                     <!-- ▸▸▸ Rolling-banner ONLY fields (stays visible at all times) -->
                     <div id="rollingBannerFields" style="display:none;">
                         <label>News Content:
@@ -640,8 +651,14 @@
         const currentImagePreview= document.getElementById('currentImagePreview');
         const removeButtonRow    = document.getElementById('removeButtonRow');
 
-        /* ── populate dropdown from the central list ───────────────────────── */
-        pageSel.innerHTML = PAGES.map(p => `<option value="${p}">${p}</option>`).join('');
+        // [MOVE-SECTION] new refs
+        const movePageRow    = document.getElementById('movePageRow');
+        const movePageSelect = document.getElementById('movePageSelect');
+
+        /* ── populate page dropdowns ────────────────────────────────────────── */
+        const pageOptionsHTML = PAGES.map(p => `<option value="${p}">${p}</option>`).join('');
+        pageSel.innerHTML      = pageOptionsHTML;
+        movePageSelect.innerHTML = pageOptionsHTML;           // [MOVE-SECTION]
 
         /* ── helper: keep 🔗 link consistent ────────────────────────────────── */
         function updatePageLink(slug) {
@@ -665,6 +682,8 @@
           cancelEditBtn.style.display    = 'none';
           currentImagePreview.style.display = 'none';
           document.querySelector('input[name="removeImage"]').checked = false;
+
+          movePageRow.style.display = 'none';                 // [MOVE-SECTION]
 
           // Add reset logic for button fields
           document.querySelector('[name="buttonLabel"]').value = '';
@@ -993,6 +1012,14 @@
             e.preventDefault();
             const fd = new FormData(addSectionForm);
 
+            // [MOVE-SECTION] pick destination page
+            const newPage = fd.get('targetPage') || fd.get('page');
+            if (!PAGES.includes(newPage)) {
+                return alert('Unknown target page: ' + newPage);
+            }
+            fd.set('page', newPage);
+            fd.delete('targetPage');
+
             // Add navigation fields
             fd.set('showInNav', showInNav.checked ? 'true' : 'false');
             fd.set('navCategory', sectionNavCategory.value || 'about');
@@ -1016,6 +1043,7 @@
             }
 
             const editId = addSectionForm.dataset.editId;
+            const originalPage = pageSel.value; // [MOVE-SECTION] remember original page
             if (editId) {
                 fd.append('editId', editId);
             }
@@ -1058,6 +1086,14 @@
             if (!r.ok) { return alert(await r.text()); }
 
             alert(`Section ${editId ? 'updated' : 'added'} successfully!`);
+
+            // [MOVE-SECTION] If moved, switch the admin view *before* reset
+            if (editId && newPage !== originalPage) {
+                console.log(`Moving section from ${originalPage} to ${newPage}`);
+                pageSel.value = newPage;
+                pageSel.dispatchEvent(new Event('change'));
+            }
+
             resetSectionForm();
             loadSections();
 
@@ -1164,6 +1200,12 @@
                     showInNav.checked = !!section.showInNav;
                     sectionNavCategory.value = section.navCategory || 'about';
                     navCatRow.style.display = showInNav.checked ? 'block' : 'none';
+
+                    // [MOVE-SECTION] show move control except for banner rows
+                    if (pageSel.value !== 'rolling-banner') {
+                        movePageRow.style.display = 'block';
+                        movePageSelect.value      = pageSel.value;
+                    }
                 }
 
                 // ---- Final UI updates for editing ----
