@@ -1124,7 +1124,7 @@ class VisualEditor {
                 font-weight: bold;
                 opacity: 0;
                 transition: opacity 0.15s ease, transform 0.15s ease;
-                z-index: 1000;
+                z-index: 1001;
                 box-shadow: 0 2px 4px rgba(0,0,0,0.2);
                 border: 1px solid rgba(255,255,255,0.2);
             }
@@ -2099,7 +2099,7 @@ class VisualEditor {
         });
 
         // Create sortable instance
-        const container = this.reorderableSecs[0].parentElement;
+        const container = document.querySelector('main') || document.body;
         this.sortable = Sortable.create(container, {
             handle: '.ve-drag-handle',
             draggable: '[data-ve-section-id]',
