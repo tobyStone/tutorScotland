@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Section Reordering - TAS</title>
+    <link rel="stylesheet" href="/styles2.css">
+    <link rel="stylesheet" href="/header-banner.css">
+    <style>
+        /* Test page specific styles */
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #333;
+        }
+        .test-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="rolling-banner" class="rolling-banner">
+        <div class="rolling-content">
+            <span id="tutorBanner">Loading news...</span>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="/images/centralShield.png" alt="TAS Logo" class="logo">
+                <div class="logo-text">
+                    <h1>Tutors Alliance Scotland</h1>
+                    <p>Professional Membership Organisation</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav id="main-nav">
+        <!-- Navigation will be loaded dynamically -->
+    </nav>
+
+    <main>
+        <div class="test-info">
+            <h1>🧪 Section Reordering Test Page</h1>
+            <p><strong>Instructions:</strong> If you're logged in as an admin, click the "Edit Mode" toggle to enable section reordering. You should see drag handles (⇅) appear on each section. Drag sections to reorder them!</p>
+        </div>
+
+        <!-- Test sections with stable IDs -->
+        <section class="test-section fade-in-section" data-ve-section-id="section-1">
+            <h2>🥇 Section 1 - First</h2>
+            <p>This is the first test section. It should be draggable when in edit mode.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </section>
+
+        <section class="test-section fade-in-section" data-ve-section-id="section-2">
+            <h2>🥈 Section 2 - Second</h2>
+            <p>This is the second test section. Try dragging it above or below other sections!</p>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </section>
+
+        <section class="test-section fade-in-section" data-ve-section-id="section-3">
+            <h2>🥉 Section 3 - Third</h2>
+            <p>This is the third test section. The order should persist after page reload.</p>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        </section>
+
+        <section class="test-section fade-in-section" data-ve-section-id="section-4">
+            <h2>🏅 Section 4 - Fourth</h2>
+            <p>This is the fourth test section. Each section has a unique data-ve-section-id.</p>
+            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </section>
+
+        <section class="test-section fade-in-section" data-ve-section-id="section-5">
+            <h2>🎯 Section 5 - Fifth</h2>
+            <p>This is the fifth and final test section. The reordering should work smoothly with visual feedback.</p>
+            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+        </section>
+
+        <!-- Dynamic sections container -->
+        <section id="dynamicSections" class="dynamic-section-container"></section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="static-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Tutors Alliance Scotland. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/rolling-banner.js"></script>
+    <script src="/js/nav-loader.js"></script>
+    <script src="/js/dynamic-sections.js"></script>
+    <script src="/js/visual-editor.js"></script>
+    
+    <script>
+        // Test page specific JavaScript
+        console.log('Test page loaded - checking for section reordering functionality');
+        
+        // Log section order on page load
+        const sections = document.querySelectorAll('[data-ve-section-id]');
+        console.log('Initial section order:', Array.from(sections).map(s => s.dataset.veSectionId));
+        
+        // Add some visual feedback for testing
+        document.addEventListener('DOMContentLoaded', () => {
+            const testInfo = document.querySelector('.test-info');
+            if (testInfo) {
+                const orderDisplay = document.createElement('div');
+                orderDisplay.id = 'order-display';
+                orderDisplay.style.marginTop = '10px';
+                orderDisplay.style.padding = '10px';
+                orderDisplay.style.background = '#fff3cd';
+                orderDisplay.style.borderRadius = '4px';
+                orderDisplay.innerHTML = '<strong>Current Order:</strong> <span id="current-order"></span>';
+                testInfo.appendChild(orderDisplay);
+                
+                // Update order display
+                function updateOrderDisplay() {
+                    const currentSections = document.querySelectorAll('[data-ve-section-id]');
+                    const order = Array.from(currentSections).map(s => s.dataset.veSectionId);
+                    document.getElementById('current-order').textContent = order.join(' → ');
+                }
+                
+                updateOrderDisplay();
+                
+                // Watch for changes
+                const observer = new MutationObserver(updateOrderDisplay);
+                observer.observe(document.querySelector('main'), { 
+                    childList: true, 
+                    subtree: true 
+                });
+            }
+        });
+    </script>
+</body>
+</html>

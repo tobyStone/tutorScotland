@@ -1,5 +1,6 @@
 const connectDB = require('./connectToDatabase');
 const Section = require('../models/Section');
+const Order = require('../models/Order');
 const { list } = require('@vercel/blob');
 
 const ITEMS_PER_PAGE = 20;
@@ -21,18 +22,22 @@ module.exports = async (req, res) => {
             bodyKeys: body ? Object.keys(body) : 'no body'
         });
 
+        /* ---------- NEW: section order endpoints ---------- */
+        if (method === 'GET'  && operation === 'get-order') return getOrder(req, res);
+        if (method === 'POST' && operation === 'set-order') return setOrder(req, res);
+
         // GET Operations
         if (method === 'GET') {
             // Scan page for editable elements
             if (operation === 'scan') {
                 return handlePageScan(req, res);
             }
-            
+
             // Get content overrides for a page
             if (operation === 'overrides') {
                 return handleGetOverrides(req, res);
             }
-            
+
             // Get original content backup
             if (operation === 'backup') {
                 return handleGetBackup(req, res);
@@ -382,4 +387,62 @@ async function handleListImages(req, res) {
 }
 
 // Ensure this runs as a Node.js lambda in Vercel
+// Section order management functions
+async function getOrder(req, res) {
+    try {
+        const { page } = req.query;
+        if (!page) {
+            return res.status(400).json({ message: 'page parameter required' });
+        }
+
+        console.log('Getting section order for page:', page);
+        const doc = await Order.findOne({ page }).lean();
+
+        return res.status(200).json(doc || { page, order: [] });
+    } catch (error) {
+        console.error('Get Order Error:', error);
+        return res.status(500).json({ message: 'Error retrieving section order' });
+    }
+}
+
+async function setOrder(req, res) {
+    try {
+        const { targetPage, order } = req.body;
+
+        if (!targetPage || !Array.isArray(order)) {
+            return res.status(400).json({
+                message: 'targetPage and order array are required'
+            });
+        }
+
+        console.log('Setting section order for page:', targetPage, 'Order:', order);
+
+        // Validate that order contains only strings (section IDs)
+        if (!order.every(id => typeof id === 'string' && id.trim().length > 0)) {
+            return res.status(400).json({
+                message: 'Order array must contain valid section ID strings'
+            });
+        }
+
+        const doc = await Order.findOneAndUpdate(
+            { page: targetPage },
+            {
+                order: order.map(id => id.trim()), // Clean whitespace
+                updatedAt: new Date()
+            },
+            {
+                upsert: true,
+                new: true,
+                setDefaultsOnInsert: true
+            }
+        );
+
+        console.log('Section order saved successfully:', doc);
+        return res.status(200).json(doc);
+    } catch (error) {
+        console.error('Set Order Error:', error);
+        return res.status(500).json({ message: 'Error saving section order' });
+    }
+}
+
 module.exports.config = { runtime: 'nodejs18.x' };

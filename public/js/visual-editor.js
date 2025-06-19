@@ -97,6 +97,11 @@ class VisualEditor {
         this.imgSearch = "";   // ⇠ non‑undefined defaults
         this.imgSort   = "newest";
 
+        // ───── section-reorder state ───────────────────────────
+        this.sortable          = null;   // SortableJS instance
+        this.sectionOrder      = [];     // order pulled from DB
+        this.reorderableSecs   = [];     // Node list cache
+
         // Initialize after DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.initialize());
@@ -106,7 +111,11 @@ class VisualEditor {
     }
 
     async initialize() {
-        // Load existing overrides (always for everyone)
+        /* 1️⃣ order first so overrides target the right elements */
+        await this.loadSectionOrder();
+        this.applySectionOrder();
+
+        // 2️⃣ then normal overrides
         await this.loadContentOverrides();
         this.applyContentOverrides();
 
@@ -255,6 +264,11 @@ class VisualEditor {
             document.body.style.outline = '3px dashed #007bff';
             document.body.style.outlineOffset = '-3px';
             this.showEditInstructions();
+
+            // Enable section reordering
+            await this.ensureSortableLoaded();
+            this.scanForSections();
+            this.activateSectionDragging();
         } else {
             this.disableEditMode();
         }
@@ -289,6 +303,13 @@ class VisualEditor {
 
         // Hide instructions
         this.hideEditInstructions();
+
+        // Disable section reordering
+        if (this.sortable) {
+            this.sortable.destroy();
+            this.sortable = null;
+        }
+        document.querySelectorAll('.ve-drag-handle').forEach(h => h.remove());
     }
 
     disableLinks() {
@@ -1133,6 +1154,72 @@ class VisualEditor {
                 justify-content: center;
                 font-weight: bold;
             }
+
+            /* Section Reordering Styles */
+            .ve-drag-handle {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: #007bff;
+                color: #fff;
+                padding: 6px 10px;
+                border-radius: 6px;
+                cursor: move;
+                user-select: none;
+                font-size: 16px;
+                font-weight: bold;
+                opacity: 0;
+                transition: opacity 0.15s ease, transform 0.15s ease;
+                z-index: 1000;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                border: 1px solid rgba(255,255,255,0.2);
+            }
+
+            [data-ve-section-id]:hover .ve-drag-handle {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+
+            .ve-drag-handle:hover {
+                opacity: 1 !important;
+                transform: scale(1.1) !important;
+                background: #0056b3;
+            }
+
+            .ve-drag-ghost {
+                opacity: 0.4;
+                background: #c8ebfb !important;
+                border: 2px dashed #007bff !important;
+                transform: rotate(2deg);
+            }
+
+            .ve-drag-chosen {
+                opacity: 0.8;
+                transform: scale(1.02);
+                box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+            }
+
+            .ve-drag-active {
+                opacity: 0.6;
+                transform: rotate(-1deg);
+            }
+
+            .ve-dragging {
+                cursor: grabbing !important;
+            }
+
+            .ve-dragging * {
+                cursor: grabbing !important;
+            }
+
+            /* Enhanced visual feedback during drag */
+            [data-ve-section-id] {
+                transition: transform 0.15s ease, box-shadow 0.15s ease;
+            }
+
+            .ve-dragging [data-ve-section-id]:not(.ve-drag-chosen):not(.ve-drag-ghost) {
+                opacity: 0.7;
+            }
         `;
         document.head.appendChild(style);
     }
@@ -1975,6 +2062,140 @@ class VisualEditor {
         }
         elementListeners.get(event).add(handler);
         element.addEventListener(event, handler);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // SECTION REORDERING FUNCTIONALITY
+    // ═══════════════════════════════════════════════════════════════════
+
+    async ensureSortableLoaded() {
+        if (window.Sortable) return;
+        try {
+            await import('https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/+esm');
+            console.log('SortableJS loaded successfully');
+        } catch (error) {
+            console.error('Failed to load SortableJS:', error);
+            this.showNotification('Failed to load drag-and-drop library', 'error');
+        }
+    }
+
+    async loadSectionOrder() {
+        try {
+            const currentPage = this.currentPage.replace(/^\//, '') || 'index';
+            const response = await fetch(`/api/content-manager?operation=get-order&page=${currentPage}`);
+            const data = await response.json();
+            this.sectionOrder = data.order || [];
+            console.log('Loaded section order:', this.sectionOrder);
+        } catch (error) {
+            console.error('Failed to load section order:', error);
+            this.sectionOrder = [];
+        }
+    }
+
+    applySectionOrder() {
+        if (!this.sectionOrder.length) return;
+
+        const parent = document.querySelector('main') || document.body;
+        const fragment = document.createDocumentFragment();
+
+        // Reorder sections according to saved order
+        this.sectionOrder.forEach(id => {
+            const element = parent.querySelector(`[data-ve-section-id="${id}"]`);
+            if (element) {
+                fragment.appendChild(element);
+            }
+        });
+
+        // Append any sections not in the saved order at the end
+        const allSections = parent.querySelectorAll('[data-ve-section-id]');
+        allSections.forEach(section => {
+            if (!this.sectionOrder.includes(section.dataset.veSectionId)) {
+                fragment.appendChild(section);
+            }
+        });
+
+        parent.appendChild(fragment);
+        console.log('Applied section order to DOM');
+    }
+
+    scanForSections() {
+        this.reorderableSecs = Array.from(document.querySelectorAll('[data-ve-section-id]'));
+        console.log('Found reorderable sections:', this.reorderableSecs.length);
+    }
+
+    activateSectionDragging() {
+        if (this.sortable || !this.reorderableSecs.length) return;
+
+        // Add drag handles to sections
+        this.reorderableSecs.forEach(section => {
+            if (section.querySelector('.ve-drag-handle')) return;
+
+            const handle = document.createElement('div');
+            handle.className = 've-drag-handle';
+            handle.innerHTML = '⇅';
+            handle.title = 'Drag to reorder section';
+            handle.setAttribute('aria-label', 'Drag handle for section reordering');
+
+            // Ensure section is positioned for absolute handle
+            if (getComputedStyle(section).position === 'static') {
+                section.style.position = 'relative';
+            }
+
+            section.prepend(handle);
+        });
+
+        // Create sortable instance
+        const container = this.reorderableSecs[0].parentElement;
+        this.sortable = Sortable.create(container, {
+            handle: '.ve-drag-handle',
+            draggable: '[data-ve-section-id]',
+            animation: 150,
+            ghostClass: 've-drag-ghost',
+            chosenClass: 've-drag-chosen',
+            dragClass: 've-drag-active',
+            onStart: () => {
+                document.body.classList.add('ve-dragging');
+            },
+            onEnd: (evt) => {
+                document.body.classList.remove('ve-dragging');
+                this.persistSectionOrder();
+            }
+        });
+
+        console.log('Section dragging activated');
+    }
+
+    async persistSectionOrder() {
+        const order = Array.from(
+            document.querySelectorAll('[data-ve-section-id]')
+        ).map(el => el.dataset.veSectionId);
+
+        const currentPage = this.currentPage.replace(/^\//, '') || 'index';
+
+        try {
+            const response = await fetch('/api/content-manager?operation=set-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    targetPage: currentPage,
+                    order
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            this.sectionOrder = result.order;
+            this.showNotification('Section order saved ✔', 'success');
+            console.log('Section order persisted:', result);
+        } catch (error) {
+            console.error('Failed to persist section order:', error);
+            this.showNotification('Could not save new order', 'error');
+
+            // TODO: Implement rollback to previous order
+        }
     }
 
     // Cleanup event listeners
