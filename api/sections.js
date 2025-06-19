@@ -123,6 +123,12 @@ module.exports = async (req, res) => {
                     
                     const updateData = { updatedAt: new Date() };
 
+                    // ─── 1 ▸ allow the page itself to change ─────────────────────────────
+                    const newPage = getField('page');               // may be undefined
+                    if (newPage && newPage !== currentDoc.page) {
+                          updateData.page = newPage.toLowerCase().trim();
+                        }
+
                     if (fields.heading) updateData.heading = getField('heading').trim();
                     if (fields.text) updateData.text = getField('text').trim();
                     if (fields.position) updateData.position = getField('position').toLowerCase();
@@ -141,21 +147,25 @@ module.exports = async (req, res) => {
                     if (fields.showInNav) updateData.showInNav = getField('showInNav') === 'true';
                     if (fields.navCategory) updateData.navCategory = getField('navCategory').toLowerCase();
 
-                    // If heading changes, update navAnchor
-                    if (fields.heading) {
-                        let newAnchor = slugify(getField('heading').trim());
-
-                        // Ensure uniqueness within the same page
-                        const collision = await Section.exists({
-                            page: currentDoc.page,
-                            navAnchor: newAnchor,
-                            _id: { $ne: editId }
-                        });
-                        if (collision) {
-                            newAnchor += '-' + Date.now().toString(36);
-                        }
-
-                        updateData.navAnchor = newAnchor;
+                    // Re-calculate navAnchor if either heading OR page is changing
+                        if (fields.heading || updateData.page) {
+                                // finalPage   = where the row will live after the update
+                                    const finalPage = updateData.page || currentDoc.page;
+                                // finalHeading = updated heading (if supplied) or keep existing
+                                    const finalHeading = fields.heading
+                                            ? getField('heading').trim()
+                                        : currentDoc.heading;
+                            
+                                    let newAnchor = slugify(finalHeading);
+                            
+                                    // Ensure uniqueness within the *destination* page
+                                    const collision = await Section.exists({
+                                            page: finalPage,
+                                            navAnchor: newAnchor,
+                                            _id: { $ne: editId }
+                                    });
+                        if (collision) newAnchor += '-' + Date.now().toString(36);
+                                            updateData.navAnchor = newAnchor;
                     }
 
                     // Add layout update logic
