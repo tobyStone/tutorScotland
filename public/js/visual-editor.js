@@ -268,7 +268,7 @@ class VisualEditor {
             // Enable section reordering
             await this.ensureSortableLoaded();
             this.scanForSections();
-            this.activateSectionDragging();
+            await this.activateSectionDragging();
         } else {
             this.disableEditMode();
         }
@@ -2022,16 +2022,14 @@ class VisualEditor {
     // SECTION REORDERING FUNCTIONALITY
     // ═══════════════════════════════════════════════════════════════════
 
-    async ensureSortableLoaded() {
-        if (window.Sortable) return;
-        try {
-            await import('https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/+esm');
-            console.log('SortableJS loaded successfully');
-        } catch (error) {
-            console.error('Failed to load SortableJS:', error);
-            this.showNotification('Failed to load drag-and-drop library', 'error');
+    ensureSortableLoaded() {
+        // This function now just checks if the library is already available.
+        if (window.Sortable) {
+            return window.Sortable;
         }
+        return null;
     }
+
 
     async loadSectionOrder() {
         try {
@@ -2077,8 +2075,24 @@ class VisualEditor {
         console.log('Found reorderable sections:', this.reorderableSecs.length);
     }
 
-    activateSectionDragging() {
+    async activateSectionDragging() {
         if (this.sortable || !this.reorderableSecs.length) return;
+
+        // 2. Load the library and wait for it
+        let Sortable = this.ensureSortableLoaded();
+        if (!Sortable) {
+            try {
+                // Dynamic import returns the module namespace
+                const sortableModule = await import('https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/+esm');
+                Sortable = sortableModule.default; // Get the default export
+                window.Sortable = Sortable; // Optional: Store it globally for next time
+                console.log('SortableJS loaded successfully');
+            } catch (error) {
+                console.error('Failed to load SortableJS:', error);
+                this.showNotification('Failed to load drag-and-drop library', 'error');
+                return; // Stop execution if loading fails
+            }
+        }
 
         // Add drag handles to sections
         this.reorderableSecs.forEach(section => {
