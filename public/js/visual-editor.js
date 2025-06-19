@@ -267,6 +267,17 @@ class VisualEditor {
 
             // Enable section reordering
             await this.ensureSortableLoaded();
+            /* ------------------------------------------------------------------
+             * guarantee every top-level <section> has *some* id so the editor
+             * can always give the user a drag handle, even on older pages
+             * that haven't been annotated yet
+             * ----------------------------------------------------------------- */
+            document.querySelectorAll('main > section').forEach((sec, i) => {
+                if (!sec.dataset.veSectionId) {
+                    const autoId = (sec.id || `auto-${i}`);
+                    sec.dataset.veSectionId = autoId;
+                }
+            });
             this.scanForSections();
             await this.activateSectionDragging();
         } else {
