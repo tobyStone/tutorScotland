@@ -252,7 +252,7 @@ class VisualEditor {
         }
     }
 
-    toggleEditMode() {
+    async toggleEditMode() {
         this.isEditMode = !this.isEditMode;
         document.body.classList.toggle(VisualEditor.EDIT_ACTIVE_CLASS, this.isEditMode);
         this.updateEditToggle();
@@ -274,7 +274,7 @@ class VisualEditor {
         }
     }
 
-    enableEditMode() {
+    async enableEditMode() {
         // Add edit overlays to editable elements
         this.scanForEditableElements();
         this.addEditOverlays();
@@ -475,54 +475,8 @@ class VisualEditor {
         }
     }
 
-    getOriginalContent(element, type) {
-        switch (type) {
-            case 'image':
-                return {
-                    src: element.src,
-                    alt: element.alt || ''
-                };
-            case 'link':
-                return {
-                    href: element.href,
-                    text: element.textContent
-                };
-            case 'text':
-                return {
-                    text: element.textContent
-                };
-            case 'html':
-                return {
-                    html: element.innerHTML
-                };
-            default:
-                return {
-                    text: element.textContent
-                };
-        }
-    }
-
-    restoreElementContent(element, type, original) {
-        switch (type) {
-            case 'image':
-                element.src = original.src;
-                element.alt = original.alt;
-                break;
-            case 'link':
-                element.href = original.href;
-                element.textContent = original.text;
-                break;
-            case 'text':
-                element.textContent = original.text;
-                break;
-            case 'html':
-                element.innerHTML = original.html;
-                break;
-            default:
-                element.textContent = original.text;
-                break;
-        }
-    }
+  
+  
 
     addEditOverlays() {
         this.editableElements.forEach(({ element, selector, type }) => {
