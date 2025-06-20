@@ -52,10 +52,30 @@ function verifyToken(req) {
     }
 }
 
+// Helper function to normalize tutor data
+function normalizeTutorData(body) {
+    const asArray = (value) => {
+        if (!value) return [];
+        if (Array.isArray(value)) return value.filter(Boolean);
+        return value.split(',').map(x => x.trim()).filter(Boolean);
+    };
+
+    return {
+        name: body.name?.trim(),
+        subjects: asArray(body.subjects),
+        costRange: body.costRange?.trim(),
+        badges: asArray(body.badges),
+        contact: body.contact?.trim(),
+        description: body.description?.trim(),
+        postcodes: asArray(body.postcodes),
+        imagePath: body.imagePath || ''
+    };
+}
+
 module.exports = async (req, res) => {
-    // Allow both POST and DELETE methods
-    if (!['POST', 'DELETE'].includes(req.method)) {
-        res.setHeader('Allow', ['POST', 'DELETE']);
+    // Allow POST, PUT, and DELETE methods
+    if (!['POST', 'PUT', 'DELETE'].includes(req.method)) {
+        res.setHeader('Allow', ['POST', 'PUT', 'DELETE']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 
@@ -78,36 +98,76 @@ module.exports = async (req, res) => {
         await connectToDatabase();
         console.log('Database connected successfully');
 
+        // Handle PUT request - Update existing tutor
+        if (req.method === 'PUT') {
+            console.log('Processing PUT request for tutor update');
+            const { id } = req.query;
+
+            if (!id) {
+                return res.status(400).json({ message: 'Tutor ID is required for update.' });
+            }
+
+            const updateData = normalizeTutorData(req.body);
+
+            // Handle image removal
+            if (req.body.removeImage === 'true' || req.body.removeImage === true) {
+                updateData.imagePath = '';
+            }
+
+            try {
+                const updatedTutor = await Tutor.findByIdAndUpdate(id, updateData, {
+                    new: true,
+                    runValidators: true
+                });
+
+                if (!updatedTutor) {
+                    return res.status(404).json({ message: 'Tutor not found for update.' });
+                }
+
+                console.log('Tutor updated successfully:', updatedTutor._id);
+                return res.status(200).json({
+                    message: "Tutor updated successfully",
+                    tutor: updatedTutor
+                });
+            } catch (error) {
+                console.error('Error updating tutor:', error);
+                return res.status(500).json({
+                    message: 'Error updating tutor',
+                    error: error.message
+                });
+            }
+        }
+
         // Handle DELETE request
         if (req.method === 'DELETE') {
-            const tutorId = req.query.id;
+            const { id } = req.query;
 
-            if (!tutorId) {
+            if (!id) {
                 console.log('Missing tutor ID for deletion');
                 return res.status(400).json({
                     message: "Missing tutor ID"
                 });
             }
 
-            console.log(`Attempting to delete tutor with ID: ${tutorId}`);
+            console.log(`Attempting to delete tutor with ID: ${id}`);
 
             try {
-                const deletedTutor = await Tutor.findByIdAndDelete(tutorId);
+                const deletedTutor = await Tutor.findByIdAndDelete(id);
 
                 if (!deletedTutor) {
-                    console.log(`Tutor with ID ${tutorId} not found`);
+                    console.log(`Tutor with ID ${id} not found`);
                     return res.status(404).json({
                         message: "Tutor not found"
                     });
                 }
 
-                console.log(`Tutor with ID ${tutorId} deleted successfully`);
+                console.log(`Tutor with ID ${id} deleted successfully`);
                 return res.status(200).json({
                     message: "Tutor deleted successfully",
                     tutor: deletedTutor
                 });
             } catch (deleteError) {
-                console.error(`Error deleting tutor with ID ${tutorId}:`, deleteError);
+                console.error(`Error deleting tutor with ID ${id}:`, deleteError);
                 return res.status(500).json({
                     message: "Error deleting tutor",
                     error: deleteError.message
@@ -115,52 +175,61 @@ module.exports = async (req, res) => {
             }
         }
 
+        // Handle POST request (add tutor or update fallback)
+        console.log('Processing POST request');
+
+        // Check for update fallback (editId in body)
+        const { editId } = req.body;
+        if (editId) {
+            console.log('POST request with editId - processing as update fallback');
+            const updateData = normalizeTutorData(req.body);
+
+            // Handle image removal
+            if (req.body.removeImage === 'true' || req.body.removeImage === true) {
+                updateData.imagePath = '';
+            }
+
+            try {
+                const updatedTutor = await Tutor.findByIdAndUpdate(editId, updateData, {
+                    new: true,
+                    runValidators: true
+                });
+
+                if (!updatedTutor) {
+                    return res.status(404).json({ message: 'Tutor not found for update.' });
+                }
+
+                console.log('Tutor updated successfully via POST fallback:', updatedTutor._id);
+                return res.status(200).json({
+                    message: "Tutor updated successfully",
+                    tutor: updatedTutor
+                });
+            } catch (error) {
+                console.error('Error updating tutor via POST fallback:', error);
+                return res.status(500).json({
+                    message: 'Error updating tutor',
+                    error: error.message
+                });
+            }
+        }
+
         // Handle POST request (add tutor)
-        // Log the request body for debugging
         console.log('Request body:', req.body);
 
-        // Extract fields from request body
-        const {
-            name,
-            subjects,
-            costRange,
-            badges,
-            contact,
-            description,
-            postcodes,
-            imagePath = ''
-        } = req.body;
+        // Normalize and validate tutor data
+        const tutorData = normalizeTutorData(req.body);
 
         // Validate required fields
-        if (!name || !subjects || !costRange) {
-            console.log('Missing required fields:', { name, subjects, costRange });
+        if (!tutorData.name || !tutorData.subjects.length || !tutorData.costRange) {
+            console.log('Missing required fields:', tutorData);
             return res.status(400).json({
                 message: "Missing required fields: name, subjects, and costRange are required"
             });
         }
 
         // Create new Tutor
-        console.log('Creating new tutor with data:', {
-            name,
-            subjects: Array.isArray(subjects) ? subjects : [subjects],
-            costRange,
-            badges: Array.isArray(badges) ? badges : [badges],
-            contact,
-            description,
-            postcodes: Array.isArray(postcodes) ? postcodes : [postcodes],
-            imagePath
-        });
-
-        const newTutor = new Tutor({
-            name,
-            subjects: Array.isArray(subjects) ? subjects : [subjects],
-            costRange,
-            badges: Array.isArray(badges) ? badges : [badges],
-            contact,
-            description,
-            postcodes: Array.isArray(postcodes) ? postcodes : [postcodes],
-            imagePath
-        });
+        console.log('Creating new tutor with data:', tutorData);
+        const newTutor = new Tutor(tutorData);
 
         // Save the tutor to the database
         console.log('Saving tutor to database...');
