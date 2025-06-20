@@ -2081,8 +2081,16 @@ class VisualEditor {
         console.log('Applied section order to DOM');
     }
 
+  
     scanForSections() {
-        this.reorderableSecs = Array.from(document.querySelectorAll('[data-ve-section-id]'));
+        // Select all elements with the attribute, but then filter them.
+        this.reorderableSecs = Array.from(document.querySelectorAll('[data-ve-section-id]'))
+            .filter(el => {
+                // Exclude our dynamic placeholder containers from being re-orderable.
+                const id = el.id;
+                return id !== 'dynamic-top' && id !== 'dynamic-middle' && id !== 'dynamic-bottom';
+            });
+
         console.log('Found reorderable sections:', this.reorderableSecs.length);
     }
 
