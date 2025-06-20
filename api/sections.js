@@ -199,16 +199,21 @@ module.exports = async (req, res) => {
                     let needsOrderUpdate = false;
                     const newPosition = updateData.position || currentDoc.position;
                     const incomingOrder = getField('order');
+
+                    // Define the effective page for the query
+                    const effectivePage = updateData.page || currentDoc.page;
+
                     if (
-                        updateData.page !== currentDoc.page ||
+                        effectivePage !== currentDoc.page ||
                         newPosition !== currentDoc.position ||
                         (typeof incomingOrder !== 'undefined' && Number(incomingOrder) < 0)
                     ) {
                         needsOrderUpdate = true;
                     }
+
                     if (needsOrderUpdate) {
                         // Find the max order in the new bucket
-                        const maxOrderDoc = await Section.findOne({ page: updateData.page, position: newPosition }).sort({ order: -1 }).select('order').lean();
+                        const maxOrderDoc = await Section.findOne({ page: effectivePage, position: newPosition }).sort({ order: -1 }).select('order').lean();
                         updateData.order = (maxOrderDoc && typeof maxOrderDoc.order === 'number' ? maxOrderDoc.order : 0) + 1;
                     } else if (typeof incomingOrder !== 'undefined') {
                         updateData.order = Number(incomingOrder);
