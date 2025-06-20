@@ -62,9 +62,9 @@ function loadDynamicSections() {
                 createPositionContainer('all');
 
                 // Get containers for different positions
-                const topContainer = document.getElementById('dynamicSectionsTop');
-                const middleContainer = document.getElementById('dynamicSectionsMiddle');
-                const bottomContainer = document.getElementById('dynamicSections');
+                const topContainer = document.getElementById('dynamic-top');
+                const middleContainer = document.getElementById('dynamic-middle');
+                const bottomContainer = document.getElementById('dynamic-bottom');
 
                 // Verify all containers exist
                 if (!topContainer || !middleContainer || !bottomContainer) {
