@@ -58,8 +58,8 @@ function loadDynamicSections() {
         .then(r => r.json())
         .then(list => {
             if (list && list.length > 0) {
-                // Create containers if they don't exist
-                createPositionContainer('all');
+                // DO NOT Create containers if they don't exist
+                //createPositionContainer('all');
 
                 // Get containers for different positions
                 const topContainer = document.getElementById('dynamic-top');
