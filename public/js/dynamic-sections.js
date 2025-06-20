@@ -78,9 +78,9 @@ function loadDynamicSections() {
                 bottomContainer.innerHTML = '';
 
                 // Group sections by position
-                const topSections = list.filter(s => s.position === 'top');
-                const middleSections = list.filter(s => s.position === 'middle');
-                const bottomSections = list.filter(s => s.position === 'bottom' || !s.position);
+                const topSections = list.filter(s => s.position === 'top').sort((a, b) => (a.order || 0) - (b.order || 0));
+                const middleSections = list.filter(s => s.position === 'middle').sort((a, b) => (a.order || 0) - (b.order || 0));
+                const bottomSections = list.filter(s => s.position === 'bottom' || !s.position).sort((a, b) => (a.order || 0) - (b.order || 0));
 
                 console.log(`Found ${topSections.length} top sections, ${middleSections.length} middle sections, ${bottomSections.length} bottom sections`);
 

@@ -195,6 +195,26 @@ module.exports = async (req, res) => {
                         console.log('Removing image from section');
                     }
 
+                    // --- ORDER REORDERING LOGIC ---
+                    let needsOrderUpdate = false;
+                    const newPosition = updateData.position || currentDoc.position;
+                    const incomingOrder = getField('order');
+                    if (
+                        updateData.page !== currentDoc.page ||
+                        newPosition !== currentDoc.position ||
+                        (typeof incomingOrder !== 'undefined' && Number(incomingOrder) < 0)
+                    ) {
+                        needsOrderUpdate = true;
+                    }
+                    if (needsOrderUpdate) {
+                        // Find the max order in the new bucket
+                        const maxOrderDoc = await Section.findOne({ page: updateData.page, position: newPosition }).sort({ order: -1 }).select('order').lean();
+                        updateData.order = (maxOrderDoc && typeof maxOrderDoc.order === 'number' ? maxOrderDoc.order : 0) + 1;
+                    } else if (typeof incomingOrder !== 'undefined') {
+                        updateData.order = Number(incomingOrder);
+                    }
+                    // --- END ORDER REORDERING LOGIC ---
+
                     if (Object.keys(updateData).length === 1) { // Only contains updatedAt
                         return res.status(400).json({ message: 'No fields to update provided' });
                     }
@@ -296,6 +316,14 @@ module.exports = async (req, res) => {
                     (Array.isArray(fields.position) ? fields.position[0] : fields.position).toString().toLowerCase()
                     : 'bottom';
 
+                // --- ORDER REORDERING LOGIC FOR CREATE ---
+                let order = 1;
+                const maxOrderDoc = await Section.findOne({ page, position }).sort({ order: -1 }).select('order').lean();
+                if (maxOrderDoc && typeof maxOrderDoc.order === 'number') {
+                    order = maxOrderDoc.order + 1;
+                }
+                // --- END ORDER REORDERING LOGIC FOR CREATE ---
+
                 // Get button fields
                 const buttonLabel = fields.buttonLabel ?
                     (Array.isArray(fields.buttonLabel) ? fields.buttonLabel[0] : fields.buttonLabel).toString().trim()
@@ -337,11 +365,11 @@ module.exports = async (req, res) => {
                 }
 
                 console.log('Creating section with data:', {
-                    page, heading, text, image, isFullPage, slug, isPublished, position, navCategory, showInNav, navAnchor, layout, team
+                    page, heading, text, image, isFullPage, slug, isPublished, position, order, navCategory, showInNav, navAnchor, layout, team
                 });
 
                 const doc = await Section.create({
-                    page, heading, text, image, isFullPage, slug, isPublished, position, buttonLabel, buttonUrl,
+                    page, heading, text, image, isFullPage, slug, isPublished, position, order, buttonLabel, buttonUrl,
                     navCategory, showInNav, navAnchor, layout, team
                 });
                 console.log('Section created:', doc);
