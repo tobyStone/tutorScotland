@@ -2047,33 +2047,61 @@ class VisualEditor {
     }
 
     applySectionOrder() {
+        // 0️⃣  Bail early if there's nothing saved for this page
         if (!this.sectionOrder.length) return;
 
-        const parent = document.querySelector('main') || document.body;
-        const fragment = document.createDocumentFragment();
+        const parent = document.querySelector('main');
+        if (!parent) {
+            console.warn('[VE] <main> not found – cannot apply order');
+            return;
+        }
 
-        // Reorder sections according to saved order
+        /* 1️⃣  gather only the reorderable STATIC sections
+               (anything inside the dynamic containers is ignored)                */
+        const staticSections = Array.from(
+            parent.querySelectorAll('[data-ve-section-id]')
+        ).filter(sec => !sec.closest('.dynamic-section-container'));
+
+        if (!staticSections.length) {
+            console.log('[VE] No reorderable sections on this page');
+            return;
+        }
+
+        /* 2️⃣  Park a comment node where the first section lives.
+               This survives while we rip the real nodes out of the tree.         */
+        const anchorPlaceholder = document.createComment('ve-order-anchor');
+        parent.replaceChild(anchorPlaceholder, staticSections[0]); // keeps position
+
+        /* 3️⃣  Build a lookup → O(1) when stepping through saved order            */
+        const lookup = new Map(
+            staticSections.map(sec => [sec.dataset.veSectionId, sec])
+        );
+
+        const frag = document.createDocumentFragment();
+
+        // 3a. append in the order stored in DB
         this.sectionOrder.forEach(id => {
-            const element = parent.querySelector(`[data-ve-section-id="${id}"]`);
-            if (element) {
-                fragment.appendChild(element);
+            if (lookup.has(id)) {
+                frag.appendChild(lookup.get(id));
+                lookup.delete(id);
             }
         });
 
-        // Append any sections not in the saved order at the end
-        const allSections = parent.querySelectorAll('[data-ve-section-id]');
-        allSections.forEach(section => {
-            if (!this.sectionOrder.includes(section.dataset.veSectionId)) {
-                fragment.appendChild(section);
-            }
-        });
+        // 3b. any new sections that weren't in the DB go to the end
+        lookup.forEach(sec => frag.appendChild(sec));
 
-        parent.appendChild(fragment);
-        console.log('Applied section order to DOM');
+        /* 4️⃣  Drop the reordered block back where it came from – **non-destructive** */
+        parent.insertBefore(frag, anchorPlaceholder);
+        anchorPlaceholder.remove();
+
+        console.log('[VE] Applied non-destructive section order');
     }
 
     scanForSections() {
-        this.reorderableSecs = Array.from(document.querySelectorAll('[data-ve-section-id]'));
+        // Only scan for static sections, not those inside dynamic containers
+        this.reorderableSecs = Array.from(
+            document.querySelectorAll('[data-ve-section-id]')
+        ).filter(sec => !sec.closest('.dynamic-section-container'));
         console.log('Found reorderable sections:', this.reorderableSecs.length);
     }
 
@@ -2120,9 +2148,11 @@ class VisualEditor {
     }
 
     async persistSectionOrder() {
+        // Only persist order for static sections, not those inside dynamic containers
         const order = Array.from(
             document.querySelectorAll('[data-ve-section-id]')
-        ).map(el => el.dataset.veSectionId);
+        ).filter(sec => !sec.closest('.dynamic-section-container'))
+         .map(el => el.dataset.veSectionId);
 
         const currentPage = this.currentPage.replace(/^\//, '') || 'index';
 
