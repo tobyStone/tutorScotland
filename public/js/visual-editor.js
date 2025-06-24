@@ -2064,8 +2064,25 @@ class VisualEditor {
         }
     }
 
+    // public/js/visual-editor.js
+
     applySectionOrder() {
+        // 0️⃣ bail if there is nothing saved
         if (!this.sectionOrder.length) return;
+
+        /* ✦✦✦ ROBUST FIX ✦✦✦
+           Never move the three dynamic containers themselves.
+           They act as structural placeholders and must stay
+           where the HTML author put them. */
+        const forbiddenIDs = [
+            'dynamicSectionsTop',
+            'dynamicSectionsMiddle',
+            'dynamicSections'
+        ];
+        this.sectionOrder = this.sectionOrder.filter(
+            id => !forbiddenIDs.includes(id)
+        );
+        /* ✦✦✦ END OF FIX ✦✦✦ */
 
         const parent = document.querySelector('main');
         if (!parent) {
@@ -2073,34 +2090,34 @@ class VisualEditor {
             return;
         }
 
-        // ✨ CHANGED: Now includes all sections, including containers.
-        const allSections = Array.from(parent.querySelectorAll('[data-ve-section-id]'));
-
-        if (!allSections.length) {
-            console.log('[VE] No reorderable sections on this page');
-            return;
-        }
-
+        // lookup & re-insert logic is unchanged …
         const anchorPlaceholder = document.createComment('ve-order-anchor');
-        parent.insertBefore(anchorPlaceholder, allSections[0]);
+        parent.insertBefore(
+            anchorPlaceholder,
+            parent.querySelector('[data-ve-section-id]')
+        );
 
-        const lookup = new Map(allSections.map(sec => [sec.dataset.veSectionId, sec]));
+        const lookup = new Map(
+            Array.from(parent.querySelectorAll('[data-ve-section-id]'))
+                .filter(el => parent === el.parentElement)   // main > …
+                .map(el => [el.dataset.veSectionId, el])
+        );
+
         const frag = document.createDocumentFragment();
-
         this.sectionOrder.forEach(id => {
             if (lookup.has(id)) {
                 frag.appendChild(lookup.get(id));
                 lookup.delete(id);
             }
         });
-
-        lookup.forEach(sec => frag.appendChild(sec));
+        lookup.forEach(el => frag.appendChild(el));
 
         parent.insertBefore(frag, anchorPlaceholder);
         anchorPlaceholder.remove();
 
-        console.log('[VE] Applied non-destructive section order to all sections.');
+        console.log('[VE] Applied non-destructive section order.');
     }
+
 
     scanForSections() {
         /* remove any old markers */
