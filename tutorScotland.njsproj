@@ -63,6 +63,7 @@
     <Content Include="models\Blog.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="models\Order.js" />
     <Content Include="models\Section.js">
       <SubType>Code</SubType>
     </Content>

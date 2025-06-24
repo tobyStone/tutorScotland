@@ -186,6 +186,9 @@ class VisualEditor {
         }
     }
 
+
+
+
     applyContentOverrides() {
         this.overrides.forEach((ov, sel) =>
             document.querySelectorAll(sel).forEach(el => this.applyOverride(el, ov))
@@ -2024,14 +2027,14 @@ class VisualEditor {
 
     async ensureSortableLoaded() {
         if (window.Sortable) return;
-        try {
-            await import('https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/+esm');
-            console.log('SortableJS loaded successfully');
-        } catch (error) {
-            console.error('Failed to load SortableJS:', error);
-            this.showNotification('Failed to load drag-and-drop library', 'error');
-        }
+        const mod = await import(
+            'https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/+esm'
+        );
+        // expose Sortable globally so Sortable.create() works
+        window.Sortable = mod.Sortable || mod.default;
+        console.log('[VE] SortableJS loaded');
     }
+
 
     async loadSectionOrder() {
         try {
@@ -2101,22 +2104,37 @@ class VisualEditor {
     }
 
     scanForSections() {
-        // Only scan for static sections, not those inside dynamic containers
-        const forbidden = new Set(['dynamicSectionsTop',
+        // remove any previous markers
+        document
+            .querySelectorAll('.ve-reorderable')
+            .forEach(el => el.classList.remove('ve-reorderable'));
+
+        const forbidden = new Set([
+            'dynamicSectionsTop',
             'dynamicSectionsMiddle',
-            'dynamicSections']);
+            'dynamicSections'
+        ]);
+
+        // find STATIC sections only
         this.reorderableSecs = Array.from(
-            document.querySelectorAll('[data-ve-section-id]'))
-            .filter(sec =>
-                !sec.closest('.dynamic-section-container') &&
-                !forbidden.has(sec.dataset.veSectionId));
-        console.log('Found reorderable sections:', this.reorderableSecs.length);
+            document.querySelectorAll('[data-ve-section-id]')
+        ).filter(sec =>
+            !sec.closest('.dynamic-section-container') &&
+            !forbidden.has(sec.dataset.veSectionId)
+        );
+
+        // add marker class
+        this.reorderableSecs.forEach(sec => sec.classList.add('ve-reorderable'));
+
+        console.log('[VE] Found reorderable sections:', this.reorderableSecs.length);
     }
 
+
+  
     activateSectionDragging() {
         if (this.sortable || !this.reorderableSecs.length) return;
 
-        // Add drag handles to sections
+        // inject a handle into each draggable section
         this.reorderableSecs.forEach(section => {
             if (section.querySelector('.ve-drag-handle')) return;
 
@@ -2126,46 +2144,35 @@ class VisualEditor {
             handle.title = 'Drag to reorder section';
             handle.setAttribute('aria-label', 'Drag handle for section reordering');
 
-            // Ensure section is positioned for absolute handle
             if (getComputedStyle(section).position === 'static') {
                 section.style.position = 'relative';
             }
-
             section.prepend(handle);
         });
 
-        // Create sortable instance
         const container = document.querySelector('main') || document.body;
         this.sortable = Sortable.create(container, {
             handle: '.ve-drag-handle',
-            draggable: '[data-ve-section-id]',
+            draggable: '.ve-reorderable',        // ← precise selector
             animation: 150,
             ghostClass: 've-drag-ghost',
             chosenClass: 've-drag-chosen',
             dragClass: 've-drag-active',
-            onStart: () => {
-                document.body.classList.add('ve-dragging');
-            },
-            onEnd: (evt) => {
+            onStart: () => document.body.classList.add('ve-dragging'),
+            onEnd: () => {
                 document.body.classList.remove('ve-dragging');
                 this.persistSectionOrder();
             }
         });
 
-        console.log('Section dragging activated');
+        console.log('[VE] Section dragging activated');
     }
 
+
     async persistSectionOrder() {
-        // Only persist order for static sections, not those inside dynamic containers
-        const forbidden = new Set(['dynamicSectionsTop',
-            'dynamicSectionsMiddle',
-            'dynamicSections']);
         const order = Array.from(
-            document.querySelectorAll('[data-ve-section-id]'))
-            .filter(sec =>
-                !sec.closest('.dynamic-section-container') &&
-                !forbidden.has(sec.dataset.veSectionId))
-            .map(el => el.dataset.veSectionId);
+            document.querySelectorAll('.ve-reorderable')
+        ).map(el => el.dataset.veSectionId);
 
         const currentPage = this.currentPage.replace(/^\//, '') || 'index';
 
@@ -2173,27 +2180,21 @@ class VisualEditor {
             const response = await fetch('/api/content-manager?operation=set-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    targetPage: currentPage,
-                    order
-                })
+                body: JSON.stringify({ targetPage: currentPage, order })
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
             const result = await response.json();
             this.sectionOrder = result.order;
             this.showNotification('Section order saved ✔', 'success');
-            console.log('Section order persisted:', result);
-        } catch (error) {
-            console.error('Failed to persist section order:', error);
+            console.log('[VE] Section order persisted:', result);
+        } catch (err) {
+            console.error('[VE] Failed to persist order:', err);
             this.showNotification('Could not save new order', 'error');
-
-            // TODO: Implement rollback to previous order
         }
     }
+
 
     // Cleanup event listeners
     cleanupEventListeners() {
