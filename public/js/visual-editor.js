@@ -2064,25 +2064,12 @@ class VisualEditor {
         }
     }
 
-    // public/js/visual-editor.js
-
+    /* ------------------------------------------------------------------ */
+    /*  SECTION ORDER: apply saved order (containers stay in the list)    */
+    /* ------------------------------------------------------------------ */
     applySectionOrder() {
-        // 0️⃣ bail if there is nothing saved
+        /* 0️⃣  Bail if there’s nothing saved for this page */
         if (!this.sectionOrder.length) return;
-
-        /* ✦✦✦ ROBUST FIX ✦✦✦
-           Never move the three dynamic containers themselves.
-           They act as structural placeholders and must stay
-           where the HTML author put them. */
-        const forbiddenIDs = [
-            'dynamicSectionsTop',
-            'dynamicSectionsMiddle',
-            'dynamicSections'
-        ];
-        this.sectionOrder = this.sectionOrder.filter(
-            id => !forbiddenIDs.includes(id)
-        );
-        /* ✦✦✦ END OF FIX ✦✦✦ */
 
         const parent = document.querySelector('main');
         if (!parent) {
@@ -2090,33 +2077,46 @@ class VisualEditor {
             return;
         }
 
-        // lookup & re-insert logic is unchanged …
-        const anchorPlaceholder = document.createComment('ve-order-anchor');
-        parent.insertBefore(
-            anchorPlaceholder,
-            parent.querySelector('[data-ve-section-id]')
+        /* 1️⃣  Collect every section that carries a data-ve-section-id
+                — static blocks *and* our three dynamic containers.        */
+        const allSections = Array.from(
+            parent.querySelectorAll('[data-ve-section-id]')
         );
 
+        if (!allSections.length) {
+            console.log('[VE] No reorderable sections on this page');
+            return;
+        }
+
+        /* 2️⃣  Build a lookup table for fast re-assembly */
         const lookup = new Map(
-            Array.from(parent.querySelectorAll('[data-ve-section-id]'))
-                .filter(el => parent === el.parentElement)   // main > …
-                .map(el => [el.dataset.veSectionId, el])
+            allSections.map(sec => [sec.dataset.veSectionId, sec])
         );
+
+        /* 3️⃣  Use a placeholder so we can re-insert as one fragment */
+        const anchor = document.createComment('ve-order-anchor');
+        parent.insertBefore(anchor, allSections[0]);
 
         const frag = document.createDocumentFragment();
+
+        /* 4️⃣  Re-insert everything in the saved order */
         this.sectionOrder.forEach(id => {
             if (lookup.has(id)) {
                 frag.appendChild(lookup.get(id));
                 lookup.delete(id);
             }
         });
-        lookup.forEach(el => frag.appendChild(el));
 
-        parent.insertBefore(frag, anchorPlaceholder);
-        anchorPlaceholder.remove();
+        /* 5️⃣  Append any brand-new sections that weren’t in the DB yet */
+        lookup.forEach(sec => frag.appendChild(sec));
 
-        console.log('[VE] Applied non-destructive section order.');
+        /* 6️⃣  Commit the fragment */
+        parent.insertBefore(frag, anchor);
+        anchor.remove();
+
+        console.log('[VE] Applied non-destructive section order (containers included).');
     }
+
 
 
     scanForSections() {
