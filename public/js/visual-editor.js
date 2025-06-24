@@ -2080,8 +2080,8 @@ class VisualEditor {
         /* 1️⃣  Collect every section that carries a data-ve-section-id
                 — static blocks *and* our three dynamic containers.        */
         const allSections = Array.from(
-            parent.querySelectorAll('[data-ve-section-id]')
-        );
+              parent.querySelectorAll('main > [data-ve-section-id]')
+            );
 
         if (!allSections.length) {
             console.log('[VE] No reorderable sections on this page');
