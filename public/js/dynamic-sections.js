@@ -158,6 +158,12 @@ function loadDynamicSections() {
  * This function creates all three containers at once to ensure proper positioning
  */
 function createPositionContainer(position) {
+
+    // 👉  If the page opted-in to manual placement just bail-out
+    if (document.body.dataset.dynManual === 'true') {
+        console.log('[DynSec] Manual placement – using containers provided in HTML');
+        return;
+    }
     // Only create containers if they don't already exist
     const main = document.querySelector('main');
     if (!main) {

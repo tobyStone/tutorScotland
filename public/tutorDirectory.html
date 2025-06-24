@@ -12,7 +12,7 @@
     <script src="/js/nav-loader.js" defer></script>
     <script src="/js/dynamic-nav.js" defer></script>
 </head>
-<body class="tutor-directory-page restricted-viewport" style="background-color: #F0F8FF;" data-page="tutorDirectory">
+<body class="tutor-directory-page restricted-viewport" style="background-color: #F0F8FF;" data-page="tutorDirectory" data-dyn-manual="true">
     <!-- Shared banner/header -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
@@ -44,8 +44,9 @@
             <!-- RIGHT COLUMN: heading + about-us text -->
             <div class="right-col">
 
-                <!-- TOP dynamic sections container -->
-                <section id="dynamicSectionsTop" class="dynamic-section-container"></section>
+                <!-- ✦ TOP dynamic sections land here -->
+                <div class="dynamic-sections-separator-top" style="display:none"></div>
+                <section id="dynamicSectionsTop" class="dynamic-section-container" style="display:none"></section>
 
 
                 <div class="about-us-landing" id="aboutUsLanding">
@@ -101,102 +102,104 @@
             </div>
         </div>
 
-        <!-- MIDDLE dynamic sections container -->
-        <section id="dynamicSectionsMiddle" class="dynamic-section-container"></section>
+        <!-- ✦ MIDDLE dynamic sections land here -->
+        <div class="dynamic-sections-separator-middle" style="display:none"></div>
+        <section id="dynamicSectionsMiddle" class="dynamic-section-container" style="display:none"></section>
 
         <!-- Clear separator before dynamic sections -->
         <div class="dynamic-sections-separator"></div>
 
-        <!-- BOTTOM dynamic sections container -->
-        <section id="dynamicSections" class="dynamic-section-container"></section>
-    </main>
 
+        <!-- ✦ BOTTOM (already present in your template) -->
+        <div class="dynamic-sections-separator" style="display:none"></div>
+        <section id="dynamicSections" class="dynamic-section-container" style="display:none"></section>
 
-    <script>
-        function goToLogin(role) {
-            window.location.href = `login.html?role=${encodeURIComponent(role)}`;
-        }
-    </script>
-
-    // Initialize the rolling banner using responsive-helper.js
-    <script src="/js/visual-editor.js" defer></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            initRollingBanner();
-        });
-
-
-        window.addEventListener('DOMContentLoaded', () => {
-            // After the heading's animation delay (say 1.5s) plus a little buffer:
-            setTimeout(() => {
-                document.querySelectorAll('.fade-later').forEach(el => {
-                    el.classList.add('fade-in');
-                });
-            }, 1500); // or 2000 if you want a bit more buffer
-        });
-
-
-
-
-        document.getElementById('mode').addEventListener('change', function () {
-            const postcodeContainer = document.getElementById('postcodeContainer');
-            if (this.value === 'in-person') {
-                postcodeContainer.style.display = 'block';
-            } else {
-                postcodeContainer.style.display = 'none';
+       </main>
+        <script>
+            function goToLogin(role) {
+                window.location.href = `login.html?role=${encodeURIComponent(role)}`;
             }
-        });
+        </script>
 
-        document.getElementById('tutorFinderForm').addEventListener('submit', function (event) {
-            event.preventDefault();
+        // Initialize the rolling banner using responsive-helper.js
+        <script src="/js/visual-editor.js" defer></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                initRollingBanner();
+            });
 
-            const subject = document.getElementById('subject').value;
-            const mode = document.getElementById('mode').value;
-            let postcode = document.getElementById('postcode').value;
 
-            if (postcode) {
-                postcode = postcode.toUpperCase();
-            }
+            window.addEventListener('DOMContentLoaded', () => {
+                // After the heading's animation delay (say 1.5s) plus a little buffer:
+                setTimeout(() => {
+                    document.querySelectorAll('.fade-later').forEach(el => {
+                        el.classList.add('fade-in');
+                    });
+                }, 1500); // or 2000 if you want a bit more buffer
+            });
 
-            let queryParams = `?subject=${encodeURIComponent(subject)}&mode=${encodeURIComponent(mode)}`;
-            if (mode === "in-person" && postcode.trim() !== "") {
-                queryParams += `&postcode=${encodeURIComponent(postcode)}`;
-            }
 
-            window.location.href = `/tutors/search${queryParams}`;
-        });
-    </script>
-    <script>
-        // Fade-in animation for sections
-        const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
 
-        // Set initial styles
-        fadeEls.forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-        });
 
-        // Create the Intersection Observer
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Fade it in
-                    entry.target.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-
-                    // Once triggered, stop observing so it doesn't re-animate if user scrolls away
-                    obs.unobserve(entry.target);
+            document.getElementById('mode').addEventListener('change', function () {
+                const postcodeContainer = document.getElementById('postcodeContainer');
+                if (this.value === 'in-person') {
+                    postcodeContainer.style.display = 'block';
+                } else {
+                    postcodeContainer.style.display = 'none';
                 }
             });
-        }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
 
-        // Observe each fadeEl
-        fadeEls.forEach(el => observer.observe(el));
-    </script>
+            document.getElementById('tutorFinderForm').addEventListener('submit', function (event) {
+                event.preventDefault();
 
-    <!-- Load the dynamic sections script -->
-    <script src="/js/dynamic-sections.js?v=20240530" type="module" defer></script>
+                const subject = document.getElementById('subject').value;
+                const mode = document.getElementById('mode').value;
+                let postcode = document.getElementById('postcode').value;
+
+                if (postcode) {
+                    postcode = postcode.toUpperCase();
+                }
+
+                let queryParams = `?subject=${encodeURIComponent(subject)}&mode=${encodeURIComponent(mode)}`;
+                if (mode === "in-person" && postcode.trim() !== "") {
+                    queryParams += `&postcode=${encodeURIComponent(postcode)}`;
+                }
+
+                window.location.href = `/tutors/search${queryParams}`;
+            });
+        </script>
+        <script>
+            // Fade-in animation for sections
+            const fadeEls = document.querySelectorAll('.fade-in-on-scroll');
+
+            // Set initial styles
+            fadeEls.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+            });
+
+            // Create the Intersection Observer
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Fade it in
+                        entry.target.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+
+                        // Once triggered, stop observing so it doesn't re-animate if user scrolls away
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
+
+            // Observe each fadeEl
+            fadeEls.forEach(el => observer.observe(el));
+        </script>
+
+        <!-- Load the dynamic sections script -->
+        <script src="/js/dynamic-sections.js?v=20240530" type="module" defer></script>
 
 
 

@@ -12,7 +12,7 @@
     <script src="/js/nav-loader.js" defer></script>
     <script src="/js/dynamic-nav.js" defer></script>
 </head>
-<body data-page="contact" class="contact-page">
+<body data-page="contact" class="contact-page" data-dyn-manual="true">
     <!-- Shared banner/header -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
@@ -47,8 +47,9 @@
             </div>
         </div>
 
-        <!-- TOP dynamic sections container -->
-        <section id="dynamicSectionsTop" class="dynamic-section-container"></section>
+        <!-- ✦ TOP dynamic sections land here -->
+        <div class="dynamic-sections-separator-top" style="display:none"></div>
+        <section id="dynamicSectionsTop" class="dynamic-section-container" style="display:none"></section>
 
         <!-- CONTACT INFO: Two-column content -->
         <section class="two-col-content fade-in-section">
@@ -70,8 +71,10 @@
             </div>
         </section>
 
-        <!-- MIDDLE dynamic sections container -->
-        <section id="dynamicSectionsMiddle" class="dynamic-section-container"></section>
+
+        <!-- ✦ MIDDLE dynamic sections land here -->
+        <div class="dynamic-sections-separator-middle" style="display:none"></div>
+        <section id="dynamicSectionsMiddle" class="dynamic-section-container" style="display:none"></section>
 
         <!-- HERO: Full-width background image with overlay text -->
         <section class="hero-banner fade-in-section">
@@ -126,8 +129,10 @@
         <!-- Clear separator before bottom dynamic sections -->
         <div class="dynamic-sections-separator"></div>
 
-        <!-- BOTTOM dynamic sections container -->
-        <section id="dynamicSections" class="dynamic-section-container"></section>
+
+        <!-- ✦ BOTTOM (already present in your template) -->
+        <div class="dynamic-sections-separator" style="display:none"></div>
+        <section id="dynamicSections" class="dynamic-section-container" style="display:none"></section>
 
         <div style="clear: both; width: 100%; height: 50px;"></div>
     </main>

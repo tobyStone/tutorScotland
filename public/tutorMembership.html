@@ -12,7 +12,7 @@
     <script src="/js/nav-loader.js" defer></script>
     <script src="/js/dynamic-nav.js" defer></script>
 </head>
-<body data-page="tutorMembership">
+<body data-page="tutorMembership" data-dyn-manual="true">
     <!-- Shared banner/header -->
     <header class="fade-in-section">
         <h1>Tutors Alliance Scotland</h1>
@@ -47,8 +47,9 @@
             </div>
         </div>
 
-        <!-- TOP dynamic sections container -->
-        <section id="dynamicSectionsTop" class="dynamic-section-container fade-in-section"></section>
+        <!-- ✦ TOP dynamic sections land here -->
+        <div class="dynamic-sections-separator-top" style="display:none"></div>
+        <section id="dynamicSectionsTop" class="dynamic-section-container" style="display:none"></section>
 
         <!-- INTRO: Two-column content -->
         <section class="two-col-content fade-in-section">
@@ -87,8 +88,10 @@
             </div>
         </section>
 
-        <!-- MIDDLE dynamic sections container -->
-        <section id="dynamicSectionsMiddle" class="dynamic-section-container fade-in-section"></section>
+
+        <!-- ✦ MIDDLE dynamic sections land here -->
+        <div class="dynamic-sections-separator-middle" style="display:none"></div>
+        <section id="dynamicSectionsMiddle" class="dynamic-section-container" style="display:none"></section>
 
         <!-- WHAT WE OFFER: Two-column content -->
         <section class="two-col-content fade-in-section">
@@ -266,8 +269,10 @@
         <!-- Clear separator before bottom dynamic sections -->
         <div class="dynamic-sections-separator fade-in-section"></div>
 
-        <!-- BOTTOM dynamic sections container -->
-        <section id="dynamicSections" class="dynamic-section-container fade-in-section"></section>
+
+        <!-- ✦ BOTTOM (already present in your template) -->
+        <div class="dynamic-sections-separator" style="display:none"></div>
+        <section id="dynamicSections" class="dynamic-section-container" style="display:none"></section>
     </main>
 
     <!-- SOCIAL ICONS FOOTER -->

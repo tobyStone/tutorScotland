@@ -82,7 +82,7 @@
         }
     </script>
 </head>
-<body class="about-page" data-page="about-us">
+<body class="about-page" data-page="about-us" data-dyn-manual="true">
     <!-- Shared banner/header -->
     <header>
         <h1>Tutors Alliance Scotland</h1>
@@ -116,6 +116,11 @@
                 </div>
             </div>
         </div>
+
+        <!-- ✦ TOP dynamic sections land here -->
+        <div class="dynamic-sections-separator-top" style="display:none"></div>
+        <section id="dynamicSectionsTop" class="dynamic-section-container" style="display:none"></section>
+
 
 
         <!-- ABOUT US: Two-column content -->
@@ -217,6 +222,12 @@
         </section>
 
 
+
+        <!-- ✦ MIDDLE dynamic sections land here -->
+        <div class="dynamic-sections-separator-middle" style="display:none"></div>
+        <section id="dynamicSectionsMiddle" class="dynamic-section-container" style="display:none"></section>
+
+
         <!-- PARTNERSHIPS: Two-column content -->
         <section class="two-col-content fade-in-section" data-ve-section-id="partnerships">
             <div>
@@ -268,11 +279,16 @@
             </div>
         </section>
 
-        <!-- Clear separator before dynamic sections -->
-        <div class="dynamic-sections-separator"></div>
 
-        <!-- Dynamic sections will be added here -->
-        <section id="dynamicSections"></section>
+
+        <!-- ✦ BOTTOM (already present in your template) -->
+        <div class="dynamic-sections-separator" style="display:none"></div>
+        <section id="dynamicSections" class="dynamic-section-container" style="display:none"></section>
+
+
+    </main>
+
+
 
         <!-- SOCIAL ICONS FOOTER -->
         <footer class="site-footer fade-in-section">
