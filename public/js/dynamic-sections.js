@@ -145,11 +145,21 @@ function loadDynamicSections() {
                 // If no dynamic sections, hide all containers and separators
                 hideAllContainers();
             }
+
+            // After processing everything...
+            // let anyone who cares know that dynamic sections are now in the DOM
+            window.dispatchEvent(new CustomEvent('dyn-sections-loaded'));
+            document.body.classList.add('dyn-ready');
+            console.log('[DynSec] Dispatched "dyn-sections-loaded" event.');
         })
         .catch(error => {
             console.error('Error loading dynamic sections:', error);
             // Hide all containers and separators on error
             hideAllContainers();
+            // Also dispatch on error to unblock the visual editor
+            window.dispatchEvent(new CustomEvent('dyn-sections-loaded'));
+            document.body.classList.add('dyn-ready');
+            console.log('[DynSec] Dispatched "dyn-sections-loaded" event after an error.');
         });
 }
 
@@ -298,6 +308,10 @@ function createDynamicSectionElement(section, index) {
     article.className = 'dyn-block fade-in-on-scroll';
     article.classList.add('ve-no-edit');
     article.style.transitionDelay = `${index * 0.1}s`;
+
+    // ✨ ADDED: Give the block a unique handle for the visual-editor drag-drop
+    // Use the database ID for stability, with a fallback for older data.
+    article.dataset.veSectionId = section._id || slugify(section.heading);
 
     // Add anchor ID for navigation linking
     if (section.navAnchor) {

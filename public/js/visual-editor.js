@@ -110,26 +110,41 @@ class VisualEditor {
         }
     }
 
+    /* ------------------------------------------------------------------ */
+    /* wait until dynamic-sections.js tells us it's done (max 2 s)        */
+    waitForDynamicSections() {
+      return new Promise(resolve => {
+        if (document.body.classList.contains('dyn-ready')) return resolve();
+        const handler = () => { window.removeEventListener('dyn-sections-loaded', handler); resolve(); };
+        window.addEventListener('dyn-sections-loaded', handler, { once: true });
+        setTimeout(resolve, 2000); // hard-timeout – never block the page
+      });
+    }
+
     async initialize() {
-        /* 1️⃣ order first so overrides target the right elements */
-        await this.loadSectionOrder();
-        this.applySectionOrder();
+      /* 1.  let dynamic sections land first (at most 2 s) */
+      await this.waitForDynamicSections();
+      console.log('[VE] Dynamic sections are ready. Initializing editor.');
 
-        // 2️⃣ then normal overrides
-        await this.loadContentOverrides();
-        this.applyContentOverrides();
+      /* 2.  load saved order, then apply it (containers are now present) */
+      await this.loadSectionOrder();
+      this.applySectionOrder();
 
-        // Initial admin check
-        const isAdmin = await this.checkAdminStatus();
-        if (isAdmin) {
-            this.loadEditorStyles();
-            this.createEditModeToggle();
-            this.createEditorModal();
-            this.setupKeyboardShortcuts();
-            
-            // Start polling for admin status every 10 minutes
-            this._adminCheckInterval = setInterval(() => this.checkAdminStatus(), 600000);
-        }
+      /* 3.  overrides as usual */
+      await this.loadContentOverrides();
+      this.applyContentOverrides();
+
+      /* 4.  admin / UI wiring (unchanged) */
+      const isAdmin = await this.checkAdminStatus();
+      if (isAdmin) {
+          this.loadEditorStyles();
+          this.createEditModeToggle();
+          this.createEditorModal();
+          this.setupKeyboardShortcuts();
+
+          // Start polling for admin status every 10 minutes
+          this._adminCheckInterval = setInterval(() => this.checkAdminStatus(), 600000);
+      }
     }
 
     loadEditorStyles() {
@@ -2050,42 +2065,28 @@ class VisualEditor {
     }
 
     applySectionOrder() {
-        // 0️⃣  Bail early if there's nothing saved for this page
         if (!this.sectionOrder.length) return;
 
-        // Filter out dynamic container IDs to prevent them from ever being moved by the editor.
-        const forbiddenIDs = ['dynamicSectionsTop', 'dynamicSectionsMiddle', 'dynamicSections'];
-        this.sectionOrder = this.sectionOrder.filter(id => !forbiddenIDs.includes(id));
-
         const parent = document.querySelector('main');
-        if (!parent) {            console.warn('[VE] <main> not found – cannot apply order');
+        if (!parent) {
+            console.warn('[VE] <main> not found – cannot apply order');
             return;
         }
 
-        /* 1️⃣  gather only the reorderable STATIC sections
-               (anything inside the dynamic containers is ignored)                */
-        const staticSections = Array.from(
-            parent.querySelectorAll('[data-ve-section-id]')
-        ).filter(sec => !sec.closest('.dynamic-section-container'));
+        // ✨ CHANGED: Now includes all sections, including containers.
+        const allSections = Array.from(parent.querySelectorAll('[data-ve-section-id]'));
 
-        if (!staticSections.length) {
+        if (!allSections.length) {
             console.log('[VE] No reorderable sections on this page');
             return;
         }
 
-        /* 2️⃣  Park a comment node where the first section lives.
-               This survives while we rip the real nodes out of the tree.         */
         const anchorPlaceholder = document.createComment('ve-order-anchor');
-        parent.replaceChild(anchorPlaceholder, staticSections[0]); // keeps position
+        parent.insertBefore(anchorPlaceholder, allSections[0]);
 
-        /* 3️⃣  Build a lookup → O(1) when stepping through saved order            */
-        const lookup = new Map(
-            staticSections.map(sec => [sec.dataset.veSectionId, sec])
-        );
-
+        const lookup = new Map(allSections.map(sec => [sec.dataset.veSectionId, sec]));
         const frag = document.createDocumentFragment();
 
-        // 3a. append in the order stored in DB
         this.sectionOrder.forEach(id => {
             if (lookup.has(id)) {
                 frag.appendChild(lookup.get(id));
@@ -2093,40 +2094,22 @@ class VisualEditor {
             }
         });
 
-        // 3b. any new sections that weren't in the DB go to the end
         lookup.forEach(sec => frag.appendChild(sec));
 
-        /* 4️⃣  Drop the reordered block back where it came from – **non-destructive** */
         parent.insertBefore(frag, anchorPlaceholder);
         anchorPlaceholder.remove();
 
-        console.log('[VE] Applied non-destructive section order');
+        console.log('[VE] Applied non-destructive section order to all sections.');
     }
 
     scanForSections() {
-        // remove any previous markers
-        document
-            .querySelectorAll('.ve-reorderable')
-            .forEach(el => el.classList.remove('ve-reorderable'));
+        document.querySelectorAll('.ve-reorderable').forEach(el => el.classList.remove('ve-reorderable'));
 
-        const forbidden = new Set([
-            'dynamicSectionsTop',
-            'dynamicSectionsMiddle',
-            'dynamicSections'
-        ]);
+        // ✨ CHANGED: No longer filters out containers. Now includes all sections.
+        this.reorderableSecs = Array.from(document.querySelectorAll('[data-ve-section-id]'));
 
-        // find STATIC sections only
-        this.reorderableSecs = Array.from(
-            document.querySelectorAll('[data-ve-section-id]')
-        ).filter(sec =>
-            !sec.closest('.dynamic-section-container') &&
-            !forbidden.has(sec.dataset.veSectionId)
-        );
-
-        // add marker class
         this.reorderableSecs.forEach(sec => sec.classList.add('ve-reorderable'));
-
-        console.log('[VE] Found reorderable sections:', this.reorderableSecs.length);
+        console.log(`[VE] Found ${this.reorderableSecs.length} reorderable sections (static + dynamic containers).`);
     }
 
 
