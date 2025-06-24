@@ -2050,9 +2050,12 @@ class VisualEditor {
         // 0️⃣  Bail early if there's nothing saved for this page
         if (!this.sectionOrder.length) return;
 
+        // Filter out dynamic container IDs to prevent them from ever being moved by the editor.
+        const forbiddenIDs = ['dynamicSectionsTop', 'dynamicSectionsMiddle', 'dynamicSections'];
+        this.sectionOrder = this.sectionOrder.filter(id => !forbiddenIDs.includes(id));
+
         const parent = document.querySelector('main');
-        if (!parent) {
-            console.warn('[VE] <main> not found – cannot apply order');
+        if (!parent) {            console.warn('[VE] <main> not found – cannot apply order');
             return;
         }
 
@@ -2099,9 +2102,14 @@ class VisualEditor {
 
     scanForSections() {
         // Only scan for static sections, not those inside dynamic containers
+        const forbidden = new Set(['dynamicSectionsTop',
+            'dynamicSectionsMiddle',
+            'dynamicSections']);
         this.reorderableSecs = Array.from(
-            document.querySelectorAll('[data-ve-section-id]')
-        ).filter(sec => !sec.closest('.dynamic-section-container'));
+            document.querySelectorAll('[data-ve-section-id]'))
+            .filter(sec =>
+                !sec.closest('.dynamic-section-container') &&
+                !forbidden.has(sec.dataset.veSectionId));
         console.log('Found reorderable sections:', this.reorderableSecs.length);
     }
 
@@ -2149,10 +2157,15 @@ class VisualEditor {
 
     async persistSectionOrder() {
         // Only persist order for static sections, not those inside dynamic containers
+        const forbidden = new Set(['dynamicSectionsTop',
+            'dynamicSectionsMiddle',
+            'dynamicSections']);
         const order = Array.from(
-            document.querySelectorAll('[data-ve-section-id]')
-        ).filter(sec => !sec.closest('.dynamic-section-container'))
-         .map(el => el.dataset.veSectionId);
+            document.querySelectorAll('[data-ve-section-id]'))
+            .filter(sec =>
+                !sec.closest('.dynamic-section-container') &&
+                !forbidden.has(sec.dataset.veSectionId))
+            .map(el => el.dataset.veSectionId);
 
         const currentPage = this.currentPage.replace(/^\//, '') || 'index';
 

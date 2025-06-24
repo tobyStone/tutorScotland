@@ -44,9 +44,11 @@
             <!-- RIGHT COLUMN: heading + about-us text -->
             <div class="right-col">
 
-                <!-- ✦ TOP dynamic sections land here -->
-                <div class="dynamic-sections-separator-top" style="display:none"></div>
-                <section id="dynamicSectionsTop" class="dynamic-section-container" style="display:none"></section>
+                <!-- ✦ TOP -->
+                <section id="dynamicSectionsTop"
+                         class="dynamic-section-container"
+                         data-ve-section-id="dynamicSectionsTop"
+                         hidden></section>
 
 
                 <div class="about-us-landing" id="aboutUsLanding">
@@ -102,19 +104,21 @@
             </div>
         </div>
 
-        <!-- ✦ MIDDLE dynamic sections land here -->
-        <div class="dynamic-sections-separator-middle" style="display:none"></div>
-        <section id="dynamicSectionsMiddle" class="dynamic-section-container" style="display:none"></section>
+        <!-- ✦ MIDDLE -->
+        <section id="dynamicSectionsMiddle"
+                 class="dynamic-section-container"
+                 data-ve-section-id="dynamicSectionsMiddle"
+                 hidden></section>
 
-        <!-- Clear separator before dynamic sections -->
-        <div class="dynamic-sections-separator"></div>
+        
 
+        <!-- ✦ BOTTOM -->
+        <section id="dynamicSections"
+                 class="dynamic-section-container"
+                 data-ve-section-id="dynamicSections"
+                 hidden></section>
 
-        <!-- ✦ BOTTOM (already present in your template) -->
-        <div class="dynamic-sections-separator" style="display:none"></div>
-        <section id="dynamicSections" class="dynamic-section-container" style="display:none"></section>
-
-       </main>
+    </main>
         <script>
             function goToLogin(role) {
                 window.location.href = `login.html?role=${encodeURIComponent(role)}`;
