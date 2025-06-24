@@ -2103,14 +2103,22 @@ class VisualEditor {
     }
 
     scanForSections() {
-        document.querySelectorAll('.ve-reorderable').forEach(el => el.classList.remove('ve-reorderable'));
+        /* remove any old markers */
+        document
+            .querySelectorAll('.ve-reorderable')
+            .forEach(el => el.classList.remove('ve-reorderable'));
 
-        // ✨ CHANGED: No longer filters out containers. Now includes all sections.
-        this.reorderableSecs = Array.from(document.querySelectorAll('[data-ve-section-id]'));
+        /* pick only the first-level children of <main> */
+        this.reorderableSecs = Array.from(
+            document.querySelectorAll('main > [data-ve-section-id]')
+        );
 
         this.reorderableSecs.forEach(sec => sec.classList.add('ve-reorderable'));
-        console.log(`[VE] Found ${this.reorderableSecs.length} reorderable sections (static + dynamic containers).`);
+        console.log(
+            `[VE] Found ${this.reorderableSecs.length} reorderable top-level sections.`
+        );
     }
+
 
 
   
@@ -2154,7 +2162,7 @@ class VisualEditor {
 
     async persistSectionOrder() {
         const order = Array.from(
-            document.querySelectorAll('.ve-reorderable')
+            document.querySelectorAll('main > .ve-reorderable')
         ).map(el => el.dataset.veSectionId);
 
         const currentPage = this.currentPage.replace(/^\//, '') || 'index';
@@ -2177,6 +2185,7 @@ class VisualEditor {
             this.showNotification('Could not save new order', 'error');
         }
     }
+
 
 
     // Cleanup event listeners
