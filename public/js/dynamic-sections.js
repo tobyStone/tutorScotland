@@ -29,14 +29,13 @@ function loadDynamicSections() {
     // 3️⃣ Normalise to lower-case
     const rawPath = location.pathname.replace(/\/$/, '');   // drop trailing /
     let page = (document.body.dataset.page ||
-                rawPath.split('/').pop().replace(/\.html?$/, '') ||
-                'index').toLowerCase();
+                    (rawPath ? rawPath.split('/').pop().replace(/\.html?$/, '') : 'index')
+                   ).toLowerCase();
 
     // Trust ?slug= ONLY if it exists AND is non-empty
     const urlParams = new URLSearchParams(location.search);
-    const slug = urlParams.has('slug') && urlParams.get('slug')
-                 ? urlParams.get('slug').toLowerCase()
-                 : page;
+    const slugParam = urlParams.get('slug');
+    const slug = slugParam ? slugParam.toLowerCase() : page;
 
     // Debug logging
     console.log('Dynamic Sections Debug:', {

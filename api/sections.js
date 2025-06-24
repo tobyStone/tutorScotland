@@ -211,10 +211,17 @@ module.exports = async (req, res) => {
                 // If no editId, we proceed with creating a new section.
                 console.log('Create operation detected');
 
-                // Handle different possible formats of fields
-                const page = fields.page ?
-                    (Array.isArray(fields.page) ? fields.page[0] : fields.page).toString().toLowerCase().trim()
-                    : 'index';
+                // Helper to get a single value from a field that might be an array
+                const getField = (name) => Array.isArray(fields[name]) ? fields[name][0] : fields[name];
+
+                // Get the raw page field. It is REQUIRED.
+                const rawPage = getField('page');
+                if (!rawPage) {
+                    return res.status(400).json({ message: 'Target Page is a required field and was not provided.' });
+                }
+
+                // Now that we know rawPage exists, we can safely normalize it.
+                const page = rawPage.toString().trim().toLowerCase().replace(/\s+/g, '-');
 
                 // 💡 Safety net: Strip irrelevant fields for rolling-banner
                 if (page === 'rolling-banner') {
@@ -228,16 +235,16 @@ module.exports = async (req, res) => {
                     delete fields.team;
                     console.log('Stripped irrelevant fields for rolling-banner submission');
                 }
+                const heading = getField('heading')?.toString().trim() || '';
+                const text = getField('text')?.toString().trim() || '';
 
-                const heading = fields.heading ?
-                    (Array.isArray(fields.heading) ? fields.heading[0] : fields.heading).toString().trim()
-                    : '';
-                const text = fields.text ?
-                    (Array.isArray(fields.text) ? fields.text[0] : fields.text).toString().trim()
-                    : '';
-
+                // Keep your original validation, adjusted slightly for the new variables
                 if (!heading || !text) {
-                    return res.status(400).json({ message: 'Heading and text required' });
+                    if (getField('layout') !== 'team') { // Only require text for non-team layouts
+                        return res.status(400).json({ message: 'Heading and text required' });
+                    } else if (!heading) {
+                        return res.status(400).json({ message: 'Heading required' });
+                    }
                 }
 
                 // Optional image
