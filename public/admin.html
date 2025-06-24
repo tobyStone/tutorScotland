@@ -1012,8 +1012,9 @@
             e.preventDefault();
             const fd = new FormData(addSectionForm);
 
-            // [MOVE-SECTION] pick destination page
-            const newPage = fd.get('targetPage') || fd.get('page');
+            // Always take the page slug straight from the <select>
+                // (or, when editing & moving, from the hidden targetPage field)
+                const newPage = fd.get('targetPage')?.trim() || pageSel.value.trim();
             if (!PAGES.includes(newPage)) {
                 return alert('Unknown target page: ' + newPage);
             }
