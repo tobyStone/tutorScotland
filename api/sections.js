@@ -211,8 +211,6 @@ module.exports = async (req, res) => {
                 // If no editId, we proceed with creating a new section.
                 console.log('Create operation detected');
 
-                // Helper to get a single value from a field that might be an array
-                const getField = (name) => Array.isArray(fields[name]) ? fields[name][0] : fields[name];
 
                 // Get the raw page field. It is REQUIRED.
                 const rawPage = getField('page');
