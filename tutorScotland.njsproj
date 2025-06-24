@@ -116,6 +116,7 @@
     <Content Include="public\js\dynamic-page.js" />
     <Content Include="public\js\dynamic-sections-template.html" />
     <Content Include="public\js\dynamic-sections.js" />
+    <Content Include="public\js\nav-loader.js" />
     <Content Include="public\js\pages.js" />
     <Content Include="public\js\rolling-banner.js" />
     <Content Include="public\js\upload-helper.js">

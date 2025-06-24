@@ -821,7 +821,6 @@
 
         /* ── layout controls logic ──────────────────────────────────────────── */
         const sectionLayout = document.getElementById('sectionLayout');
-        const standardFields = document.getElementById('standardFields');
         const teamBuilder = document.getElementById('teamBuilder');
         const addMemberBtn = document.getElementById('addMemberBtn');
         const teamMemberList = document.getElementById('teamMemberList');
@@ -1014,7 +1013,10 @@
 
             // Always take the page slug straight from the <select>
                 // (or, when editing & moving, from the hidden targetPage field)
-                const newPage = fd.get('targetPage')?.trim() || pageSel.value.trim();
+            const moveVal = addSectionForm.dataset.editId       // only present while editing
+                                  ? fd.get('targetPage')?.trim()
+                              : '';
+            const newPage = moveVal || pageSel.value.trim();
             if (!PAGES.includes(newPage)) {
                 return alert('Unknown target page: ' + newPage);
             }
