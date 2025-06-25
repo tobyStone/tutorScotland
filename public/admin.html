@@ -134,6 +134,17 @@
             display: block;
         }
 
+        .admin-table {
+            table-layout: fixed; /* cells never grow beyond 100 % */
+            width: 100%;
+        }
+
+            .admin-table th,
+            .admin-table td {
+                overflow-wrap: anywhere; /* let the browser insert soft-wraps */
+                word-break: break-word; /* older fallback, same idea        */
+            }
+
         /* Tutor table specific styles */
         #tutorTable img {
             max-width: 60px;
