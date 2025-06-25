@@ -73,5 +73,12 @@ const schema = new mongoose.Schema({
 }, {
     timestamps: true                                // Adds createdAt and updatedAt
 });
+
+// Add unique index for content overrides
+schema.index(
+  { targetPage: 1, targetSelector: 1, isContentOverride: 1 },
+  { unique: true, partialFilterExpression: { isContentOverride: true } }
+);
+
 module.exports = mongoose.models.Section
     || mongoose.model('Section', schema);

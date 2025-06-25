@@ -1469,45 +1469,57 @@ class VisualEditor {
 
             if (para) {
                 try {
-                    const saved = await this.saveParagraphOverride(para);
-                    this.applyOverride(para, saved);
+                    // A. Save the entire paragraph's HTML. This is now the source of truth.
+                    await this.saveParagraphOverride(para);
+
+                    // B. 💥 CRITICAL FIX: Delete the old, stale link-level override.
+                    const staleSelector = this.getStableLinkSelector(element);
+                    const staleOverride = this.overrides.get(staleSelector);
+
+                    if (staleOverride) {
+                        console.log('Found stale link override to delete:', staleOverride);
+                        await fetch(`/api/content-manager?id=${staleOverride._id}`, {
+                            method: 'DELETE'
+                        });
+                        // Remove it from the local cache as well
+                        this.overrides.delete(staleSelector);
+                    }
+
                     this.closeModal();
-                    this.showNotification('Button updated ✔', 'success');
+                    this.showNotification('Paragraph and button updated ✔', 'success');
+
                 } catch (err) {
-                    console.error('Failed to save paragraph override for button', err);
-                    this.showNotification('Failed to save button update', 'error');
+                    console.error('Failed to save paragraph and clean up button override', err);
+                    this.showNotification('Failed to save update', 'error');
                 }
             } else {
-                /* fall-back: create / replace a normal link override */
+                // Fallback for standalone buttons remains the same
                 const stableSel = this.getStableLinkSelector(element);
-
-                /* decide up-front whether we are updating (PUT) or creating (POST)  */
                 const already = this.overrides.get(stableSel);
-                const method  = 'POST';                               // API only knows POST
-                const api     = '/api/content-manager?operation=override' +
-                                (already ? ('&id=' + already._id) : '');
+                const api = '/api/content-manager?operation=override' +
+                            (already ? ('&id=' + already._id) : '');
 
-                try{
+                try {
                     const resp = await fetch(api, {
-                        method,
+                        method: 'POST',
                         headers:{ 'Content-Type':'application/json' },
                         body: JSON.stringify({
-                            targetPage    : this.currentPage,
+                            targetPage: this.currentPage,
                             targetSelector: stableSel,
-                            contentType   : 'link',
-                            image         : url,
-                            text          : label,
+                            contentType: 'link',
+                            image: url,
+                            text: label,
                             originalContent: this.getOriginalContent(element,'link')
                         })
                     });
-                    if(!resp.ok) throw new Error('network');
+                    if(!resp.ok) throw new Error('API Error saving standalone button');
 
                     const ov = await resp.json();
-                    this.overrides.set(stableSel, ov);        // idempotent
+                    this.overrides.set(stableSel, ov);
                     this.applyOverride(element, ov);
                     this.closeModal();
                     this.showNotification('Button updated ✔', 'success');
-                }catch(err){
+                } catch(err) {
                     console.error('Failed to save link override for standalone button',err);
                     this.showNotification('Failed to save button update','error');
                 }
@@ -2068,7 +2080,7 @@ class VisualEditor {
     /*  SECTION ORDER: apply saved order (containers stay in the list)    */
     /* ------------------------------------------------------------------ */
     applySectionOrder() {
-        /* 0️⃣  Bail if there’s nothing saved for this page */
+        /* 0️⃣  Bail if there's nothing saved for this page */
         if (!this.sectionOrder.length) return;
 
         const parent = document.querySelector('main');
@@ -2107,7 +2119,7 @@ class VisualEditor {
             }
         });
 
-        /* 5️⃣  Append any brand-new sections that weren’t in the DB yet */
+        /* 5️⃣  Append any brand-new sections that weren't in the DB yet */
         lookup.forEach(sec => frag.appendChild(sec));
 
         /* 6️⃣  Commit the fragment */

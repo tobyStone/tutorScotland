@@ -96,7 +96,7 @@ async function handleGetOverrides(req, res) {
             isContentOverride: true,
             targetPage: page,
             isActive: { $ne: false }
-        }).lean();
+        }).sort({ createdAt: 1 }).lean();
 
         return res.status(200).json(overrides);
     } catch (error) {
