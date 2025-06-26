@@ -1448,31 +1448,31 @@ class VisualEditor {
         }
     }
 
+    // This is the complete, corrected function.
     async saveContent() {
         if (!this.activeEditor) return;
 
         const { element, selector, type } = this.activeEditor;
 
+        // Special, robust handling for buttons
         if (type === 'link' && element.classList.contains('ve-btn')) {
-            // 1️⃣ write the form values straight into the DOM
+            // 1. Get the new content from the form
             const { image: url, text: label } = this.getFormData('link');
             element.href = url;
             element.textContent = label;
-
-            // make the change persist past enableLinks()
             if (element.dataset.originalHref !== undefined) {
                 element.dataset.originalHref = url;
             }
 
-            /* 2️⃣ persist – paragraph when available, otherwise the anchor itself */
             const para = element.closest('p');
 
+            // 2. If the button is inside a paragraph, save the whole paragraph
             if (para) {
                 try {
-                    // A. Save the entire paragraph's HTML. This is now the source of truth.
+                    // A. Save the entire paragraph's HTML. This is the new source of truth.
                     await this.saveParagraphOverride(para);
 
-                    // B. 💥 CRITICAL FIX: Delete the old, stale link-level override.
+                    // B. CRITICAL FIX: Find and delete the old, stale link-level override.
                     const staleSelector = this.getStableLinkSelector(element);
                     const staleOverride = this.overrides.get(staleSelector);
 
@@ -1481,7 +1481,7 @@ class VisualEditor {
                         await fetch(`/api/content-manager?id=${staleOverride._id}`, {
                             method: 'DELETE'
                         });
-                        // Remove it from the local cache as well
+                        // Also remove it from the local cache to prevent re-application
                         this.overrides.delete(staleSelector);
                     }
 
@@ -1493,44 +1493,43 @@ class VisualEditor {
                     this.showNotification('Failed to save update', 'error');
                 }
             } else {
-                // Fallback for standalone buttons remains the same
+                // 3. Fallback for standalone buttons (not in a paragraph)
                 const stableSel = this.getStableLinkSelector(element);
                 const already = this.overrides.get(stableSel);
                 const api = '/api/content-manager?operation=override' +
-                            (already ? ('&id=' + already._id) : '');
+                    (already ? ('&id=' + already._id) : '');
 
                 try {
                     const resp = await fetch(api, {
                         method: 'POST',
-                        headers:{ 'Content-Type':'application/json' },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             targetPage: this.currentPage,
                             targetSelector: stableSel,
                             contentType: 'link',
                             image: url,
                             text: label,
-                            originalContent: this.getOriginalContent(element,'link')
+                            originalContent: this.getOriginalContent(element, 'link')
                         })
                     });
-                    if(!resp.ok) throw new Error('API Error saving standalone button');
+                    if (!resp.ok) throw new Error('API Error saving standalone button');
 
                     const ov = await resp.json();
                     this.overrides.set(stableSel, ov);
                     this.applyOverride(element, ov);
                     this.closeModal();
                     this.showNotification('Button updated ✔', 'success');
-                } catch(err) {
-                    console.error('Failed to save link override for standalone button',err);
-                    this.showNotification('Failed to save button update','error');
+                } catch (err) {
+                    console.error('Failed to save link override for standalone button', err);
+                    this.showNotification('Failed to save button update', 'error');
                 }
             }
-            return;
+            return; // End special handling for buttons
         }
 
+        // --- Original logic for all other content types ---
         const contentData = this.getFormData(type);
-
         try {
-            // Save to database - pass operation in query string for API compatibility
             const response = await fetch('/api/content-manager?operation=override', {
                 method: 'POST',
                 headers: {
@@ -1547,17 +1546,9 @@ class VisualEditor {
 
             if (response.ok) {
                 const override = await response.json();
-
-                // Apply changes to element
                 this.applyOverride(element, override);
-
-                // Update local overrides
                 this.overrides.set(selector, override);
-
-                // Close modal
                 this.closeModal();
-
-                // Show success message
                 this.showNotification('Content saved successfully!', 'success');
             } else {
                 throw new Error('Failed to save content');
@@ -1567,6 +1558,7 @@ class VisualEditor {
             this.showNotification('Failed to save content', 'error');
         }
     }
+
 
     getFormData(type) {
         switch (type) {
