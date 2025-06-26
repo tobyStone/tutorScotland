@@ -121,30 +121,35 @@ class VisualEditor {
       });
     }
 
+    // In public/js/visual-editor.js, modify the initialize function
+
     async initialize() {
-      /* 1.  let dynamic sections land first (at most 2 s) */
-      await this.waitForDynamicSections();
-      console.log('[VE] Dynamic sections are ready. Initializing editor.');
+        /* 1.  let dynamic sections land first (at most 2 s) */
+        await this.waitForDynamicSections();
+        console.log('[VE] Dynamic sections are ready. Initializing editor.');
 
-      /* 2.  load saved order, then apply it (containers are now present) */
-      await this.loadSectionOrder();
-      this.applySectionOrder();
+        /* 2.  load saved order, then apply it (containers are now present) */
+        await this.loadSectionOrder();
+        this.applySectionOrder();
 
-      /* 3.  overrides as usual */
-      await this.loadContentOverrides();
-      this.applyContentOverrides();
+        /* 3.  overrides as usual */
+        await this.loadContentOverrides();
 
-      /* 4.  admin / UI wiring (unchanged) */
-      const isAdmin = await this.checkAdminStatus();
-      if (isAdmin) {
-          this.loadEditorStyles();
-          this.createEditModeToggle();
-          this.createEditorModal();
-          this.setupKeyboardShortcuts();
+        // --- THIS IS THE CHANGE ---
+        // OLD: this.applyContentOverrides();
+        // NEW:
+        this.applyOverridesWithRetry();
+        // --- END OF CHANGE ---
 
-          // Start polling for admin status every 10 minutes
-          this._adminCheckInterval = setInterval(() => this.checkAdminStatus(), 600000);
-      }
+        /* 4.  admin / UI wiring (unchanged) */
+        const isAdmin = await this.checkAdminStatus();
+        if (isAdmin) {
+            this.loadEditorStyles();
+            this.createEditModeToggle();
+            this.createEditorModal();
+            this.setupKeyboardShortcuts();
+            this._adminCheckInterval = setInterval(() => this.checkAdminStatus(), 600000);
+        }
     }
 
     loadEditorStyles() {
@@ -215,23 +220,49 @@ class VisualEditor {
 
 
 
+    // In public/js/visual-editor.js
+
     applyContentOverrides() {
-        console.log('[VE DEBUG] Starting to apply all content overrides...');
+        console.log('[VE RETRY] Applying all known content overrides...');
         this.overrides.forEach((ov, sel) => {
-
-            // --- NEW LOGGING ---
-            console.log(`[VE DEBUG] Attempting to apply override for selector: "${sel}"`, ov);
             const elements = document.querySelectorAll(sel);
-            if (elements.length === 0) {
-                console.warn(`[VE DEBUG] WARNING: Found 0 elements for selector "${sel}". Override will not be applied.`);
-            } else {
-                console.log(`[VE DEBUG] Found ${elements.length} element(s) for selector "${sel}". Applying now...`);
-            }
-            // --- END LOGGING ---
-
             elements.forEach(el => this.applyOverride(el, ov));
         });
-        console.log('[VE DEBUG] Finished applying all content overrides.');
+    }
+
+    // Add this new function inside the VisualEditor class
+
+    async applyOverridesWithRetry(maxRetries = 50, delay = 100) {
+        let attempt = 0;
+
+        const execute = () => {
+            // Find all selectors in our map that do NOT yet exist in the DOM
+            const missingSelectors = [...this.overrides.keys()].filter(sel =>
+                !document.querySelector(sel)
+            );
+
+            if (missingSelectors.length === 0) {
+                // Success! All elements are present.
+                console.log(`%c[VE RETRY] SUCCESS: All ${this.overrides.size} elements found. Applying all overrides now.`, 'color: green; font-weight: bold;');
+                this.applyContentOverrides();
+                return; // We are done
+            }
+
+            if (attempt >= maxRetries) {
+                // Failure: We timed out.
+                console.error(`%c[VE RETRY] FAILED: After ${maxRetries} attempts, some elements are still missing.`, 'color: red; font-weight: bold;', { missingSelectors });
+                // Still try to apply to what we did find
+                this.applyContentOverrides();
+                return;
+            }
+
+            // Wait and try again
+            attempt++;
+            console.log(`[VE RETRY] Attempt #${attempt}: Waiting for ${missingSelectors.length} elements to appear...`);
+            setTimeout(execute, delay);
+        };
+
+        execute(); // Start the process
     }
 
     applyOverride(element, override) {
