@@ -1447,8 +1447,8 @@ class VisualEditor {
                 break;
         }
     }
+    // This is the complete, corrected function for visual-editor.js
 
-    // This is the complete, corrected function.
     async saveContent() {
         if (!this.activeEditor) return;
 
@@ -1456,7 +1456,7 @@ class VisualEditor {
 
         // Special, robust handling for buttons
         if (type === 'link' && element.classList.contains('ve-btn')) {
-            // 1. Get the new content from the form
+            // 1. Get the new content from the form and update the element in the DOM
             const { image: url, text: label } = this.getFormData('link');
             element.href = url;
             element.textContent = label;
@@ -1472,17 +1472,35 @@ class VisualEditor {
                     // A. Save the entire paragraph's HTML. This is the new source of truth.
                     await this.saveParagraphOverride(para);
 
-                    // B. CRITICAL FIX: Find and delete the old, stale link-level override.
-                    const staleSelector = this.getStableLinkSelector(element);
-                    const staleOverride = this.overrides.get(staleSelector);
+                    // B. --- ROBUST FIX: Find the stale link override by checking which one targets this element ---
+                    let staleOverrideToDelete = null;
+                    for (const ov of this.overrides.values()) {
+                        // Is this override for a link?
+                        if (ov.contentType === 'link') {
+                            try {
+                                // Does its selector point to our current button element?
+                                const targetedEl = document.querySelector(ov.targetSelector);
+                                if (targetedEl === element) {
+                                    staleOverrideToDelete = ov;
+                                    break; // Found it, stop searching
+                                }
+                            } catch (e) {
+                                console.warn(`[VE] Ignoring invalid selector from overrides map: ${ov.targetSelector}`);
+                            }
+                        }
+                    }
 
-                    if (staleOverride) {
-                        console.log('Found stale link override to delete:', staleOverride);
-                        await fetch(`/api/content-manager?id=${staleOverride._id}`, {
+                    // C. If we found a stale override, delete it via the API
+                    if (staleOverrideToDelete) {
+                        console.log('Found stale link override to delete:', staleOverrideToDelete);
+                        const response = await fetch(`/api/content-manager?id=${staleOverrideToDelete._id}`, {
                             method: 'DELETE'
                         });
-                        // Also remove it from the local cache to prevent re-application
-                        this.overrides.delete(staleSelector);
+                        if (response.ok) {
+                            // Also remove it from the local cache
+                            this.overrides.delete(staleOverrideToDelete.targetSelector);
+                            console.log('Successfully deleted stale override.');
+                        }
                     }
 
                     this.closeModal();
@@ -1493,7 +1511,7 @@ class VisualEditor {
                     this.showNotification('Failed to save update', 'error');
                 }
             } else {
-                // 3. Fallback for standalone buttons (not in a paragraph)
+                // 3. Fallback for standalone buttons (not in a paragraph) - This logic remains the same
                 const stableSel = this.getStableLinkSelector(element);
                 const already = this.overrides.get(stableSel);
                 const api = '/api/content-manager?operation=override' +
@@ -1558,7 +1576,6 @@ class VisualEditor {
             this.showNotification('Failed to save content', 'error');
         }
     }
-
 
     getFormData(type) {
         switch (type) {
