@@ -188,14 +188,24 @@ class VisualEditor {
         }
     }
 
+
     async loadContentOverrides() {
         try {
             const response = await fetch(`/api/content-manager?operation=overrides&page=${this.currentPage}`);
             const overrides = await response.json();
 
+            // --- NEW LOGGING ---
+            console.log('[VE DEBUG] Overrides fetched from API:', JSON.parse(JSON.stringify(overrides)));
+            // --- END LOGGING ---
+
             overrides.forEach(override => {
                 this.overrides.set(override.targetSelector, override);
             });
+
+            // --- NEW LOGGING ---
+            console.log('[VE DEBUG] Overrides map populated:', this.overrides);
+            // --- END LOGGING ---
+
         } catch (error) {
             console.error('Failed to load content overrides:', error);
         }
@@ -204,10 +214,24 @@ class VisualEditor {
 
 
 
+
     applyContentOverrides() {
-        this.overrides.forEach((ov, sel) =>
-            document.querySelectorAll(sel).forEach(el => this.applyOverride(el, ov))
-        );
+        console.log('[VE DEBUG] Starting to apply all content overrides...');
+        this.overrides.forEach((ov, sel) => {
+
+            // --- NEW LOGGING ---
+            console.log(`[VE DEBUG] Attempting to apply override for selector: "${sel}"`, ov);
+            const elements = document.querySelectorAll(sel);
+            if (elements.length === 0) {
+                console.warn(`[VE DEBUG] WARNING: Found 0 elements for selector "${sel}". Override will not be applied.`);
+            } else {
+                console.log(`[VE DEBUG] Found ${elements.length} element(s) for selector "${sel}". Applying now...`);
+            }
+            // --- END LOGGING ---
+
+            elements.forEach(el => this.applyOverride(el, ov));
+        });
+        console.log('[VE DEBUG] Finished applying all content overrides.');
     }
 
     applyOverride(element, override) {
@@ -223,20 +247,33 @@ class VisualEditor {
             }
         }
 
+
         switch (override.contentType) {
             case 'text':
+                // --- NEW LOGGING ---
+                console.log(`%c[VE DEBUG] -> Applying TEXT: "${override.text || override.heading}"`, 'color: orange;', element);
+                // --- END LOGGING ---
                 element.textContent = override.text || override.heading;
                 break;
             case 'html':
+                // --- NEW LOGGING ---
+                console.log(`%c[VE DEBUG] -> Applying HTML`, 'color: purple;', { content: override.text, element });
+                // --- END LOGGING ---
                 element.innerHTML = override.text;
                 break;
             case 'image':
+                // --- NEW LOGGING ---
+                console.log(`%c[VE DEBUG] -> Applying IMAGE: "${override.image}"`, 'color: green;', element);
+                // --- END LOGGING ---
                 if (element.tagName === 'IMG') {
                     element.src = override.image;
                     if (override.text) element.alt = override.text;
                 }
                 break;
             case 'link':
+                // --- NEW LOGGING ---
+                console.log(`%c[VE DEBUG] -> Applying LINK: text="${override.text}", href="${override.image}"`, 'color: blue;', element);
+                // --- END LOGGING ---
                 if (element.tagName === 'A') {
                     element.href = override.image;  // Using image field for URL
                     element.textContent = override.text;
