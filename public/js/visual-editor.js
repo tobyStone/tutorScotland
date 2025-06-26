@@ -1447,108 +1447,88 @@ class VisualEditor {
                 break;
         }
     }
-    // This is the complete, corrected function for visual-editor.js
-
+    // This is the new, simplified, and correct function.
     async saveContent() {
         if (!this.activeEditor) return;
 
         const { element, selector, type } = this.activeEditor;
 
-        // Special, robust handling for buttons
+        // A. Unified handling for buttons: ALWAYS save as a 'link' override.
         if (type === 'link' && element.classList.contains('ve-btn')) {
-            // 1. Get the new content from the form and update the element in the DOM
-            const { image: url, text: label } = this.getFormData('link');
-            element.href = url;
-            element.textContent = label;
-            if (element.dataset.originalHref !== undefined) {
-                element.dataset.originalHref = url;
+
+            // 1. Get the new, updated data directly from the form fields.
+            const contentData = this.getFormData('link');
+            const url = contentData.image; // 'image' field holds the URL
+            const label = contentData.text;
+
+            console.log(`[VE Save] Saving button. Text from form: "${label}", URL from form: "${url}"`);
+
+            // 2. Find the override document to update.
+            //    We will now search our local cache for an override that targets this specific element.
+            let overrideToUpdate = null;
+            for (const ov of this.overrides.values()) {
+                try {
+                    if (document.querySelector(ov.targetSelector) === element) {
+                        overrideToUpdate = ov;
+                        break;
+                    }
+                } catch (e) { /* Ignore invalid selectors */ }
             }
 
-            const para = element.closest('p');
+            // 3. Construct the API URL. If we found an override, we'll update it by its ID.
+            const api = '/api/content-manager?operation=override' +
+                (overrideToUpdate ? `&id=${overrideToUpdate._id}` : '');
 
-            // 2. If the button is inside a paragraph, save the whole paragraph
-            if (para) {
-                try {
-                    // A. Save the entire paragraph's HTML. This is the new source of truth.
-                    await this.saveParagraphOverride(para);
+            // 4. Generate a stable selector for creating a *new* override if none was found.
+            const stableSel = this.getStableLinkSelector(element);
 
-                    // B. --- ROBUST FIX: Find the stale link override by checking which one targets this element ---
-                    let staleOverrideToDelete = null;
-                    for (const ov of this.overrides.values()) {
-                        // Is this override for a link?
-                        if (ov.contentType === 'link') {
-                            try {
-                                // Does its selector point to our current button element?
-                                const targetedEl = document.querySelector(ov.targetSelector);
-                                if (targetedEl === element) {
-                                    staleOverrideToDelete = ov;
-                                    break; // Found it, stop searching
-                                }
-                            } catch (e) {
-                                console.warn(`[VE] Ignoring invalid selector from overrides map: ${ov.targetSelector}`);
-                            }
-                        }
-                    }
+            try {
+                const response = await fetch(api, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        targetPage: this.currentPage,
+                        targetSelector: stableSel,
+                        contentType: 'link',
+                        image: url, // a.href
+                        text: label, // a.textContent
+                        originalContent: this.getOriginalContent(element, 'link')
+                    })
+                });
 
-                    // C. If we found a stale override, delete it via the API
-                    if (staleOverrideToDelete) {
-                        console.log('Found stale link override to delete:', staleOverrideToDelete);
-                        const response = await fetch(`/api/content-manager?id=${staleOverrideToDelete._id}`, {
-                            method: 'DELETE'
-                        });
-                        if (response.ok) {
-                            // Also remove it from the local cache
-                            this.overrides.delete(staleOverrideToDelete.targetSelector);
-                            console.log('Successfully deleted stale override.');
-                        }
-                    }
+                if (!response.ok) throw new Error('API request failed');
 
-                    this.closeModal();
-                    this.showNotification('Paragraph and button updated ✔', 'success');
+                const savedOverride = await response.json();
 
-                } catch (err) {
-                    console.error('Failed to save paragraph and clean up button override', err);
-                    this.showNotification('Failed to save update', 'error');
+                // 5. Update the live DOM and our local cache
+                this.applyOverride(element, savedOverride);
+                this.overrides.set(stableSel, savedOverride);
+
+                // If we updated an old override with a different selector, remove the old key
+                if (overrideToUpdate && overrideToUpdate.targetSelector !== stableSel) {
+                    this.overrides.delete(overrideToUpdate.targetSelector);
                 }
-            } else {
-                // 3. Fallback for standalone buttons (not in a paragraph) - This logic remains the same
-                const stableSel = this.getStableLinkSelector(element);
-                const already = this.overrides.get(stableSel);
-                const api = '/api/content-manager?operation=override' +
-                    (already ? ('&id=' + already._id) : '');
 
-                try {
-                    const resp = await fetch(api, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            targetPage: this.currentPage,
-                            targetSelector: stableSel,
-                            contentType: 'link',
-                            image: url,
-                            text: label,
-                            originalContent: this.getOriginalContent(element, 'link')
-                        })
-                    });
-                    if (!resp.ok) throw new Error('API Error saving standalone button');
+                this.closeModal();
+                this.showNotification('Button updated successfully!', 'success');
 
-                    const ov = await resp.json();
-                    this.overrides.set(stableSel, ov);
-                    this.applyOverride(element, ov);
-                    this.closeModal();
-                    this.showNotification('Button updated ✔', 'success');
-                } catch (err) {
-                    console.error('Failed to save link override for standalone button', err);
-                    this.showNotification('Failed to save button update', 'error');
-                }
+            } catch (err) {
+                console.error('Failed to save button override:', err);
+                this.showNotification('Failed to save button update.', 'error');
             }
-            return; // End special handling for buttons
+
+            return; // End of button-specific logic
         }
 
-        // --- Original logic for all other content types ---
+        // B. Original logic for all other content types (unchanged)
         const contentData = this.getFormData(type);
         try {
-            const response = await fetch('/api/content-manager?operation=override', {
+            // ... (the rest of the original function for non-button elements)
+            const existingOverride = this.overrides.get(selector);
+            const api = '/api/content-manager?operation=override' +
+                (existingOverride ? `&id=${existingOverride._id}` : '');
+
+            const response = await fetch(api, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
