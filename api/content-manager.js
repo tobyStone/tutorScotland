@@ -110,42 +110,43 @@ async function handleGetOverrides(req, res) {
  * ------------------------------------------------------------------ */
 async function handleCreateOverride(req, res) {
     try {
-        const { id } = req.query;        // ? present on UPDATE
+        const { id } = req.query; // Present on UPDATE
         const {
-            targetPage,           // required on create
-            targetSelector,       // required on create / update
-            contentType,          // required on create
+            targetPage,
+            targetSelector,
+            contentType,
             text,
-            image,
+            image, // For links, this holds the URL
             originalContent,
             overrideType = 'replace',
         } = req.body;
 
-        /* ----------------------------- *
-         * 1) COMMON VALIDATION          *
-         * ----------------------------- */
         if (!targetSelector || (!id && (!targetPage || !contentType))) {
             return res.status(400).json({ message: 'Missing required fields.' });
         }
 
         /* ----------------------------- *
-         * 2) UPDATE  (id present)       *
+         * 2) UPDATE (id present)        *
          * ----------------------------- */
         if (id) {
-            console.log('[handleOverride] UPDATE ?', id, targetSelector);
+            console.log('[handleOverride] UPDATE ?', id);
 
-            const allowed = { text, image, targetSelector };
-            const $set = { updatedAt: new Date() };
+            // Explicitly define the fields that are allowed to be updated.
+            // CRITICAL: We DO NOT include originalContent here to make it immutable.
+            const updateData = {
+                text,
+                image,
+                targetSelector, // Still allow selector migration if needed
+                updatedAt: new Date()
+            };
 
-            // copy only defined, non-null props
-            Object.entries(allowed).forEach(([k, v]) => {
-                if (typeof v !== 'undefined') $set[k] = v;
-            });
+            // Remove any undefined properties so we don't overwrite fields with null.
+            Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
 
             const updated = await Section.findByIdAndUpdate(
                 id,
-                { $set },
-                { new: true }
+                { $set: updateData },
+                { new: true } // Return the modified document
             ).lean();
 
             if (!updated) {
@@ -159,7 +160,7 @@ async function handleCreateOverride(req, res) {
          * ----------------------------- */
         console.log('[handleOverride] CREATE ?', targetSelector);
 
-        // de-dup : if a record already exists for the same page+selector, update it
+        // This de-duplication is a failsafe; a new element should have a new selector.
         let doc = await Section.findOne({
             targetPage,
             targetSelector,
@@ -167,22 +168,24 @@ async function handleCreateOverride(req, res) {
         });
 
         if (doc) {
+            console.log('[handleOverride] De-duplication: Found existing doc, updating it.');
             doc.text = text ?? doc.text;
             doc.image = image ?? doc.image;
+            // Do NOT touch originalContent
             doc.updatedAt = new Date();
             await doc.save();
             return res.status(200).json(doc.toObject());
         }
 
-        // truly new document
+        // Truly new document, save originalContent for the first and only time.
         doc = new Section({
-            page: targetPage,           // legacy field – keep for now
+            page: targetPage,
             targetPage,
             targetSelector,
             contentType,
             text,
             image,
-            originalContent,
+            originalContent, // Saved only on creation
             overrideType,
             isContentOverride: true,
             isActive: true,
@@ -194,28 +197,6 @@ async function handleCreateOverride(req, res) {
     } catch (err) {
         console.error('handleOverride error:', err);
         return res.status(500).json({ message: 'Error saving override', error: err.message });
-    }
-}
-
-// Delete content override (restore original)
-async function handleDeleteOverride(req, res) {
-    try {
-        const { id } = req.query;
-
-        if (!id) {
-            return res.status(400).json({ message: 'Override ID required' });
-        }
-
-        const override = await Section.findByIdAndDelete(id);
-
-        if (!override) {
-            return res.status(404).json({ message: 'Override not found' });
-        }
-
-        return res.status(200).json({ message: 'Override deleted successfully' });
-    } catch (error) {
-        console.error('Delete Override Error:', error);
-        return res.status(500).json({ message: 'Error deleting override' });
     }
 }
 
