@@ -865,6 +865,33 @@ class VisualEditor {
         }
     }
 
+    /* ---------------------------------------------------------- *
+ *  Remove accidental twin elements and move ve-block-id back *
+ *  to the original in-flow element (H1-H6, P, etc.)          *
+ * ---------------------------------------------------------- */
+    _cleanUpTwins() {
+        const norm = s => (s || '').replace(/\s+/g, ' ').trim();
+
+        document.querySelectorAll('[data-ve-block-id]').forEach(el => {
+            // Only worry about headings / paragraphs we know we duplicate sometimes
+            if (!/^h[1-6]|p$/.test(el.tagName.toLowerCase())) return;
+
+            const txt = norm(el.textContent);
+            const twin = el.parentElement?.querySelector(
+                `${el.tagName}:not([data-ve-block-id])`
+            );
+
+            /* Found the original?  Great – move the ID over and delete the twin  */
+            if (twin && norm(twin.textContent).startsWith('Raising Standards')) {
+                twin.dataset.veBlockId = el.dataset.veBlockId;   // keep stable id
+                twin.textContent = txt;                    // keep new wording
+                el.remove();                                     // drop stray clone
+                console.info('[VE clean-up] twin removed, ID moved to original');
+            }
+        });
+    }
+
+
     async uploadImage() {
         const fileInput = document.getElementById('image-upload');
         const file = fileInput.files[0];
