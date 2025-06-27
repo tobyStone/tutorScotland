@@ -307,9 +307,13 @@ class VisualEditor {
         }
     }
 
+    // visual-editor.js
+
     async saveContent() {
         if (!this.activeEditor) return;
-        const { element, type } = this.activeEditor;
+
+        // Use the 'original' content captured when the editor was first opened. This is more reliable.
+        const { element, type, original } = this.activeEditor;
         const contentData = this.getFormData(type);
 
         let overrideToUpdate = null;
@@ -340,7 +344,8 @@ class VisualEditor {
                     contentType: type,
                     ...contentData,
                     isButton: (type === 'link' && document.getElementById('link-is-button')?.checked),
-                    originalContent: this.getOriginalContent(element, type)
+                    // CRITICAL CHANGE: Use the pristine 'original' content.
+                    originalContent: original
                 })
             });
 
@@ -805,13 +810,28 @@ class VisualEditor {
         }
     }
 
+    // visual-editor.js
+
     getOriginalContent(element, type) {
+        // Clone the element to safely work on it without affecting the live page
+        const clone = element.cloneNode(true);
+
+        // IMPORTANT: Remove any editor-specific UI artifacts from the clone before getting content
+        clone.querySelectorAll('.edit-overlay, .edit-controls, .ve-drag-handle').forEach(n => n.remove());
+
         switch (type) {
-            case 'text': return element.textContent;
-            case 'html': return element.innerHTML;
-            case 'image': return { src: element.src, alt: element.alt };
-            case 'link': return { href: element.href, text: element.textContent };
-            default: return element.outerHTML;
+            case 'text':
+                return clone.textContent.trim();
+            case 'html':
+                return clone.innerHTML.trim();
+            case 'image':
+                // For images, the original `src` and `alt` are what matter
+                return { src: element.src, alt: element.alt };
+            case 'link':
+                // For links, get the clean text and the real href (in case edit mode has disabled it)
+                return { href: element.dataset.originalHref || element.href, text: clone.textContent.trim() };
+            default:
+                return clone.outerHTML;
         }
     }
 
