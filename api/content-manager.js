@@ -62,10 +62,6 @@ module.exports = async (req, res) => {
             }
         }
 
-        // PATCH Operations
-        if (method === 'PATCH') {
-            return handleUpdateOverride(req, res);
-        }
 
         // DELETE Operations
         if (method === 'DELETE') {
@@ -159,35 +155,98 @@ async function handleCreateOverride(req, res) {
     }
 }
 
-// Update existing content override
-async function handleUpdateOverride(req, res) {
+/* ------------------------------------------------------------------ *
+ *  handleCreateOrUpdateOverride                                       *
+ *  – called for POST ?operation=override                              *
+ *    • WITHOUT  ?id  ? create new override                            *
+ *    • WITH     ?id  ? update existing override                       *
+ * ------------------------------------------------------------------ */
+async function handleCreateOverride(req, res) {
     try {
-        const { id } = req.query;
-        const updateData = req.body;
+        const { id } = req.query;        // ? present on UPDATE
+        const {
+            targetPage,           // required on create
+            targetSelector,       // required on create / update
+            contentType,          // required on create
+            text,
+            image,
+            originalContent,
+            overrideType = 'replace',
+        } = req.body;
 
-        if (!id) {
-            return res.status(400).json({ message: 'Override ID required' });
+        /* ----------------------------- *
+         * 1) COMMON VALIDATION          *
+         * ----------------------------- */
+        if (!targetSelector || (!id && (!targetPage || !contentType))) {
+            return res.status(400).json({ message: 'Missing required fields.' });
         }
 
-        // Ensure isButton is explicitly handled if present in updateData
-        if ('isButton' in updateData) {
-            updateData.isButton = Boolean(updateData.isButton);
+        /* ----------------------------- *
+         * 2) UPDATE  (id present)       *
+         * ----------------------------- */
+        if (id) {
+            console.log('[handleOverride] UPDATE ?', id, targetSelector);
+
+            const allowed = { text, image, targetSelector };
+            const $set = { updatedAt: new Date() };
+
+            // copy only defined, non-null props
+            Object.entries(allowed).forEach(([k, v]) => {
+                if (typeof v !== 'undefined') $set[k] = v;
+            });
+
+            const updated = await Section.findByIdAndUpdate(
+                id,
+                { $set },
+                { new: true }
+            ).lean();
+
+            if (!updated) {
+                return res.status(404).json({ message: `Override ${id} not found` });
+            }
+            return res.status(200).json(updated);
         }
 
-        const override = await Section.findByIdAndUpdate(
-            id,
-            { ...updateData, updatedAt: new Date() },
-            { new: true }
-        );
+        /* ----------------------------- *
+         * 3) CREATE (no id)             *
+         * ----------------------------- */
+        console.log('[handleOverride] CREATE ?', targetSelector);
 
-        if (!override) {
-            return res.status(404).json({ message: 'Override not found' });
+        // de-dup : if a record already exists for the same page+selector, update it
+        let doc = await Section.findOne({
+            targetPage,
+            targetSelector,
+            isContentOverride: true,
+        });
+
+        if (doc) {
+            doc.text = text ?? doc.text;
+            doc.image = image ?? doc.image;
+            doc.updatedAt = new Date();
+            await doc.save();
+            return res.status(200).json(doc.toObject());
         }
 
-        return res.status(200).json(override);
-    } catch (error) {
-        console.error('Update Override Error:', error);
-        return res.status(500).json({ message: 'Error updating override' });
+        // truly new document
+        doc = new Section({
+            page: targetPage,           // legacy field – keep for now
+            targetPage,
+            targetSelector,
+            contentType,
+            text,
+            image,
+            originalContent,
+            overrideType,
+            isContentOverride: true,
+            isActive: true,
+            isPublished: true,
+        });
+        await doc.save();
+        return res.status(201).json(doc.toObject());
+
+    } catch (err) {
+        console.error('handleOverride error:', err);
+        return res.status(500).json({ message: 'Error saving override', error: err.message });
     }
 }
 
