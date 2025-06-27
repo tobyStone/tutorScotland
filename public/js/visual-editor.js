@@ -878,8 +878,9 @@ class VisualEditor {
             if (!/^h[1-6]|p$/.test(el.tagName.toLowerCase())) return;
 
             const txt = norm(el.textContent);
-            const twin = el.parentElement?.querySelector(
-                `${el.tagName}:not([data-ve-block-id])`
+            const scope = el.closest('section[data-ve-section-id]') || document;
+            const twin = scope.querySelector(
+                    `${el.tagName}:not([data-ve-block-id])`
             );
 
             /* Found the original?  Great – move the ID over and delete the twin  */
