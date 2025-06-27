@@ -1189,11 +1189,12 @@ class VisualEditor {
 // Initialize visual editor when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new VisualEditor();
-    overrides.forEach(ov => {
-        const el = document.querySelector(ov.cssHint /* h2:nth-of-type(1)… */);
-        if (el && !el.dataset.veBlockId) el.dataset.veBlockId = ov.blockId;
-    });
 
+});
+
+overrides.forEach(ov => {
+    const el = document.querySelector(ov.cssHint /* h2:nth-of-type(1)… */);
+    if (el && !el.dataset.veBlockId) el.dataset.veBlockId = ov.blockId;
 });
 
 
