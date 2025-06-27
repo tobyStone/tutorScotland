@@ -176,7 +176,7 @@ class VisualEditor {
     async _applyAndMigrateOverridesWithRetry(maxRetries = 50, delay = 100) {
         let attempt = 0;
 
-        /** Helper – add a stable id on first use and return `[data-ve-block-id="…"]` */
+        /* helper – give every element a stable selector */
         const ensureStableSelector = el => {
             if (!el.dataset.veBlockId) {
                 el.dataset.veBlockId =
@@ -185,48 +185,45 @@ class VisualEditor {
             return `[data-ve-block-id="${el.dataset.veBlockId}"]`;
         };
 
-        /* Normalise text so “\n ” etc. do not break equality checks */
-        const norm = str => (str || '').replace(/\s+/g, ' ').trim();
+        /* normalise text for fuzzy comparisons */
+        const norm = s => (s || '').replace(/\s+/g, ' ').trim();
 
         const execute = async () => {
-            let pending = [];
+            const pending = [];
 
-            /* ── main loop ─────────────────────────────────────────── */
+            /* ── first pass: apply everything we can ─────────────────── */
             for (const [selector, ov] of this.overrides.entries()) {
                 const found = document.querySelectorAll(selector);
-
                 if (found.length) {
-                    /* good – override can be applied */
                     found.forEach(el => this.applyOverride(el, ov));
-                    continue;
+                } else {
+                    pending.push([selector, ov]);
                 }
-
-                /* nothing matched → queue for rescue */
-                pending.push([selector, ov]);
             }
 
-            /* everything resolved? great – we’re done  */
+            /* all done? */
             if (pending.length === 0) {
                 console.log('%c[VE] All overrides applied successfully.', 'color:green;font-weight:bold;');
                 this._cleanUpTwins();
                 return;
             }
 
-            /* retry budget exhausted? give up  */
+            /* out of retries? */
             if (attempt >= maxRetries) {
                 console.error(
                     `%c[VE] FAILED: After ${maxRetries} attempts the selectors below are still missing:`,
-                    'color:red;font-weight:bold;', pending.map(p => p[0])
+                    'color:red;font-weight:bold;',
+                    pending.map(p => p[0])
                 );
                 return;
             }
 
-            /* try to rescue each missing override once per attempt   */
+            /* ── second pass: try to rescue / migrate missing overrides ─ */
             for (const [selector, ov] of pending) {
                 let candidate = null;
 
                 switch (ov.contentType) {
-                    case 'link':   /* already handled in previous version → keep it  */
+                    case 'link':
                         if (!selector.includes('[data-ve-button-id]')) {
                             candidate = Array.from(document.querySelectorAll('a.button, a.ve-btn, a'))
                                 .find(a => norm(a.textContent) === norm(ov.text));
@@ -243,31 +240,26 @@ class VisualEditor {
                         candidate = Array.from(
                             document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,span,li')
                         )
-                            /* ignore dyn-content shells */
-                            .filter(el => !el.closest('.dyn-content'))
+                            .filter(el => !el.closest('.dyn-content'))                     // skip shells
                             .find(el => norm(el.textContent) === norm(ov.text || ov.heading));
 
-                        /* if we only matched a dyn-content clone, walk to the real heading */
+                        /* matched only the dyn-content shell → walk to real heading */
                         if (!candidate) {
-                            const shell = Array.from(
-                                document.querySelectorAll('.dyn-content')
-                            ).find(d => norm(d.textContent) === norm(ov.text || ov.heading));
+                            const shell = Array.from(document.querySelectorAll('.dyn-content'))
+                                .find(d => norm(d.textContent) === norm(ov.text || ov.heading));
                             if (shell) {
                                 candidate = shell.closest('section')
                                     ?.querySelector('h1,h2,h3,h4,h5,h6,p:not([data-ve-block-id])');
                             }
                         }
                         break;
-
                 }
 
-                if (!candidate) continue;   /* rescue failed this round */
+                if (!candidate) continue;   // couldn’t rescue this one (yet)
 
-                /* ───────────────  migrate  ─────────────── */
+                /* migrate selector */
                 const newSel = ensureStableSelector(candidate);
-
                 ov.targetSelector = newSel;
-
 
                 /* ▶ DEBUG: show what we’re about to send */
                 dbg('[MIG] pushing selector to API:', {
@@ -278,19 +270,21 @@ class VisualEditor {
                 });
 
                 try {
-                    await fetch(`/api/content-manager?operation=override&id=${ov._id}`, {
+                    /* ===== hit the API ===== */
+                    const resp = await fetch(`/api/content-manager?operation=override&id=${ov._id}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ ...ov, targetSelector: newSel })
                     });
 
-                    /* ▶ DEBUG: show status & payload coming back */
-                    dbg('[MIG] API response', resp.status,
-                        resp.headers.get('content-type')?.includes('json')
-                            ? await resp.clone().json().catch(() => '-')
-                            : await resp.text().catch(() => '-')
-                    );
+                    /* ▶ DEBUG: log status + payload (json *or* text) */
+                    dbg('[MIG] API response', resp.status);
+                    let payload;
+                    try { payload = await resp.clone().json(); }
+                    catch { payload = await resp.text().catch(() => '-'); }
+                    dbg('[MIG] payload', payload);
 
+                    /* update local map and DOM */
                     this.overrides.delete(selector);
                     this.overrides.set(newSel, ov);
                     this.applyOverride(candidate, ov);
@@ -304,7 +298,7 @@ class VisualEditor {
                 }
             }
 
-            /* schedule next retry */
+            /* schedule another retry for anything still unresolved */
             attempt++;
             setTimeout(execute, delay);
         };
