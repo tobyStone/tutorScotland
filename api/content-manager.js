@@ -101,59 +101,6 @@ async function handleGetOverrides(req, res) {
     }
 }
 
-// Create new content override
-// In api/content-manager.js, REPLACE the handleCreateOverride function
-
-async function handleCreateOverride(req, res) {
-    try {
-        const { id } = req.query; // Check for an ID to handle updates
-        const {
-            targetPage, targetSelector, contentType, text, image,
-            originalContent, overrideType = 'replace'
-        } = req.body;
-
-        if (!targetPage || !targetSelector || !contentType) {
-            return res.status(400).json({ message: 'Missing required fields for override.' });
-        }
-
-        // If an ID is provided, this is an UPDATE operation.
-        if (id) {
-            const updatedOverride = await Section.findByIdAndUpdate(
-                id,
-                { $set: { text, image, targetSelector, updatedAt: new Date() } },
-                { new: true }
-            ).lean();
-
-            if (!updatedOverride) {
-                return res.status(404).json({ message: `Override with ID ${id} not found.` });
-            }
-            return res.status(200).json(updatedOverride);
-        }
-
-        // If no ID, it's a CREATE operation. Check for existing to prevent duplicates.
-        const existingOverride = await Section.findOne({ targetPage, targetSelector, isContentOverride: true });
-        if (existingOverride) {
-            // If it somehow exists, update it instead of creating a duplicate.
-            existingOverride.text = text;
-            existingOverride.image = image;
-            await existingOverride.save();
-            return res.status(200).json(existingOverride.toObject());
-        }
-
-        // Create new override
-        const newOverride = new Section({
-            page: targetPage, isContentOverride: true, targetPage, targetSelector,
-            contentType, text, image, originalContent, overrideType,
-            isActive: true, isPublished: true
-        });
-        await newOverride.save();
-        return res.status(201).json(newOverride.toObject());
-
-    } catch (error) {
-        console.error('Create/Update Override Error:', error);
-        return res.status(500).json({ message: 'Error saving override' });
-    }
-}
 
 /* ------------------------------------------------------------------ *
  *  handleCreateOrUpdateOverride                                       *

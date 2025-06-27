@@ -241,7 +241,11 @@ class VisualEditor {
                             document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,span,li')
                         )
                             .filter(el => !el.closest('.dyn-content'))                     // skip shells
-                            .find(el => norm(el.textContent) === norm(ov.text || ov.heading));
+                                  .find(el => {
+                                          const txt = norm(el.textContent);
+                                          return txt === norm(ov.text || ov.heading)      // edited wording
+                                                  || txt === norm(ov.originalContent || '');  // original wording
+                                      });
 
                         /* matched only the dyn-content shell → walk to real heading */
                         if (!candidate) {
@@ -260,6 +264,8 @@ class VisualEditor {
                 /* migrate selector */
                 const newSel = ensureStableSelector(candidate);
                 ov.targetSelector = newSel;
+                doc.blockId = el.dataset.veBlockId;
+
 
                 /* ▶ DEBUG: show what we’re about to send */
                 dbg('[MIG] pushing selector to API:', {
@@ -1183,6 +1189,11 @@ class VisualEditor {
 // Initialize visual editor when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new VisualEditor();
+    overrides.forEach(ov => {
+        const el = document.querySelector(ov.cssHint /* h2:nth-of-type(1)… */);
+        if (el && !el.dataset.veBlockId) el.dataset.veBlockId = ov.blockId;
+    });
+
 });
 
 
