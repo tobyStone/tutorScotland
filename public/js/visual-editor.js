@@ -326,7 +326,7 @@ class VisualEditor {
 
         const stableSelector = (type === 'link' && element.classList.contains('ve-btn'))
             ? this.getStableLinkSelector(element)
-            : this.generateSelector(element);
+            : this.ensureBlockId(element);
 
         const pageKey = (this.currentPage.replace(/^\//, '') || 'index').replace(/\.html?$/i, '');
 
@@ -512,6 +512,16 @@ class VisualEditor {
         }
         return `[data-ve-button-id="${el.dataset.veButtonId}"]`;
     }
+
+    /** ensure the element has a ve-block-id; return the selector */
+    ensureBlockId(el) {
+        if (!el.dataset.veBlockId) {
+            el.dataset.veBlockId =
+                self.crypto?.randomUUID?.() ?? `ve-block-${Date.now()}-${Math.random()}`;
+        }
+        return `[data-ve-block-id="${el.dataset.veBlockId}"]`;
+    }
+
 
     getElementType(element) {
         const tagName = element.tagName.toLowerCase();
