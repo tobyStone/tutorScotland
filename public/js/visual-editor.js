@@ -264,10 +264,13 @@ class VisualEditor {
 
         execute();
     }
+
     applyOverride(element, override) {
         if (override.contentType === 'link' && override.targetSelector?.includes('data-ve-button-id')) {
             const el = document.querySelector(override.targetSelector);
             if (el) {
+                // This block is for migrating old selectors, can be simplified or removed later.
+                // For now, it's fine.
                 const stable = this.getStableLinkSelector(el);
                 this.overrides.set(stable, override);
                 this.overrides.delete(override.targetSelector);
@@ -287,18 +290,26 @@ class VisualEditor {
                     if (override.text) element.alt = override.text;
                 }
                 break;
+
+            // --- MODIFIED SECTION START ---
             case 'link':
-                if (element.tagName === 'A') {
-                    element.href = override.image;
-                    element.textContent = override.text;
-                    if (element.dataset.originalHref !== undefined) {
-                        element.dataset.originalHref = override.image;
+                // Find the actual <a> tag, whether it's the element itself or a child of it.
+                const linkElement = element.tagName === 'A' ? element : element.querySelector('a');
+
+                if (linkElement) {
+                    linkElement.href = override.image; // 'image' field holds the URL for links
+                    linkElement.textContent = override.text;
+                    if (linkElement.dataset.originalHref !== undefined) {
+                        // If we are in edit mode, update the data-attribute too
+                        linkElement.dataset.originalHref = override.image;
                     }
+                } else {
+                    console.warn('[VE] applyOverride failed for link: could not find an <a> tag in', element);
                 }
                 break;
+            // --- MODIFIED SECTION END ---
         }
     }
-
     // visual-editor.js
 
     async saveContent() {
