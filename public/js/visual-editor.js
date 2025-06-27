@@ -266,6 +266,8 @@ class VisualEditor {
                 /* ───────────────  migrate  ─────────────── */
                 const newSel = ensureStableSelector(candidate);
 
+                ov.targetSelector = newSel;
+
                 try {
                     await fetch(`/api/content-manager?operation=override&id=${ov._id}`, {
                         method: 'POST',
