@@ -1150,7 +1150,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 /* ✦ Diagnostic helper – can be switched on/off ✦ */
-const VE = { DEBUG: false };                 // toggle in console
+const VE = { DEBUG: true };                 // toggle in console
 
 function dbg(...args) {
     if (VE.DEBUG) console.log('%c[VE-DBG]', 'color:#7AB7FF;font-weight:bold;', ...args);
