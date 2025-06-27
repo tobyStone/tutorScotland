@@ -895,24 +895,33 @@ class VisualEditor {
     _cleanUpTwins() {
         const norm = s => (s || '').replace(/\s+/g, ' ').trim();
 
-        /* 1️⃣ handle legacy “dyn-content” clones */
+        /* handle legacy “dyn-content” clones */
         document.querySelectorAll('.dyn-content[data-ve-block-id]').forEach(clone => {
-            // find the first real in-flow element **inside the same section**
             const host = clone.closest('section[data-ve-section-id]');
             const real = host && host.querySelector(
                 'h1,h2,h3,h4,h5,h6,p,div,span,li:not([data-ve-block-id])'
             );
             if (!real) return;
 
-            real.dataset.veBlockId = clone.dataset.veBlockId;     // keep stable id
-            real.textContent = clone.textContent;            // keep new wording
-            clone.remove();                                       // drop stray clone
+            real.dataset.veBlockId = clone.dataset.veBlockId;
+            real.textContent = clone.textContent;
+            clone.remove();
             dbg('[clean] moved ID to real node and deleted dyn-content');
         });
 
-        /* 2️⃣ run the original twin-cleanup logic (handles old duplicate H2/P) */
-        _oldClean.call(this);
+        /* existing duplicate-heading clean-up (old logic) */
+        document.querySelectorAll('[data-ve-block-id]').forEach(el => {
+            if (!/^h[1-6]$/.test(el.tagName)) return;
+            const twin = el.parentElement?.querySelector(`${el.tagName}:not([data-ve-block-id])`);
+            if (twin && norm(twin.textContent).startsWith('Raising Standards')) {
+                twin.dataset.veBlockId = el.dataset.veBlockId;
+                twin.textContent = el.textContent;
+                el.remove();
+            }
+        });
+        dbg('[clean] twin sweep finished');
     }
+
 
 
     async uploadImage() {
@@ -1178,11 +1187,6 @@ VisualEditor.prototype.applyOverride = function (el, ov) {
     return _oldApplyOverride.call(this, el, ov);
 };
 
-const _oldClean = VisualEditor.prototype._cleanUpTwins;
-VisualEditor.prototype._cleanUpTwins = function () {
-    dbg('running _cleanUpTwins');
-    return _oldClean.call(this);
-};
 
 const _oldDone = VisualEditor.prototype._applyAndMigrateOverridesWithRetry;
 VisualEditor.prototype._applyAndMigrateOverridesWithRetry = async function (max, delay) {
