@@ -268,12 +268,28 @@ class VisualEditor {
 
                 ov.targetSelector = newSel;
 
+
+                /* ▶ DEBUG: show what we’re about to send */
+                dbg('[MIG] pushing selector to API:', {
+                    id: ov._id,
+                    page: ov.page,
+                    old: selector,
+                    new: newSel
+                });
+
                 try {
                     await fetch(`/api/content-manager?operation=override&id=${ov._id}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ ...ov, targetSelector: newSel })
                     });
+
+                    /* ▶ DEBUG: show status & payload coming back */
+                    dbg('[MIG] API response', resp.status,
+                        resp.headers.get('content-type')?.includes('json')
+                            ? await resp.clone().json().catch(() => '-')
+                            : await resp.text().catch(() => '-')
+                    );
 
                     this.overrides.delete(selector);
                     this.overrides.set(newSel, ov);
