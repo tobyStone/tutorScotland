@@ -240,9 +240,25 @@ class VisualEditor {
 
                     case 'text':
                     case 'html':
-                        candidate = Array.from(document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,span,li'))
+                        candidate = Array.from(
+                            document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,span,li')
+                        )
+                            /* ignore dyn-content shells */
+                            .filter(el => !el.closest('.dyn-content'))
                             .find(el => norm(el.textContent) === norm(ov.text || ov.heading));
+
+                        /* if we only matched a dyn-content clone, walk to the real heading */
+                        if (!candidate) {
+                            const shell = Array.from(
+                                document.querySelectorAll('.dyn-content')
+                            ).find(d => norm(d.textContent) === norm(ov.text || ov.heading));
+                            if (shell) {
+                                candidate = shell.closest('section')
+                                    ?.querySelector('h1,h2,h3,h4,h5,h6,p:not([data-ve-block-id])');
+                            }
+                        }
                         break;
+
                 }
 
                 if (!candidate) continue;   /* rescue failed this round */
@@ -879,24 +895,23 @@ class VisualEditor {
     _cleanUpTwins() {
         const norm = s => (s || '').replace(/\s+/g, ' ').trim();
 
-        document.querySelectorAll('[data-ve-block-id]').forEach(el => {
-            // Only worry about headings / paragraphs we know we duplicate sometimes
-            if (!/^h[1-6]|p$/.test(el.tagName.toLowerCase())) return;
-
-            const txt = norm(el.textContent);
-            const scope = el.closest('section[data-ve-section-id]') || document;
-            const twin = scope.querySelector(
-                    `${el.tagName}:not([data-ve-block-id])`
+        /* 1️⃣ handle legacy “dyn-content” clones */
+        document.querySelectorAll('.dyn-content[data-ve-block-id]').forEach(clone => {
+            // find the first real in-flow element **inside the same section**
+            const host = clone.closest('section[data-ve-section-id]');
+            const real = host && host.querySelector(
+                'h1,h2,h3,h4,h5,h6,p,div,span,li:not([data-ve-block-id])'
             );
+            if (!real) return;
 
-            /* Found the original?  Great – move the ID over and delete the twin  */
-            if (twin && norm(twin.textContent).startsWith('Raising Standards')) {
-                twin.dataset.veBlockId = el.dataset.veBlockId;   // keep stable id
-                twin.textContent = txt;                    // keep new wording
-                el.remove();                                     // drop stray clone
-                console.info('[VE clean-up] twin removed, ID moved to original');
-            }
+            real.dataset.veBlockId = clone.dataset.veBlockId;     // keep stable id
+            real.textContent = clone.textContent;            // keep new wording
+            clone.remove();                                       // drop stray clone
+            dbg('[clean] moved ID to real node and deleted dyn-content');
         });
+
+        /* 2️⃣ run the original twin-cleanup logic (handles old duplicate H2/P) */
+        _oldClean.call(this);
     }
 
 
