@@ -912,7 +912,9 @@ class VisualEditor {
         /* existing duplicate-heading clean-up (old logic) */
         document.querySelectorAll('[data-ve-block-id]').forEach(el => {
             if (!/^h[1-6]$/.test(el.tagName)) return;
-            const twin = el.parentElement?.querySelector(`${el.tagName}:not([data-ve-block-id])`);
+            const hostSection = el.closest('section[data-ve-section-id]') || document;
+            const twin = hostSection.querySelector(
+                    `${el.tagName}:not([data-ve-block-id])`);
             if (twin && norm(twin.textContent).startsWith('Raising Standards')) {
                 twin.dataset.veBlockId = el.dataset.veBlockId;
                 twin.textContent = el.textContent;
