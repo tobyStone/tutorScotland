@@ -202,6 +202,7 @@ class VisualEditor {
             /* everything resolved? great – we’re done  */
             if (pending.length === 0) {
                 console.log('%c[VE] All overrides applied successfully.', 'color:green;font-weight:bold;');
+                this._cleanUpTwins();
                 return;
             }
 
