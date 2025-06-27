@@ -1140,10 +1140,14 @@ class VisualEditor {
 }
 
 
-/* ----------------------------------------------------
-   ⬇️  paste the scaffold STARTING HERE  ⬇️
-   (i.e. at top-level, not indented inside the class)
----------------------------------------------------- */
+
+
+// Initialize visual editor when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new VisualEditor();
+});
+
+
 
 /* ✦ Diagnostic helper – can be switched on/off ✦ */
 const VE = { DEBUG: false };                 // toggle in console
@@ -1173,11 +1177,6 @@ VisualEditor.prototype._applyAndMigrateOverridesWithRetry = async function (max,
 };
 
 
-
-// Initialize visual editor when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new VisualEditor();
-});
 
 // Add slide animations
 const slideAnimations = document.createElement('style');
