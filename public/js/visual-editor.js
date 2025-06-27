@@ -163,59 +163,109 @@ class VisualEditor {
         }
     }
 
+    /* ------------------------------------------------------------------ *
+  *  Apply overrides, retrying for late-loaded elements AND            *
+  *  transparently migrating stale selectors (incl. data-ve-button-id) *
+  * ------------------------------------------------------------------ */
     async _applyAndMigrateOverridesWithRetry(maxRetries = 50, delay = 100) {
         let attempt = 0;
+
         const execute = async () => {
             let allOverridesApplied = true;
 
             for (const [selector, ov] of this.overrides.entries()) {
                 const elements = document.querySelectorAll(selector);
 
-                if (elements.length > 0) {
+                /* ────────────────────────────
+                 * 1. Selector already matches
+                 * ──────────────────────────── */
+                if (elements.length) {
                     elements.forEach(el => this.applyOverride(el, ov));
-                } else {
-                    allOverridesApplied = false;
+                    continue;
+                }
 
-                    if (ov.contentType === 'link' && !selector.includes('[data-ve-button-id]')) {
-                        const candidate = Array.from(document.querySelectorAll('a.button, a.ve-btn')).find(btn => btn.textContent.trim() === ov.text);
-                        if (candidate) {
-                            console.log(`%c[VE Migration] Found button for stale selector "${selector}". Migrating...`, 'color: #9F58FF; font-weight: bold;');
+                /* No element yet → mark failure and try to rescue */
+                allOverridesApplied = false;
 
-                            if (!candidate.dataset.veButtonId) {
-                                candidate.dataset.veButtonId = (self.crypto?.randomUUID?.() ?? `ve-btn-${Date.now()}-${Math.random()}`);
-                            }
-                            const newStableSelector = this.generateSelector(candidate);
+                /* We only try to migrate LINK-type overrides            */
+                /* This block now works for BOTH stale legacy selectors   */
+                /* *and* selectors that already contain data-ve-button-id */
+                if (ov.contentType === 'link') {
+                    /* extract id from selector if present */
+                    const idMatch = selector.match(/\[data-ve-button-id="([^"]+)"\]/);
+                    const expectedId = idMatch ? idMatch[1] : null;
 
-                            try {
-                                await fetch(`/api/content-manager?operation=override&id=${ov._id}`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ ...ov, targetSelector: newStableSelector, contentType: 'link' })
-                                });
-                                this.overrides.delete(selector);
-                                this.overrides.set(newStableSelector, ov);
-                                this.applyOverride(candidate, ov);
-                                console.log(`%c[VE Migration] Success!`, 'color: green;');
-                                allOverridesApplied = true;
-                            } catch (err) { console.error('Migration save failed:', err); }
+                    /* look for a button-ish <a> with the same visible text */
+                    const candidate = Array
+                        .from(document.querySelectorAll('a.button, a.ve-btn, a'))
+                        .find(a => a.textContent.trim() === ov.text);
+
+                    if (candidate) {
+                        console.log(
+                            `%c[VE Migration] Rescuing lost button for selector "${selector}"…`,
+                            'color:#9F58FF;font-weight:bold;'
+                        );
+
+                        /* ensure the <a> carries the id we expect */
+                        if (expectedId) {
+                            candidate.dataset.veButtonId = expectedId;      // re-attach old id
+                        } else if (!candidate.dataset.veButtonId) {
+                            candidate.dataset.veButtonId =
+                                (self.crypto?.randomUUID?.() ?? `ve-btn-${Date.now()}-${Math.random()}`);
+                        }
+
+                        /* generate a *stable* selector for it */
+                        const newSel = this.generateSelector(candidate);
+
+                        try {
+                            /* persist the new selector in the DB */
+                            await fetch(`/api/content-manager?operation=override&id=${ov._id}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ ...ov, targetSelector: newSel })
+                            });
+
+                            /* update local cache & apply override */
+                            this.overrides.delete(selector);
+                            this.overrides.set(newSel, ov);
+                            this.applyOverride(candidate, ov);
+
+                            console.log('%c[VE Migration] Success ✓', 'color:green;');
+                            /* this one is now resolved, keep looping for others */
+                            continue;
+                        } catch (err) {
+                            console.error('Migration save failed:', err);
                         }
                     }
                 }
             }
 
+            /* ───────────────
+             * All good? bail.
+             * ─────────────── */
             if (allOverridesApplied) {
-                console.log(`%c[VE] All overrides applied successfully.`, 'color: green; font-weight: bold;');
+                console.log('%c[VE] All overrides applied successfully.', 'color:green;font-weight:bold;');
                 return;
             }
 
+            /* ───────────────────────
+             * Hit retry limit? abort.
+             * ─────────────────────── */
             if (attempt >= maxRetries) {
-                console.error(`%c[VE] FAILED: After ${maxRetries} attempts, some overrides could not be applied.`, 'color: red; font-weight: bold;');
+                console.error(
+                    `%c[VE] FAILED: After ${maxRetries} attempts, some overrides could not be applied.`,
+                    'color:red;font-weight:bold;'
+                );
                 return;
             }
 
+            /* ─────────────
+             * Retry later…
+             * ───────────── */
             attempt++;
             setTimeout(execute, delay);
         };
+
         execute();
     }
 
