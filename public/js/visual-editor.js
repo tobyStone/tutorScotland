@@ -170,9 +170,9 @@ class VisualEditor {
     }
 
     /* ------------------------------------------------------------------ *
- *  Apply overrides, re-hydrating late-loaded elements and migrating   *
- *  stale selectors for any content-type (text, html, image, link)   *
- * ------------------------------------------------------------------ */
+   *  Apply overrides, re-hydrating late-loaded elements and migrating   *
+   *  stale selectors for any content-type (text, html, image, link)   *
+   * ------------------------------------------------------------------ */
     async _applyAndMigrateOverridesWithRetry(maxRetries = 50, delay = 100) {
         let attempt = 0;
 
@@ -190,24 +190,20 @@ class VisualEditor {
                     }
                 } catch (e) {
                     console.warn(`[VE] Invalid selector in overrides map: "${selector}"`, e.message);
-                    successfullyApplied.add(selector); // Remove it from contention
+                    successfullyApplied.add(selector);
                 }
             }
 
-            // Update the pending map
             successfullyApplied.forEach(selector => pendingOverrides.delete(selector));
 
-            /* all done? */
             if (pendingOverrides.size === 0) {
                 console.log('%c[VE] All overrides applied successfully.', 'color:green;font-weight:bold;');
                 this._cleanUpTwins();
-                // Dispatch final event
                 window.dispatchEvent(new CustomEvent('ve-overrides-done'));
                 dbg('🚩 ve-overrides-done event dispatched');
                 return;
             }
 
-            /* out of retries? */
             if (attempt >= maxRetries) {
                 console.error(
                     `%c[VE] FAILED: After ${maxRetries} attempts, the selectors below are still missing:`,
@@ -221,57 +217,53 @@ class VisualEditor {
             const norm = s => (s || '').replace(/\s+/g, ' ').trim();
 
             for (const [staleSelector, ov] of pendingOverrides.entries()) {
-                // Skip if this override doesn't have originalContent to match against
                 if (!ov.originalContent) continue;
 
                 let candidate = null;
-
-                // Find a candidate element based on its original content
-                // Note: This logic assumes originalContent is unique enough to find the right element.
                 candidate = Array.from(
                     document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,span,li,a,img')
                 )
-                    .filter(el => !el.dataset.veBlockId && !el.closest('.ve-no-edit')) // Only check elements that haven't been claimed
+                    .filter(el => !el.dataset.veBlockId && !el.dataset.veButtonId && !el.closest('.ve-no-edit'))
                     .find(el => {
                         const originalText = (typeof ov.originalContent === 'string') ? ov.originalContent : ov.originalContent.text;
                         return norm(el.textContent) === norm(originalText);
                     });
 
-                if (!candidate) continue; // Couldn't rescue this one (yet)
+                if (!candidate) continue;
 
                 // --- THIS IS THE CORE FIX ---
-                // We found the element. Re-hydrate it with the correct ID from the database.
-                // Do NOT generate a new ID and do NOT call the API.
+                // We now check for BOTH block and button IDs and re-hydrate accordingly.
+                const blockIdMatch = staleSelector.match(/\[data-ve-block-id="([^"]+)"\]/);
+                const buttonIdMatch = staleSelector.match(/\[data-ve-button-id="([^"]+)"\]/);
 
-                const idMatch = staleSelector.match(/\[data-ve-block-id="([^"]+)"\]/);
-                if (idMatch && idMatch[1]) {
-                    const correctBlockId = idMatch[1];
-                    candidate.dataset.veBlockId = correctBlockId; // Re-hydrate the DOM
+                let rehydrationSuccess = false;
 
+                if (blockIdMatch && blockIdMatch[1]) {
+                    candidate.dataset.veBlockId = blockIdMatch[1];
+                    rehydrationSuccess = true;
+                } else if (buttonIdMatch && buttonIdMatch[1]) {
+                    candidate.dataset.veButtonId = buttonIdMatch[1];
+                    rehydrationSuccess = true;
+                }
+
+                if (rehydrationSuccess) {
                     console.log(
                         `%c[VE Re-hydration]`, 'color:#17a2b8; font-weight:bold;',
                         `Found element for "${staleSelector}" based on original content. Restoring correct ID.`
                     );
-
-                    // Now that the element has the correct ID, apply the override and remove from pending
                     this.applyOverride(candidate, ov);
                     pendingOverrides.delete(staleSelector);
-
                 } else {
-                    // This block can handle LEGACY migrations if needed, but for data-ve-block-id,
-                    // re-hydration is the correct approach. For now, we'll log it.
-                    console.warn(`[VE] Found candidate for non-block-id selector, but migration logic is now focused on re-hydration.`, staleSelector);
+                    console.warn(`[VE] Found candidate for selector, but it has no re-hydratable ID.`, staleSelector);
                 }
             }
 
-            /* schedule another retry for anything still unresolved */
             attempt++;
             setTimeout(execute, delay);
         };
 
         execute();
     }
-
     applyOverride(element, override) {
         if (override.contentType === 'link' && override.targetSelector?.includes('data-ve-button-id')) {
             const el = document.querySelector(override.targetSelector);
