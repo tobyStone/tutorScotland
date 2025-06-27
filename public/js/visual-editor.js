@@ -45,6 +45,9 @@ function recoverFromError(editor) {
 }
 
 class VisualEditor {
+
+
+
     static BUTTON_CSS = 'button aurora';
     static EDIT_ACTIVE_CLASS = 've-edit-active';
     static IMAGE_UPLOAD_URL = '/api/upload-image'; // Centralized API endpoint
@@ -88,6 +91,9 @@ class VisualEditor {
             this.initialize();
         }
     }
+
+
+
 
     waitForDynamicSections() {
         return new Promise(resolve => {
@@ -1132,6 +1138,41 @@ class VisualEditor {
         }
     }
 }
+
+
+/* ----------------------------------------------------
+   ⬇️  paste the scaffold STARTING HERE  ⬇️
+   (i.e. at top-level, not indented inside the class)
+---------------------------------------------------- */
+
+/* ✦ Diagnostic helper – can be switched on/off ✦ */
+const VE = { DEBUG: false };                 // toggle in console
+
+function dbg(...args) {
+    if (VE.DEBUG) console.log('%c[VE-DBG]', 'color:#7AB7FF;font-weight:bold;', ...args);
+}
+
+/* monkey-patch ↓ AFTER the class exists */
+const _oldApplyOverride = VisualEditor.prototype.applyOverride;
+VisualEditor.prototype.applyOverride = function (el, ov) {
+    dbg('applyOverride →', ov.contentType, ov.targetSelector, el);
+    return _oldApplyOverride.call(this, el, ov);
+};
+
+const _oldClean = VisualEditor.prototype._cleanUpTwins;
+VisualEditor.prototype._cleanUpTwins = function () {
+    dbg('running _cleanUpTwins');
+    return _oldClean.call(this);
+};
+
+const _oldDone = VisualEditor.prototype._applyAndMigrateOverridesWithRetry;
+VisualEditor.prototype._applyAndMigrateOverridesWithRetry = async function (max, delay) {
+    await _oldDone.call(this, max, delay);
+    window.dispatchEvent(new CustomEvent('ve-overrides-done'));
+    dbg('🚩 ve-overrides-done event dispatched');
+};
+
+
 
 // Initialize visual editor when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
