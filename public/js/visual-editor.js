@@ -121,27 +121,25 @@ class VisualEditor {
       });
     }
 
-    // In public/js/visual-editor.js, modify the initialize function
+    // In public/js/visual-editor.js
 
+    // 1. THIS IS YOUR FINAL 'initialize' FUNCTION
     async initialize() {
-        /* 1.  let dynamic sections land first (at most 2 s) */
+        /* 1.  let dynamic sections land first */
         await this.waitForDynamicSections();
         console.log('[VE] Dynamic sections are ready. Initializing editor.');
 
-        /* 2.  load saved order, then apply it (containers are now present) */
+        /* 2.  load and apply section order */
         await this.loadSectionOrder();
         this.applySectionOrder();
 
-        /* 3.  overrides as usual */
+        /* 3.  load content overrides */
         await this.loadContentOverrides();
 
-        // --- THIS IS THE CHANGE ---
-        // OLD: this.applyContentOverrides();
-        // NEW:
-        this.applyOverridesWithRetry();
-        // --- END OF CHANGE ---
+        /* 4.  Apply overrides using the new resilient method */
+        this._applyAndMigrateOverridesWithRetry();
 
-        /* 4.  admin / UI wiring (unchanged) */
+        /* 5.  Set up admin UI */
         const isAdmin = await this.checkAdminStatus();
         if (isAdmin) {
             this.loadEditorStyles();
@@ -152,161 +150,123 @@ class VisualEditor {
         }
     }
 
-    loadEditorStyles() {
-        if (document.getElementById('ve-style')) return;
-        const link = document.createElement('link');
-        link.id = 've-style';
-        link.rel = 'stylesheet';
-        link.href = '/editor.css';
-        document.head.appendChild(link);
-    }
-
-    async checkAdminStatus() {
-        try {
-            const response = await fetch('/api/login?check=admin', {
-                cache: 'no-store',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
-                }
-            });
-            const data = await response.json();
-            const isAdmin = data.isAdmin || false;
-
-            // If we were in edit mode but lost admin status, disable it
-            if (!isAdmin && this.isEditMode) {
-                this.disableEditMode();
-                this.isEditMode = false;
-                this.updateEditToggle();
-            }
-
-            return isAdmin;
-        } catch (error) {
-            console.error('Admin check failed:', error);
-            if (this.isEditMode) {
-                this.disableEditMode();
-                this.isEditMode = false;
-                this.updateEditToggle();
-            }
-            return false;
-        }
-    }
-
-
+    // 2. THIS IS YOUR 'loadContentOverrides' FUNCTION (with debug logs)
     async loadContentOverrides() {
         try {
             const response = await fetch(`/api/content-manager?operation=overrides&page=${this.currentPage}`);
             const overrides = await response.json();
 
-            // --- NEW LOGGING ---
             console.log('[VE DEBUG] Overrides fetched from API:', JSON.parse(JSON.stringify(overrides)));
-            // --- END LOGGING ---
 
             overrides.forEach(override => {
                 this.overrides.set(override.targetSelector, override);
             });
 
-            // --- NEW LOGGING ---
             console.log('[VE DEBUG] Overrides map populated:', this.overrides);
-            // --- END LOGGING ---
 
         } catch (error) {
             console.error('Failed to load content overrides:', error);
         }
     }
 
-
-
-
-
-    // In public/js/visual-editor.js
-
-    applyContentOverrides() {
-        console.log('[VE RETRY] Applying all known content overrides...');
-        this.overrides.forEach((ov, sel) => {
-            const elements = document.querySelectorAll(sel);
-            elements.forEach(el => this.applyOverride(el, ov));
-        });
-    }
-
-    // Add this new function inside the VisualEditor class
-
-    async applyOverridesWithRetry(maxRetries = 50, delay = 100) {
+    // 3. THIS IS YOUR NEW, COMBINED RETRY & MIGRATION FUNCTION
+    async _applyAndMigrateOverridesWithRetry(maxRetries = 50, delay = 100) {
         let attempt = 0;
 
-        const execute = () => {
-            // Find all selectors in our map that do NOT yet exist in the DOM
-            const missingSelectors = [...this.overrides.keys()].filter(sel =>
-                !document.querySelector(sel)
-            );
+        const execute = async () => {
+            let allOverridesApplied = true;
 
-            if (missingSelectors.length === 0) {
-                // Success! All elements are present.
-                console.log(`%c[VE RETRY] SUCCESS: All ${this.overrides.size} elements found. Applying all overrides now.`, 'color: green; font-weight: bold;');
-                this.applyContentOverrides();
-                return; // We are done
+            for (const [selector, ov] of this.overrides.entries()) {
+                const elements = document.querySelectorAll(selector);
+
+                if (elements.length > 0) {
+                    // Success: Selector is valid, apply it.
+                    elements.forEach(el => this.applyOverride(el, ov));
+                } else {
+                    // Failure: Selector might be stale or element hasn't loaded yet.
+                    allOverridesApplied = false;
+
+                    // MIGRATION LOGIC: Check if this is a known brittle selector we can fix.
+                    if (ov.contentType === 'link' && !selector.includes('[data-ve-button-id]')) {
+                        const candidate = Array.from(document.querySelectorAll('a.button, a.ve-btn')).find(btn => btn.textContent.trim() === ov.text);
+                        if (candidate) {
+                            console.log(`%c[VE Migration] Found button for stale selector "${selector}". Migrating...`, 'color: #9F58FF; font-weight: bold;');
+
+                            if (!candidate.dataset.veButtonId) {
+                                candidate.dataset.veButtonId = (self.crypto?.randomUUID?.() ?? `ve-btn-${Date.now()}-${Math.random()}`);
+                            }
+                            const newStableSelector = this.generateSelector(candidate);
+
+                            try {
+                                await fetch(`/api/content-manager?operation=override&id=${ov._id}`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ ...ov, targetSelector: newStableSelector })
+                                });
+                                this.overrides.delete(selector);
+                                this.overrides.set(newStableSelector, ov);
+                                this.applyOverride(candidate, ov);
+                                console.log(`%c[VE Migration] Success!`, 'color: green;');
+                                allOverridesApplied = true; // This one is now resolved.
+                            } catch (err) { console.error('Migration save failed:', err); }
+                        }
+                    }
+                }
+            }
+
+            if (allOverridesApplied) {
+                console.log(`%c[VE] All overrides applied successfully.`, 'color: green; font-weight: bold;');
+                return; // We are done.
             }
 
             if (attempt >= maxRetries) {
-                // Failure: We timed out.
-                console.error(`%c[VE RETRY] FAILED: After ${maxRetries} attempts, some elements are still missing.`, 'color: red; font-weight: bold;', { missingSelectors });
-                // Still try to apply to what we did find
-                this.applyContentOverrides();
+                console.error(`%c[VE] FAILED: After ${maxRetries} attempts, some overrides could not be applied.`, 'color: red; font-weight: bold;');
                 return;
             }
 
-            // Wait and try again
+            // Wait and try again.
             attempt++;
-            console.log(`[VE RETRY] Attempt #${attempt}: Waiting for ${missingSelectors.length} elements to appear...`);
             setTimeout(execute, delay);
         };
 
-        execute(); // Start the process
+        execute(); // Start the process.
     }
 
+
+    // 4. THIS IS YOUR 'applyOverride' FUNCTION (with debug logs)
     applyOverride(element, override) {
-        // upgrade old id-based selectors on the fly
-        if(override.contentType==='link' &&
-           override.targetSelector?.includes('data-ve-button-id')){
+        // ... (This function remains unchanged from the previous step)
+        if (override.contentType === 'link' &&
+            override.targetSelector?.includes('data-ve-button-id')) {
             const el = document.querySelector(override.targetSelector);
-            if(el){
+            if (el) {
                 const stable = this.getStableLinkSelector(el);
                 this.overrides.set(stable, override);
                 this.overrides.delete(override.targetSelector);
-                override.targetSelector = stable;  // future saves reuse it
+                override.targetSelector = stable;
             }
         }
 
-
         switch (override.contentType) {
             case 'text':
-                // --- NEW LOGGING ---
                 console.log(`%c[VE DEBUG] -> Applying TEXT: "${override.text || override.heading}"`, 'color: orange;', element);
-                // --- END LOGGING ---
                 element.textContent = override.text || override.heading;
                 break;
             case 'html':
-                // --- NEW LOGGING ---
                 console.log(`%c[VE DEBUG] -> Applying HTML`, 'color: purple;', { content: override.text, element });
-                // --- END LOGGING ---
                 element.innerHTML = override.text;
                 break;
             case 'image':
-                // --- NEW LOGGING ---
                 console.log(`%c[VE DEBUG] -> Applying IMAGE: "${override.image}"`, 'color: green;', element);
-                // --- END LOGGING ---
                 if (element.tagName === 'IMG') {
                     element.src = override.image;
                     if (override.text) element.alt = override.text;
                 }
                 break;
             case 'link':
-                // --- NEW LOGGING ---
                 console.log(`%c[VE DEBUG] -> Applying LINK: text="${override.text}", href="${override.image}"`, 'color: blue;', element);
-                // --- END LOGGING ---
                 if (element.tagName === 'A') {
-                    element.href = override.image;  // Using image field for URL
+                    element.href = override.image;
                     element.textContent = override.text;
                     if (element.dataset.originalHref !== undefined) {
                         element.dataset.originalHref = override.image;
@@ -315,7 +275,6 @@ class VisualEditor {
                 break;
         }
     }
-
     createEditModeToggle() {
         const button = document.createElement('button');
         button.id = 'edit-mode-toggle';
@@ -1515,113 +1474,64 @@ class VisualEditor {
                 break;
         }
     }
-    // This is the new, simplified, and correct function.
+    // In visual-editor.js, REPLACE the entire saveContent function
+
     async saveContent() {
         if (!this.activeEditor) return;
 
         const { element, selector, type } = this.activeEditor;
+        const contentData = this.getFormData(type);
 
-        // A. Unified handling for buttons: ALWAYS save as a 'link' override.
-        if (type === 'link' && element.classList.contains('ve-btn')) {
-
-            // 1. Get the new, updated data directly from the form fields.
-            const contentData = this.getFormData('link');
-            const url = contentData.image; // 'image' field holds the URL
-            const label = contentData.text;
-
-            console.log(`[VE Save] Saving button. Text from form: "${label}", URL from form: "${url}"`);
-
-            // 2. Find the override document to update.
-            //    We will now search our local cache for an override that targets this specific element.
-            let overrideToUpdate = null;
-            for (const ov of this.overrides.values()) {
-                try {
-                    if (document.querySelector(ov.targetSelector) === element) {
-                        overrideToUpdate = ov;
-                        break;
-                    }
-                } catch (e) { /* Ignore invalid selectors */ }
-            }
-
-            // 3. Construct the API URL. If we found an override, we'll update it by its ID.
-            const api = '/api/content-manager?operation=override' +
-                (overrideToUpdate ? `&id=${overrideToUpdate._id}` : '');
-
-            // 4. Generate a stable selector for creating a *new* override if none was found.
-            const stableSel = this.getStableLinkSelector(element);
-
+        // Find the override document to update, if it exists.
+        let overrideToUpdate = null;
+        for (const ov of this.overrides.values()) {
             try {
-                const response = await fetch(api, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        targetPage: this.currentPage,
-                        targetSelector: stableSel,
-                        contentType: 'link',
-                        image: url, // a.href
-                        text: label, // a.textContent
-                        originalContent: this.getOriginalContent(element, 'link')
-                    })
-                });
-
-                if (!response.ok) throw new Error('API request failed');
-
-                const savedOverride = await response.json();
-
-                // 5. Update the live DOM and our local cache
-                this.applyOverride(element, savedOverride);
-                this.overrides.set(stableSel, savedOverride);
-
-                // If we updated an old override with a different selector, remove the old key
-                if (overrideToUpdate && overrideToUpdate.targetSelector !== stableSel) {
-                    this.overrides.delete(overrideToUpdate.targetSelector);
+                // Check if an override's selector points to our currently edited element.
+                if (document.querySelector(ov.targetSelector) === element) {
+                    overrideToUpdate = ov;
+                    break;
                 }
-
-                this.closeModal();
-                this.showNotification('Button updated successfully!', 'success');
-
-            } catch (err) {
-                console.error('Failed to save button override:', err);
-                this.showNotification('Failed to save button update.', 'error');
-            }
-
-            return; // End of button-specific logic
+            } catch (e) { /* Ignore invalid selectors */ }
         }
 
-        // B. Original logic for all other content types (unchanged)
-        const contentData = this.getFormData(type);
-        try {
-            // ... (the rest of the original function for non-button elements)
-            const existingOverride = this.overrides.get(selector);
-            const api = '/api/content-manager?operation=override' +
-                (existingOverride ? `&id=${existingOverride._id}` : '');
+        const api = '/api/content-manager?operation=override' +
+            (overrideToUpdate ? `&id=${overrideToUpdate._id}` : '');
 
+        // Always generate a fresh, stable selector for the save operation.
+        const stableSelector = this.generateSelector(element);
+
+        try {
             const response = await fetch(api, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     targetPage: this.currentPage,
-                    targetSelector: selector,
+                    targetSelector: stableSelector,
                     contentType: type,
                     ...contentData,
                     originalContent: this.getOriginalContent(element, type)
                 })
             });
 
-            if (response.ok) {
-                const override = await response.json();
-                this.applyOverride(element, override);
-                this.overrides.set(selector, override);
-                this.closeModal();
-                this.showNotification('Content saved successfully!', 'success');
-            } else {
-                throw new Error('Failed to save content');
+            if (!response.ok) throw new Error('API request failed');
+
+            const savedOverride = await response.json();
+
+            // Update the local cache with the new stable selector.
+            // Remove the old one if it was different (migration case).
+            if (overrideToUpdate && overrideToUpdate.targetSelector !== stableSelector) {
+                this.overrides.delete(overrideToUpdate.targetSelector);
             }
-        } catch (error) {
-            console.error('Save error:', error);
-            this.showNotification('Failed to save content', 'error');
+            this.overrides.set(stableSelector, savedOverride);
+
+            // Apply the change visually.
+            this.applyOverride(element, savedOverride);
+            this.closeModal();
+            this.showNotification('Content saved successfully!', 'success');
+
+        } catch (err) {
+            console.error('Failed to save override:', err);
+            this.showNotification('Failed to save override.', 'error');
         }
     }
 

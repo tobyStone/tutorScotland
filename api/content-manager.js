@@ -106,86 +106,56 @@ async function handleGetOverrides(req, res) {
 }
 
 // Create new content override
+// In api/content-manager.js, REPLACE the handleCreateOverride function
+
 async function handleCreateOverride(req, res) {
     try {
-        console.log('Creating override with payload:', req.body);
-
+        const { id } = req.query; // Check for an ID to handle updates
         const {
-            targetPage,
-            targetSelector,
-            contentType,
-            heading,
-            text,
-            image,
-            originalContent,
-            overrideType = 'replace',
-            isButton = false
+            targetPage, targetSelector, contentType, text, image,
+            originalContent, overrideType = 'replace'
         } = req.body;
 
         if (!targetPage || !targetSelector || !contentType) {
-            return res.status(400).json({ 
-                message: 'targetPage, targetSelector, and contentType are required' 
-            });
+            return res.status(400).json({ message: 'Missing required fields for override.' });
         }
 
-        // Validate content type
-        const allowedTypes = ['text', 'html', 'image', 'link', 'list', 'button'];
-        if (!allowedTypes.includes(contentType)) {
-            return res.status(400).json({ 
-                message: 'Unsupported content type. Allowed types: ' + allowedTypes.join(', ')
-            });
+        // If an ID is provided, this is an UPDATE operation.
+        if (id) {
+            const updatedOverride = await Section.findByIdAndUpdate(
+                id,
+                { $set: { text, image, targetSelector, updatedAt: new Date() } },
+                { new: true }
+            ).lean();
+
+            if (!updatedOverride) {
+                return res.status(404).json({ message: `Override with ID ${id} not found.` });
+            }
+            return res.status(200).json(updatedOverride);
         }
 
-        // Normalize content type (list stored as html, button as link)
-        const normalizedType = contentType === 'list' ? 'html' : contentType;
-
-        // Check if override already exists
-        const existingOverride = await Section.findOne({
-            isContentOverride: true,
-            targetPage,
-            targetSelector
-        });
-
+        // If no ID, it's a CREATE operation. Check for existing to prevent duplicates.
+        const existingOverride = await Section.findOne({ targetPage, targetSelector, isContentOverride: true });
         if (existingOverride) {
-            // Update existing override
-            existingOverride.page = targetPage; // Satisfy schema requirement
-            existingOverride.heading = heading;
+            // If it somehow exists, update it instead of creating a duplicate.
             existingOverride.text = text;
             existingOverride.image = image;
-            existingOverride.contentType = normalizedType;
-            existingOverride.overrideType = overrideType;
-            existingOverride.isActive = true;
-            existingOverride.isButton = isButton;
-            existingOverride.updatedAt = new Date();
-
             await existingOverride.save();
-            return res.status(200).json(existingOverride);
-        } else {
-            // Create new override
-            const newOverride = new Section({
-                page: targetPage, // Satisfy schema requirement
-                isContentOverride: true,
-                targetPage,
-                targetSelector,
-                contentType: normalizedType,
-                heading,
-                text,
-                image,
-                isButton,
-                originalContent,
-                overrideType,
-                isActive: true,
-                isPublished: true,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            });
-
-            await newOverride.save();
-            return res.status(201).json(newOverride);
+            return res.status(200).json(existingOverride.toObject());
         }
+
+        // Create new override
+        const newOverride = new Section({
+            page: targetPage, isContentOverride: true, targetPage, targetSelector,
+            contentType, text, image, originalContent, overrideType,
+            isActive: true, isPublished: true
+        });
+        await newOverride.save();
+        return res.status(201).json(newOverride.toObject());
+
     } catch (error) {
-        console.error('Create Override Error:', error);
-        return res.status(500).json({ message: 'Error creating override' });
+        console.error('Create/Update Override Error:', error);
+        return res.status(500).json({ message: 'Error saving override' });
     }
 }
 
