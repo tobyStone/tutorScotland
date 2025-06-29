@@ -622,6 +622,23 @@ class VisualEditor {
         });
     }
 
+    /* ⚡ QUICK-ACTION: turn a text block into an Aurora button */
+    _promoteToButton(el) {
+        // 1️⃣ create a fresh <a> element carrying Aurora classes  VE id
+            const a = document.createElement('a');
+        a.className = `${VisualEditor.BUTTON_CSS} ve-btn`;
+        a.href = '#';                     // temporary – will be edited next
+        a.textContent = 'Click me';       // placeholder
+        this.getStableLinkSelector(a);    // stamps data-ve-button-id
+    
+            // 2️⃣ insert **after** the current element to avoid messing with flow
+            el.after(a);
+    
+            // 3️⃣ immediately open the link editor for it
+            this.openEditor(a, this.getStableLinkSelector(a), 'link');
+    }
+
+
     createEditOverlay(element, selector, type) {
         const overlay = document.createElement('div');
         overlay.className = 'edit-overlay';
@@ -631,7 +648,18 @@ class VisualEditor {
         controls.style.cssText = `position: absolute; top: -35px; left: 0; background: #007bff; color: white; padding: 5px 10px; border-radius: 4px; font-size: 12px; display: flex; align-items: center; gap: 10px; pointer-events: auto; white-space: nowrap;`;
         const editBtn = overlay.querySelector('.edit-btn');
         editBtn.style.cssText = `background: #28a745; border: none; color: white; padding: 3px 8px; border-radius: 3px; cursor: pointer; font-size: 11px;`;
-        element.addEventListener('mouseenter', () => { if (this.isEditMode) overlay.style.opacity = '1'; });
+        if (type !== 'link') {
+                const addBtn = document.createElement('button');
+                addBtn.textContent = '＋';
+                addBtn.title = 'Add Aurora button';
+                addBtn.style.cssText = 'background:#007bff;color:#fff;padding:3px 7px;border:none;border-radius:3px;font-size:11px;cursor:pointer;';
+                addBtn.addEventListener('click', e => {
+                        e.stopPropagation();
+                        this._promoteToButton(element);
+                    });
+                controls.appendChild(addBtn);
+            }
+    element.addEventListener('mouseenter', () => { if (this.isEditMode) overlay.style.opacity = '1'; });
         overlay.addEventListener('mouseleave', (e) => { if (!element.contains(e.relatedTarget)) overlay.style.opacity = '0'; });
         editBtn.addEventListener('click', (e) => { e.stopPropagation(); this.openEditor(element, selector, type); });
         return overlay;

@@ -317,10 +317,10 @@ async function handleListImages(req, res) {
         const offset = (pageNum - 1) * limit;
 
         // Use Vercel Blob list function
-        const { blobs } = await list({
-            limit : 1000,
-            prefix: 'content-images/'          // always the top folder
-        });
+        const folderRaw = clean(req.query.folder) || 'content-images';
+        const prefix = folderRaw.endsWith('/') ? folderRaw : `${folderRaw}/`;
+        
+        const { blobs } = await list({ limit: 1000, prefix });
 
         // 1) drop any file that *is already* a thumbnail
         let files = blobs.filter(b => !b.pathname.startsWith('content-images/thumbnails/'));
@@ -351,10 +351,7 @@ async function handleListImages(req, res) {
 
         const total = files.length || 0;
         const images = paginatedFiles.map(blob => {
-            const thumb = blob.url.replace(
-                '/content-images/',
-                '/content-images/thumbnails/'
-            );
+            const thumb = blob.url.replace(`${prefix}`, `${prefix}thumbnails/`);
             return {
                 name : blob.pathname.split('/').pop(),
                 url  : blob.url,
