@@ -305,7 +305,9 @@ class VisualEditor {
             override.targetSelector?.includes('data-ve-button-id') &&
             !override.targetSelector.includes('[data-ve-section-id')) {
 
-            const el = document.querySelector(override.targetSelector);
+            // Prefer a match that is INSIDE a section; ignore nav/header clones
+            const el = [...document.querySelectorAll(override.targetSelector)]
+                                .find(node => node.closest('[data-ve-section-id]'));
             if (el && el.closest('[data-ve-section-id]')) {
                 const scopedSelector = this.getStableLinkSelector(el);
                 console.log(`[VE] Migrating selector from "${override.targetSelector}" to "${scopedSelector}"`);
