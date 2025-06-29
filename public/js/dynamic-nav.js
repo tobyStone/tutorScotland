@@ -214,6 +214,11 @@ async function addCustomPagesToNav() {
                 const link = document.createElement('a');
                 link.href = `/page/${page.slug}`;
                 link.textContent = page.heading;
+
+                // CRITICAL: Strip any visual editor IDs to prevent conflicts
+                link.removeAttribute('data-ve-button-id');
+                link.removeAttribute('data-ve-block-id');
+
                 listItem.appendChild(link);
                 targetSubmenu.appendChild(listItem);
                 console.log(`Added custom page to ${category} dropdown: ${page.heading} -> /page/${page.slug}`);
@@ -277,6 +282,11 @@ async function addSectionAnchors() {
                 const link = document.createElement('a');
                 link.href = href;
                 link.textContent = section.heading;
+
+                // CRITICAL: Strip any visual editor IDs to prevent conflicts
+                link.removeAttribute('data-ve-button-id');
+                link.removeAttribute('data-ve-block-id');
+
                 listItem.appendChild(link);
                 targetSubmenu.appendChild(listItem);
                 console.log(`Added section anchor to ${category} dropdown: ${section.heading} -> ${href}`);
@@ -347,6 +357,11 @@ function addCustomPagesLegacy(publishedPages) {
                 const link = document.createElement('a');
                 link.href = `/page/${page.slug}`;
                 link.textContent = page.heading;
+
+                // CRITICAL: Strip any visual editor IDs to prevent conflicts
+                link.removeAttribute('data-ve-button-id');
+                link.removeAttribute('data-ve-block-id');
+
                 dropdownContent.appendChild(link);
                 console.log(`Added link to legacy dropdown: ${page.heading} -> /page/${page.slug}`);
             });
@@ -368,6 +383,11 @@ function addCustomPagesLegacy(publishedPages) {
                 const link = document.createElement('a');
                 link.href = `/page/${page.slug}`;
                 link.textContent = page.heading;
+
+                // CRITICAL: Strip any visual editor IDs to prevent conflicts
+                link.removeAttribute('data-ve-button-id');
+                link.removeAttribute('data-ve-block-id');
+
                 dropdownContent.appendChild(link);
                 console.log(`Added link to legacy dropdown: ${page.heading} -> /page/${page.slug}`);
             });
@@ -395,6 +415,11 @@ function addCustomPagesLegacy(publishedPages) {
                 a.href = `/page/${page.slug}`;
                 a.className = 'nav-link';
                 a.textContent = page.heading;
+
+                // CRITICAL: Strip any visual editor IDs to prevent conflicts
+                a.removeAttribute('data-ve-button-id');
+                a.removeAttribute('data-ve-block-id');
+
                 li.appendChild(a);
 
                 // Add the link to the navigation menu before the last item

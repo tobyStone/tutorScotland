@@ -14,13 +14,26 @@
     
     const html = await response.text();
     
+          const scrubVEids = rawHtml => {
+                // Use the DOM so we don’t accidentally mangle inline scripts/templates
+                    const tmp = document.createElement('div');
+                tmp.innerHTML = rawHtml;
+                tmp.querySelectorAll('[data-ve-button-id],[data-ve-block-id]')
+                       .forEach(el => {
+                             el.removeAttribute('data-ve-button-id');
+                             el.removeAttribute('data-ve-block-id');
+                           });
+                return tmp.innerHTML;
+              };
+      const cleanHtml = scrubVEids(html);
+      
     // Find the header element and insert navigation after it
     const header = document.querySelector('header');
     if (header) {
-      header.insertAdjacentHTML('afterend', html);
+        header.insertAdjacentHTML('afterend', cleanHtml);
     } else {
       // Fallback: insert at the beginning of body
-      document.body.insertAdjacentHTML('afterbegin', html);
+        document.body.insertAdjacentHTML('afterbegin', cleanHtml);
     }
     
     // Emit custom event to signal navigation is loaded

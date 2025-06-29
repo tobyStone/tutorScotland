@@ -56,7 +56,13 @@ class VisualEditor {
         if (!VisualEditor.BUTTON_CSS.trim()) return;
         const cssParts = VisualEditor.BUTTON_CSS.split(/\s+/);
         document.querySelectorAll('a').forEach(a => {
-            if (a.classList.contains('ve-btn') || a.closest('nav, header, #edit-mode-toggle, #editor-modal, .edit-overlay, .ve-no-edit')) return;
+            // Enhanced exclusion: exclude navigation, header, and any elements with navigation-related classes
+            if (a.classList.contains('ve-btn') ||
+                a.closest('nav, header, #edit-mode-toggle, #editor-modal, .edit-overlay, .ve-no-edit, .main-nav, .nav-link, .menu-item') ||
+                a.classList.contains('nav-link') ||
+                a.classList.contains('banner-login-link') ||
+                a.closest('.main-nav')) return;
+
             if (cssParts.every(c => a.classList.contains(c))) {
                 a.classList.add('ve-btn');
                 if (!a.dataset.veButtonId) {
@@ -68,6 +74,23 @@ class VisualEditor {
                 }
             }
         });
+
+        // Check for duplicate button IDs after assignment
+        this.checkForDuplicateButtonIds();
+    }
+
+    checkForDuplicateButtonIds() {
+        const buttonIds = [...document.querySelectorAll('[data-ve-button-id]')]
+            .map(el => el.dataset.veButtonId);
+        const duplicates = buttonIds.filter((id, index, arr) => arr.indexOf(id) !== index);
+
+        if (duplicates.length > 0) {
+            console.error('[VE] Duplicate button IDs detected:', [...new Set(duplicates)]);
+            duplicates.forEach(id => {
+                const elements = document.querySelectorAll(`[data-ve-button-id="${id}"]`);
+                console.error(`[VE] ID "${id}" found on ${elements.length} elements:`, elements);
+            });
+        }
     }
 
     constructor() {
@@ -184,6 +207,15 @@ class VisualEditor {
             for (const [selector, ov] of pendingOverrides.entries()) {
                 try {
                     const foundElements = document.querySelectorAll(selector);
+
+                    // Enhanced diagnostics: warn about duplicate matches
+                    if (foundElements.length > 1) {
+                        // After scoping, duplicate matches are effectively bugs
+                        const logLevel = selector.includes('[data-ve-section-id') ? 'error' : 'warn';
+                        console[logLevel](`[VE] ${logLevel.toUpperCase()}: selector "${selector}" matched ${foundElements.length} elements`, foundElements);
+                        console[logLevel]('[VE] This may indicate duplicate IDs or overly broad selectors');
+                    }
+
                     if (foundElements.length > 0) {
                         foundElements.forEach(el => this.applyOverride(el, ov));
                         successfullyApplied.add(selector);
@@ -266,15 +298,18 @@ class VisualEditor {
     }
 
     applyOverride(element, override) {
-        if (override.contentType === 'link' && override.targetSelector?.includes('data-ve-button-id')) {
+        // Auto-migrate legacy un-scoped selectors to section-scoped ones
+        if (override.contentType === 'link' &&
+            override.targetSelector?.includes('data-ve-button-id') &&
+            !override.targetSelector.includes('[data-ve-section-id')) {
+
             const el = document.querySelector(override.targetSelector);
-            if (el) {
-                // This block is for migrating old selectors, can be simplified or removed later.
-                // For now, it's fine.
-                const stable = this.getStableLinkSelector(el);
-                this.overrides.set(stable, override);
+            if (el && el.closest('[data-ve-section-id]')) {
+                const scopedSelector = this.getStableLinkSelector(el);
+                console.log(`[VE] Migrating selector from "${override.targetSelector}" to "${scopedSelector}"`);
+                this.overrides.set(scopedSelector, override);
                 this.overrides.delete(override.targetSelector);
-                override.targetSelector = stable;
+                override.targetSelector = scopedSelector;
             }
         }
         switch (override.contentType) {
@@ -518,6 +553,14 @@ class VisualEditor {
             el.dataset.veButtonId =
                 (self.crypto?.randomUUID?.() ?? `ve-btn-${Date.now()}-${Math.random()}`);
         }
+
+        // Create section-scoped selector to prevent cross-section conflicts
+        const section = el.closest('[data-ve-section-id]');
+        if (section && section.dataset.veSectionId) {
+            return `[data-ve-section-id="${section.dataset.veSectionId}"] [data-ve-button-id="${el.dataset.veButtonId}"]`;
+        }
+
+        // Fallback to button-only selector for elements not in sections
         return `[data-ve-button-id="${el.dataset.veButtonId}"]`;
     }
 

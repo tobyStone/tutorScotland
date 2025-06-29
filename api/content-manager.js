@@ -5,6 +5,17 @@ const { list } = require('@vercel/blob');
 
 const ITEMS_PER_PAGE = 20;
 
+/**
+ * RECOMMENDED: Create a compound unique index in MongoDB to prevent duplicate overrides:
+ *
+ * db.sections.createIndex(
+ *   { targetPage: 1, targetSelector: 1 },
+ *   { unique: true, partialFilterExpression: { isContentOverride: true } }
+ * );
+ *
+ * This protects against race conditions when multiple editors save the same element.
+ */
+
 module.exports = async (req, res) => {
     try {
         await connectDB();
@@ -104,9 +115,9 @@ async function handleGetOverrides(req, res) {
 
 /* ------------------------------------------------------------------ *
  *  handleCreateOrUpdateOverride                                       *
- *  – called for POST ?operation=override                              *
- *    • WITHOUT  ?id  ? create new override                            *
- *    • WITH     ?id  ? update existing override                       *
+ *  ï¿½ called for POST ?operation=override                              *
+ *    ï¿½ WITHOUT  ?id  ? create new override                            *
+ *    ï¿½ WITH     ?id  ? update existing override                       *
  * ------------------------------------------------------------------ */
 async function handleCreateOverride(req, res) {
     try {
@@ -266,6 +277,30 @@ async function handleCreateBackup(req, res) {
     } catch (error) {
         console.error('Create Backup Error:', error);
         return res.status(500).json({ message: 'Error creating backup' });
+    }
+}
+
+// Delete content override
+async function handleDeleteOverride(req, res) {
+    try {
+        const { id } = req.query;
+
+        if (!id) {
+            return res.status(400).json({ message: 'ID parameter required' });
+        }
+
+        console.log('Deleting content override with ID:', id);
+
+        const deleted = await Section.findByIdAndDelete(id);
+        if (!deleted) {
+            return res.status(404).json({ message: 'Override not found' });
+        }
+
+        console.log('Successfully deleted override:', deleted.targetSelector);
+        return res.status(204).end();
+    } catch (error) {
+        console.error('Delete Override Error:', error);
+        return res.status(500).json({ message: 'Error deleting override' });
     }
 }
 
