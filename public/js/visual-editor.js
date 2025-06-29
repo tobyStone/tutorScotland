@@ -327,7 +327,11 @@ class VisualEditor {
                 element.textContent = override.text || override.heading;
                 break;
             case 'html':
-                element.innerHTML = override.text;
+                if (override.overrideType === 'insert-after') {
+                        element.insertAdjacentHTML('afterend', override.text);
+                    } else {
+                        element.innerHTML = override.text;
+                    }
                 break;
             case 'image':
                 if (element.tagName === 'IMG') {
@@ -376,14 +380,20 @@ class VisualEditor {
 
         const api = `/api/content-manager?operation=override` + (overrideToUpdate ? `&id=${overrideToUpdate._id}` : '');
 
-          /*
-   *  ⬇️  Force links to be saved with a section-scoped selector.
-   *      (If the element is NOT inside a section we still fall back to the
-   *      plain [data-ve-button-id] selector, but nav / header are excluded.)
-   */
-        const stableSelector = type === 'link'
-                ? this.getStableLinkSelector(element)
-            : this.ensureBlockId(element);
+        /* ---------- selector strategy ------------------------------------ *
+        *  • links  → button-aware, nav-safe selector
+        *  • all others  → DOM path  enclosing section id (persists!)
+        * --------------------------------------------------------------- */
+        let stableSelector;
+        if (type === 'link') {
+                stableSelector = this.getStableLinkSelector(element);
+            } else {
+                const section = element.closest('[data-ve-section-id]');
+                const path = this.generateSelector(element);   // e.g.  div:nth-of-type(2) > img
+                stableSelector = section
+                        ? `[data-ve-section-id="${section.dataset.veSectionId}"] ${path}`
+                    : path;                                       // body-level element
+        }
 
         const pageKey = (this.currentPage.replace(/^\//, '') || 'index').replace(/\.html?$/i, '');
 
@@ -635,7 +645,37 @@ class VisualEditor {
             el.after(a);
     
             // 3️⃣ immediately open the link editor for it
+        this.openEditor(a, this.getStableLinkSelector(a), 'link');
+
+        const btnHtml = `<a href="#" class="${VisualEditor.BUTTON_CSS} ve-btn"
+                    data-ve-button-id="${self.crypto?.randomUUID?.()}">Click me</a>`;
+        
+            // 1️⃣  insert visually
+            el.insertAdjacentHTML('beforeend', btnHtml);
+        const a = el.lastElementChild;
+        
+            // 2️⃣  SAVE an HTML override of type **insert-after**
+            const section = el.closest('[data-ve-section-id]');
+        const selector = section
+                ? `[data-ve-section-id="${section.dataset.veSectionId}"] ${this.generateSelector(el)}`
+            : this.generateSelector(el);
+        
+            fetch('/api/content-manager?operation=override', {
+            method : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body   : JSON.stringify({
+                    targetPage   : (location.pathname.replace(/^\//, '') || 'index').replace(/\.html?$/, ''),
+                    targetSelector: selector,
+                    contentType  : 'html',
+                    text         : btnHtml,
+                    overrideType : 'insert-after',
+                    originalContent: ''          // we’re adding, not replacing
+            })
+            }).then(r => r.json()).catch(() => { });
+
+            // 3️⃣  let the admin tweak label / link immediately
             this.openEditor(a, this.getStableLinkSelector(a), 'link');
+        
     }
 
 
