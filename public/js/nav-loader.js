@@ -18,7 +18,7 @@
                 // Use the DOM so we don’t accidentally mangle inline scripts/templates
                     const tmp = document.createElement('div');
                 tmp.innerHTML = rawHtml;
-                tmp.querySelectorAll('[data-ve-button-id],[data-ve-block-id]')
+                tmp.querySelectorAll('[data-ve-button-id]')
                        .forEach(el => {
                              el.removeAttribute('data-ve-button-id');
                              el.removeAttribute('data-ve-block-id');

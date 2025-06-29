@@ -46,7 +46,13 @@ function recoverFromError(editor) {
 
 class VisualEditor {
 
-
+    static _closestScope(el) {
+        if (el.closest('.main-nav')) return '.main-nav';
+        if (el.closest('header')) return 'header';
+        if (el.closest('[data-ve-section-id]'))     // section gets handled later
+                return null;                            // <- we’ll add section id below
+        return null;                                // body-level fallback
+    }
 
     static BUTTON_CSS = 'button aurora';
     static EDIT_ACTIVE_CLASS = 've-edit-active';
@@ -558,30 +564,27 @@ class VisualEditor {
 
     getStableLinkSelector(el) {
         if (!el) return '';
-        if (!el.dataset.veButtonId) {
-            el.dataset.veButtonId =
-                (self.crypto?.randomUUID?.() ?? `ve-btn-${Date.now()}-${Math.random()}`);
-        }
-
-        // Create section-scoped selector to prevent cross-section conflicts
-        const section = el.closest('[data-ve-section-id]');
-        if (section && section.dataset.veSectionId) {
-            return `[data-ve-section-id="${section.dataset.veSectionId}"] [data-ve-button-id="${el.dataset.veButtonId}"]`;
-        }
-
-        // Fallback to button-only selector for elements not in sections
-        return `[data-ve-button-id="${el.dataset.veButtonId}"]`;
+    
+            /* 1️⃣ ensure the element itself has a button-id */
+            if (!el.dataset.veButtonId) {
+                    el.dataset.veButtonId =
+                        (self.crypto?.randomUUID?.() ?? `ve-btn-${Date.now()}-${Math.random()}`);
+                }
+    
+            /* 2️⃣ decide which container we must prepend */
+            const scope = VisualEditor._closestScope(el);
+    
+            /* ─ content section ─────────────────────── */
+            if (!scope) {
+                    const section = el.closest('[data-ve-section-id]');
+                    return section
+                            ? `[data-ve-section-id="${section.dataset.veSectionId}"] [data-ve-button-id="${el.dataset.veButtonId}"]`
+                        : `[data-ve-button-id="${el.dataset.veButtonId}"]`;   // (rare) truly global element
+                }
+    
+            /* ─ nav / header ────────────────────────── */
+            return `${scope} [data-ve-button-id="${el.dataset.veButtonId}"]`;
     }
-
-    /** ensure the element has a ve-block-id; return the selector */
-    ensureBlockId(el) {
-        if (!el.dataset.veBlockId) {
-            el.dataset.veBlockId =
-                self.crypto?.randomUUID?.() ?? `ve-block-${Date.now()}-${Math.random()}`;
-        }
-        return `[data-ve-block-id="${el.dataset.veBlockId}"]`;
-    }
-
 
     getElementType(element) {
         const tagName = element.tagName.toLowerCase();
