@@ -206,7 +206,9 @@ class VisualEditor {
             /* ── Pass 1: Apply everything we can find directly ──────── */
             for (const [selector, ov] of pendingOverrides.entries()) {
                 try {
-                    const foundElements = document.querySelectorAll(selector);
+                      // Filter out anything living in header or nav so we never “paint” the menu
+                          const foundElements = [...document.querySelectorAll(selector)]
+                                    .filter(el => !el.closest('nav, header, .main-nav'));
 
                     // Enhanced diagnostics: warn about duplicate matches
                     if (foundElements.length > 1) {
