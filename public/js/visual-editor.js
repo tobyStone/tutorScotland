@@ -366,8 +366,13 @@ class VisualEditor {
 
         const api = `/api/content-manager?operation=override` + (overrideToUpdate ? `&id=${overrideToUpdate._id}` : '');
 
-        const stableSelector = (type === 'link' && element.classList.contains('ve-btn'))
-            ? this.getStableLinkSelector(element)
+          /*
+   *  ⬇️  Force links to be saved with a section-scoped selector.
+   *      (If the element is NOT inside a section we still fall back to the
+   *      plain [data-ve-button-id] selector, but nav / header are excluded.)
+   */
+        const stableSelector = type === 'link'
+                ? this.getStableLinkSelector(element)
             : this.ensureBlockId(element);
 
         const pageKey = (this.currentPage.replace(/^\//, '') || 'index').replace(/\.html?$/i, '');
