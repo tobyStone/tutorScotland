@@ -596,6 +596,23 @@ class VisualEditor {
             return `${scope} [data-ve-button-id="${el.dataset.veButtonId}"]`;
     }
 
+    getStableImgSelector(el) {
+        if (!el) return '';
+
+        /* 1️⃣ ensure an ID is present */
+        if (!el.dataset.veBlockId) {
+            el.dataset.veBlockId =
+                (self.crypto?.randomUUID?.() ?? `ve-img-${Date.now()}-${Math.random()}`);
+        }
+
+        /* 2️⃣ prepend section scope (like we already do for links) */
+        const section = el.closest('[data-ve-section-id]');
+        return section
+            ? `[data-ve-section-id="${section.dataset.veSectionId}"] [data-ve-block-id="${el.dataset.veBlockId}"]`
+            : `[data-ve-block-id="${el.dataset.veBlockId}"]`;
+    }
+
+
     getElementType(element) {
         const tagName = element.tagName.toLowerCase();
         switch (tagName) {
