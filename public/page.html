@@ -12,7 +12,7 @@
     <script src="/js/nav-loader.js" defer></script>
     <script src="/js/dynamic-nav.js" defer></script>
     <script src="/js/rolling-banner.js" defer></script>
-    <script src="/js/visual-editor.js" defer></script>
+    <script type="module" src="/js/visual-editor.js" defer></script>
 </head>
 <body class="dynamic-page" data-page="page">
     <header>
@@ -257,9 +257,102 @@
     <script src="/responsive-helper.js" defer></script>   <!-- defines initRollingBanner -->
     <script src="/js/rolling-banner.js" defer></script>   <!-- *uses* initRollingBanner -->
     <script src="/js/dynamic-nav.js" defer></script>
-    <script src="/js/visual-editor.js" defer></script>
+    <script type="module" src="/js/visual-editor.js" defer></script>
 
     <!-- bump the version whenever you redeploy -->
     <script src="/js/dynamic-sections.js?v=20240530" type="module" defer></script>
+<!-- Visual Editor Templates -->
+<template id="ve-editor-modal-template">
+    <div id="editor-modal" class="ve-modal-container">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Edit Content</h3>
+                <button id="close-modal" class="close-btn" aria-label="Close modal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="content-form" onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="content-type">Content Type:</label>
+                        <select id="content-type" disabled>
+                            <option value="text">Text</option>
+                            <option value="html">HTML</option>
+                            <option value="image">Image</option>
+                            <option value="link">Link</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="text-group">
+                        <label for="content-text">Text Content:</label>
+                        <textarea id="content-text" rows="4"></textarea>
+                    </div>
+                    <div class="form-group" id="html-group">
+                        <label for="content-html">HTML Content:</label>
+                        <textarea id="content-html" rows="6"></textarea>
+                    </div>
+                    <div class="form-group" id="image-group">
+                        <label for="content-image">Image URL:</label>
+                        <div class="image-input-group">
+                            <input type="url" id="content-image">
+                            <button type="button" id="browse-btn" class="btn btn-secondary">Browse Images</button>
+                        </div>
+                        <div id="image-preview" style="display: none;"><img src="" alt="Preview" style="max-width: 200px; max-height: 200px;"></div>
+                        <div class="upload-section">
+                            <label for="image-upload">Or upload a new image:</label>
+                            <input type="file" id="image-upload" accept="image/*">
+                            <button type="button" id="upload-btn" class="btn btn-secondary">Upload Image</button>
+                            <div id="upload-progress" style="display: none;">
+                                <div class="progress-bar"><div class="progress-fill"></div></div>
+                                <span class="progress-text">Uploading...</span>
+                            </div>
+                        </div>
+                        <label for="image-alt">Alt Text:</label>
+                        <input type="text" id="image-alt">
+                    </div>
+                    <div class="form-group" id="link-group">
+                        <label for="link-url">Link URL:</label>
+                        <input type="url" id="link-url">
+                        <label for="link-text">Link Text:</label>
+                        <input type="text" id="link-text">
+                        <div class="form-check mt-2">
+                            <input type="checkbox" id="link-is-button" class="form-check-input">
+                            <label for="link-is-button" class="form-check-label">Style as button</label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="preview-btn" class="btn btn-secondary">Preview</button>
+                        <button type="button" id="save-btn" class="btn btn-primary">Save Changes</button>
+                        <button type="button" id="restore-btn" class="btn btn-warning">Restore Original</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="image-browser" class="image-browser" style="display: none;"></div>
+    </div>
+</template>
+
+<template id="ve-image-browser-template">
+    <div class="image-browser-header">
+        <h4>Browse Images</h4>
+        <button type="button" id="close-browser" class="close-btn" aria-label="Close image browser">×</button>
+    </div>
+    <div class="image-browser-content">
+        <div class="image-browser-toolbar">
+            <input type="text" id="image-search" placeholder="Search images..." class="form-control">
+            <select id="image-sort" class="form-control">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="name">Name</option>
+            </select>
+        </div>
+        <div id="image-grid" class="image-grid">
+            <div class="loading-spinner"></div>
+        </div>
+        <div id="image-pagination" class="image-pagination">
+            <button type="button" id="prev-page" class="btn btn-secondary" disabled>Previous</button>
+            <span id="page-info">Page 1</span>
+            <button type="button" id="next-page" class="btn btn-secondary">Next</button>
+        </div>
+    </div>
+</template>
 </body>
 </html>
