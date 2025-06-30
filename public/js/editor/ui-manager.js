@@ -79,8 +79,11 @@ export class UIManager {
         const elements = new Set();
         const selectors = [
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+
+            'p:not(.no-edit)', '.editable',
             'p:not(.no-edit)',
             '.editable',
+
             'img:not(.no-edit)',
             `a.${BUTTON_CSS.split(' ')[0]}`
         ];
@@ -143,18 +146,24 @@ export class UIManager {
         this.dom.modal.style.display = 'block';
     }
 
-    fillForm(el,type) {
+    fillForm(el, type) {
         const modal = this.dom.modal;
-        switch(type){
-            case 'text': modal.querySelector('#content-text').value = el.textContent.trim(); break;
-            case 'html': modal.querySelector('#content-html').value = el.innerHTML.trim(); break;
+        const content = this.callbacks.getOriginalContent(el, type);
+
+        switch (type) {
+            case 'text':
+                modal.querySelector('#content-text').value = content;
+                break;
+            case 'html':
+                modal.querySelector('#content-html').value = content;
+                break;
             case 'image':
-                modal.querySelector('#content-image').value = el.src;
-                modal.querySelector('#image-alt').value = el.alt;
+                modal.querySelector('#content-image').value = content.src;
+                modal.querySelector('#image-alt').value = content.alt;
                 break;
             case 'link':
-                modal.querySelector('#link-url').value = el.dataset.originalHref || el.href;
-                modal.querySelector('#link-text').value = el.textContent.trim();
+                modal.querySelector('#link-url').value = content.href;
+                modal.querySelector('#link-text').value = content.text;
                 modal.querySelector('#link-is-button').checked = el.classList.contains(BUTTON_CSS.split(/\s+/)[0]);
                 break;
         }
