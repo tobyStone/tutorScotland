@@ -20,35 +20,35 @@ export class OverrideEngine {
         }
     }
 
+    // Apply all overrides after the page is fully rendered. Any selectors that
+    // cannot be matched are reported for easier debugging.
     applyAllOverrides() {
         const unappliedSelectors = [];
+        console.log('[VE] Applying all content overrides...');
+
         for (const [selector, ov] of this.overrides.entries()) {
-            let found = false;
             try {
-                const targetElements = [...document.querySelectorAll(selector)].filter(el =>
-                    selector.startsWith('.main-nav') ? true : !el.closest('.main-nav')
+                const elements = document.querySelectorAll(selector);
+                const targets = [...elements].filter(el =>
+                    selector.startsWith('.main-nav') ? true : !el.closest('.main-nav, .ve-no-edit')
                 );
 
-                if (targetElements.length > 0) {
-                    targetElements.forEach(el => this.applyOverride(el, ov));
-                    found = true;
+                if (targets.length > 0) {
+                    targets.forEach(el => this.applyOverride(el, ov));
+                } else {
+                    unappliedSelectors.push(selector);
                 }
             } catch (e) {
-                // ignore invalid selector errors
-                console.warn(`[VE] Invalid selector syntax in overrides map: "${selector}"`, e.message);
-                unappliedSelectors.push({ selector, reason: 'Invalid Syntax' });
-                found = true;
-            }
-
-            if (!found) {
-                unappliedSelectors.push({ selector, reason: 'Not Found in DOM' });
+                console.warn(`[VE] Invalid selector syntax: "${selector}"`, e);
             }
         }
 
         if (unappliedSelectors.length > 0) {
-            console.error('[VE] FAILED: Overrides not applied:', unappliedSelectors);
+            console.error('%c[VE] FAILED: Could not find elements for selectors:',
+                'color:red;font-weight:bold;', unappliedSelectors);
         } else {
-            console.log('%c[VE] All overrides applied successfully.', 'color:green;font-weight:bold;');
+            console.log('%c[VE] All overrides applied successfully.',
+                'color:green;font-weight:bold;');
         }
     }
 
@@ -63,6 +63,9 @@ export class OverrideEngine {
         // from being included in the element's content.
         element.querySelectorAll('.edit-overlay').forEach(o => o.remove());
 
+        // Mark this element so other scripts do not revert the changes
+        element.dataset.veManaged = 'true';
+
         switch(override.contentType){
             case 'text':
                 element.textContent = override.text;
@@ -75,6 +78,7 @@ export class OverrideEngine {
                 if (img) {
                     img.src = override.image;
                     if(override.text) img.alt = override.text;
+                    img.dataset.veManaged = 'true';
                 }
                 break;
             }
@@ -83,10 +87,10 @@ export class OverrideEngine {
                 if (a) {
                     a.href = override.image;
                     a.textContent = override.text;
-                    // Correctly toggle all button classes based on the 'isButton' flag
                     BUTTON_CSS.split(/\s+/).forEach(cls => {
                         a.classList.toggle(cls, !!override.isButton);
                     });
+                    a.dataset.veManaged = 'true';
                 }
                 break;
             }
@@ -114,8 +118,7 @@ export class OverrideEngine {
         const idAttributeKey = (type === 'link') ? 'veButtonId' : 'veBlockId';
         const idAttribute = `data-${idAttributeKey.replace(/[A-Z]/g, '-$&').toLowerCase()}`;
         if (!el.dataset[idAttributeKey]) {
-            const prefix = (type === 'link') ? 've-btn-' : 've-block-';
-            el.dataset[idAttributeKey] = self.crypto?.randomUUID?.() ?? `${prefix}${Date.now()}`;
+            el.dataset[idAttributeKey] = self.crypto?.randomUUID?.() ?? `${type}-${Date.now()}`;
         }
         const section = el.closest('[data-ve-section-id]');
         const idSelector = `[${idAttribute}="${el.dataset[idAttributeKey]}"]`;
