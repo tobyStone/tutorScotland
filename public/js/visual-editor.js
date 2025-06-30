@@ -334,6 +334,13 @@ class VisualEditor {
                     }
                 break;
             case 'image':
+                   /* auto-migrate img selectors that still use a raw DOM path */
+                       if (override.targetSelector && !override.targetSelector.includes('[data-ve-block-id')) {
+                               const scoped = this.getStableImgSelector(element);
+                               this.overrides.set(scoped, override);
+                               this.overrides.delete(override.targetSelector);
+                               override.targetSelector = scoped;
+                           }
                 if (element.tagName === 'IMG') {
                     element.src = override.image;
                     if (override.text) element.alt = override.text;
@@ -387,7 +394,11 @@ class VisualEditor {
         let stableSelector;
         if (type === 'link') {
                 stableSelector = this.getStableLinkSelector(element);
-            } else {
+        }
+        else if (type === 'image') {
+            stableSelector = this.getStableImgSelector(element);
+        }
+        else {
                 const section = element.closest('[data-ve-section-id]');
                 const path = this.generateSelector(element);   // e.g.  div:nth-of-type(2) > img
                 stableSelector = section
