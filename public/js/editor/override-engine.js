@@ -29,14 +29,11 @@ export class OverrideEngine {
      */
     applyAllOverrides() {
         const unappliedSelectors = [];
-        console.log('[VE] Applying all content overrides...');
-
         for (const [selector, ov] of this.overrides.entries()) {
             let found = false;
             try {
-                const elements = document.querySelectorAll(selector);
-                const targetElements = [...elements].filter(el =>
-                    selector.startsWith('.main-nav') ? true : !el.closest('nav, header, .main-nav')
+                const targetElements = [...document.querySelectorAll(selector)].filter(el =>
+                    selector.startsWith('.main-nav') ? true : !el.closest('.main-nav')
                 );
 
                 if (targetElements.length > 0) {
@@ -44,9 +41,7 @@ export class OverrideEngine {
                     found = true;
                 }
             } catch (e) {
-                console.warn(`[VE] Invalid selector syntax in overrides map: "${selector}"`, e.message);
-                unappliedSelectors.push({ selector, reason: 'Invalid Syntax' });
-                found = true; // Mark as handled
+                // ignore invalid selector errors
             }
 
             if (!found) {
@@ -55,11 +50,7 @@ export class OverrideEngine {
         }
 
         if (unappliedSelectors.length > 0) {
-            console.error(
-                `%c[VE] FAILED: ${unappliedSelectors.length} override(s) could not be applied:`,
-                'color:red;font-weight:bold;',
-                unappliedSelectors
-            );
+            console.error('[VE] FAILED: Overrides not applied:', unappliedSelectors);
         } else {
             console.log('%c[VE] All overrides applied successfully.', 'color:green;font-weight:bold;');
         }
@@ -113,7 +104,7 @@ export class OverrideEngine {
         
         const clone = element.cloneNode(true);
         clone.querySelectorAll('.edit-overlay').forEach(o => o.remove());
-        if (clone.querySelector('p, ul, ol, div, h1, h2, h3, h4, h5, h6, br, strong, em, b, i, u')) {
+        if (clone.querySelector('p, ul, ol, div, br, strong, em, b, i, u')) {
             return 'html';
         }
         
@@ -124,8 +115,9 @@ export class OverrideEngine {
      * Generates a stable, unique selector for an element to persist changes.
      */
     getStableSelector(el, type) {
-        if (type === 'link' && el.closest('.main-nav')) {
-            return `.main-nav a[href="${el.getAttribute('href') || '#'}"]`;
+        if (el.closest('.main-nav')) {
+            const href = el.getAttribute('href') || '#';
+            return `.main-nav a[href="${href}"]`;
         }
 
         const idAttributeKey = (type === 'link') ? 'veButtonId' : 'veBlockId';

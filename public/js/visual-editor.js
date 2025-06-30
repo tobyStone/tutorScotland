@@ -13,7 +13,8 @@ class VisualEditor {
             onPreview: data => this.preview(data),
             onRestore: () => this.restore(),
             onUpload: () => this.uploadImage(),
-            getType: el => overrideEngine.getElementType(el)
+            getType: el => overrideEngine.getElementType(el),
+            getOriginalContent: (el, type) => overrideEngine.getOriginalContent(el, type)
         });
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());
