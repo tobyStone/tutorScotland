@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <title>Contact Tutors Alliance Scotland</title>
     <link rel="icon" href="/images/bannerShield2.png" type="image/png">
@@ -9,9 +7,9 @@
     <link rel="stylesheet" href="/css/nav.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/responsive-helper.js"></script>
-    <script src="/js/nav-loader.js" defer></script>
-    <script src="/js/dynamic-nav.js" defer></script>
-    <script type="module" src="/js/visual-editor.js" defer></script>
+    <script src="/js/nav-loader.js" defer=""></script>
+    <script src="/js/dynamic-nav.js" defer=""></script>
+    <script type="module" src="/js/visual-editor.js" defer=""></script>
     <style>
         /* Public form container styling */
         .public-form-container {
@@ -79,10 +77,10 @@
 <body data-page="publicConnect">
     <!-- Shared banner/header -->
     <header>
-        <h1>Tutors Alliance Scotland</h1>
+        <h1 data-ve-block-id="02e86e68-7285-4c39-97e2-769a3bbd8c64">Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a href="/" class="banner-login-link login-box">Home</a>
-            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a href="/" class="banner-login-link login-box" data-ve-block-id="fdc72013-4afb-48ca-b742-ecd1da0348c2">Home</a>
+            <a href="login.html?role=admin" class="banner-login-link login-box" data-ve-block-id="484dad10-0f9e-44a7-a755-3f6dec2aed9a">Login</a>
         </div>
     </header>
 
@@ -96,8 +94,8 @@
     </div>
 
     <main>
-        <h2>Get in Touch</h2>
-        <p>
+        <h2 data-ve-block-id="f87a18ff-8fa9-41d0-9148-142ed3974be0">Get in Touch</h2>
+        <p data-ve-block-id="7a512df0-c69b-4617-8fab-d4c7a6226a3c">
             We'd love to hear from you! Whether you have questions about our services, need help finding the right educational support,
             or want to learn more about what we do, please fill out the form below and we'll get back to you as soon as possible.
         </p>
@@ -106,19 +104,19 @@
         <section id="dynamicSectionsTop" class="dynamic-section-container"></section>
 
         <div class="public-form-container">
-            <h3>Contact Form</h3>
+            <h3 data-ve-block-id="b4c37955-4b0c-457b-a836-6533d3db98b0">Contact Form</h3>
             <form id="publicSubmissionForm" class="public-submission-form">
                 <label for="publicName">Full Name:</label>
-                <input type="text" id="publicName" name="publicName" required>
+                <input type="text" id="publicName" name="publicName" required="">
 
                 <label for="publicEmail">Email Address:</label>
-                <input type="email" id="publicEmail" name="publicEmail" required>
+                <input type="email" id="publicEmail" name="publicEmail" required="">
 
                 <label for="publicPhone">Phone Number (Optional):</label>
                 <input type="tel" id="publicPhone" name="publicPhone">
 
                 <label for="publicSubject">Subject:</label>
-                <select id="publicSubject" name="publicSubject" required>
+                <select id="publicSubject" name="publicSubject" required="">
                     <option value="">Please select...</option>
                     <option value="General Inquiry">General Inquiry</option>
                     <option value="Finding a Tutor">Finding a Tutor</option>
@@ -128,7 +126,7 @@
                 </select>
 
                 <label for="publicMessage">Message:</label>
-                <textarea id="publicMessage" name="publicMessage" placeholder="Please tell us how we can help you..." required></textarea>
+                <textarea id="publicMessage" name="publicMessage" placeholder="Please tell us how we can help you..." required=""></textarea>
 
                 <button type="submit">Send Message</button>
             </form>
@@ -245,7 +243,7 @@
                 <form id="content-form" onsubmit="return false;">
                     <div class="form-group">
                         <label for="content-type">Content Type:</label>
-                        <select id="content-type" disabled>
+                        <select id="content-type" disabled="">
                             <option value="text">Text</option>
                             <option value="html">HTML</option>
                             <option value="image">Image</option>
@@ -319,11 +317,12 @@
             <div class="loading-spinner"></div>
         </div>
         <div id="image-pagination" class="image-pagination">
-            <button type="button" id="prev-page" class="btn btn-secondary" disabled>Previous</button>
+            <button type="button" id="prev-page" class="btn btn-secondary" disabled="">Previous</button>
             <span id="page-info">Page 1</span>
             <button type="button" id="next-page" class="btn btn-secondary">Next</button>
         </div>
     </div>
 </template>
-</body>
-</html>
+
+
+</body></html>

@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <title>Login - Tutor Scotland</title>
     <link rel="icon" href="/images/bannerShield2.png" type="image/png">
@@ -9,9 +7,9 @@
     <link rel="stylesheet" href="/css/nav.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/responsive-helper.js"></script>
-    <script src="/js/nav-loader.js" defer></script>
-    <script src="/js/dynamic-nav.js" defer></script>
-    <script type="module" src="/js/visual-editor.js" defer></script>
+    <script src="/js/nav-loader.js" defer=""></script>
+    <script src="/js/dynamic-nav.js" defer=""></script>
+    <script type="module" src="/js/visual-editor.js" defer=""></script>
     <style>
         /* Inline styles for the login page */
         main {
@@ -76,10 +74,10 @@
 
     <!-- Shared banner/header -->
     <header>
-        <h1>Tutors Alliance Scotland</h1>
+        <h1 data-ve-block-id="d75ba36a-d794-4435-b341-1e35330d41da">Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a href="index.html" class="banner-login-link login-box">Home</a>
-            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a href="index.html" class="banner-login-link login-box" data-ve-block-id="7c67b5eb-fec2-4b4f-8d90-560e304b3b27">Home</a>
+            <a href="login.html?role=admin" class="banner-login-link login-box" data-ve-block-id="c4b44e7b-f9f7-442a-99e7-5cd14fc9ecaf">Login</a>
         </div>
     </header>
 
@@ -95,12 +93,12 @@
 
     <main>
         <div class="login-container">
-            <h2>Login</h2>
+            <h2 data-ve-block-id="6b16c2f7-912f-418e-aa3a-40d71d9c6040">Login</h2>
             <form id="loginForm">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+                <input type="email" id="email" name="email" required="">
                 <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required="">
                 <button type="submit">Login</button>
             </form>
         </div>
@@ -137,7 +135,7 @@
         });
     </script>
     <!-- Rolling banner script -->
-    <script src="/js/rolling-banner.js" defer></script>
+    <script src="/js/rolling-banner.js" defer=""></script>
 
 
 <!-- Visual Editor Templates -->
@@ -153,7 +151,7 @@
                 <form id="content-form" onsubmit="return false;">
                     <div class="form-group">
                         <label for="content-type">Content Type:</label>
-                        <select id="content-type" disabled>
+                        <select id="content-type" disabled="">
                             <option value="text">Text</option>
                             <option value="html">HTML</option>
                             <option value="image">Image</option>
@@ -227,11 +225,12 @@
             <div class="loading-spinner"></div>
         </div>
         <div id="image-pagination" class="image-pagination">
-            <button type="button" id="prev-page" class="btn btn-secondary" disabled>Previous</button>
+            <button type="button" id="prev-page" class="btn btn-secondary" disabled="">Previous</button>
             <span id="page-info">Page 1</span>
             <button type="button" id="next-page" class="btn btn-secondary">Next</button>
         </div>
     </div>
 </template>
-</body>
-</html>
+
+
+</body></html>

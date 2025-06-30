@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <title>STA Tutor Connection</title>
     <link rel="icon" href="/images/bannerShield2.png" type="image/png">
@@ -8,9 +6,9 @@
     <link rel="stylesheet" href="/header-banner.css">
     <link rel="stylesheet" href="/css/nav.css">
     <script src="/responsive-helper.js"></script>
-    <script src="/js/nav-loader.js" defer></script>
-    <script src="/js/dynamic-nav.js" defer></script>
-    <script type="module" src="/js/visual-editor.js" defer></script>
+    <script src="/js/nav-loader.js" defer=""></script>
+    <script src="/js/dynamic-nav.js" defer=""></script>
+    <script type="module" src="/js/visual-editor.js" defer=""></script>
     <style>
         /* You can keep your existing .tutor-form-container styles, or move them into style.css */
         .tutor-form-container {
@@ -72,10 +70,10 @@
 <body>
     <!-- Shared banner/header -->
     <header>
-        <h1>Tutors Alliance Scotland</h1>
+        <h1 data-ve-block-id="14e54aa1-4245-4745-9b9c-47e9e0c717f6">Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a href="index.html" class="banner-login-link login-box">Home</a>
-            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a href="index.html" class="banner-login-link login-box" data-ve-block-id="1ad67831-16f3-4664-9924-60ec0f3e0d28">Home</a>
+            <a href="login.html?role=admin" class="banner-login-link login-box" data-ve-block-id="466a0adb-d910-4ae0-98c5-0a6ba88134cf">Login</a>
         </div>
     </header>
 
@@ -89,8 +87,8 @@
     </div>
 
     <main>
-        <h2>Interested in Joining?</h2>
-        <p>
+        <h2 data-ve-block-id="c948a9ec-21bf-48cc-8e26-471a0d0f9e68">Interested in Joining?</h2>
+        <p data-ve-block-id="41eac3f6-76fe-427d-b90c-46d006c94f3a">
             Fill out your details below to learn more about membership, or to connect with parents
             and schools looking for qualified tutors.
         </p>
@@ -99,19 +97,19 @@
         <section id="dynamicSectionsTop" class="dynamic-section-container"></section>
 
         <div class="tutor-form-container">
-            <h3>Tutor Connection Form</h3>
+            <h3 data-ve-block-id="3627f789-69c2-454a-adf5-63481a635fc3">Tutor Connection Form</h3>
             <form id="tutorSubmissionForm" class="tutor-submission-form">
                 <label for="tutorName">Full Name:</label>
-                <input type="text" id="tutorName" name="tutorName" required>
+                <input type="text" id="tutorName" name="tutorName" required="">
 
                 <label for="contactEmail">Contact Email:</label>
-                <input type="email" id="contactEmail" name="contactEmail" required>
+                <input type="email" id="contactEmail" name="contactEmail" required="">
 
                 <label for="subjectTaught">Subject(s) Taught:</label>
-                <input type="text" id="subjectTaught" name="subjectTaught" placeholder="e.g. Math, English" required>
+                <input type="text" id="subjectTaught" name="subjectTaught" placeholder="e.g. Math, English" required="">
 
                 <label for="qualification">Qualification Level:</label>
-                <select id="qualification" name="qualification" required>
+                <select id="qualification" name="qualification" required="">
                     <option value="Undergraduate">Undergraduate</option>
                     <option value="Postgraduate">Postgraduate</option>
                     <option value="PhD">PhD</option>
@@ -119,7 +117,7 @@
                 </select>
 
                 <label for="safeguarding">Safeguarding (PVG Registered?):</label>
-                <select id="safeguarding" name="safeguarding" required>
+                <select id="safeguarding" name="safeguarding" required="">
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                 </select>
@@ -241,7 +239,7 @@
                 <form id="content-form" onsubmit="return false;">
                     <div class="form-group">
                         <label for="content-type">Content Type:</label>
-                        <select id="content-type" disabled>
+                        <select id="content-type" disabled="">
                             <option value="text">Text</option>
                             <option value="html">HTML</option>
                             <option value="image">Image</option>
@@ -315,11 +313,12 @@
             <div class="loading-spinner"></div>
         </div>
         <div id="image-pagination" class="image-pagination">
-            <button type="button" id="prev-page" class="btn btn-secondary" disabled>Previous</button>
+            <button type="button" id="prev-page" class="btn btn-secondary" disabled="">Previous</button>
             <span id="page-info">Page 1</span>
             <button type="button" id="next-page" class="btn btn-secondary">Next</button>
         </div>
     </div>
 </template>
-</body>
-</html>
+
+
+</body></html>

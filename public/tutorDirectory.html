@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <title>Tutors Alliance Scotland - Helping all Scottish children grow</title>
     <link rel="icon" href="/images/bannerShield2.png" type="image/png">
@@ -9,16 +7,16 @@
     <link rel="stylesheet" href="/css/nav.css">
     <script src="/responsive-helper.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="/js/nav-loader.js" defer></script>
-    <script src="/js/dynamic-nav.js" defer></script>
+    <script src="/js/nav-loader.js" defer=""></script>
+    <script src="/js/dynamic-nav.js" defer=""></script>
 </head>
 <body class="tutor-directory-page restricted-viewport" style="background-color: #F0F8FF;" data-page="tutorDirectory" data-dyn-manual="true">
     <!-- Shared banner/header -->
     <header>
-        <h1>Tutors Alliance Scotland</h1>
+        <h1 data-ve-block-id="c6483d52-334f-4129-95c8-677e5b5220ab">Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a href="index.html" class="banner-login-link login-box">Home</a>
-            <a href="login.html?role=admin" class="banner-login-link login-box">Login</a>
+            <a href="index.html" class="banner-login-link login-box" data-ve-block-id="9f3e4408-ce25-4903-a446-0cc4692c547e">Home</a>
+            <a href="login.html?role=admin" class="banner-login-link login-box" data-ve-block-id="d17c8e40-a42f-4df2-afc3-ee3620cc64e3">Login</a>
         </div>
     </header>
 
@@ -37,22 +35,20 @@
         <div class="content-flex-wrapper">
             <!-- LEFT COLUMN: Shield + Ribbons -->
             <div class="left-col">
-                <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield">
-                <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner">
+                <img src="/images/centralShield.png" alt="Large STA Shield" class="main-shield" id="imageShield" data-ve-block-id="e4873d7e-48d4-404c-a7ec-f794da331e9f">
+                <img src="/images/bannerWithRibbons.png" alt="Banner Ribbon" class="main-ribbons" id="imageBanner" data-ve-block-id="52cf130f-c993-43a5-b372-f539272a8577">
             </div>
 
             <!-- RIGHT COLUMN: heading + about-us text -->
             <div class="right-col">
 
                 <!-- ✦ TOP -->
-                <section id="dynamicSectionsTop"
-                         class="dynamic-section-container ve-no-edit"
-                         data-ve-section-id="dynamicSectionsTop"></section>
+                <section id="dynamicSectionsTop" class="dynamic-section-container ve-no-edit" data-ve-section-id="dynamicSectionsTop"></section>
 
 
                 <div class="about-us-landing" id="aboutUsLanding">
-                    <h1 class="mission-statement" style="color: #0057B7;">Find a Tutor</h1>
-                    <p>
+                    <h1 class="mission-statement" style="color: #0057B7;" data-ve-block-id="3552bdff-4ddd-41b2-bb6a-56981b7725a3">Find a Tutor</h1>
+                    <p data-ve-block-id="c496e739-1ae7-4489-8c18-cbb30d0e6696">
                         Use this search form to find tutors by subject and location. All tutors are fully
                         qualified teachers, covered by statutory safeguarding guidelines.
                     </p>
@@ -74,7 +70,7 @@
                 </style>
 
                 <div class="form-container" style="width: 80%; max-width: 500px; background-color: #fff; border-radius: 1rem; padding: 2rem; box-shadow: 0 2px 18px rgba(0,87,183,0.05); margin: 2rem auto;">
-                    <h2 style="color: #001B44; margin-bottom: 1.5rem; text-align: center;">Tutor Finder</h2>
+                    <h2 style="color: #001B44; margin-bottom: 1.5rem; text-align: center;" data-ve-block-id="ec0294dd-32e4-41e3-ab6c-e70d1fa07654">Tutor Finder</h2>
                     <form id="tutorFinderForm" action="/tutors" method="GET" style="display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
                         <div style="width: 100%; text-align: center;">
                             <label for="subject" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333; text-align: center;">Subject</label>
@@ -104,18 +100,12 @@
         </div>
 
         <!-- ✦ MIDDLE -->
-        <section id="dynamicSectionsMiddle"
-                 class="dynamic-section-container"
-                 data-ve-section-id="dynamicSectionsMiddle"
-                 hidden></section>
+        <section id="dynamicSectionsMiddle" class="dynamic-section-container" data-ve-section-id="dynamicSectionsMiddle" hidden=""></section>
 
         
 
         <!-- ✦ BOTTOM -->
-        <section id="dynamicSections"
-                 class="dynamic-section-container"
-                 data-ve-section-id="dynamicSections"
-                 hidden></section>
+        <section id="dynamicSections" class="dynamic-section-container" data-ve-section-id="dynamicSections" hidden=""></section>
 
     </main>
         <script>
@@ -125,7 +115,7 @@
         </script>
 
         // Initialize the rolling banner using responsive-helper.js
-        <script type="module" src="/js/visual-editor.js" defer></script>
+        <script type="module" src="/js/visual-editor.js" defer=""></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 initRollingBanner();
@@ -202,7 +192,7 @@
         </script>
 
         <!-- Load the dynamic sections script -->
-        <script src="/js/dynamic-sections.js?v=20240530" type="module" defer></script>
+        <script src="/js/dynamic-sections.js?v=20240530" type="module" defer=""></script>
 
 
 
@@ -219,7 +209,7 @@
                 <form id="content-form" onsubmit="return false;">
                     <div class="form-group">
                         <label for="content-type">Content Type:</label>
-                        <select id="content-type" disabled>
+                        <select id="content-type" disabled="">
                             <option value="text">Text</option>
                             <option value="html">HTML</option>
                             <option value="image">Image</option>
@@ -293,12 +283,13 @@
             <div class="loading-spinner"></div>
         </div>
         <div id="image-pagination" class="image-pagination">
-            <button type="button" id="prev-page" class="btn btn-secondary" disabled>Previous</button>
+            <button type="button" id="prev-page" class="btn btn-secondary" disabled="">Previous</button>
             <span id="page-info">Page 1</span>
             <button type="button" id="next-page" class="btn btn-secondary">Next</button>
         </div>
     </div>
 </template>
-</body>
-</html>
 
+
+
+</body></html>

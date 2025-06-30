@@ -80,9 +80,10 @@ export class UIManager {
         const selectors = [
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
             'p:not(.no-edit)',
+            'span:not(.no-edit)',
             '.editable',
             'img:not(.no-edit)',
-            `a.${BUTTON_CSS.split(' ')[0]}`
+            'a:not(.no-edit)',
         ];
         selectors.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {

@@ -1,30 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
     <title>Blog Writer – Tutors Alliance Scotland</title>
 
     <!-- assets -->
-    <link rel="icon" href="/images/bannerShield2.png" type="image/png" />
-    <link rel="stylesheet" href="/styles2.css" />
-    <link rel="stylesheet" href="/header-banner.css" />
-    <link rel="stylesheet" href="/css/nav.css" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <script src="/responsive-helper.js" defer></script>
-    <script src="/js/nav-loader.js" defer></script>
-    <script src="/js/dynamic-nav.js" defer></script>
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
+    <link rel="stylesheet" href="/styles2.css">
+    <link rel="stylesheet" href="/header-banner.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <script src="/responsive-helper.js" defer=""></script>
+    <script src="/js/nav-loader.js" defer=""></script>
+    <script src="/js/dynamic-nav.js" defer=""></script>
 
     <!-- SEO metadata -->
-    <meta name="description" content="Tutors Alliance Scotland blog management system - create and manage educational blog posts for tutors and parents in Scotland." />
-    <meta name="keywords" content="tutoring, Scotland, education, blog, tutors alliance" />
-    <meta name="author" content="Tutors Alliance Scotland" />
+    <meta name="description" content="Tutors Alliance Scotland blog management system - create and manage educational blog posts for tutors and parents in Scotland.">
+    <meta name="keywords" content="tutoring, Scotland, education, blog, tutors alliance">
+    <meta name="author" content="Tutors Alliance Scotland">
     
     <!-- Open Graph metadata for social sharing -->
-    <meta property="og:title" content="Blog Writer - Tutors Alliance Scotland" />
-    <meta property="og:description" content="Create and manage educational blog posts for tutors and parents in Scotland." />
-    <meta property="og:image" content="https://tutorsalliancescotland.co.uk/images/bannerShield2.png" />
-    <meta property="og:url" content="https://tutorsalliancescotland.co.uk/blogWriter.html" />
-    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Blog Writer - Tutors Alliance Scotland">
+    <meta property="og:description" content="Create and manage educational blog posts for tutors and parents in Scotland.">
+    <meta property="og:image" content="https://tutorsalliancescotland.co.uk/images/bannerShield2.png">
+    <meta property="og:url" content="https://tutorsalliancescotland.co.uk/blogWriter.html">
+    <meta property="og:type" content="website">
 
     <!-- JSON‑LD placeholder (filled on submit) -->
     <script id="blogMicrodata" type="application/ld+json"></script>
@@ -138,10 +136,10 @@
 <body>
     <!-- HEADER / NAV identical to other pages -->
     <header>
-        <h1>Tutors Alliance Scotland</h1>
+        <h1 data-ve-block-id="df1818f1-65ca-4f6a-96c5-f1a8570c778c">Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a class="banner-login-link login-box" href="/">Home</a>
-            <a class="banner-login-link login-box" href="/login.html?role=admin">Login</a>
+            <a class="banner-login-link login-box" href="/" data-ve-block-id="106101f5-9626-42a7-a2ad-f7d6b4570d70">Home</a>
+            <a class="banner-login-link login-box" href="/login.html?role=admin" data-ve-block-id="9ddfc533-4f00-4698-a881-0d5ac2668385">Login</a>
         </div>
     </header>
 
@@ -161,11 +159,11 @@
 
         <!-- Create Blog Section -->
         <section id="newBlogSection" class="tab-content active">
-            <h2>Create a New Blog Post</h2>
+            <h2 data-ve-block-id="3abe36c0-caac-4c55-a567-31ba5ca6d3fe">Create a New Blog Post</h2>
 
             <form id="blogForm">
-                <label>Title:<input id="titleField" class="wide-input" name="title" required /></label>
-                <label>Author:<input id="authorField" class="wide-input" name="author" required /></label>
+                <label>Title:<input id="titleField" class="wide-input" name="title" required=""></label>
+                <label>Author:<input id="authorField" class="wide-input" name="author" required=""></label>
 
                 <label>
                     Category:
@@ -183,17 +181,17 @@
 
                 <label>
                     Publish Date/Time:
-                    <input type="datetime-local" id="publishDateField" name="publishDate" />
+                    <input type="datetime-local" id="publishDateField" name="publishDate">
                 </label>
 
                 <label>
                     Content:
-                    <textarea id="contentField" rows="6" required></textarea>
+                    <textarea id="contentField" rows="6" required=""></textarea>
                 </label>
 
                 <label>
                     Image:
-                    <input type="file" id="imageField" accept="image/*" />
+                    <input type="file" id="imageField" accept="image/*">
                 </label>
 
                 <button type="submit">Create Blog</button>
@@ -202,7 +200,7 @@
 
         <!-- Manage Blogs Section -->
         <section id="manageBlogSection" class="tab-content">
-            <h2>Manage Existing Blog Posts</h2>
+            <h2 data-ve-block-id="6a6d76c0-4eaf-41cc-a1c1-9da7e14a3de2">Manage Existing Blog Posts</h2>
             
             <div class="blog-filter">
                 <label for="blogCategoryFilter">Filter by category:</label>
@@ -433,5 +431,6 @@
             blogMicrodata.textContent = '';
         });
     </script>
-</body>
-</html>
+
+
+</body></html>

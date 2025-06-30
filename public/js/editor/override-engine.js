@@ -57,7 +57,7 @@ export class OverrideEngine {
             case 'link': {
                 const a = element.tagName === 'A' ? element : element.querySelector('a');
                 if (a) {
-                    a.href = override.image;
+                    a.href = override.href || override.image;
                     a.textContent = override.text;
                     BUTTON_CSS.split(/\s+/).forEach(cls => a.classList.toggle(cls, !!override.isButton));
                 }
@@ -87,7 +87,8 @@ export class OverrideEngine {
         const idKey = (type === 'link') ? 'veButtonId' : 'veBlockId';
         const attr = `data-${idKey.replace(/[A-Z]/g, '-$&').toLowerCase()}`;
         if (!el.dataset[idKey]) {
-            el.dataset[idKey] = self.crypto?.randomUUID?.() ?? `${type}-${Date.now()}`;
+            console.warn('[VE] Element is editable but missing a data-ve-block-id. Add one in the markup so overrides persist.', el);
+            return null; // abort save; forces the admin to fix markup
         }
         const section = el.closest('[data-ve-section-id]');
         const idSelector = `[${attr}="${el.dataset[idKey]}"]`;
@@ -107,6 +108,7 @@ export class OverrideEngine {
         const originalContent = this.getOriginalContent(element, type);
         const existing = this.findOverrideForElement(element);
         const selector = this.getStableSelector(element, type);
+        if (!selector) return { success: false };
         const payload = {
             _id: existing?._id,
             targetPage: editorState.currentPage,

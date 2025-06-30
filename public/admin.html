@@ -1,18 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
     <title>TAS Admin – Dashboard</title>
 
     <!-- favicon & css -->
-    <link rel="icon" href="/images/bannerShield2.png" type="image/png" />
-    <link rel="stylesheet" href="/styles2.css" />
-    <link rel="stylesheet" href="/header-banner.css" />
-    <link rel="stylesheet" href="/css/nav.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="/responsive-helper.js" defer></script>
-    <script src="/js/nav-loader.js" defer></script>
-    <script src="/js/dynamic-nav.js" defer></script>
+    <link rel="icon" href="/images/bannerShield2.png" type="image/png">
+    <link rel="stylesheet" href="/styles2.css">
+    <link rel="stylesheet" href="/header-banner.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/responsive-helper.js" defer=""></script>
+    <script src="/js/nav-loader.js" defer=""></script>
+    <script src="/js/dynamic-nav.js" defer=""></script>
 
     <style>
         /* lilac panel used by both forms */
@@ -169,10 +167,10 @@
 <body data-page="admin">
     <!-- ─────────────── HEADER/BANNER ─────────────── -->
     <header>
-        <h1>Tutors Alliance Scotland</h1>
+        <h1 data-ve-block-id="0a085027-3a19-49be-87ae-b06a6e36d043">Tutors Alliance Scotland</h1>
         <div class="header-links">
-            <a class="banner-login-link login-box" href="/">Home</a>
-            <a class="banner-login-link login-box" href="/login.html?role=admin">Login</a>
+            <a class="banner-login-link login-box" href="/" data-ve-block-id="a2c3c663-5d9d-4b5b-b630-e017bf8340b4">Home</a>
+            <a class="banner-login-link login-box" href="/login.html?role=admin" data-ve-block-id="ee305c05-9d20-4871-927f-7dfc04e21884">Login</a>
         </div>
     </header>
 
@@ -197,7 +195,7 @@
             <!-- ░░░░░░  ADD‑/DELETE SECTION  ░░░░░░ -->
             <div class="admin-form-container">
                 <!-- Heading will change dynamically -->
-                <h3 id="sectionFormHeading">Add a Dynamic Section</h3>
+                <h3 id="sectionFormHeading" data-ve-block-id="8eee3405-0831-4242-b51f-c00b65269345">Add a Dynamic Section</h3>
 
                 <!-- ★ NEW – simplified form : only page, heading, paragraph, image ★ -->
                 <form id="addSection" enctype="multipart/form-data" autocomplete="off">
@@ -206,7 +204,7 @@
                         <select name="page" id="pageSelect">
                             <!-- Generated dynamically from pages.js -->
                         </select>
-                        <a id="viewPageLink" href="/" target="_blank" style="margin-left:12px;font-size:.9em">🔗 Open Page</a>
+                        <a id="viewPageLink" href="/" target="_blank" style="margin-left:12px;font-size:.9em" data-ve-block-id="58511f1e-05ce-4b1b-a7b1-04dd59d69b20">🔗 Open Page</a>
                     </label>
 
                     <!-- [MOVE-SECTION] ▸ Hidden unless editing -->
@@ -223,7 +221,7 @@
                     <!-- ▸▸▸ Rolling-banner ONLY fields (stays visible at all times) -->
                     <div id="rollingBannerFields" style="display:none;">
                         <label>News Content:
-                            <textarea name="rollingText" rows="3" required placeholder="Enter news content to display in the rolling banner"></textarea>
+                            <textarea name="rollingText" rows="3" required="" placeholder="Enter news content to display in the rolling banner"></textarea>
                         </label>
                     </div>
 
@@ -231,7 +229,7 @@
                     <div id="metaControls">
                         <label>Layout:
                             <select name="layout" id="sectionLayout">
-                                <option value="standard" selected>Standard</option>
+                                <option value="standard" selected="">Standard</option>
                                 <option value="team">Team Members Grid</option>
                             </select>
                         </label>
@@ -247,22 +245,22 @@
                             <select name="navCategory" id="sectionNavCategory">
                                 <option value="tutors">For Tutors</option>
                                 <option value="parents">For Parents</option>
-                                <option value="about" selected>About TAS</option>
+                                <option value="about" selected="">About TAS</option>
                             </select>
                         </label>
 
                         <!-- ★ ONE shared heading field, outside the per-layout wrappers -->
-                        <label id="mainHeadingLabel">Heading:<input name="heading" required></label>
+                        <label id="mainHeadingLabel">Heading:<input name="heading" required=""></label>
 
                         <div id="standardFields">
                             <!-- ★ Wrapper holds only the controls that belong to the Standard layout -->
                             <div id="standardOnlyFields">
-                                <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
+                                <label>Paragraph:<textarea name="text" rows="3" required=""></textarea></label>
                                 <label>Image:<input type="file" name="image" id="sectionImage" accept="image/*"></label>
                             <!-- To show current image and allow removal -->
                             <div id="currentImagePreview" style="margin-top: 10px; display: none;">
-                                <p style="margin-bottom: 5px;">Current Image:</p>
-                                <img src="" alt="Current Image" style="max-width: 100px; max-height: 100px; border-radius: 4px;">
+                                <p style="margin-bottom: 5px;" data-ve-block-id="09d85e4c-83d0-4bb1-836e-f6fb414b5946">Current Image:</p>
+                                <img src="" alt="Current Image" style="max-width: 100px; max-height: 100px; border-radius: 4px;" data-ve-block-id="0a1cfcab-196e-4c69-8198-94c82e8f690e">
                                 <label style="display: inline-flex; align-items: center; margin-left: 15px;">
                                     <input type="checkbox" name="removeImage" value="true" style="width: auto; margin-right: 5px;"> Remove Image
                                 </label>
@@ -294,7 +292,7 @@
                             <select name="position">
                                 <option value="top">Top of Page</option>
                                 <option value="middle">Middle of Page</option>
-                                <option value="bottom" selected>Bottom of Page</option>
+                                <option value="bottom" selected="">Bottom of Page</option>
                             </select>
                         </label>
                     </div><!-- /metaControls -->
@@ -305,7 +303,7 @@
                 </form>
 
                 <!-- ★ NEW – table of existing sections with a delete button ★ -->
-                <h3 style="margin-top:35px">Existing sections for this page</h3>
+                <h3 style="margin-top:35px" data-ve-block-id="cae01088-0f78-4a09-a2dc-0d214075c4a2">Existing sections for this page</h3>
                 <table id="sectionTable" class="admin-table">
                     <thead>
                         <tr><th>#</th><th>Heading</th><th>Layout</th><th>Position</th><th>Image?</th><th>Button?</th><th>Actions</th></tr>
@@ -316,23 +314,23 @@
 
             <!-- ░░░░░░  CREATE NEW PAGE  ░░░░░░ -->
             <div class="admin-form-container">
-                <h3 id="pageFormHeading">Create a New Page</h3>
+                <h3 id="pageFormHeading" data-ve-block-id="43a4e36a-6975-46a8-beb1-94b6a0eb2908">Create a New Page</h3>
 
                 <form id="pageForm" enctype="multipart/form-data" autocomplete="off">
                     <label>
                         Page URL (e.g., "summer-tutoring"):
-                        <input type="text" name="slug" id="pageSlug" required>
+                        <input type="text" name="slug" id="pageSlug" required="">
                     </label>
 
-                    <label>Page Title:<input name="heading" required></label>
-                    <label>Page Content:<textarea name="text" rows="6" required></textarea></label>
+                    <label>Page Title:<input name="heading" required=""></label>
+                    <label>Page Content:<textarea name="text" rows="6" required=""></textarea></label>
 
                     <label>
                         Show in Navigation Menu:
                         <select name="navCategory" id="pageNavCategory">
                             <option value="tutors">For Tutors</option>
                             <option value="parents">For Parents</option>
-                            <option value="about" selected>About TAS</option>
+                            <option value="about" selected="">About TAS</option>
                         </select>
                     </label>
 
@@ -352,7 +350,7 @@
                     <div id="currentPageImagePreview" style="display:none;margin-top:10px"></div>
 
                     <label>
-                        <input type="checkbox" name="isPublished" id="isPublished" checked>
+                        <input type="checkbox" name="isPublished" id="isPublished" checked="">
                         Publish page immediately
                     </label>
 
@@ -372,7 +370,7 @@
                     <button type="button" id="cancelPageEditBtn" class="cancel-btn" style="display:none">Cancel Edit</button>
                 </form>
 
-                <h3 style="margin-top:35px">Existing Pages</h3>
+                <h3 style="margin-top:35px" data-ve-block-id="657dfb5e-7981-4780-8bab-bdcd5af52e68">Existing Pages</h3>
                 <table id="pagesTable" class="admin-table">
                     <thead>
                         <tr>
@@ -391,42 +389,42 @@
         <div id="tutors-tab" class="tab-content">
             <!-- ░░░░░░ ADD‑TUTOR FORM ░░░░░░ -->
             <div class="admin-form-container">
-                <h3>Add a Tutor</h3>
+                <h3 data-ve-block-id="13e6c683-aa50-44ba-92dd-feee30f7c319">Add a Tutor</h3>
 
                 <!-- handled completely in JS  -->
                 <form id="tutorForm" autocomplete="off">
-                    <label>Tutor Name:<input type="text" name="name" required /></label>
+                    <label>Tutor Name:<input type="text" name="name" required=""></label>
 
                     <label>
                         Subjects (comma‑separated):
-                        <input type="text" name="subjects" required />
+                        <input type="text" name="subjects" required="">
                     </label>
 
                     <label>
                         Cost Range (e.g. __P__ for £, __P____P__ for ££):
-                        <input type="text" name="costRange" required />
+                        <input type="text" name="costRange" required="">
                     </label>
 
                     <label>
                         Badges (comma‑separated):
-                        <input type="text" name="badges" />
+                        <input type="text" name="badges">
                     </label>
 
                     <label>
                         Tutor Image:
-                        <input type="file" id="imageField" accept="image/*" />
+                        <input type="file" id="imageField" accept="image/*">
                     </label>
 
                     <label>
                         Contact (email or website):
-                        <input type="text" name="contact" />
+                        <input type="text" name="contact">
                     </label>
 
                     <label>Description:<textarea name="description"></textarea></label>
 
                     <label>
                         Postcodes (comma‑separated):
-                        <input type="text" name="postcodes" />
+                        <input type="text" name="postcodes">
                     </label>
 
                     <button type="submit">Add Tutor</button>
@@ -435,8 +433,8 @@
 
             <!-- ░░░░░░ MANAGE TUTORS ░░░░░░ -->
             <div class="admin-form-container">
-                <h3>Manage Existing Tutors</h3>
-                <p>Click on a tutor's name to view details. Use the delete button to remove a tutor.</p>
+                <h3 data-ve-block-id="39d7ff9d-4901-48f1-86e1-0755df97f9ae">Manage Existing Tutors</h3>
+                <p data-ve-block-id="f128aec9-bb79-4cbb-92e2-efce7b8f5367">Click on a tutor's name to view details. Use the delete button to remove a tutor.</p>
 
                 <table id="tutorTable" class="admin-table">
                     <thead>
@@ -1373,5 +1371,6 @@
         await loadPages();
         resetPageForm();          // just in case
     </script>
-</body>
-</html>
+
+
+</body></html>
