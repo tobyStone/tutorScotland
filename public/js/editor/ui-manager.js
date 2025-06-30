@@ -79,27 +79,28 @@ export class UIManager {
         const elements = new Set();
         const selectors = [
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-
-            'p:not(.no-edit)', '.editable',
             'p:not(.no-edit)',
             '.editable',
-
             'img:not(.no-edit)',
             `a.${BUTTON_CSS.split(' ')[0]}`
         ];
+
         selectors.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {
                 if (el.closest('.ve-no-edit, #editor-modal, #edit-mode-toggle')) return;
                 elements.add(el);
             });
         });
+
         return Array.from(elements);
     }
 
     addOverlays(elements) {
         elements.forEach(el => {
             const type = this.callbacks.getType(el);
-            if (el.querySelector(':scope > .edit-overlay')) return;
+            const target = this.getOverlayMount(el, type);
+            if (target.querySelector(':scope > .edit-overlay')) return;
+
             const overlay = document.createElement('div');
             overlay.className = 'edit-overlay';
             overlay.innerHTML = `<div class="edit-controls"><button class="edit-btn">✏️ Edit</button></div>`;
@@ -107,15 +108,32 @@ export class UIManager {
                 e.stopPropagation();
                 this.callbacks.onEdit(el);
             });
-            if (getComputedStyle(el).position === 'static') {
-                el.style.position = 'relative';
+
+            if (getComputedStyle(target).position === 'static') {
+                target.style.position = 'relative';
             }
-            el.appendChild(overlay);
+            target.appendChild(overlay);
         });
+    }
+
+    getOverlayMount(element, type) {
+        if (type === 'image') {
+            if (!element.parentElement?.classList.contains('ve-img-wrap')) {
+                const wrap = document.createElement('span');
+                wrap.className = 've-img-wrap';
+                element.parentNode.insertBefore(wrap, element);
+                wrap.appendChild(element);
+            }
+            return element.parentElement;
+        }
+        return element;
     }
 
     removeOverlays() {
         document.querySelectorAll('.edit-overlay').forEach(o => o.remove());
+        document.querySelectorAll('.ve-img-wrap').forEach(w => {
+            if (w.parentNode) w.replaceWith(...w.childNodes);
+        });
     }
 
     disableLinks() {
