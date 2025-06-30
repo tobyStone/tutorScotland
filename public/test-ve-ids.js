@@ -69,7 +69,7 @@ function testVisualEditorIds() {
     console.log(`   Scoped buttons: ${sectionsWithButtons.length}`);
     
     const passed = duplicateIds.length === 0 && navElements.length === 0 && allIds.size === buttonIds.length;
-    console.log(`\n${passed ? '✅ ALL TESTS PASSED' : '❌ SOME TESTS FAILED'}`);
+    console.log(`\n${passed ? '✅ ALL TESTS ARE PASSED' : '❌ SOME TESTS FAILED'}`);
     
     return {
         passed,
