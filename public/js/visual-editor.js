@@ -26,7 +26,7 @@ class VisualEditor {
         await this.waitForDynSections();
         await sectionSorter.init();
         await overrideEngine.load();
-        overrideEngine.applyAll();
+        overrideEngine.applyAllOverrides();
         try {
             const { isAdmin } = await apiService.checkAdminStatus();
             if (isAdmin) this.enable();
