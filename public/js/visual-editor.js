@@ -634,48 +634,40 @@ class VisualEditor {
 
     /* ⚡ QUICK-ACTION: turn a text block into an Aurora button */
     _promoteToButton(el) {
-        // 1️⃣ create a fresh <a> element carrying Aurora classes  VE id
-            const a = document.createElement('a');
+        /* 1️⃣ build the anchor entirely in-memory */
+        const a = document.createElement('a');
         a.className = `${VisualEditor.BUTTON_CSS} ve-btn`;
-        a.href = '#';                     // temporary – will be edited next
-        a.textContent = 'Click me';       // placeholder
-        this.getStableLinkSelector(a);    // stamps data-ve-button-id
-    
-            // 2️⃣ insert **after** the current element to avoid messing with flow
-            el.after(a);
-    
-            // 3️⃣ immediately open the link editor for it
-        this.openEditor(a, this.getStableLinkSelector(a), 'link');
+        a.href = '#';          // temp – user will edit next
+        a.textContent = 'Click me';
 
-        const btnHtml = `<a href="#" class="${VisualEditor.BUTTON_CSS} ve-btn"
-                    data-ve-button-id="${self.crypto?.randomUUID?.()}">Click me</a>`;
-        
-            // 1️⃣  insert visually
-            el.insertAdjacentHTML('beforeend', btnHtml);
-        const a = el.lastElementChild;
-        
-            // 2️⃣  SAVE an HTML override of type **insert-after**
-            const section = el.closest('[data-ve-section-id]');
-        const selector = section
-                ? `[data-ve-section-id="${section.dataset.veSectionId}"] ${this.generateSelector(el)}`
+        /* 2️⃣ stamp / read a permanent VE id (+ returns nav-safe selector) */
+        const stableSelector = this.getStableLinkSelector(a);
+
+        /* 3️⃣ insert it right after the chosen element (visual change) */
+        el.after(a);
+
+        /* 4️⃣ persist as an “insert-after” override (so it re-appears for
+              everyone else and on the next page load) */
+        const section = el.closest('[data-ve-section-id]');
+        const hostSel = section
+            ? `[data-ve-section-id="${section.dataset.veSectionId}"] ${this.generateSelector(el)}`
             : this.generateSelector(el);
-        
-            fetch('/api/content-manager?operation=override', {
-            method : 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body   : JSON.stringify({
-                    targetPage   : (location.pathname.replace(/^\//, '') || 'index').replace(/\.html?$/, ''),
-                    targetSelector: selector,
-                    contentType  : 'html',
-                    text         : btnHtml,
-                    overrideType : 'insert-after',
-                    originalContent: ''          // we’re adding, not replacing
-            })
-            }).then(r => r.json()).catch(() => { });
 
-            // 3️⃣  let the admin tweak label / link immediately
-            this.openEditor(a, this.getStableLinkSelector(a), 'link');
-        
+        fetch('/api/content-manager?operation=override', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                targetPage: (location.pathname.replace(/^\//, '') || 'index').replace(/\.html?$/, ''),
+                targetSelector: hostSel,          // ← the thing we insert *after*
+                contentType: 'html',
+                text: a.outerHTML,      // serialised anchor
+                overrideType: 'insert-after',
+                originalContent: ''               // we’re adding, not replacing
+            })
+        }).catch(console.error);
+
+        /* 5️⃣ open the link-editor so the admin can set label + URL */
+        this.openEditor(a, stableSelector, 'link');
     }
 
 

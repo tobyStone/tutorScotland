@@ -156,6 +156,8 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\test-editor.html" />
+    <Content Include="public\test-reorder.html" />
+    <Content Include="public\test-ve-ids.js" />
     <Content Include="public\tutorConnect.html">
       <SubType>Code</SubType>
     </Content>
