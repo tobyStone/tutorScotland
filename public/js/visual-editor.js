@@ -83,6 +83,13 @@ class VisualEditor {
 
         // Check for duplicate button IDs after assignment
         this.checkForDuplicateButtonIds();
+
+        document.querySelectorAll('img').forEach(img => {
+            if (!img.dataset.veBlockId) {
+                img.dataset.veBlockId =
+                    (self.crypto?.randomUUID?.() ?? `ve-img-${Date.now()}-${Math.random()}`);
+            }
+        });
     }
 
     checkForDuplicateButtonIds() {
@@ -306,67 +313,86 @@ class VisualEditor {
     }
 
     applyOverride(element, override) {
-        // Auto-migrate legacy un-scoped selectors to section-scoped ones
+
+        if (!element) {
+            console.warn('[VE] applyOverride: element missing', override);
+            return;
+        }
+
+        /* ───────── link selector auto-migration ───────── */
         if (override.contentType === 'link' &&
             override.targetSelector?.includes('data-ve-button-id') &&
             !override.targetSelector.includes('[data-ve-section-id')) {
 
-            // Prefer a match that is INSIDE a section; ignore nav/header clones
             const el = [...document.querySelectorAll(override.targetSelector)]
-                                .find(node => node.closest('[data-ve-section-id]'));
-            if (el && el.closest('[data-ve-section-id]')) {
-                const scopedSelector = this.getStableLinkSelector(el);
-                console.log(`[VE] Migrating selector from "${override.targetSelector}" to "${scopedSelector}"`);
-                this.overrides.set(scopedSelector, override);
+                .find(n => n.closest('[data-ve-section-id]'));
+
+            if (el) {
+                const scoped = this.getStableLinkSelector(el);
+                this.overrides.set(scoped, override);
                 this.overrides.delete(override.targetSelector);
-                override.targetSelector = scopedSelector;
+                override.targetSelector = scoped;
             }
         }
+
         switch (override.contentType) {
+
             case 'text':
                 element.textContent = override.text || override.heading;
                 break;
+
             case 'html':
                 if (override.overrideType === 'insert-after') {
-                        element.insertAdjacentHTML('afterend', override.text);
-                    } else {
-                        element.innerHTML = override.text;
-                    }
-                break;
-            case 'image':
-                   /* auto-migrate img selectors that still use a raw DOM path */
-                       if (override.targetSelector && !override.targetSelector.includes('[data-ve-block-id')) {
-                               const scoped = this.getStableImgSelector(element);
-                               this.overrides.set(scoped, override);
-                               this.overrides.delete(override.targetSelector);
-                               override.targetSelector = scoped;
-                           }
-                if (element.tagName === 'IMG') {
-                    element.src = override.image;
-                    if (override.text) element.alt = override.text;
-                }
-                break;
-
-            // --- MODIFIED SECTION START ---
-            case 'link':
-                // Find the actual <a> tag, whether it's the element itself or a child of it.
-                const linkElement = element.tagName === 'A' ? element : element.querySelector('a');
-
-                if (linkElement) {
-                    linkElement.href = override.image; // 'image' field holds the URL for links
-                    linkElement.textContent = override.text;
-                    if (linkElement.dataset.originalHref !== undefined) {
-                        // If we are in edit mode, update the data-attribute too
-                        linkElement.dataset.originalHref = override.image;
+                    element.insertAdjacentHTML('afterend', override.text);
+                    const newNode = element.nextElementSibling;
+                    if (newNode && !newNode.dataset.veBlockId) {
+                        newNode.dataset.veBlockId = self.crypto?.randomUUID?.();
                     }
                 } else {
-                    console.warn('[VE] applyOverride failed for link: could not find an <a> tag in', element);
+                    element.innerHTML = override.text;
                 }
                 break;
-            // --- MODIFIED SECTION END ---
+
+            case 'image': {
+                if (override.targetSelector &&
+                    !override.targetSelector.includes('[data-ve-block-id')) {
+
+                    const scoped = this.getStableImgSelector(element);
+                    if (scoped !== override.targetSelector) {
+                        this.overrides.set(scoped, override);
+                        this.overrides.delete(override.targetSelector);
+                        override.targetSelector = scoped;
+                        element = document.querySelector(scoped) || element;
+                    }
+                }
+                const img = element.tagName === 'IMG' ? element : element.querySelector('img');
+                if (img) {
+                    img.src = override.image;
+                    if (override.text) img.alt = override.text;
+                }
+                break;
+            }
+
+            case 'link': {
+                const a = element.tagName === 'A' ? element : element.querySelector('a');
+                if (a) {
+                    a.href = override.image;
+                    a.textContent = override.text;
+                    a.classList.toggle(
+                        VisualEditor.BUTTON_CSS.split(/\s+/)[0],
+                        !!override.isButton
+                    );
+                    if ('dataset' in a && 'originalHref' in a.dataset) {
+                        a.dataset.originalHref = override.image;
+                    }
+                } else {
+                    console.warn('[VE] applyOverride(link): <a> missing in', element);
+                }
+                break;
+            }
         }
     }
-    // visual-editor.js
+
 
     async saveContent() {
         if (!this.activeEditor) return;
@@ -607,19 +633,22 @@ class VisualEditor {
             return `${scope} [data-ve-button-id="${el.dataset.veButtonId}"]`;
     }
 
+    // inside VisualEditor class
     getStableImgSelector(el) {
+        // if the user clicked the wrapper, dive one level
+        if (el && el.tagName !== 'IMG') el = el.querySelector('img');
+
         if (!el) return '';
 
-        /* 1️⃣ ensure an ID is present */
         if (!el.dataset.veBlockId) {
             el.dataset.veBlockId =
                 (self.crypto?.randomUUID?.() ?? `ve-img-${Date.now()}-${Math.random()}`);
         }
 
-        /* 2️⃣ prepend section scope (like we already do for links) */
         const section = el.closest('[data-ve-section-id]');
         return section
-            ? `[data-ve-section-id="${section.dataset.veSectionId}"] [data-ve-block-id="${el.dataset.veBlockId}"]`
+            ? `[data-ve-section-id="${section.dataset.veSectionId}"] `
+            + `[data-ve-block-id="${el.dataset.veBlockId}"]`
             : `[data-ve-block-id="${el.dataset.veBlockId}"]`;
     }
 
