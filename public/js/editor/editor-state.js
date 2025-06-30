@@ -1,22 +1,43 @@
-class EditorState {
+export class EditorState {
     constructor() {
-        this.listeners = {};
-        this.isEditMode = false;
-        this.currentPage = location.pathname;
-        this.activeEditor = null;
+        this._isEditMode = false;
+        this._activeEditor = null;
+        this.currentPage = (location.pathname.replace(/^\//, '') || 'index').replace(/\.html?$/i, '');
+        this._events = new Map();
     }
-    on(event, callback) {
-        (this.listeners[event] = this.listeners[event] || []).push(callback);
+
+    get isEditMode() { return this._isEditMode; }
+    get activeEditor() { return this._activeEditor; }
+
+    on(name, handler) {
+        if (!this._events.has(name)) this._events.set(name, []);
+        this._events.get(name).push(handler);
     }
-    emit(event, data) {
-        (this.listeners[event] || []).forEach(cb => cb(data));
+
+    emit(name, data) {
+        if (this._events.has(name)) {
+            for (const fn of this._events.get(name)) fn(data);
+        }
     }
-    setActiveEditor(editor) {
-        this.activeEditor = editor;
-        this.emit('activeEditorChanged', editor);
+
+    setEditMode(val) {
+        if (this._isEditMode === val) return;
+        this._isEditMode = val;
+        this.emit('editModeChange', val);
     }
+
+    setActiveEditor(obj) {
+        this._activeEditor = obj;
+        this.emit('activeEditorChange', obj);
+    }
+
     validate() {
-        return !!this.activeEditor;
+        if (!this._activeEditor) return false;
+        if (!this._activeEditor.element || !this._activeEditor.element.isConnected) {
+            this.setActiveEditor(null);
+            return false;
+        }
+        return true;
     }
 }
 

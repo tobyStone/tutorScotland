@@ -156,15 +156,15 @@ class UIManager {
         this.createEditModeToggle();
         this.createEditorModal();
     }
-    
+
     loadEditorStyles() {
         if (document.getElementById('ve-style')) return;
-        const link = document.createElement('link');
-        link.id = 've-style';
-        link.rel = 'stylesheet';
-        link.href = '/editor.css';
-        document.head.appendChild(link);
-    }
+            const link = document.createElement('link');
+            link.id = 've-style';
+            link.rel = 'stylesheet';
+            link.href = '/editor.css';
+            document.head.appendChild(link);
+        }
     
     createEditModeToggle() {
         const button = document.createElement('button');
@@ -177,16 +177,21 @@ class UIManager {
         button.addEventListener('click', () => this.callbacks.onToggleEditMode());
         document.body.appendChild(button);
     }
-    
+
     createEditorModal() {
         const template = document.getElementById('ve-editor-modal-template');
         if (!template) {
             console.error('[VE] Editor modal template not found in HTML!');
             return;
-        }
+    }
         const modalClone = template.content.cloneNode(true);
         document.body.appendChild(modalClone);
-        
+
+    createModal() {
+        const tpl = document.getElementById('ve-editor-modal-template');
+        if (!tpl) { console.error('[VE] modal template missing'); return; }
+        const frag = tpl.content.cloneNode(true);
+        document.body.appendChild(frag);
         this.dom.modal = document.getElementById('editor-modal');
         this.dom.imageBrowserContainer = this.dom.modal.querySelector('#image-browser');
         
@@ -216,7 +221,7 @@ class UIManager {
             document.body.style.outlineOffset = '';
         }
     }
-    
+
     handleActiveEditorChange(activeEditor) {
         if (activeEditor) {
             this.openModal(activeEditor);
@@ -224,7 +229,7 @@ class UIManager {
             this.closeModal();
         }
     }
-    
+
     getMountPoint(element, type) {
         if (type === 'image') {
             if (!element.parentElement?.classList.contains('ve-img-wrap')) {
@@ -232,9 +237,9 @@ class UIManager {
                 wrap.className = 've-img-wrap';
                 element.parentNode.insertBefore(wrap, element);
                 wrap.appendChild(element);
-            }
+    }
             return element.parentElement;
-        }
+    }
         return element;
     }
 
@@ -268,7 +273,7 @@ class UIManager {
     closeModal() {
         if(this.dom.modal) this.dom.modal.style.display = 'none';
         editorState.setActiveEditor(null);
-    }
+        }
 
     updateFormFieldsVisibility(type) {
         ['text', 'html', 'image', 'link'].forEach(group => {
@@ -278,7 +283,7 @@ class UIManager {
         const currentGroup = this.dom.modal.querySelector(`#${type}-group`);
         if(currentGroup) currentGroup.style.display = 'block';
     }
-    
+
     getFormData() {
         const type = this.dom.modal.querySelector('#content-type').value;
         switch (type) {
@@ -321,7 +326,7 @@ class UIManager {
             this.dom.modal.querySelector('#upload-btn').disabled = false;
         }, 2000);
     }
-    
+
     showNotification(message, type = 'info') {
         const notification = document.createElement('div');
         notification.className = `ve-notification ve-notification-${type}`;
@@ -329,7 +334,7 @@ class UIManager {
         document.body.appendChild(notification);
         setTimeout(() => notification.remove(), 3000);
     }
-    
+
     showEditInstructions() {
         if (document.getElementById('edit-instructions')) return;
         const instructions = document.createElement('div');
@@ -339,7 +344,7 @@ class UIManager {
         instructions.querySelector('#close-instructions').addEventListener('click', () => instructions.remove());
         setTimeout(() => instructions.remove(), 5000);
     }
-    
+
     updateEditToggle(isEditMode) {
         const button = document.getElementById('edit-mode-toggle');
         if (button) {
