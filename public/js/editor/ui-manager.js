@@ -74,7 +74,7 @@ export class UIManager {
         if (ed) this.openModal(ed); else this.closeModal();
     }
 
-    // ✅ FIX #2 & #3: This is the critical fix for making buttons and images editable.
+    // This function MUST find all editable types.
     scanEditableElements() {
         const elements = new Set();
         const selectors = [
@@ -84,14 +84,12 @@ export class UIManager {
             'img:not(.no-edit)',
             `a.${BUTTON_CSS.split(' ')[0]}`
         ];
-
         selectors.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {
                 if (el.closest('.ve-no-edit, #editor-modal, #edit-mode-toggle')) return;
                 elements.add(el);
             });
         });
-
         return Array.from(elements);
     }
 

@@ -21,32 +21,20 @@ export class OverrideEngine {
     }
 
     applyAllOverrides() {
+        console.log('[VE] Applying all content overrides...');
         const unappliedSelectors = [];
         for (const [selector, ov] of this.overrides.entries()) {
-            let found = false;
-            try {
-                const targetElements = [...document.querySelectorAll(selector)].filter(el =>
-                    selector.startsWith('.main-nav') ? true : !el.closest('.main-nav')
-                );
-
-                if (targetElements.length > 0) {
-                    targetElements.forEach(el => this.applyOverride(el, ov));
-                    found = true;
-                }
-            } catch (e) {
-                // ignore invalid selector errors
-                console.warn(`[VE] Invalid selector syntax in overrides map: "${selector}"`, e.message);
-                unappliedSelectors.push({ selector, reason: 'Invalid Syntax' });
-                found = true;
-            }
-
-            if (!found) {
-                unappliedSelectors.push({ selector, reason: 'Not Found in DOM' });
+            const targets = [...document.querySelectorAll(selector)].filter(el =>
+                selector.startsWith('.main-nav') ? true : !el.closest('.main-nav')
+            );
+            if (targets.length > 0) {
+                targets.forEach(el => this.applyOverride(el, ov));
+            } else {
+                unappliedSelectors.push(selector);
             }
         }
-
         if (unappliedSelectors.length > 0) {
-            console.error('[VE] FAILED: Overrides not applied:', unappliedSelectors);
+            console.error('%c[VE] FAILED: Could not find elements for selectors:', 'color:red;font-weight:bold;', unappliedSelectors);
         } else {
             console.log('%c[VE] All overrides applied successfully.', 'color:green;font-weight:bold;');
         }
@@ -57,25 +45,13 @@ export class OverrideEngine {
      */
     applyOverride(element, override) {
         if (!element) return;
-
-        // ✅ FIX #1: Before applying new content, always remove any existing
-        // editor UI from the element. This prevents the "📝 Edit" text
-        // from being included in the element's content.
-        element.querySelectorAll('.edit-overlay').forEach(o => o.remove());
-
-        switch(override.contentType){
-            case 'text':
-                element.textContent = override.text;
-                break;
-            case 'html':
-                element.innerHTML = override.text;
-                break;
+        element.dataset.veManaged = 'true';
+        switch (override.contentType) {
+            case 'text': element.textContent = override.text; break;
+            case 'html': element.innerHTML = override.text; break;
             case 'image': {
                 const img = element.tagName === 'IMG' ? element : element.querySelector('img');
-                if (img) {
-                    img.src = override.image;
-                    if(override.text) img.alt = override.text;
-                }
+                if (img) { img.src = override.image; if (override.text) img.alt = override.text; }
                 break;
             }
             case 'link': {
@@ -83,10 +59,7 @@ export class OverrideEngine {
                 if (a) {
                     a.href = override.image;
                     a.textContent = override.text;
-                    // Correctly toggle all button classes based on the 'isButton' flag
-                    BUTTON_CSS.split(/\s+/).forEach(cls => {
-                        a.classList.toggle(cls, !!override.isButton);
-                    });
+                    BUTTON_CSS.split(/\s+/).forEach(cls => a.classList.toggle(cls, !!override.isButton));
                 }
                 break;
             }
@@ -111,17 +84,14 @@ export class OverrideEngine {
             const href = el.getAttribute('href') || '#';
             return `.main-nav a[href="${href}"]`;
         }
-        const idAttributeKey = (type === 'link') ? 'veButtonId' : 'veBlockId';
-        const idAttribute = `data-${idAttributeKey.replace(/[A-Z]/g, '-$&').toLowerCase()}`;
-        if (!el.dataset[idAttributeKey]) {
-            const prefix = (type === 'link') ? 've-btn-' : 've-block-';
-            el.dataset[idAttributeKey] = self.crypto?.randomUUID?.() ?? `${prefix}${Date.now()}`;
+        const idKey = (type === 'link') ? 'veButtonId' : 'veBlockId';
+        const attr = `data-${idKey.replace(/[A-Z]/g, '-$&').toLowerCase()}`;
+        if (!el.dataset[idKey]) {
+            el.dataset[idKey] = self.crypto?.randomUUID?.() ?? `${type}-${Date.now()}`;
         }
         const section = el.closest('[data-ve-section-id]');
-        const idSelector = `[${idAttribute}="${el.dataset[idAttributeKey]}"]`;
-        return section
-            ? `[data-ve-section-id="${section.dataset.veSectionId}"] ${idSelector}`
-            : idSelector;
+        const idSelector = `[${attr}="${el.dataset[idKey]}"]`;
+        return section ? `[data-ve-section-id="${section.dataset.veSectionId}"] ${idSelector}` : idSelector;
     }
 
     findOverrideForElement(el) {

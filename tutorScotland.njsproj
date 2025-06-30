@@ -84,6 +84,7 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="public\css\nav.css" />
+    <Content Include="public\editor.css" />
     <Content Include="public\header-banner.css" />
     <Content Include="public\index.html">
       <SubType>Code</SubType>
@@ -116,6 +117,12 @@
     <Content Include="public\js\dynamic-page.js" />
     <Content Include="public\js\dynamic-sections-template.html" />
     <Content Include="public\js\dynamic-sections.js" />
+    <Content Include="public\js\editor\api-service.js" />
+    <Content Include="public\js\editor\editor-state.js" />
+    <Content Include="public\js\editor\features\image-browser.js" />
+    <Content Include="public\js\editor\features\section-sorter.js" />
+    <Content Include="public\js\editor\override-engine.js" />
+    <Content Include="public\js\editor\ui-manager.js" />
     <Content Include="public\js\nav-loader.js" />
     <Content Include="public\js\pages.js" />
     <Content Include="public\js\rolling-banner.js" />
@@ -196,6 +203,8 @@
     <Folder Include="public\css\" />
     <Folder Include="public\images\" />
     <Folder Include="public\js\" />
+    <Folder Include="public\js\editor\" />
+    <Folder Include="public\js\editor\features\" />
     <Folder Include="public\partials\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
