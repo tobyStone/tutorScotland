@@ -266,9 +266,19 @@ class VisualEditor {
             for (const [staleSelector, ov] of pendingOverrides.entries()) {
                 if (!ov.originalContent) continue;
 
+                   /*  Section-scoped search root  🔑 */
+                       let searchRoot = document;
+                   const secMatch = staleSelector.match(/\[data-ve-section-id="([^"]+)"\]/);
+                   if (secMatch && secMatch[1]) {
+                           const scopedRoot = document.querySelector(
+                                   `[data-ve-section-id="${secMatch[1]}"]`
+                               );
+                           if (scopedRoot) searchRoot = scopedRoot;
+                       }
+
                 let candidate = null;
                 candidate = Array.from(
-                    document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,span,li,a,img')
+                    searchRoot.querySelectorAll('h1,h2,h3,h4,h5,h6,p,div,span,li,a,img')
                 )
                     .filter(el => !el.dataset.veBlockId && !el.dataset.veButtonId && !el.closest('.ve-no-edit'))
                     .find(el => {
@@ -354,6 +364,14 @@ class VisualEditor {
                 break;
 
             case 'image': {
+                /* If more than one node already carries this id ➜ keep the first and strip the rest */
+                if (override.targetSelector?.includes('[data-ve-block-id')) {
+                    const id = override.targetSelector.match(/\[data-ve-block-id="([^"]+)"/)?.[1];
+                    if (id) {
+                        const nodes = [...document.querySelectorAll(`[data-ve-block-id="${id}"]`)];
+                        if (nodes.length > 1) nodes.slice(1).forEach(n => n.removeAttribute('data-ve-block-id'));
+                    }
+                }
                 if (override.targetSelector &&
                     !override.targetSelector.includes('[data-ve-block-id')) {
 
