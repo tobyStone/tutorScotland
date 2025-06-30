@@ -6,6 +6,7 @@ const BUTTON_CSS = 'button aurora';
 export class UIManager {
     constructor(callbacks) {
         this.callbacks = callbacks;
+        this.editableElements = [];
         this.dom = {};
         this.imageBrowser = new ImageBrowser({ onSelect: item => this.handleImageSelect(item) });
         editorState.on('editModeChange', m => this.onEditModeChange(m));
@@ -57,30 +58,55 @@ export class UIManager {
         document.body.classList.toggle('ve-edit-active', val);
         const btn = document.getElementById('edit-mode-toggle');
         if (btn) btn.textContent = val ? 'Exit Edit' : 'Edit Mode';
+
+        if (val) {
+            // When entering edit mode, scan for elements and add overlays.
+            this.addOverlays(this.scanEditableElements());
+            this.disableLinks();
+        } else {
+            // When exiting, remove all UI.
+            this.removeOverlays();
+            this.enableLinks();
+        }
     }
 
     onActiveEditorChange(ed) {
         if (ed) this.openModal(ed); else this.closeModal();
     }
 
+    // ✅ FIX #2 & #3: This is the critical fix for making buttons and images editable.
     scanEditableElements() {
-        const elements = [];
-        const selectors = ['h1','h2','h3','h4','h5','h6','p:not(.no-edit)','img:not(.no-edit)','a.ve-btn'];
-        selectors.forEach(sel => document.querySelectorAll(sel).forEach(el => {
-            if (el.closest('.ve-no-edit,#editor-modal,#edit-mode-toggle')) return;
-            elements.push(el);
-        }));
-        return elements;
+        const elements = new Set();
+        const selectors = [
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'p:not(.no-edit)',
+            '.editable',
+            'img:not(.no-edit)',
+            `a.${BUTTON_CSS.split(' ')[0]}`
+        ];
+        selectors.forEach(sel => {
+            document.querySelectorAll(sel).forEach(el => {
+                if (el.closest('.ve-no-edit, #editor-modal, #edit-mode-toggle')) return;
+                elements.add(el);
+            });
+        });
+        return Array.from(elements);
     }
 
     addOverlays(elements) {
         elements.forEach(el => {
             const type = this.callbacks.getType(el);
+            if (el.querySelector(':scope > .edit-overlay')) return;
             const overlay = document.createElement('div');
             overlay.className = 'edit-overlay';
             overlay.innerHTML = `<div class="edit-controls"><button class="edit-btn">✏️ Edit</button></div>`;
-            overlay.querySelector('.edit-btn').addEventListener('click', e => { e.stopPropagation(); this.callbacks.onEdit(el); });
-            if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+            overlay.querySelector('.edit-btn').addEventListener('click', e => {
+                e.stopPropagation();
+                this.callbacks.onEdit(el);
+            });
+            if (getComputedStyle(el).position === 'static') {
+                el.style.position = 'relative';
+            }
             el.appendChild(overlay);
         });
     }
