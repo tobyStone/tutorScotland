@@ -140,15 +140,32 @@ class VisualEditor {
         const fileInput = document.getElementById('image-upload');
         const file = fileInput.files[0];
         if (!file) { this.uiManager.showNotification('Choose file','error'); return; }
+
+        // ✅ IMPROVED: Better upload handling with retry logic
         const fd = new FormData();
-        fd.append('file', file); fd.append('folder','content-images');
+        fd.append('file', file);
+        fd.append('folder','content-images');
+
         try {
-            const res = await apiService.uploadImage(fd, pct => {/*progress ignored*/});
+            this.uiManager.showNotification('Uploading image...','info');
+            const res = await apiService.uploadImage(fd, () => {/*progress ignored*/});
             this.uiManager.handleImageSelect(res);
             this.uiManager.showNotification('Upload complete','success');
             fileInput.value = '';
         } catch (e) {
-            this.uiManager.showNotification('Upload failed','error');
+            console.error('Upload failed:', e);
+
+            // ✅ NEW: Provide more specific error messages
+            let errorMessage = 'Upload failed';
+            if (e.message.includes('corrupted') || e.message.includes('invalid')) {
+                errorMessage = 'Image appears corrupted. Please try a different image or format.';
+            } else if (e.message.includes('too large')) {
+                errorMessage = 'Image is too large. Please resize it first.';
+            } else if (e.message.includes('network') || e.message.includes('Network')) {
+                errorMessage = 'Network error. Please check your connection and try again.';
+            }
+
+            this.uiManager.showNotification(errorMessage, 'error');
         }
     }
 

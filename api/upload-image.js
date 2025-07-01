@@ -157,6 +157,24 @@ module.exports = async (req, res) => {
         }
 
         console.log(`✅ Image validated: ${metadata.width}x${metadata.height} ${metadata.format}`);
+
+        // ✅ NEW: Additional validation to detect corrupted/incomplete images
+        if (!metadata.width || !metadata.height || metadata.width < 1 || metadata.height < 1) {
+            fs.unlink(uploadedFile.filepath, ()=>{}); // cleanup
+            return res.status(400).json({
+                message: 'Image appears to be corrupted or has invalid dimensions.'
+            });
+        }
+
+        // Check for suspiciously small file size relative to dimensions (may indicate corruption)
+        const expectedMinSize = (metadata.width * metadata.height) / 50; // Very conservative estimate
+        if (buffer.length < expectedMinSize) {
+            console.warn(`Suspicious file size: ${buffer.length} bytes for ${metadata.width}x${metadata.height} image`);
+            fs.unlink(uploadedFile.filepath, ()=>{}); // cleanup
+            return res.status(400).json({
+                message: 'Image file appears to be corrupted or incomplete. Please try uploading again.'
+            });
+        }
         // ──────────────────────────────────────────────────────────────────
 
         if (metadata.width > MAX_DIMENSIONS || metadata.height > MAX_DIMENSIONS) {
@@ -166,10 +184,36 @@ module.exports = async (req, res) => {
         }
 
         /* -------------------------------------------------------------
-            3️⃣  Create thumbnail
+            3️⃣  Server-side image integrity test & thumbnail creation
         ------------------------------------------------------------- */
+
+        // ✅ NEW: Test image processing to detect corruption/artifacts
+        try {
+            // Try to process the image - this will fail if the image is corrupted
+            const testBuffer = await img
+                .resize(100, 100, { fit: 'cover', position: 'center' })
+                .jpeg({ quality: 90 })
+                .toBuffer();
+
+            if (!testBuffer || testBuffer.length === 0) {
+                throw new Error('Image processing test failed');
+            }
+        } catch (processError) {
+            console.error('Image processing test failed:', processError.message);
+            fs.unlink(uploadedFile.filepath, ()=>{}); // cleanup
+            return res.status(400).json({
+                message: 'Image appears to be corrupted and cannot be processed. Please try a different image.'
+            });
+        }
+
+        // Create thumbnail with high quality settings to prevent artifacts
         const thumbnailBuffer = await img
-            .resize(240, 240, { fit: 'cover', position: 'center' })
+            .resize(240, 240, {
+                fit: 'cover',
+                position: 'center',
+                kernel: sharp.kernel.lanczos3  // High-quality resampling
+            })
+            .jpeg({ quality: 95 })  // Higher quality for thumbnails
             .toBuffer();
 
         const putOpts = { access: 'public', contentType: uploadedFile.mimetype, overwrite: true };

@@ -40,19 +40,118 @@ class ApiService {
         return r.json();
     }
 
-    uploadImage(formData, onProgress) {
+    async uploadImage(formData, onProgress) {
+        // ✅ IMPROVED: Add client-side preprocessing to prevent corrupted uploads
+        const file = formData.get('file');
+        if (!file) {
+            throw new Error('No file provided');
+        }
+
+        // Validate file before upload
+        const MAX_SIZE = 4 * 1024 * 1024; // 4MB
+        if (file.size > MAX_SIZE) {
+            throw new Error('Image is larger than 4MB - please resize it first');
+        }
+
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+            throw new Error('Please use JPG, PNG, WebP or GIF');
+        }
+
+        // ✅ IMPROVED: Apply client-side resizing if needed to prevent artifacts
+        let processedFile = file;
+        if (file.size > 2.5 * 1024 * 1024) { // larger than 2.5MB? shrink it
+            console.log('Resizing large image to prevent upload artifacts...');
+            try {
+                processedFile = await this.resizeImageSafely(file, 1280);
+                console.log('Image resized successfully to size:', processedFile.size);
+            } catch (error) {
+                console.warn('Client-side resizing failed, using original file:', error.message);
+                // Continue with original file if resizing fails
+            }
+        }
+
+        // Create new FormData with processed file
+        const processedFormData = new FormData();
+        processedFormData.append('file', processedFile);
+        processedFormData.append('folder', formData.get('folder') || 'content-images');
+
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.open('POST', '/api/upload-image', true);
             xhr.upload.onprogress = e => {
                 if (e.lengthComputable && onProgress) onProgress((e.loaded / e.total) * 100);
             };
-            xhr.onload = () => (xhr.status >= 200 && xhr.status < 300)
-                ? resolve(JSON.parse(xhr.responseText))
-                : reject(new Error('Upload failed'));
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        resolve(JSON.parse(xhr.responseText));
+                    } catch (e) {
+                        reject(new Error('Invalid server response'));
+                    }
+                } else {
+                    reject(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`));
+                }
+            };
             xhr.onerror = () => reject(new Error('Network error'));
-            xhr.send(formData);
+            xhr.send(processedFormData);
         });
+    }
+
+    // ✅ NEW: Safe image resizing method to prevent horizontal line artifacts
+    async resizeImageSafely(file, maxSide = 1280) {
+        // Validate input
+        if (!file || file.size === 0) {
+            throw new Error('Invalid file for resizing');
+        }
+
+        const img = await createImageBitmap(file);
+
+        // Validate image dimensions
+        if (!img.width || !img.height || img.width < 1 || img.height < 1) {
+            throw new Error('Invalid image dimensions');
+        }
+
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+
+        // If no scaling needed, return original
+        if (scale >= 0.95) {
+            return file;
+        }
+
+        const newWidth = Math.round(img.width * scale);
+        const newHeight = Math.round(img.height * scale);
+
+        // Validate calculated dimensions
+        if (newWidth < 1 || newHeight < 1) {
+            throw new Error('Calculated dimensions too small');
+        }
+
+        const canvas = new OffscreenCanvas(newWidth, newHeight);
+        const ctx = canvas.getContext('2d');
+
+        // ✅ IMPROVED: Better canvas rendering settings to prevent artifacts
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        // Clear canvas to prevent artifacts
+        ctx.clearRect(0, 0, newWidth, newHeight);
+
+        // Draw image with precise dimensions
+        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+        // ✅ IMPROVED: Higher quality JPEG to reduce compression artifacts
+        const blob = await canvas.convertToBlob({
+            type: 'image/jpeg',
+            quality: 0.92  // Higher quality to prevent horizontal line artifacts
+        });
+
+        // Validate output
+        if (!blob || blob.size === 0) {
+            throw new Error('Canvas conversion failed');
+        }
+
+        return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: blob.type });
     }
 
     async getSectionOrder(pageKey) {
