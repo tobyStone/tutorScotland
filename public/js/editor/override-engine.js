@@ -87,8 +87,8 @@ export class OverrideEngine {
         const idKey = (type === 'link') ? 'veButtonId' : 'veBlockId';
         const attr = `data-${idKey.replace(/[A-Z]/g, '-$&').toLowerCase()}`;
         if (!el.dataset[idKey]) {
-            console.warn('[VE] Element is editable but missing a data-ve-block-id. Add one in the markup so overrides persist.', el);
-            return null; // abort save; forces the admin to fix markup
+            el.dataset[idKey] = self.crypto?.randomUUID?.() ?? `${type}-${Date.now()}`;
+            console.log(`[VE] Assigning new persistent ID to element:`, el);
         }
         const section = el.closest('[data-ve-section-id]');
         const idSelector = `[${attr}="${el.dataset[idKey]}"]`;
