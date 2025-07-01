@@ -35,7 +35,7 @@ function ensureBlockIds(htmlString) {
     const editableTags = ['p', 'img', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
     editableTags.forEach(tag => {
         tempDiv.querySelectorAll(tag).forEach(el => {
-            if (!el.hasAttribute('data-ve-block-id') && !el.closest('.ve-no-edit')) {
+            if (!el.hasAttribute('data-ve-block-id')) {
                 el.setAttribute('data-ve-block-id', uuidv4());
             }
         });
@@ -386,32 +386,59 @@ function createDynamicSectionElement(section, index) {
 
     // Add image if available
     if (section.image) {
-        article.insertAdjacentHTML(
-            'beforeend',
-            `<div class="dyn-image-container">
-                <img src="${section.image}"
-                     alt="${section.heading || 'Section image'}"
-                     loading="lazy"
-                     data-ve-block-id="${uuidv4()}">
-             </div>`
-        );
+        // Use a stable block ID for the image (from section or generate if missing)
+        const imageBlockId = section.imageBlockId || uuidv4();
+        // Check for an editor-managed image with this block ID
+        const existingManagedImage = document.querySelector(`[data-ve-block-id="${imageBlockId}"][data-ve-managed="true"]`);
+        if (!existingManagedImage) {
+            article.insertAdjacentHTML(
+                'beforeend',
+                `<div class="dyn-image-container">
+                    <img src="${section.image}"
+                         alt="${section.heading || 'Section image'}"
+                         loading="lazy"
+                         data-ve-block-id="${imageBlockId}">
+                 </div>`
+            );
+        } else {
+            console.log(`[VE Integration] Preserving editor-managed image for block ID: ${imageBlockId}`);
+        }
     }
 
-    // Add heading
-    const heading = document.createElement('h2');
-    heading.textContent = section.heading;
-    heading.setAttribute('data-ve-block-id', uuidv4());
-    article.appendChild(heading);
+    // Add heading (use a stable block ID if available)
+    const headingBlockId = section.headingBlockId || uuidv4();
+    const existingManagedHeading = document.querySelector(`[data-ve-block-id="${headingBlockId}"][data-ve-managed="true"]`);
+    if (!existingManagedHeading) {
+        const heading = document.createElement('h2');
+        heading.textContent = section.heading;
+        heading.setAttribute('data-ve-block-id', headingBlockId);
+        article.appendChild(heading);
+    } else {
+        console.log(`[VE Integration] Preserving editor-managed heading for block ID: ${headingBlockId}`);
+    }
 
-    // Add content
-    const content = document.createElement('div');
-    content.className = 'dyn-content';
-    content.innerHTML = ensureBlockIds(section.text);
-    article.appendChild(content);
+    // Add content (use ensureBlockIds and check for managed content)
+    const contentBlockId = section.contentBlockId || uuidv4();
+    const existingManagedContent = document.querySelector(`[data-ve-block-id="${contentBlockId}"][data-ve-managed="true"]`);
+    if (!existingManagedContent) {
+        const content = document.createElement('div');
+        content.className = 'dyn-content';
+        content.innerHTML = ensureBlockIds(section.text);
+        content.setAttribute('data-ve-block-id', contentBlockId);
+        article.appendChild(content);
+    } else {
+        console.log(`[VE Integration] Preserving editor-managed content for block ID: ${contentBlockId}`);
+    }
 
-    // Add button rendering for standard sections before return article:
+    // Add button (if present, use a stable block ID)
     if (section.buttonLabel && section.buttonUrl) {
-        article.insertAdjacentHTML('beforeend', buttonHtml(section));
+        const buttonBlockId = section.buttonBlockId || uuidv4();
+        const existingManagedButton = document.querySelector(`[data-ve-button-id="${buttonBlockId}"][data-ve-managed="true"]`);
+        if (!existingManagedButton) {
+            article.insertAdjacentHTML('beforeend', buttonHtml({ ...section, buttonBlockId }));
+        } else {
+            console.log(`[VE Integration] Preserving editor-managed button for block ID: ${buttonBlockId}`);
+        }
     }
 
     // Add debug logging
