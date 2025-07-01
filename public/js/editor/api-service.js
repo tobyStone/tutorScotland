@@ -58,8 +58,12 @@ class ApiService {
             throw new Error('Please use JPG, PNG, WebP or GIF');
         }
 
-        // ✅ IMPROVED: Apply client-side resizing if needed to prevent artifacts
+        // ✅ TEMPORARY: Disable client-side resizing to isolate server issues
         let processedFile = file;
+        console.log('Using original file without client-side resizing for debugging');
+
+        // TODO: Re-enable after server issues are resolved
+        /*
         if (file.size > 2.5 * 1024 * 1024) { // larger than 2.5MB? shrink it
             console.log('Resizing large image to prevent upload artifacts...');
             try {
@@ -70,6 +74,7 @@ class ApiService {
                 // Continue with original file if resizing fails
             }
         }
+        */
 
         // Create new FormData with processed file
         const processedFormData = new FormData();

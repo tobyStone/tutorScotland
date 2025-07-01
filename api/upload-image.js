@@ -207,14 +207,24 @@ module.exports = async (req, res) => {
         }
 
         // Create thumbnail with high quality settings to prevent artifacts
-        const thumbnailBuffer = await img
-            .resize(240, 240, {
-                fit: 'cover',
-                position: 'center',
-                kernel: sharp.kernel.lanczos3  // High-quality resampling
-            })
-            .jpeg({ quality: 95 })  // Higher quality for thumbnails
-            .toBuffer();
+        let thumbnailBuffer;
+        try {
+            thumbnailBuffer = await img
+                .resize(240, 240, {
+                    fit: 'cover',
+                    position: 'center',
+                    kernel: 'lanczos3'  // ✅ FIXED: High-quality resampling
+                })
+                .jpeg({ quality: 95 })  // Higher quality for thumbnails
+                .toBuffer();
+        } catch (kernelError) {
+            console.warn('Lanczos3 kernel failed, falling back to default:', kernelError.message);
+            // Fallback to default kernel if lanczos3 is not supported
+            thumbnailBuffer = await img
+                .resize(240, 240, { fit: 'cover', position: 'center' })
+                .jpeg({ quality: 95 })
+                .toBuffer();
+        }
 
         const putOpts = { access: 'public', contentType: uploadedFile.mimetype, overwrite: true };
         const mainKey = `${folder}/${filename}`;
@@ -241,6 +251,15 @@ module.exports = async (req, res) => {
 
     } catch (error) {
         console.error('[upload-image] Unexpected error:', error);
+        console.error('[upload-image] Error stack:', error.stack);
+
+        // Clean up temp file if it exists
+        if (uploadedFile?.filepath) {
+            fs.unlink(uploadedFile.filepath, (err) => {
+                if (err) console.error('Error deleting temp file after error:', err);
+            });
+        }
+
         return res.status(500).json({
             message: 'Upload failed unexpectedly',
             error: error.message
