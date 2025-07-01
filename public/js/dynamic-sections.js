@@ -20,6 +20,29 @@ function buttonHtml(s) {
         : '';
 }
 
+// ✅ NEW: Add a UUID generator utility function
+function uuidv4() {
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    );
+}
+
+// ✅ NEW: Add a helper to inject IDs into an HTML string
+function ensureBlockIds(htmlString) {
+    if (!htmlString) return '';
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlString;
+    const editableTags = ['p', 'img', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+    editableTags.forEach(tag => {
+        tempDiv.querySelectorAll(tag).forEach(el => {
+            if (!el.hasAttribute('data-ve-block-id') && !el.closest('.ve-no-edit')) {
+                el.setAttribute('data-ve-block-id', uuidv4());
+            }
+        });
+    });
+    return tempDiv.innerHTML;
+}
+
 /**
  * Load dynamic sections for the current page
  */
@@ -305,11 +328,7 @@ function createPositionContainer(position) {
 function createDynamicSectionElement(section, index) {
     const article = document.createElement('article');
     article.className = 'dyn-block fade-in-on-scroll';
-    article.classList.add('ve-no-edit');
     article.style.transitionDelay = `${index * 0.1}s`;
-
-    // ✨ ADDED: Give the block a unique handle for the visual-editor drag-drop
-    // Use the database ID for stability, with a fallback for older data.
     article.dataset.veSectionId = section._id || slugify(section.heading);
 
     // Add anchor ID for navigation linking
@@ -372,7 +391,8 @@ function createDynamicSectionElement(section, index) {
             `<div class="dyn-image-container">
                 <img src="${section.image}"
                      alt="${section.heading || 'Section image'}"
-                     loading="lazy">
+                     loading="lazy"
+                     data-ve-block-id="${uuidv4()}">
              </div>`
         );
     }
@@ -380,12 +400,13 @@ function createDynamicSectionElement(section, index) {
     // Add heading
     const heading = document.createElement('h2');
     heading.textContent = section.heading;
+    heading.setAttribute('data-ve-block-id', uuidv4());
     article.appendChild(heading);
 
     // Add content
     const content = document.createElement('div');
     content.className = 'dyn-content';
-    content.innerHTML = section.text;
+    content.innerHTML = ensureBlockIds(section.text);
     article.appendChild(content);
 
     // Add button rendering for standard sections before return article:

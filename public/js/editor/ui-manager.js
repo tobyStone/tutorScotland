@@ -3,6 +3,25 @@ import { ImageBrowser } from './features/image-browser.js';
 
 const BUTTON_CSS = 'button aurora';
 
+function uuidv4() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
+
+function ensureBlockIds(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  ['p', 'img', 'a', 'h1','h2','h3','h4','h5','h6'].forEach(tag => {
+    tmp.querySelectorAll(tag).forEach(el => {
+      if (!el.hasAttribute('data-ve-block-id')) {
+        el.setAttribute('data-ve-block-id', uuidv4());
+      }
+    });
+  });
+  return tmp.innerHTML;
+}
+
 export class UIManager {
     constructor(callbacks) {
         this.callbacks = callbacks;
@@ -80,14 +99,13 @@ export class UIManager {
         const selectors = [
             'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
             'p:not(.no-edit)',
-            'span:not(.no-edit)',
             '.editable',
             'img:not(.no-edit)',
-            'a:not(.no-edit)',
+            `a.${BUTTON_CSS.replace(/\s/g, '.')}`
         ];
         selectors.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {
-                if (el.closest('.ve-no-edit, #editor-modal, #edit-mode-toggle')) return;
+                if (el.closest('.ve-no-edit, #editor-modal, #edit-mode-toggle, .main-nav')) return;
                 elements.add(el);
             });
         });
@@ -189,10 +207,14 @@ export class UIManager {
     getFormData() {
         const type = this.dom.modal.querySelector('#content-type').value;
         switch(type){
-            case 'text': return { text: this.dom.modal.querySelector('#content-text').value };
-            case 'html': return { text: this.dom.modal.querySelector('#content-html').value };
-            case 'image': return { image: this.dom.modal.querySelector('#content-image').value, text: this.dom.modal.querySelector('#image-alt').value };
-            case 'link': return { image: this.dom.modal.querySelector('#link-url').value, text: this.dom.modal.querySelector('#link-text').value, isButton: this.dom.modal.querySelector('#link-is-button').checked };
+            case 'text':
+                return { text: this.dom.modal.querySelector('#content-text').value };
+            case 'html':
+                return { text: ensureBlockIds(this.dom.modal.querySelector('#content-html').value) };
+            case 'image':
+                return { image: this.dom.modal.querySelector('#content-image').value, text: this.dom.modal.querySelector('#image-alt').value };
+            case 'link':
+                return { image: this.dom.modal.querySelector('#link-url').value, text: this.dom.modal.querySelector('#link-text').value, isButton: this.dom.modal.querySelector('#link-is-button').checked };
             default: return {};
         }
     }
