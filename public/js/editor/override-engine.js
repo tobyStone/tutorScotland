@@ -10,6 +10,11 @@ export class OverrideEngine {
         this.overrides = new Map();
     }
 
+    async init() {
+        console.log('[VE] OverrideEngine initializing...');
+        await this.load();
+    }
+
     async load() {
         try {
             const data = await apiService.loadOverrides(editorState.currentPage);
