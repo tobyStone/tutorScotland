@@ -45,8 +45,17 @@ class VisualEditor {
 
     // ✅ NEW: Listen for dynamic content changes and refresh accordingly
     setupDynamicContentListener() {
+        let isProcessingDynamicContent = false;
+
         // Listen for additional dynamic content loads (e.g., from page.html)
         window.addEventListener('dyn-sections-loaded', () => {
+            // ✅ FIXED: Prevent multiple simultaneous override applications
+            if (isProcessingDynamicContent) {
+                console.log('[VE] Already processing dynamic content, skipping...');
+                return;
+            }
+
+            isProcessingDynamicContent = true;
             console.log('[VE] Dynamic sections loaded, reapplying overrides...');
 
             // Reapply overrides to newly loaded content
@@ -55,6 +64,8 @@ class VisualEditor {
 
                 // Refresh UI overlays if in edit mode
                 this.uiManager.refreshEditableElements();
+
+                isProcessingDynamicContent = false;
             }, 100); // Small delay to ensure DOM is fully updated
         });
     }

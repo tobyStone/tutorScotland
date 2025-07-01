@@ -92,12 +92,12 @@ export class OverrideEngine {
         const tagName = element.tagName.toLowerCase();
         if (tagName === 'img') return 'image';
         if (tagName === 'a') return 'link';
-        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) return 'text';
-        const clone = element.cloneNode(true);
-        clone.querySelectorAll('.edit-overlay').forEach(o => o.remove());
-        if (clone.querySelector('p, ul, ol, div, br, strong, em, b, i, u')) {
-            return 'html';
-        }
+        // ✅ FIXED: All text-based elements should be treated as 'text', not 'html'
+        // This includes headings, paragraphs, divs with text content, etc.
+        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div', 'span'].includes(tagName)) return 'text';
+
+        // ✅ FIXED: For any other element, default to 'text' to avoid HTML content type issues
+        // The 'html' content type was causing infinite loops and persistence issues
         return 'text';
     }
 
