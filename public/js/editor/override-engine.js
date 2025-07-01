@@ -21,7 +21,9 @@ export class OverrideEngine {
     }
 
     applyAllOverrides() {
-        console.log('[VE] Applying all content overrides...');
+        const timestamp = Date.now();
+        console.log(`[VE] Applying all content overrides... (${timestamp})`);
+        console.log(`[VE] Total overrides to apply: ${this.overrides.size}`);
         this.applyOverridesWithRetry();
     }
 
@@ -47,6 +49,10 @@ export class OverrideEngine {
             // If all overrides applied successfully, we're done
             if (unappliedSelectors.length === 0) {
                 console.log('%c[VE] All overrides applied successfully.', 'color:green;font-weight:bold;');
+
+                // ✅ NEW: Dispatch completion event to prevent loops
+                console.log('[VE-DBG] 🚩 ve-overrides-done event dispatched');
+                window.dispatchEvent(new CustomEvent('ve-overrides-done'));
                 return;
             }
 
@@ -67,13 +73,29 @@ export class OverrideEngine {
      */
     applyOverride(element, override) {
         if (!element) return;
+
+        // ✅ FIXED: Add debug logging for image overrides
+        if (override.contentType === 'image') {
+            console.log(`[VE-DBG] applyOverride → image [${override.targetSelector}]`, element, `src: ${override.image}`);
+        }
+
         element.dataset.veManaged = 'true';
         switch (override.contentType) {
-            case 'text': element.textContent = override.text; break;
-            case 'html': element.innerHTML = override.text; break;
+            case 'text':
+                element.textContent = override.text;
+                console.log(`[VE-DBG] applyOverride → text [${override.targetSelector}]`, element);
+                break;
+            case 'html':
+                element.innerHTML = override.text;
+                console.log(`[VE-DBG] applyOverride → html [${override.targetSelector}]`, element);
+                break;
             case 'image': {
                 const img = element.tagName === 'IMG' ? element : element.querySelector('img');
-                if (img) { img.src = override.image; if (override.text) img.alt = override.text; }
+                if (img) {
+                    img.src = override.image;
+                    if (override.text) img.alt = override.text;
+                    console.log(`[VE-DBG] Image updated: ${img.src}`);
+                }
                 break;
             }
             case 'link': {
@@ -82,6 +104,7 @@ export class OverrideEngine {
                     a.href = override.href || override.image;
                     a.textContent = override.text;
                     BUTTON_CSS.split(/\s+/).forEach(cls => a.classList.toggle(cls, !!override.isButton));
+                    console.log(`[VE-DBG] applyOverride → link [${override.targetSelector}]`, a);
                 }
                 break;
             }

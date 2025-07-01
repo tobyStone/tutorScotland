@@ -25,9 +25,13 @@ class VisualEditor {
     }
 
     async init() {
+        console.log('[VE] Initializing Visual Editor...');
         await this.waitForDynamicSections();
         await sectionSorter.init();
         await overrideEngine.load();
+
+        // ✅ FIXED: Apply overrides only once during initialization
+        console.log('[VE] Initial override application...');
         overrideEngine.applyAllOverrides();
 
         // ✅ NEW: Set up listener for dynamic content changes
@@ -43,9 +47,10 @@ class VisualEditor {
         }
     }
 
-    // ✅ NEW: Listen for dynamic content changes and refresh accordingly
+    // ✅ FIXED: Listen for dynamic content changes and refresh accordingly
     setupDynamicContentListener() {
         let isProcessingDynamicContent = false;
+        let overrideApplicationCount = 0;
 
         // Listen for additional dynamic content loads (e.g., from page.html)
         window.addEventListener('dyn-sections-loaded', () => {
@@ -56,17 +61,31 @@ class VisualEditor {
             }
 
             isProcessingDynamicContent = true;
-            console.log('[VE] Dynamic sections loaded, reapplying overrides...');
+            overrideApplicationCount++;
+            console.log(`[VE] Dynamic sections loaded (${overrideApplicationCount}), reapplying overrides...`);
 
-            // Reapply overrides to newly loaded content
+            // ✅ FIXED: Only apply overrides once per dynamic load cycle
             setTimeout(() => {
-                overrideEngine.applyAllOverrides();
+                // Check if this is the first application or if we need to refresh
+                if (overrideApplicationCount === 1) {
+                    console.log('[VE] First override application - applying all overrides');
+                    overrideEngine.applyAllOverrides();
+                } else {
+                    console.log('[VE] Subsequent override application - skipping to prevent loops');
+                }
 
                 // Refresh UI overlays if in edit mode
-                this.uiManager.refreshEditableElements();
+                if (editorState.isEditMode) {
+                    this.uiManager.refreshEditableElements();
+                }
 
                 isProcessingDynamicContent = false;
             }, 100); // Small delay to ensure DOM is fully updated
+        });
+
+        // ✅ NEW: Reset counter when page changes
+        window.addEventListener('beforeunload', () => {
+            overrideApplicationCount = 0;
         });
     }
 
