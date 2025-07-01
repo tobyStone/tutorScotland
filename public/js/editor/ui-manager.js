@@ -112,6 +112,22 @@ export class UIManager {
         return Array.from(elements);
     }
 
+    // ✅ NEW: Refresh editable elements after dynamic content changes
+    refreshEditableElements() {
+        if (!editorState.isEditMode) return;
+
+        console.log('[VE] Refreshing editable elements after dynamic content change...');
+
+        // Remove existing overlays
+        this.removeOverlays();
+
+        // Rescan and add overlays to new elements
+        const elements = this.scanEditableElements();
+        this.addOverlays(elements);
+
+        console.log(`[VE] Refreshed ${elements.length} editable elements.`);
+    }
+
     addOverlays(elements) {
         elements.forEach(el => {
             const type = this.callbacks.getType(el);

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Editor Persistence Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { border: 1px solid #ccc; padding: 20px; margin: 20px 0; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        #results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Visual Editor Persistence Test</h1>
+    <p>This page tests whether block IDs are properly preserved in dynamic content for cross-browser/device persistence.</p>
+
+    <div class="test-section">
+        <h2>Test Controls</h2>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Static Content (Should have block IDs)</h2>
+        <p data-ve-block-id="test-static-paragraph">This is a static paragraph that should have a block ID.</p>
+        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzAwNzNlNiIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VGVzdCBJbWFnZTwvdGV4dD48L3N2Zz4=" alt="Test Image" data-ve-block-id="test-static-image">
+    </div>
+
+    <div class="test-section">
+        <h2>Dynamic Content Container</h2>
+        <div id="dynamicContent">
+            <!-- Dynamic content will be inserted here -->
+        </div>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        // Test data that simulates what would come from the API
+        const testSectionData = {
+            _id: 'test-section-id',
+            heading: 'Dynamic Test Section',
+            text: '<p>This is dynamic content that should have block IDs.</p><p>This is another paragraph in the dynamic content.</p>',
+            image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzI4YTc0NSIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+RHluYW1pYzwvdGV4dD48L3N2Zz4=',
+            headingBlockId: 'test-heading-block-id',
+            contentBlockId: 'test-content-block-id',
+            imageBlockId: 'test-image-block-id',
+            buttonLabel: 'Test Button',
+            buttonUrl: '#test',
+            buttonBlockId: 'test-button-block-id'
+        };
+
+        // UUID generator (same as in dynamic-sections.js)
+        function uuidv4() {
+            return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+            );
+        }
+
+        // Helper to inject IDs into HTML string (same as in dynamic-sections.js)
+        function ensureBlockIds(htmlString) {
+            if (!htmlString) return '';
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlString;
+            const editableTags = ['p', 'img', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+            editableTags.forEach(tag => {
+                tempDiv.querySelectorAll(tag).forEach(el => {
+                    if (!el.hasAttribute('data-ve-block-id')) {
+                        el.setAttribute('data-ve-block-id', uuidv4());
+                    }
+                });
+            });
+            return tempDiv.innerHTML;
+        }
+
+        // Create dynamic section (similar to dynamic-sections.js)
+        function createDynamicSection(section) {
+            const article = document.createElement('article');
+            article.className = 'dyn-block';
+            article.dataset.veSectionId = section._id;
+
+            // Add image with stable block ID
+            if (section.image) {
+                const imageBlockId = section.imageBlockId || uuidv4();
+                article.insertAdjacentHTML('beforeend', 
+                    `<img src="${section.image}" alt="${section.heading}" data-ve-block-id="${imageBlockId}">`
+                );
+            }
+
+            // Add heading with stable block ID
+            const headingBlockId = section.headingBlockId || uuidv4();
+            const heading = document.createElement('h2');
+            heading.textContent = section.heading;
+            heading.setAttribute('data-ve-block-id', headingBlockId);
+            article.appendChild(heading);
+
+            // Add content with stable block ID and ensure nested IDs
+            const contentBlockId = section.contentBlockId || uuidv4();
+            const content = document.createElement('div');
+            content.className = 'dyn-content';
+            content.innerHTML = ensureBlockIds(section.text);
+            content.setAttribute('data-ve-block-id', contentBlockId);
+            article.appendChild(content);
+
+            // Add button if present
+            if (section.buttonLabel && section.buttonUrl) {
+                const buttonBlockId = section.buttonBlockId || uuidv4();
+                const button = document.createElement('a');
+                button.href = section.buttonUrl;
+                button.textContent = section.buttonLabel;
+                button.className = 'button aurora';
+                button.setAttribute('data-ve-button-id', buttonBlockId);
+                article.appendChild(button);
+            }
+
+            return article;
+        }
+
+        // Test functions
+        function testStaticBlockIds() {
+            const results = [];
+            
+            // Test static paragraph
+            const staticP = document.querySelector('[data-ve-block-id="test-static-paragraph"]');
+            if (staticP) {
+                results.push({ type: 'success', message: '✅ Static paragraph has block ID: test-static-paragraph' });
+            } else {
+                results.push({ type: 'error', message: '❌ Static paragraph missing block ID' });
+            }
+
+            // Test static image
+            const staticImg = document.querySelector('[data-ve-block-id="test-static-image"]');
+            if (staticImg) {
+                results.push({ type: 'success', message: '✅ Static image has block ID: test-static-image' });
+            } else {
+                results.push({ type: 'error', message: '❌ Static image missing block ID' });
+            }
+
+            return results;
+        }
+
+        function testDynamicBlockIds() {
+            const results = [];
+            
+            // Create and insert dynamic content
+            const container = document.getElementById('dynamicContent');
+            container.innerHTML = ''; // Clear existing content
+            
+            const dynamicSection = createDynamicSection(testSectionData);
+            container.appendChild(dynamicSection);
+
+            // Test dynamic heading
+            const dynamicHeading = document.querySelector('[data-ve-block-id="test-heading-block-id"]');
+            if (dynamicHeading) {
+                results.push({ type: 'success', message: '✅ Dynamic heading has stable block ID: test-heading-block-id' });
+            } else {
+                results.push({ type: 'error', message: '❌ Dynamic heading missing stable block ID' });
+            }
+
+            // Test dynamic content
+            const dynamicContent = document.querySelector('[data-ve-block-id="test-content-block-id"]');
+            if (dynamicContent) {
+                results.push({ type: 'success', message: '✅ Dynamic content has stable block ID: test-content-block-id' });
+            } else {
+                results.push({ type: 'error', message: '❌ Dynamic content missing stable block ID' });
+            }
+
+            // Test dynamic image
+            const dynamicImage = document.querySelector('[data-ve-block-id="test-image-block-id"]');
+            if (dynamicImage) {
+                results.push({ type: 'success', message: '✅ Dynamic image has stable block ID: test-image-block-id' });
+            } else {
+                results.push({ type: 'error', message: '❌ Dynamic image missing stable block ID' });
+            }
+
+            // Test dynamic button
+            const dynamicButton = document.querySelector('[data-ve-button-id="test-button-block-id"]');
+            if (dynamicButton) {
+                results.push({ type: 'success', message: '✅ Dynamic button has stable block ID: test-button-block-id' });
+            } else {
+                results.push({ type: 'error', message: '❌ Dynamic button missing stable block ID' });
+            }
+
+            // Test nested paragraph IDs
+            const nestedParagraphs = dynamicContent.querySelectorAll('p[data-ve-block-id]');
+            if (nestedParagraphs.length >= 2) {
+                results.push({ type: 'success', message: `✅ Found ${nestedParagraphs.length} nested paragraphs with block IDs` });
+            } else {
+                results.push({ type: 'error', message: `❌ Expected 2+ nested paragraphs with block IDs, found ${nestedParagraphs.length}` });
+            }
+
+            return results;
+        }
+
+        function testSelectorUniqueness() {
+            const results = [];
+            const allBlockIds = [...document.querySelectorAll('[data-ve-block-id]')].map(el => el.dataset.veBlockId);
+            const allButtonIds = [...document.querySelectorAll('[data-ve-button-id]')].map(el => el.dataset.veButtonId);
+            
+            const uniqueBlockIds = new Set(allBlockIds);
+            const uniqueButtonIds = new Set(allButtonIds);
+
+            if (allBlockIds.length === uniqueBlockIds.size) {
+                results.push({ type: 'success', message: `✅ All ${allBlockIds.length} block IDs are unique` });
+            } else {
+                results.push({ type: 'error', message: `❌ Found duplicate block IDs: ${allBlockIds.length} total, ${uniqueBlockIds.size} unique` });
+            }
+
+            if (allButtonIds.length === uniqueButtonIds.size) {
+                results.push({ type: 'success', message: `✅ All ${allButtonIds.length} button IDs are unique` });
+            } else {
+                results.push({ type: 'error', message: `❌ Found duplicate button IDs: ${allButtonIds.length} total, ${uniqueButtonIds.size} unique` });
+            }
+
+            return results;
+        }
+
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            results.forEach(result => {
+                const div = document.createElement('div');
+                div.className = `test-result ${result.type}`;
+                div.textContent = result.message;
+                resultsDiv.appendChild(div);
+            });
+        }
+
+        function runAllTests() {
+            clearResults();
+            
+            const allResults = [
+                { type: 'info', message: '🧪 Running Visual Editor Persistence Tests...' },
+                ...testStaticBlockIds(),
+                ...testDynamicBlockIds(),
+                ...testSelectorUniqueness(),
+                { type: 'info', message: '✅ All tests completed!' }
+            ];
+
+            displayResults(allResults);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // Run tests on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runAllTests, 500); // Small delay to ensure everything is loaded
+        });
+    </script>
+</body>
+</html>

@@ -29,6 +29,10 @@ class VisualEditor {
         await sectionSorter.init();
         await overrideEngine.load();
         overrideEngine.applyAllOverrides();
+
+        // ✅ NEW: Set up listener for dynamic content changes
+        this.setupDynamicContentListener();
+
         try {
             const { isAdmin } = await apiService.checkAdminStatus();
             if (isAdmin) {
@@ -37,6 +41,22 @@ class VisualEditor {
         } catch (error) {
             console.error('[VE] Admin check failed, editor not enabled.', error);
         }
+    }
+
+    // ✅ NEW: Listen for dynamic content changes and refresh accordingly
+    setupDynamicContentListener() {
+        // Listen for additional dynamic content loads (e.g., from page.html)
+        window.addEventListener('dyn-sections-loaded', () => {
+            console.log('[VE] Dynamic sections loaded, reapplying overrides...');
+
+            // Reapply overrides to newly loaded content
+            setTimeout(() => {
+                overrideEngine.applyAllOverrides();
+
+                // Refresh UI overlays if in edit mode
+                this.uiManager.refreshEditableElements();
+            }, 100); // Small delay to ensure DOM is fully updated
+        });
     }
 
     waitForDynamicSections() {

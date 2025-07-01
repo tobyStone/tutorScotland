@@ -200,6 +200,29 @@
                 `;
             });
 
+        // ✅ NEW: Add UUID generator utility function (same as dynamic-sections.js)
+        function uuidv4() {
+            return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+            );
+        }
+
+        // ✅ NEW: Add helper to inject IDs into HTML string (same as dynamic-sections.js)
+        function ensureBlockIds(htmlString) {
+            if (!htmlString) return '';
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlString;
+            const editableTags = ['p', 'img', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+            editableTags.forEach(tag => {
+                tempDiv.querySelectorAll(tag).forEach(el => {
+                    if (!el.hasAttribute('data-ve-block-id')) {
+                        el.setAttribute('data-ve-block-id', uuidv4());
+                    }
+                });
+            });
+            return tempDiv.innerHTML;
+        }
+
         // Load any additional dynamic sections for this page
         fetch(`/api/sections?page=${slug}`)
             .then(r => r.json())
@@ -214,12 +237,36 @@
 
                     // Add each section with proper spacing and styling
                     list.forEach((s, index) => {
-                        host.insertAdjacentHTML('beforeend', `
-                          <article class="dyn-block fade-in-section" style="transition-delay: ${index * 0.1}s">
-                            ${s.image ? `<img src="${s.image}" alt="${s.heading}" loading="lazy">` : ''}
-                            <h2>${s.heading}</h2>
-                            <div class="dyn-content">${s.text}</div>
-                          </article>`);
+                        // ✅ FIXED: Create section with proper block IDs
+                        const article = document.createElement('article');
+                        article.className = 'dyn-block fade-in-section';
+                        article.style.transitionDelay = `${index * 0.1}s`;
+                        article.dataset.veSectionId = s._id || s.heading.toLowerCase().replace(/\s+/g, '-');
+
+                        // Add image with stable block ID from database
+                        if (s.image) {
+                            const imageBlockId = s.imageBlockId || uuidv4();
+                            article.insertAdjacentHTML('beforeend',
+                                `<img src="${s.image}" alt="${s.heading}" loading="lazy" data-ve-block-id="${imageBlockId}">`
+                            );
+                        }
+
+                        // Add heading with stable block ID from database
+                        const headingBlockId = s.headingBlockId || uuidv4();
+                        const heading = document.createElement('h2');
+                        heading.textContent = s.heading;
+                        heading.setAttribute('data-ve-block-id', headingBlockId);
+                        article.appendChild(heading);
+
+                        // Add content with stable block ID from database and ensure nested IDs
+                        const contentBlockId = s.contentBlockId || uuidv4();
+                        const content = document.createElement('div');
+                        content.className = 'dyn-content';
+                        content.innerHTML = ensureBlockIds(s.text);
+                        content.setAttribute('data-ve-block-id', contentBlockId);
+                        article.appendChild(content);
+
+                        host.appendChild(article);
                     });
 
                     // Make sure the dynamic sections container is visible
@@ -227,6 +274,31 @@
 
                     // Ensure the separator is visible
                     document.querySelector('.dynamic-sections-separator').style.display = 'block';
+                } else {
+                    // Hide containers if no sections
+                    const host = document.getElementById('dynamicSections');
+                    if (host) host.style.display = 'none';
+                    const separator = document.querySelector('.dynamic-sections-separator');
+                    if (separator) separator.style.display = 'none';
+                }
+
+                // ✅ NEW: Dispatch event to notify visual editor that dynamic content is ready
+                window.dispatchEvent(new CustomEvent('dyn-sections-loaded'));
+                document.body.classList.add('dyn-ready');
+                console.log('[Page] Dispatched "dyn-sections-loaded" event.');
+            })
+            .catch(error => {
+                console.error('Error loading dynamic sections for page:', error);
+                // Hide containers on error
+                const host = document.getElementById('dynamicSections');
+                if (host) host.style.display = 'none';
+                const separator = document.querySelector('.dynamic-sections-separator');
+                if (separator) separator.style.display = 'none';
+
+                // ✅ NEW: Still dispatch event to unblock visual editor
+                window.dispatchEvent(new CustomEvent('dyn-sections-loaded'));
+                document.body.classList.add('dyn-ready');
+                console.log('[Page] Dispatched "dyn-sections-loaded" event after error.');
 
                     // Force layout recalculation to ensure proper positioning
                     document.body.offsetHeight;

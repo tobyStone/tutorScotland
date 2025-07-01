@@ -34,6 +34,12 @@ const schema = new mongoose.Schema({
     buttonLabel: { type: String, default: '' },     // Button text
     buttonUrl:   { type: String, default: '' },     // Button destination URL
 
+    // ✅ NEW: Add fields for visual editor block IDs
+    headingBlockId: { type: String, default: '' },   // UUID for heading element
+    contentBlockId: { type: String, default: '' },   // UUID for content/text element
+    imageBlockId: { type: String, default: '' },     // UUID for image element
+    buttonBlockId: { type: String, default: '' },    // UUID for button element
+
     // ★ NEW: Add fields for navigation integration
     navCategory: { type: String, default: 'about' }, // 'tutors', 'parents', 'about'
     showInNav: { type: Boolean, default: false },    // Whether to show in navigation

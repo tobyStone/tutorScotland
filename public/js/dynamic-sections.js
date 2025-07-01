@@ -386,7 +386,7 @@ function createDynamicSectionElement(section, index) {
 
     // Add image if available
     if (section.image) {
-        // Use a stable block ID for the image (from section or generate if missing)
+        // ✅ FIXED: Use stable block ID from database, generate only if missing
         const imageBlockId = section.imageBlockId || uuidv4();
         // Check for an editor-managed image with this block ID
         const existingManagedImage = document.querySelector(`[data-ve-block-id="${imageBlockId}"][data-ve-managed="true"]`);
@@ -405,7 +405,7 @@ function createDynamicSectionElement(section, index) {
         }
     }
 
-    // Add heading (use a stable block ID if available)
+    // Add heading (use stable block ID from database)
     const headingBlockId = section.headingBlockId || uuidv4();
     const existingManagedHeading = document.querySelector(`[data-ve-block-id="${headingBlockId}"][data-ve-managed="true"]`);
     if (!existingManagedHeading) {
@@ -417,7 +417,7 @@ function createDynamicSectionElement(section, index) {
         console.log(`[VE Integration] Preserving editor-managed heading for block ID: ${headingBlockId}`);
     }
 
-    // Add content (use ensureBlockIds and check for managed content)
+    // Add content (use stable block ID from database and ensure nested IDs)
     const contentBlockId = section.contentBlockId || uuidv4();
     const existingManagedContent = document.querySelector(`[data-ve-block-id="${contentBlockId}"][data-ve-managed="true"]`);
     if (!existingManagedContent) {
@@ -430,7 +430,7 @@ function createDynamicSectionElement(section, index) {
         console.log(`[VE Integration] Preserving editor-managed content for block ID: ${contentBlockId}`);
     }
 
-    // Add button (if present, use a stable block ID)
+    // Add button (if present, use stable block ID from database)
     if (section.buttonLabel && section.buttonUrl) {
         const buttonBlockId = section.buttonBlockId || uuidv4();
         const existingManagedButton = document.querySelector(`[data-ve-button-id="${buttonBlockId}"][data-ve-managed="true"]`);

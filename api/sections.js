@@ -195,6 +195,17 @@ module.exports = async (req, res) => {
                         console.log('Removing image from section');
                     }
 
+                    // ✅ NEW: Preserve existing block IDs or generate new ones if missing
+                    const { v4: uuidv4 } = require('uuid');
+                    if (!currentDoc.headingBlockId) updateData.headingBlockId = uuidv4();
+                    if (!currentDoc.contentBlockId) updateData.contentBlockId = uuidv4();
+                    if (!currentDoc.imageBlockId && (updateData.image || currentDoc.image)) {
+                        updateData.imageBlockId = uuidv4();
+                    }
+                    if (!currentDoc.buttonBlockId && ((updateData.buttonLabel || currentDoc.buttonLabel) && (updateData.buttonUrl || currentDoc.buttonUrl))) {
+                        updateData.buttonBlockId = uuidv4();
+                    }
+
                     if (Object.keys(updateData).length === 1) { // Only contains updatedAt
                         return res.status(400).json({ message: 'No fields to update provided' });
                     }
@@ -341,13 +352,22 @@ module.exports = async (req, res) => {
                     }
                 }
 
+                // ✅ NEW: Generate block IDs for visual editor persistence
+                const { v4: uuidv4 } = require('uuid');
+                const headingBlockId = uuidv4();
+                const contentBlockId = uuidv4();
+                const imageBlockId = image ? uuidv4() : '';
+                const buttonBlockId = (buttonLabel && buttonUrl) ? uuidv4() : '';
+
                 console.log('Creating section with data:', {
-                    page, heading, text, image, isFullPage, slug, isPublished, position, navCategory, showInNav, navAnchor, layout, team
+                    page, heading, text, image, isFullPage, slug, isPublished, position, navCategory, showInNav, navAnchor, layout, team,
+                    headingBlockId, contentBlockId, imageBlockId, buttonBlockId
                 });
 
                 const doc = await Section.create({
                     page, heading, text, image, isFullPage, slug, isPublished, position, buttonLabel, buttonUrl,
-                    navCategory, showInNav, navAnchor, layout, team
+                    navCategory, showInNav, navAnchor, layout, team,
+                    headingBlockId, contentBlockId, imageBlockId, buttonBlockId
                 });
                 console.log('Section created:', doc);
                 return res.status(201).json(doc);

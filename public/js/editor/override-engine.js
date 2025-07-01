@@ -22,21 +22,43 @@ export class OverrideEngine {
 
     applyAllOverrides() {
         console.log('[VE] Applying all content overrides...');
-        const unappliedSelectors = [];
-        for (const [selector, ov] of this.overrides.entries()) {
-            const targets = [...document.querySelectorAll(selector)].filter(el =>
-                selector.startsWith('.main-nav') ? true : !el.closest('.main-nav')
-            );
-            if (targets.length > 0) {
-                targets.forEach(el => this.applyOverride(el, ov));
-            } else {
-                unappliedSelectors.push(selector);
+        this.applyOverridesWithRetry();
+    }
+
+    // ✅ NEW: Apply overrides with retry mechanism for dynamic content
+    async applyOverridesWithRetry(maxAttempts = 50, delay = 100) {
+        let attempt = 0;
+        let unappliedSelectors = [];
+
+        while (attempt < maxAttempts) {
+            unappliedSelectors = [];
+
+            for (const [selector, ov] of this.overrides.entries()) {
+                const targets = [...document.querySelectorAll(selector)].filter(el =>
+                    selector.startsWith('.main-nav') ? true : !el.closest('.main-nav')
+                );
+                if (targets.length > 0) {
+                    targets.forEach(el => this.applyOverride(el, ov));
+                } else {
+                    unappliedSelectors.push(selector);
+                }
             }
-        }
-        if (unappliedSelectors.length > 0) {
-            console.error('%c[VE] FAILED: Could not find elements for selectors:', 'color:red;font-weight:bold;', unappliedSelectors);
-        } else {
-            console.log('%c[VE] All overrides applied successfully.', 'color:green;font-weight:bold;');
+
+            // If all overrides applied successfully, we're done
+            if (unappliedSelectors.length === 0) {
+                console.log('%c[VE] All overrides applied successfully.', 'color:green;font-weight:bold;');
+                return;
+            }
+
+            // If this is the last attempt, log failure and exit
+            if (attempt === maxAttempts - 1) {
+                console.error('%c[VE] FAILED: After 50 attempts, the selectors below are still missing:', 'color:red;font-weight:bold;', unappliedSelectors);
+                return;
+            }
+
+            // Wait before next attempt
+            await new Promise(resolve => setTimeout(resolve, delay));
+            attempt++;
         }
     }
 
