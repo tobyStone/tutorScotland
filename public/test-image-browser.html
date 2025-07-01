@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Image Browser Fix</title>
+    <link rel="stylesheet" href="/styles2.css">
+    <link rel="stylesheet" href="/editor.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #e9ecef;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🖼️ Image Browser Fix Test</h1>
+        
+        <div class="status info">
+            <h3>Test Purpose:</h3>
+            <p>This page tests the fix for previously uploaded images that don't have thumbnails. 
+            The image browser should now:</p>
+            <ul>
+                <li>✅ Show original images when thumbnails are missing</li>
+                <li>✅ Display visual indicators for images without thumbnails</li>
+                <li>✅ Allow selection of any image regardless of thumbnail status</li>
+            </ul>
+        </div>
+
+        <div class="status" id="test-status">
+            <p>Click the button below to open the image browser and test the fix.</p>
+        </div>
+
+        <button class="test-button" onclick="openImageBrowser()">
+            🔍 Open Image Browser
+        </button>
+
+        <button class="test-button" onclick="runDiagnostics()">
+            🔧 Run Diagnostics
+        </button>
+
+        <div id="selected-image" style="margin-top: 20px;"></div>
+        <div id="diagnostics" style="margin-top: 20px;"></div>
+    </div>
+
+    <!-- Image Browser Container -->
+    <div id="image-browser-container" class="image-browser" style="display: none;"></div>
+
+    <!-- Image Browser Template -->
+    <template id="ve-image-browser-template">
+        <div class="image-browser-header">
+            <h4>Browse Images</h4>
+            <button type="button" id="close-browser" class="close-btn" aria-label="Close image browser">×</button>
+        </div>
+        <div class="image-browser-content">
+            <div class="image-browser-toolbar">
+                <input type="text" id="image-search" placeholder="Search images..." class="form-control">
+                <select id="image-sort" class="form-control">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="name">Name</option>
+                </select>
+            </div>
+            <div id="image-grid" class="image-grid">
+                <div class="loading-spinner"></div>
+            </div>
+            <div id="image-pagination" class="image-pagination">
+                <button type="button" id="prev-page" class="btn btn-secondary">Previous</button>
+                <span id="page-info">Page 1</span>
+                <button type="button" id="next-page" class="btn btn-secondary">Next</button>
+            </div>
+        </div>
+    </template>
+
+    <script type="module">
+        import { ImageBrowser } from '/js/editor/features/image-browser.js';
+
+        let imageBrowser;
+        let selectedImage = null;
+
+        window.openImageBrowser = function() {
+            if (!imageBrowser) {
+                imageBrowser = new ImageBrowser({
+                    onSelect: (item) => {
+                        selectedImage = item;
+                        displaySelectedImage(item);
+                        updateStatus('success', `✅ Image selected: ${item.name}`);
+                    }
+                });
+            }
+            
+            const container = document.getElementById('image-browser-container');
+            imageBrowser.open(container);
+            updateStatus('info', '🔍 Image browser opened. Look for images with warning icons (⚠) - these are images without thumbnails.');
+        };
+
+        window.runDiagnostics = async function() {
+            updateStatus('info', '🔧 Running diagnostics...');
+            
+            try {
+                // Test API endpoint
+                const response = await fetch('/api/content-manager?operation=list-images&page=1');
+                const data = await response.json();
+                
+                let diagnostics = '<h3>📊 Diagnostics Results:</h3>';
+                diagnostics += `<p><strong>Total images:</strong> ${data.total}</p>`;
+                
+                const withThumbs = data.images.filter(img => img.hasThumb).length;
+                const withoutThumbs = data.images.filter(img => !img.hasThumb).length;
+                
+                diagnostics += `<p><strong>Images with thumbnails:</strong> ${withThumbs}</p>`;
+                diagnostics += `<p><strong>Images without thumbnails:</strong> ${withoutThumbs}</p>`;
+                
+                if (withoutThumbs > 0) {
+                    diagnostics += '<p class="status error">⚠️ Found images without thumbnails - these should now display correctly with fallback to original images.</p>';
+                } else {
+                    diagnostics += '<p class="status success">✅ All images have thumbnails.</p>';
+                }
+                
+                document.getElementById('diagnostics').innerHTML = diagnostics;
+                updateStatus('success', '✅ Diagnostics complete');
+                
+            } catch (error) {
+                updateStatus('error', `❌ Diagnostics failed: ${error.message}`);
+            }
+        };
+
+        function displaySelectedImage(item) {
+            const container = document.getElementById('selected-image');
+            container.innerHTML = `
+                <div class="status success">
+                    <h3>✅ Selected Image:</h3>
+                    <p><strong>Name:</strong> ${item.name}</p>
+                    <p><strong>Has Thumbnail:</strong> ${item.hasThumb ? 'Yes' : 'No'}</p>
+                    <p><strong>URL:</strong> <a href="${item.url}" target="_blank">${item.url}</a></p>
+                    <p><strong>Thumb URL:</strong> <a href="${item.thumb}" target="_blank">${item.thumb}</a></p>
+                    <img src="${item.thumb}" alt="${item.name}" style="max-width: 200px; margin-top: 10px; border: 2px solid #28a745; border-radius: 5px;">
+                </div>
+            `;
+        }
+
+        function updateStatus(type, message) {
+            const status = document.getElementById('test-status');
+            status.className = `status ${type}`;
+            status.innerHTML = `<p>${message}</p>`;
+        }
+
+        // Auto-run diagnostics on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(runDiagnostics, 1000);
+        });
+    </script>
+</body>
+</html>

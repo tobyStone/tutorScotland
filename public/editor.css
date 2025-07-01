@@ -205,6 +205,33 @@ body.ve-edit-active #editor-modal[style*="display: block"] {
     object-fit: cover;
 }
 
+/* Visual indicator for images without thumbnails */
+.image-item.no-thumbnail {
+    border-color: #ffc107;
+    background: linear-gradient(45deg, transparent 40%, rgba(255, 193, 7, 0.1) 50%, transparent 60%);
+}
+
+.image-item.no-thumbnail:hover {
+    border-color: #e0a800;
+}
+
+.image-item.no-thumbnail::after {
+    content: "⚠";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ffc107;
+    color: #000;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
 /* Loading spinner */
 .loading-spinner {
     width: 40px;

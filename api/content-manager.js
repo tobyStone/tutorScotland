@@ -350,14 +350,23 @@ async function handleListImages(req, res) {
         const paginatedFiles = files.slice(offset, offset + limit);
 
         const total = files.length || 0;
+
+        // Get list of existing thumbnails for fallback detection
+        const { blobs: thumbBlobs } = await list({ limit: 1000, prefix: `${prefix}thumbnails/` });
+        const existingThumbs = new Set(thumbBlobs.map(b => b.pathname));
+
         const images = paginatedFiles.map(blob => {
+            const thumbPath = blob.pathname.replace(`${prefix}`, `${prefix}thumbnails/`);
             const thumb = blob.url.replace(`${prefix}`, `${prefix}thumbnails/`);
+            const hasThumb = existingThumbs.has(thumbPath);
+
             return {
                 name : blob.pathname.split('/').pop(),
                 url  : blob.url,
-                thumb,                            // always points to companion thumb
+                thumb: hasThumb ? thumb : blob.url,  // Use original if no thumbnail
                 uploadedAt: blob.uploadedAt,
-                size: blob.size
+                size: blob.size,
+                hasThumb                             // Flag for client-side logic
             };
         });
 
