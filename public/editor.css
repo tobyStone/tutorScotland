@@ -283,4 +283,71 @@ body.ve-edit-active #editor-modal[style*="display: block"] {
     padding: 2px 6px;
     background: #20c997;       /* teal stands out, but pick any */
     opacity: 0.95;             /* subtle transparency */
-} 
+}
+
+/* ===== Drag Handle Styles for Section Reordering ===== */
+.ve-drag-handle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 123, 255, 0.9);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: grab;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 1000;
+    user-select: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+.ve-drag-handle:hover {
+    background: rgba(0, 123, 255, 1);
+    transform: scale(1.05);
+}
+
+.ve-drag-handle:active {
+    cursor: grabbing;
+    transform: scale(0.95);
+}
+
+/* Section reordering styles */
+.ve-reorderable {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.ve-reorderable:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.sortable-ghost {
+    opacity: 0.5;
+    background: #f0f8ff;
+    border: 2px dashed #007bff;
+}
+
+.sortable-chosen {
+    transform: rotate(2deg);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* Notification styles */
+.ve-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    z-index: 10001;
+    animation: slideDown 0.3s ease-out;
+}
+
+.ve-notification.ve-success { background: #4CAF50; }
+.ve-notification.ve-error { background: #f44336; }
+.ve-notification.ve-info { background: #2196F3; }

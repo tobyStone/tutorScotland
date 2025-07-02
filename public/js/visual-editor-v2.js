@@ -45,13 +45,41 @@ class VisualEditor {
         // Apply any existing overrides
         await this.applyOverrides();
 
+        // Check admin status and enable UI if admin
+        try {
+            const { isAdmin } = await apiService.checkAdminStatus();
+            if (isAdmin) {
+                this.enableEditorUI();
+            }
+        } catch (error) {
+            console.error('🚫 Admin check failed, editor not enabled.', error);
+        }
+
         console.log('✅ Visual Editor v2 ready!');
+    }
+
+    enableEditorUI() {
+        console.log('🔓 Enabling editor UI for admin user');
+        // UI is already initialized, just set up periodic admin check
+        setInterval(async () => {
+            try {
+                const { isAdmin } = await apiService.checkAdminStatus();
+                if (!isAdmin && editorState.isEditMode) {
+                    editorState.setEditMode(false);
+                }
+            } catch (error) {
+                // Ignore errors in periodic check
+            }
+        }, 600000); // Check every 10 minutes
     }
 
     setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'e') {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
                 e.preventDefault();
+                this.toggleEditMode();
+            }
+            if (e.key === 'Escape' && editorState.isEditMode) {
                 this.toggleEditMode();
             }
         });
@@ -59,10 +87,10 @@ class VisualEditor {
 
     toggleEditMode() {
         console.log('🔄 Toggling edit mode...');
-        editorState.toggleEditMode();
-        this.uiManager.refreshEditableElements();
-        
-        if (editorState.isEditMode) {
+        const newMode = !editorState.isEditMode;
+        editorState.setEditMode(newMode);
+
+        if (newMode) {
             this.enableEditMode();
         } else {
             this.disableEditMode();
@@ -72,21 +100,37 @@ class VisualEditor {
     enableEditMode() {
         console.log('🎨 Enabling edit mode');
         document.body.classList.add('visual-editor-active');
-        this.uiManager.showEditControls();
+
+        // Scan for editable elements and add overlays
+        const elements = this.uiManager.scanEditableElements();
+        this.uiManager.addOverlays(elements);
+        this.uiManager.disableLinks();
+
+        // Activate section sorter for drag-and-drop functionality
+        sectionSorter.activate();
     }
 
     disableEditMode() {
         console.log('👁️ Disabling edit mode');
         document.body.classList.remove('visual-editor-active');
-        this.uiManager.hideEditControls();
+
+        // Remove overlays and restore links
+        this.uiManager.removeOverlays();
+        this.uiManager.enableLinks();
+
+        // Deactivate section sorter
+        sectionSorter.deactivate();
     }
 
     handleEditClick(element) {
         console.log('✏️ Edit clicked for element:', element);
         const type = overrideEngine.getElementType(element);
-        const originalContent = overrideEngine.getOriginalContent(element, type);
-        
-        this.uiManager.showEditDialog(element, type, originalContent);
+        const selector = overrideEngine.getStableSelector(element, type);
+        const original = overrideEngine.getOriginalContent(element, type);
+        const canRestore = overrideEngine.overrides.has(selector);
+
+        // Set active editor which will trigger the modal to open
+        editorState.setActiveEditor({ element, selector, type, original, canRestore });
     }
 
     getElementSelector(element) {
@@ -109,72 +153,48 @@ class VisualEditor {
         return selector;
     }
 
-    async handleSave(element, newContent, type) {
-        console.log('💾 Saving content for element:', element, 'Type:', type, 'Content:', newContent);
-        
+    async handleSave(data) {
+        console.log('💾 Saving content with data:', data);
+        const result = await overrideEngine.save(data);
+        this.uiManager.showNotification(result.success ? 'Saved!' : 'Save failed', result.success ? 'success' : 'error');
+        if (result.success) editorState.setActiveEditor(null);
+    }
+
+    handlePreview(data) {
+        console.log('👁️ Previewing content with data:', data);
+        if (!editorState.validate()) return;
+        const { element, type, original } = editorState.activeEditor;
+        overrideEngine.applyOverride(element, { contentType: type, ...data });
+        this.uiManager.showNotification('Preview for 3s');
+        setTimeout(() => overrideEngine.restoreElementContent(element, type, original), 3000);
+    }
+
+    async handleRestore() {
+        console.log('🔄 Restoring original content');
+        const { selector } = editorState.activeEditor;
+        const result = await overrideEngine.restore(selector);
+        this.uiManager.showNotification(result.success ? 'Restored!' : 'Restore failed', result.success ? 'success' : 'error');
+        if (result.success) editorState.setActiveEditor(null);
+    }
+
+    async handleUpload(file) {
+        console.log('📤 Uploading file:', file);
+
         try {
-            // Apply the change immediately for instant feedback
-            overrideEngine.applyOverride(element, newContent, type);
-            
-            // Save to backend
-            const payload = {
-                targetPage: window.location.pathname,
-                targetSelector: this.getElementSelector(element),
-                contentType: type,
-                newContent: newContent
-            };
-            const result = await apiService.saveOverride(payload);
-            
-            if (result.success) {
-                console.log('✅ Content saved successfully');
-                this.uiManager.showSuccess('Content saved successfully!');
-            } else {
-                throw new Error(result.error || 'Failed to save content');
-            }
-        } catch (error) {
-            console.error('❌ Error saving content:', error);
-            this.uiManager.showError('Failed to save content: ' + error.message);
-            
-            // Revert the change on error
-            const originalContent = overrideEngine.getOriginalContent(element, type);
-            overrideEngine.applyOverride(element, originalContent, type);
-        }
-    }
+            this.uiManager.showNotification('Uploading image...', 'info');
 
-    handlePreview(element, newContent, type) {
-        console.log('👁️ Previewing content for element:', element);
-        overrideEngine.applyOverride(element, newContent, type);
-    }
-
-    handleRestore(element) {
-        console.log('🔄 Restoring original content for element:', element);
-        const type = overrideEngine.getElementType(element);
-        const originalContent = overrideEngine.getOriginalContent(element, type);
-        
-        overrideEngine.applyOverride(element, originalContent, type);
-        this.uiManager.showSuccess('Content restored to original!');
-    }
-
-    async handleUpload(file, element) {
-        console.log('📤 Uploading file for element:', element);
-        
-        try {
-            this.uiManager.showLoading('Uploading image...');
-            
             const result = await apiService.uploadImage(file);
-            
+
             if (result.success) {
-                const imageUrl = result.url;
-                await this.handleSave(element, imageUrl, 'image');
-                this.uiManager.showSuccess('Image uploaded and saved!');
+                this.uiManager.showNotification('Image uploaded successfully!', 'success');
+                return result.url;
             } else {
                 throw new Error(result.error || 'Failed to upload image');
             }
         } catch (error) {
             console.error('❌ Error uploading image:', error);
-            this.uiManager.showError('Failed to upload image: ' + error.message);
-        } finally {
-            this.uiManager.hideLoading();
+            this.uiManager.showNotification('Failed to upload image: ' + error.message, 'error');
+            throw error;
         }
     }
 
@@ -285,12 +305,7 @@ class VisualEditor {
         }
     }
 
-    setupShortcuts() {
-        document.addEventListener('keydown', e => {
-            if ((e.ctrlKey||e.metaKey)&&e.key==='e'){ e.preventDefault(); this.toggleEditMode(); }
-            if (e.key==='Escape' && editorState.isEditMode){ this.toggleEditMode(); }
-        });
-    }
+
 }
 
 // Initialize the visual editor when the script loads
