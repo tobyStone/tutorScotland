@@ -18,7 +18,11 @@ export class OverrideEngine {
     async load() {
         try {
             const data = await apiService.loadOverrides(editorState.currentPage);
-            data.forEach(ov => this.overrides.set(ov.targetSelector, ov));
+            console.log(`[VE] Loaded ${data.length} overrides from API for page "${editorState.currentPage}"`);
+            data.forEach((ov, i) => {
+                console.log(`[VE] Override ${i}: selector="${ov.targetSelector}" (length: ${ov.targetSelector?.length})`);
+                this.overrides.set(ov.targetSelector, ov);
+            });
             console.log('[VE] Overrides map populated:', this.overrides);
         } catch (e) {
             console.error('[VE] Failed to load content overrides', e);
@@ -41,12 +45,15 @@ export class OverrideEngine {
             unappliedSelectors = [];
 
             for (const [selector, ov] of this.overrides.entries()) {
+                console.log(`[VE] Trying to apply override with selector: "${selector}" (length: ${selector.length})`);
                 const targets = [...document.querySelectorAll(selector)].filter(el =>
                     selector.startsWith('.main-nav') ? true : !el.closest('.main-nav')
                 );
+                console.log(`[VE] Found ${targets.length} targets for selector: "${selector}"`);
                 if (targets.length > 0) {
                     targets.forEach(el => this.applyOverride(el, ov));
                 } else {
+                    console.log(`[VE] No targets found for selector: "${selector}"`);
                     unappliedSelectors.push(selector);
                 }
             }
@@ -143,7 +150,9 @@ export class OverrideEngine {
         }
         const section = el.closest('[data-ve-section-id]');
         const idSelector = `[${attr}="${el.dataset[idKey]}"]`;
-        return section ? `[data-ve-section-id="${section.dataset.veSectionId}"] ${idSelector}` : idSelector;
+        const finalSelector = section ? `[data-ve-section-id="${section.dataset.veSectionId}"] ${idSelector}` : idSelector;
+        console.log(`[VE] Generated selector: "${finalSelector}" (length: ${finalSelector.length})`);
+        return finalSelector;
     }
 
     findOverrideForElement(el) {
