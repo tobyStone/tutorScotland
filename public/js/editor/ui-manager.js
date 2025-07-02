@@ -38,6 +38,7 @@ export class UIManager {
         if (this.imageBrowser && typeof this.imageBrowser.init === 'function') {
             this.imageBrowser.init();
         }
+        this.initialize(); // ✅ FIX: Call initialize to create toggle button and modal
         this.refreshEditableElements();
     }
 
