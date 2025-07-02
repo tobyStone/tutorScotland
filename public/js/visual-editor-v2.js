@@ -200,34 +200,7 @@ class VisualEditor {
         }
     }
 
-    async applyOverrides() {
-        console.log('🔄 Applying existing overrides...');
 
-        try {
-            const pageKey = (window.location.pathname.replace(/^\//, '') || 'index').replace(/\.html?$/i, '');
-            const overrides = await apiService.loadOverrides(pageKey);
-
-            if (overrides && overrides.length > 0) {
-                console.log(`📝 Found ${overrides.length} overrides to apply`);
-
-                for (const override of overrides) {
-                    const element = overrideEngine.findElementByOverride(override);
-                    if (element) {
-                        overrideEngine.applyOverride(element, override.newContent, override.contentType);
-                        console.log('✅ Applied override for:', override.targetSelector);
-                    } else {
-                        console.warn('⚠️ Element not found for override:', override.targetSelector);
-                    }
-                }
-
-                console.log('✅ All overrides applied');
-            } else {
-                console.log('📝 No existing overrides found');
-            }
-        } catch (error) {
-            console.error('❌ Error applying overrides:', error);
-        }
-    }
 
     // ✅ FIXED: Listen for dynamic content changes and refresh accordingly
     setupDynamicContentListener() {
@@ -253,8 +226,7 @@ class VisualEditor {
                     // Refresh UI manager to detect new elements
                     this.uiManager.refreshEditableElements();
 
-                    // Reapply overrides to new content
-                    await this.applyOverrides();
+                    // Overrides are now handled by the override engine automatically
 
                     console.log('[VE] ✅ Visual editor refreshed after dynamic content load');
                 } catch (error) {
