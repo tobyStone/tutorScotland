@@ -28,7 +28,13 @@ const schema = new mongoose.Schema({
     text: String,
     image: String,                                  // Vercel?blob URL
     order: Number,                                  // sort order
-    position: { type: String, default: 'bottom' },  // 'top', 'middle', 'bottom'
+    position: {
+        type: String,
+        default: function() {
+            // Only set default for dynamic sections, not content overrides
+            return this.isContentOverride ? undefined : 'bottom';
+        }
+    },  // 'top', 'middle', 'bottom' - only for dynamic sections
 
     // ★ NEW: Add fields for the optional button
     buttonLabel: { type: String, default: '' },     // Button text

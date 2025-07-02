@@ -27,37 +27,37 @@ class VisualEditor {
     async init() {
         console.log('🎨 Visual Editor v2 initializing... (CACHE-BUST VERSION)');
 
-        // Check admin status FIRST - only proceed if admin
-        try {
-            const { isAdmin } = await apiService.checkAdminStatus();
-            if (!isAdmin) {
-                console.log('🚫 Not an admin user, visual editor disabled');
-                return;
-            }
-        } catch (error) {
-            console.error('🚫 Admin check failed, editor not enabled.', error);
-            return;
-        }
-
-        // Initialize override engine first (this loads and applies overrides automatically)
+        // Always initialize override engine first (loads and applies overrides for all users)
         await overrideEngine.init();
 
-        // Initialize UI (only for admin users)
-        this.uiManager.init();
+        // Check admin status - only initialize editing UI if admin
+        try {
+            const { isAdmin } = await apiService.checkAdminStatus();
+            if (isAdmin) {
+                console.log('🔓 Admin user detected, enabling editing interface');
 
-        // Initialize section sorter
-        sectionSorter.init();
+                // Initialize UI (only for admin users)
+                this.uiManager.init();
 
-        // Set up keyboard shortcuts
-        this.setupKeyboardShortcuts();
+                // Initialize section sorter
+                sectionSorter.init();
 
-        // Set up dynamic content listener
-        this.setupDynamicContentListener();
+                // Set up keyboard shortcuts
+                this.setupKeyboardShortcuts();
 
-        // Enable editor UI and set up periodic admin check
-        this.enableEditorUI();
+                // Set up dynamic content listener
+                this.setupDynamicContentListener();
 
-        console.log('✅ Visual Editor v2 ready!');
+                // Enable editor UI and set up periodic admin check
+                this.enableEditorUI();
+
+                console.log('✅ Visual Editor v2 ready with editing capabilities!');
+            } else {
+                console.log('👀 Non-admin user, overrides applied but editing disabled');
+            }
+        } catch (error) {
+            console.error('🚫 Admin check failed, editing not enabled.', error);
+        }
     }
 
     enableEditorUI() {

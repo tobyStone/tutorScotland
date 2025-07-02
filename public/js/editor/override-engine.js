@@ -19,9 +19,9 @@ export class OverrideEngine {
         try {
             const data = await apiService.loadOverrides(editorState.currentPage);
             data.forEach(ov => this.overrides.set(ov.targetSelector, ov));
-            console.log(`[VE] Loaded ${data.length} overrides for page "${editorState.currentPage}"`);
+            console.log(`🔄 Loaded ${data.length} content overrides for page "${editorState.currentPage}"`);
         } catch (e) {
-            console.error('[VE] Failed to load content overrides', e);
+            console.error('❌ Failed to load content overrides', e);
         }
     }
 
@@ -46,7 +46,9 @@ export class OverrideEngine {
                 );
                 if (targets.length > 0) {
                     targets.forEach(el => this.applyOverride(el, ov));
+                    console.log(`✅ Applied override: ${ov.contentType} for selector "${selector}"`);
                 } else {
+                    console.log(`⚠️ No targets found for selector: "${selector}"`);
                     unappliedSelectors.push(selector);
                 }
             }
