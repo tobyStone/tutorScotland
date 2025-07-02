@@ -45,15 +45,31 @@ export class OverrideEngine {
             unappliedSelectors = [];
 
             for (const [selector, ov] of this.overrides.entries()) {
-                console.log(`[VE] Trying to apply override with selector: "${selector}" (length: ${selector.length})`);
                 const targets = [...document.querySelectorAll(selector)].filter(el =>
                     selector.startsWith('.main-nav') ? true : !el.closest('.main-nav')
                 );
-                console.log(`[VE] Found ${targets.length} targets for selector: "${selector}"`);
                 if (targets.length > 0) {
                     targets.forEach(el => this.applyOverride(el, ov));
                 } else {
-                    console.log(`[VE] No targets found for selector: "${selector}"`);
+                    // Enhanced debugging for missing elements
+                    console.log(`[VE] ❌ No targets found for selector: "${selector}"`);
+
+                    // Check if the section exists
+                    const sectionMatch = selector.match(/\[data-ve-section-id="([^"]+)"\]/);
+                    if (sectionMatch) {
+                        const sectionId = sectionMatch[1];
+                        const sectionEl = document.querySelector(`[data-ve-section-id="${sectionId}"]`);
+                        console.log(`[VE] Section "${sectionId}" exists:`, !!sectionEl);
+
+                        // Check if the block exists within the section
+                        const blockMatch = selector.match(/\[data-ve-block-id="([^"]+)"\]/);
+                        if (blockMatch && sectionEl) {
+                            const blockId = blockMatch[1];
+                            const blockEl = sectionEl.querySelector(`[data-ve-block-id="${blockId}"]`);
+                            console.log(`[VE] Block "${blockId}" exists in section:`, !!blockEl);
+                        }
+                    }
+
                     unappliedSelectors.push(selector);
                 }
             }
@@ -150,9 +166,7 @@ export class OverrideEngine {
         }
         const section = el.closest('[data-ve-section-id]');
         const idSelector = `[${attr}="${el.dataset[idKey]}"]`;
-        const finalSelector = section ? `[data-ve-section-id="${section.dataset.veSectionId}"] ${idSelector}` : idSelector;
-        console.log(`[VE] Generated selector: "${finalSelector}" (length: ${finalSelector.length})`);
-        return finalSelector;
+        return section ? `[data-ve-section-id="${section.dataset.veSectionId}"] ${idSelector}` : idSelector;
     }
 
     findOverrideForElement(el) {

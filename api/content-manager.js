@@ -147,8 +147,6 @@ async function handleCreateOverride(req, res) {
         // Enhanced debugging
         console.log('[handleCreateOverride] Full request body:', JSON.stringify(req.body, null, 2));
         console.log('[handleCreateOverride] Query params:', req.query);
-        console.log('[handleCreateOverride] targetSelector length:', targetSelector?.length);
-        console.log('[handleCreateOverride] targetSelector full:', targetSelector);
 
         if (!targetSelector || (!id && (!targetPage || !contentType))) {
             console.log('[handleCreateOverride] Validation failed:', {
@@ -230,13 +228,7 @@ async function handleCreateOverride(req, res) {
             isPublished: true,
         });
 
-        console.log('[handleCreateOverride] About to save doc with targetSelector:', doc.targetSelector);
-        console.log('[handleCreateOverride] targetSelector length before save:', doc.targetSelector?.length);
-
         await doc.save();
-
-        console.log('[handleCreateOverride] After save, doc.targetSelector:', doc.targetSelector);
-        console.log('[handleCreateOverride] targetSelector length after save:', doc.targetSelector?.length);
         return res.status(201).json(doc.toObject());
 
     } catch (err) {
