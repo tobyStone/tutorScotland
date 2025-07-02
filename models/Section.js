@@ -74,6 +74,7 @@ const schema = new mongoose.Schema({
         enum: ['replace', 'append', 'prepend'],
         default: 'replace'
     },                                             // How to apply the override
+    isButton: { type: Boolean, default: false },   // Whether link should be styled as button
     originalContent: mongoose.Schema.Types.Mixed,   // Backup of original content
     isActive: { type: Boolean, default: true }     // Whether the override is currently active
 }, {

@@ -106,10 +106,11 @@ export class OverrideEngine {
             case 'link': {
                 const a = element.tagName === 'A' ? element : element.querySelector('a');
                 if (a) {
-                    a.href = override.href || override.image;
+                    a.href = override.image; // API stores URL in image field for compatibility
                     a.textContent = override.text;
+                    // Apply or remove aurora button styling based on isButton flag
                     BUTTON_CSS.split(/\s+/).forEach(cls => a.classList.toggle(cls, !!override.isButton));
-                    console.log(`[VE-DBG] applyOverride → link [${override.targetSelector}]`, a);
+                    console.log(`[VE-DBG] applyOverride → link [${override.targetSelector}]`, a, `isButton: ${override.isButton}`);
                 }
                 break;
             }

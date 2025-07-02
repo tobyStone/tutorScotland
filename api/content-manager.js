@@ -132,12 +132,24 @@ async function handleCreateOverride(req, res) {
             targetSelector,
             contentType,
             text,
-            image, // For links, this holds the URL
+            image, // For images
+            href,  // For links
+            isButton, // For link styling
             originalContent,
             overrideType = 'replace',
         } = req.body;
 
+        // Enhanced debugging
+        console.log('[handleCreateOverride] Full request body:', JSON.stringify(req.body, null, 2));
+        console.log('[handleCreateOverride] Query params:', req.query);
+
         if (!targetSelector || (!id && (!targetPage || !contentType))) {
+            console.log('[handleCreateOverride] Validation failed:', {
+                targetSelector: !!targetSelector,
+                id: !!id,
+                targetPage: !!targetPage,
+                contentType: !!contentType
+            });
             return res.status(400).json({ message: 'Missing required fields.' });
         }
 
@@ -151,7 +163,8 @@ async function handleCreateOverride(req, res) {
             // CRITICAL: We DO NOT include originalContent here to make it immutable.
             const updateData = {
                 text,
-                image,
+                image: image || href, // Use href for links, image for images
+                isButton,
                 targetSelector, // Still allow selector migration if needed
                 updatedAt: new Date()
             };
@@ -186,7 +199,8 @@ async function handleCreateOverride(req, res) {
         if (doc) {
             console.log('[handleOverride] De-duplication: Found existing doc, updating it.');
             doc.text = text ?? doc.text;
-            doc.image = image ?? doc.image;
+            doc.image = (image || href) ?? doc.image;
+            doc.isButton = isButton ?? doc.isButton;
             // Do NOT touch originalContent
             doc.updatedAt = new Date();
             await doc.save();
@@ -200,7 +214,8 @@ async function handleCreateOverride(req, res) {
             targetSelector,
             contentType,
             text,
-            image,
+            image: image || href,
+            isButton,
             originalContent, // Saved only on creation
             overrideType,
             isContentOverride: true,
@@ -212,6 +227,8 @@ async function handleCreateOverride(req, res) {
 
     } catch (err) {
         console.error('handleOverride error:', err);
+        console.error('handleOverride error stack:', err.stack);
+        console.error('handleOverride request body:', JSON.stringify(req.body, null, 2));
         return res.status(500).json({ message: 'Error saving override', error: err.message });
     }
 }
