@@ -26,6 +26,10 @@ export class EditorState {
         this.emit('editModeChange', val);
     }
 
+    toggleEditMode() {
+        this.setEditMode(!this._isEditMode);
+    }
+
     setActiveEditor(obj) {
         this._activeEditor = obj;
         this.emit('activeEditorChange', obj);

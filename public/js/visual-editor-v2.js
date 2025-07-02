@@ -62,7 +62,7 @@ class VisualEditor {
         editorState.toggleEditMode();
         this.uiManager.updateUI();
         
-        if (editorState.isEditMode()) {
+        if (editorState.isEditMode) {
             this.enableEditMode();
         } else {
             this.disableEditMode();
