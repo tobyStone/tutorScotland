@@ -28,13 +28,8 @@ class VisualEditor {
         console.log(`🏁 [RACE] Visual Editor v2 init() starting at ${Date.now()}`);
         console.log('🎨 Visual Editor v2 initializing... (CACHE-BUST VERSION)');
 
-        // Wait for dynamic sections to load before applying overrides
-        console.log(`🏁 [RACE] About to wait for dynamic sections at ${Date.now()}`);
-        await this.waitForDynamicSections();
-        console.log(`🏁 [RACE] Dynamic sections ready, initializing override engine at ${Date.now()}`);
-
-        // Always initialize override engine first (loads and applies overrides for all users)
-        await overrideEngine.init();
+        // 🎯 ORCHESTRATED CONTENT MANAGEMENT FLOW
+        await this.orchestrateContentManagement();
 
         // Check admin status - only initialize editing UI if admin
         try {
@@ -64,6 +59,98 @@ class VisualEditor {
         } catch (error) {
             console.error('🚫 Admin check failed, editing not enabled.', error);
         }
+    }
+
+    /**
+     * 🎯 ORCHESTRATED CONTENT MANAGEMENT FLOW
+     * Ensures proper order: HTML → Dynamic Sections → Content Overrides → Section Reordering
+     */
+    async orchestrateContentManagement() {
+        console.log('🎭 [ORCHESTRATOR] Starting content management orchestration...');
+
+        try {
+            // STEP 1: Original HTML is already loaded (browser handles this)
+            console.log('📄 [ORCHESTRATOR] Step 1: Original HTML loaded ✅');
+
+            // STEP 2: Wait for dynamic sections to be placed
+            console.log('🏗️ [ORCHESTRATOR] Step 2: Waiting for dynamic sections...');
+            console.log(`🏁 [RACE] About to wait for dynamic sections at ${Date.now()}`);
+            await this.waitForDynamicSections();
+            console.log('🏗️ [ORCHESTRATOR] Step 2: Dynamic sections placed ✅');
+
+            // STEP 3: Apply content overrides (both original and dynamic content)
+            console.log('✏️ [ORCHESTRATOR] Step 3: Applying content overrides...');
+            console.log(`🏁 [RACE] Dynamic sections ready, initializing override engine at ${Date.now()}`);
+            await overrideEngine.init();
+            console.log('✏️ [ORCHESTRATOR] Step 3: Content overrides applied ✅');
+
+            // STEP 4: Apply section reordering (if admin and reordering data exists)
+            console.log('🔄 [ORCHESTRATOR] Step 4: Checking for section reordering...');
+            await this.applySectionReordering();
+            console.log('🔄 [ORCHESTRATOR] Step 4: Section reordering complete ✅');
+
+            console.log('🎉 [ORCHESTRATOR] Content management orchestration complete!');
+
+        } catch (error) {
+            console.error('❌ [ORCHESTRATOR] Error during content management orchestration:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Apply section reordering if data exists
+     */
+    async applySectionReordering() {
+        try {
+            // Use the existing section sorter system to apply stored order from database
+            const currentPage = this.getCurrentPageSlug();
+            console.log(`🔄 [ORCHESTRATOR] Loading section order for page: ${currentPage}`);
+
+            // Use the imported section sorter to apply order from database
+            await sectionSorter.init();
+            console.log('🔄 [ORCHESTRATOR] Section reordering applied via sectionSorter.init()');
+        } catch (error) {
+            console.error('❌ [ORCHESTRATOR] Error applying section reordering:', error);
+            // Don't throw - reordering failure shouldn't break the whole system
+        }
+    }
+
+    /**
+     * Reorder sections based on stored data
+     */
+    async reorderSectionsFromData(orderData) {
+        if (!orderData || !Array.isArray(orderData)) {
+            console.log('🔄 [ORCHESTRATOR] Invalid order data, skipping');
+            return;
+        }
+
+        const main = document.querySelector('main');
+        if (!main) {
+            console.log('🔄 [ORCHESTRATOR] No main element found, skipping reordering');
+            return;
+        }
+
+        // Get all sections that have data-ve-section-id
+        const sections = Array.from(main.querySelectorAll('[data-ve-section-id]'));
+        console.log(`🔄 [ORCHESTRATOR] Found ${sections.length} reorderable sections`);
+
+        // Create a map of section-id to element
+        const sectionMap = new Map();
+        sections.forEach(section => {
+            const sectionId = section.getAttribute('data-ve-section-id');
+            if (sectionId) {
+                sectionMap.set(sectionId, section);
+            }
+        });
+
+        // Reorder based on stored order
+        orderData.forEach((sectionId, index) => {
+            const section = sectionMap.get(sectionId);
+            if (section) {
+                main.appendChild(section); // Move to end in correct order
+                console.log(`🔄 [ORCHESTRATOR] Moved section "${sectionId}" to position ${index + 1}`);
+            }
+        });
     }
 
     waitForDynamicSections() {
@@ -298,6 +385,21 @@ class VisualEditor {
         }
     }
 
+    /**
+     * Get current page slug for localStorage keys
+     */
+    getCurrentPageSlug() {
+        const path = window.location.pathname;
+        // Normalize path: remove leading/trailing slashes, handle index.html
+        let slug = path.replace(/^\/+|\/+$/g, '');
+        if (slug === '' || slug === 'index.html') {
+            slug = 'index';
+        }
+        // Remove .html extension if present
+        slug = slug.replace(/\.html$/, '');
+        return slug;
+    }
+
 
 }
 
@@ -307,3 +409,4 @@ const visualEditor = new VisualEditor();
 
 // Export for potential external use
 window.visualEditor = visualEditor;
+window.sectionSorter = sectionSorter;
