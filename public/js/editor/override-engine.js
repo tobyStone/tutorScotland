@@ -38,7 +38,10 @@ export class OverrideEngine {
 
                 // Show elements that have the specific block ID we're looking for
                 data.forEach((ov) => {
+                    // Check for both block-id and button-id patterns
                     const blockIdMatch = ov.targetSelector.match(/data-ve-block-id="([^"]+)"/);
+                    const buttonIdMatch = ov.targetSelector.match(/data-ve-button-id="([^"]+)"/);
+
                     if (blockIdMatch) {
                         const targetBlockId = blockIdMatch[1];
                         const elementsWithBlockId = document.querySelectorAll(`[data-ve-block-id="${targetBlockId}"]`);
@@ -52,25 +55,72 @@ export class OverrideEngine {
                                 `[data-ve-block-id="${blockId}"]`;
                             console.log(`     ${i + 1}. <${el.tagName.toLowerCase()}> → selector: "${fullSelector}"`);
                             console.log(`        Expected: "${ov.targetSelector}"`);
-                            console.log(`        Match: ${fullSelector === ov.targetSelector ? '✅' : '❌'}`);
 
-                            // Show parent elements to find section containers
-                            let parent = el.parentElement;
-                            let depth = 0;
-                            console.log(`        🔍 Parent chain for missing section ID:`);
-                            while (parent && depth < 5) {
-                                const parentSectionId = parent.getAttribute('data-ve-section-id');
-                                const parentBlockId = parent.getAttribute('data-ve-block-id');
-                                const parentId = parent.id;
-                                const parentClass = parent.className;
-                                console.log(`          ${depth + 1}. <${parent.tagName.toLowerCase()}> id="${parentId}" class="${parentClass}" section="${parentSectionId}" block="${parentBlockId}"`);
-                                if (parentSectionId) {
-                                    console.log(`          🎯 Found section container! Could use: [data-ve-section-id="${parentSectionId}"] [data-ve-block-id="${blockId}"]`);
-                                    break;
+                            // Only show "Match: ❌" if we can't find a parent section to fix it
+                            const isDirectMatch = fullSelector === ov.targetSelector;
+                            let canBeFixed = false;
+                            if (!isDirectMatch && !sectionId) {
+                                // Check if we can find a parent section
+                                let parent = el.parentElement;
+                                while (parent && !parent.getAttribute('data-ve-section-id')) {
+                                    parent = parent.parentElement;
                                 }
-                                parent = parent.parentElement;
-                                depth++;
+                                canBeFixed = !!parent;
                             }
+
+                            if (isDirectMatch) {
+                                console.log(`        Match: ✅`);
+                            } else if (canBeFixed) {
+                                console.log(`        Match: 🔧 (can be fixed via parent section)`);
+                            } else {
+                                console.log(`        Match: ❌`);
+                            }
+
+                            // Show parent elements to find section containers (only if not direct match)
+                            if (!isDirectMatch) {
+                                let parent = el.parentElement;
+                                let depth = 0;
+                                console.log(`        🔍 Parent chain for missing section ID:`);
+                                while (parent && depth < 5) {
+                                    const parentSectionId = parent.getAttribute('data-ve-section-id');
+                                    const parentBlockId = parent.getAttribute('data-ve-block-id');
+                                    const parentId = parent.id;
+                                    const parentClass = parent.className;
+                                    console.log(`          ${depth + 1}. <${parent.tagName.toLowerCase()}> id="${parentId}" class="${parentClass}" section="${parentSectionId}" block="${parentBlockId}"`);
+                                    if (parentSectionId) {
+                                        console.log(`          🎯 Found section container! Could use: [data-ve-section-id="${parentSectionId}"] [data-ve-block-id="${blockId}"]`);
+                                        break;
+                                    }
+                                    parent = parent.parentElement;
+                                    depth++;
+                                }
+                            }
+                        });
+                    }
+
+                    if (buttonIdMatch) {
+                        const targetButtonId = buttonIdMatch[1];
+                        const elementsWithButtonId = document.querySelectorAll(`[data-ve-button-id="${targetButtonId}"]`);
+                        console.log(`   🎯 Elements with target button ID "${targetButtonId}": ${elementsWithButtonId.length}`);
+
+                        // Also check for elements with matching block ID (common case)
+                        const elementsWithBlockId = document.querySelectorAll(`[data-ve-block-id="${targetButtonId}"]`);
+                        if (elementsWithBlockId.length > 0) {
+                            console.log(`   🔄 Found ${elementsWithBlockId.length} elements with matching block ID instead of button ID`);
+                            elementsWithBlockId.forEach((el, i) => {
+                                console.log(`     ${i + 1}. <${el.tagName.toLowerCase()}> has data-ve-block-id="${targetButtonId}" (should be data-ve-button-id)`);
+                            });
+                        }
+
+                        elementsWithButtonId.forEach((el, i) => {
+                            const sectionId = el.getAttribute('data-ve-section-id');
+                            const buttonId = el.getAttribute('data-ve-button-id');
+                            const fullSelector = sectionId ?
+                                `[data-ve-section-id="${sectionId}"] [data-ve-button-id="${buttonId}"]` :
+                                `[data-ve-button-id="${buttonId}"]`;
+                            console.log(`     ${i + 1}. <${el.tagName.toLowerCase()}> → selector: "${fullSelector}"`);
+                            console.log(`        Expected: "${ov.targetSelector}"`);
+                            console.log(`        Match: ${fullSelector === ov.targetSelector ? '✅' : '❌'}`);
                         });
                     }
                 });
@@ -124,8 +174,16 @@ export class OverrideEngine {
                 console.log(`   Content type: ${ov.contentType}, Active: ${ov.isActive}`);
 
                 // Debug: Test the selector directly
-                const allMatches = document.querySelectorAll(selector);
+                let allMatches = document.querySelectorAll(selector);
                 console.log(`   🔍 Raw querySelectorAll found: ${allMatches.length} elements`);
+
+                // FALLBACK: If no matches and selector uses data-ve-button-id, try data-ve-block-id
+                if (allMatches.length === 0 && selector.includes('data-ve-button-id')) {
+                    const fallbackSelector = selector.replace(/data-ve-button-id/g, 'data-ve-block-id');
+                    console.log(`   🔄 Trying fallback selector: "${fallbackSelector}"`);
+                    allMatches = document.querySelectorAll(fallbackSelector);
+                    console.log(`   🔍 Fallback querySelectorAll found: ${allMatches.length} elements`);
+                }
 
                 const targets = [...allMatches].filter(el =>
                     selector.startsWith('.main-nav') ? true : !el.closest('.main-nav')
