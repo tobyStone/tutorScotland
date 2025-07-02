@@ -312,6 +312,15 @@ export class OverrideEngine {
             const href = el.getAttribute('href') || '#';
             return `.main-nav a[href="${href}"]`;
         }
+
+        // ✅ FIXED: For links, check if there's already a data-ve-block-id and use that
+        // This prevents creating new IDs when editing existing buttons
+        if (type === 'link' && el.dataset.veBlockId) {
+            const sectionEl = el.closest('[data-ve-section-id]');
+            const sectionId = sectionEl?.dataset.veSectionId || '';
+            return sectionId ? `[data-ve-section-id="${sectionId}"] [data-ve-block-id="${el.dataset.veBlockId}"]` : `[data-ve-block-id="${el.dataset.veBlockId}"]`;
+        }
+
         const idKey = (type === 'link') ? 'veButtonId' : 'veBlockId';
         const attr = `data-${idKey.replace(/[A-Z]/g, '-$&').toLowerCase()}`;
         if (!el.dataset[idKey]) {
