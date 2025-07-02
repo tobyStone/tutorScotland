@@ -17,6 +17,7 @@ export class OverrideEngine {
 
     async load() {
         try {
+            console.log(`🏁 [RACE] OverrideEngine.load() starting at ${Date.now()}`);
             const data = await apiService.loadOverrides(editorState.currentPage);
             data.forEach(ov => this.overrides.set(ov.targetSelector, ov));
             console.log(`🔄 Loaded ${data.length} content overrides for page "${editorState.currentPage}"`);
@@ -92,6 +93,9 @@ export class OverrideEngine {
                     });
                 }
             }
+
+            console.log(`🏁 [RACE] About to call applyAllOverrides() at ${Date.now()}`);
+            this.applyAllOverrides();
         } catch (e) {
             console.error('❌ Failed to load content overrides', e);
         }
@@ -99,7 +103,7 @@ export class OverrideEngine {
 
     applyAllOverrides() {
         const timestamp = Date.now();
-        console.log(`[VE] Applying all content overrides... (${timestamp})`);
+        console.log(`🏁 [RACE] applyAllOverrides() called at ${timestamp}`);
         console.log(`[VE] Total overrides to apply: ${this.overrides.size}`);
         this.applyOverridesWithRetry();
     }
@@ -109,14 +113,19 @@ export class OverrideEngine {
         let attempt = 0;
         let unappliedSelectors = [];
 
+        console.log(`🏁 [RACE] applyOverridesWithRetry() starting at ${Date.now()}, attempt 1/${maxAttempts}`);
+
         while (attempt < maxAttempts) {
             unappliedSelectors = [];
+            console.log(`🔄 [RETRY] Attempt ${attempt + 1}/${maxAttempts} at ${Date.now()}`);
 
             for (const [selector, ov] of this.overrides.entries()) {
+                console.log(`🎯 [DECISION] Processing override: "${selector}"`);
+                console.log(`   Content type: ${ov.contentType}, Active: ${ov.isActive}`);
+
                 // Debug: Test the selector directly
-                console.log(`🔍 Testing selector: "${selector}"`);
                 const allMatches = document.querySelectorAll(selector);
-                console.log(`   Raw querySelectorAll found: ${allMatches.length} elements`);
+                console.log(`   🔍 Raw querySelectorAll found: ${allMatches.length} elements`);
 
                 const targets = [...allMatches].filter(el =>
                     selector.startsWith('.main-nav') ? true : !el.closest('.main-nav')
@@ -124,13 +133,14 @@ export class OverrideEngine {
                 console.log(`   After nav filter: ${targets.length} elements`);
 
                 if (targets.length > 0) {
-                    targets.forEach(el => {
-                        console.log(`   Applying to: <${el.tagName.toLowerCase()}> with content: "${el.textContent?.substring(0, 50)}..."`);
+                    console.log(`✅ [DECISION] APPLYING override - found ${targets.length} target(s)`);
+                    targets.forEach((el, i) => {
+                        console.log(`   ${i + 1}. Applying to: <${el.tagName.toLowerCase()}> with content: "${el.textContent?.substring(0, 50)}..."`);
                         this.applyOverride(el, ov);
                     });
-                    console.log(`✅ Applied override: ${ov.contentType} for selector "${selector}"`);
+                    console.log(`✅ [SUCCESS] Applied override: ${ov.contentType} for selector "${selector}"`);
                 } else {
-                    console.log(`⚠️ No targets found for selector: "${selector}"`);
+                    console.log(`❌ [DECISION] SKIPPING override - no targets found for selector: "${selector}"`);
                     console.log(`   Override details: type=${ov.contentType}, content="${ov.text || ov.image || 'N/A'}"`);
 
                     // Try to find similar elements for debugging
@@ -151,12 +161,14 @@ export class OverrideEngine {
                         }
                     }
 
+                    console.log(`📝 [DECISION] Adding "${selector}" to unapplied list for retry`);
                     unappliedSelectors.push(selector);
                 }
             }
 
             // If all overrides applied successfully, we're done
             if (unappliedSelectors.length === 0) {
+                console.log(`🎉 [RACE] All overrides applied successfully at ${Date.now()}, attempt ${attempt + 1}/${maxAttempts}`);
                 console.log('%c[VE] All overrides applied successfully.', 'color:green;font-weight:bold;');
 
                 // ✅ NEW: Dispatch completion event to prevent loops
@@ -167,11 +179,14 @@ export class OverrideEngine {
 
             // If this is the last attempt, log failure and exit
             if (attempt === maxAttempts - 1) {
+                console.log(`💀 [RACE] Final attempt failed at ${Date.now()}, ${unappliedSelectors.length} selectors still unapplied`);
                 console.error('%c[VE] FAILED: After 50 attempts, the selectors below are still missing:', 'color:red;font-weight:bold;', unappliedSelectors);
                 return;
             }
 
             // Wait before next attempt
+            console.log(`⏳ [RACE] Retrying in ${delay}ms... ${unappliedSelectors.length} selectors still need targets`);
+            console.log(`   Unapplied selectors: ${unappliedSelectors.join(', ')}`);
             await new Promise(resolve => setTimeout(resolve, delay));
             attempt++;
         }

@@ -25,10 +25,13 @@ class VisualEditor {
     }
 
     async init() {
+        console.log(`🏁 [RACE] Visual Editor v2 init() starting at ${Date.now()}`);
         console.log('🎨 Visual Editor v2 initializing... (CACHE-BUST VERSION)');
 
         // Wait for dynamic sections to load before applying overrides
+        console.log(`🏁 [RACE] About to wait for dynamic sections at ${Date.now()}`);
         await this.waitForDynamicSections();
+        console.log(`🏁 [RACE] Dynamic sections ready, initializing override engine at ${Date.now()}`);
 
         // Always initialize override engine first (loads and applies overrides for all users)
         await overrideEngine.init();
@@ -223,15 +226,18 @@ class VisualEditor {
 
         // Listen for additional dynamic content loads (e.g., from page.html)
         window.addEventListener('dyn-sections-loaded', () => {
+            console.log(`🏁 [RACE] dyn-sections-loaded event received at ${Date.now()}`);
+
             // ✅ FIXED: Prevent multiple simultaneous override applications
             if (isProcessingDynamicContent) {
-                console.log('[VE] Already processing dynamic content, skipping...');
+                console.log(`🏁 [RACE] Already processing dynamic content, skipping at ${Date.now()}`);
                 return;
             }
 
             isProcessingDynamicContent = true;
             overrideApplicationCount++;
 
+            console.log(`🏁 [RACE] Dynamic content processing started (attempt #${overrideApplicationCount}) at ${Date.now()}`);
             console.log(`[VE] Dynamic content loaded (attempt #${overrideApplicationCount}), refreshing visual editor...`);
 
             // ✅ FIXED: Small delay to ensure DOM is fully updated

@@ -173,18 +173,20 @@ function loadDynamicSections() {
 
             // After processing everything...
             // let anyone who cares know that dynamic sections are now in the DOM
+            console.log(`🏁 [RACE] About to dispatch dyn-sections-loaded event at ${Date.now()}`);
             window.dispatchEvent(new CustomEvent('dyn-sections-loaded'));
             document.body.classList.add('dyn-ready');
-            console.log('[DynSec] Dispatched "dyn-sections-loaded" event.');
+            console.log(`🏁 [RACE] Dispatched "dyn-sections-loaded" event at ${Date.now()}`);
         })
         .catch(error => {
             console.error('Error loading dynamic sections:', error);
             // Hide all containers and separators on error
             hideAllContainers();
             // Also dispatch on error to unblock the visual editor
+            console.log(`🏁 [RACE] About to dispatch dyn-sections-loaded event (ERROR CASE) at ${Date.now()}`);
             window.dispatchEvent(new CustomEvent('dyn-sections-loaded'));
             document.body.classList.add('dyn-ready');
-            console.log('[DynSec] Dispatched "dyn-sections-loaded" event after an error.');
+            console.log(`🏁 [RACE] Dispatched "dyn-sections-loaded" event (ERROR CASE) at ${Date.now()}`);
         });
 }
 
