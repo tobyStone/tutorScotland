@@ -113,11 +113,21 @@ export class OverrideEngine {
             unappliedSelectors = [];
 
             for (const [selector, ov] of this.overrides.entries()) {
-                const targets = [...document.querySelectorAll(selector)].filter(el =>
+                // Debug: Test the selector directly
+                console.log(`🔍 Testing selector: "${selector}"`);
+                const allMatches = document.querySelectorAll(selector);
+                console.log(`   Raw querySelectorAll found: ${allMatches.length} elements`);
+
+                const targets = [...allMatches].filter(el =>
                     selector.startsWith('.main-nav') ? true : !el.closest('.main-nav')
                 );
+                console.log(`   After nav filter: ${targets.length} elements`);
+
                 if (targets.length > 0) {
-                    targets.forEach(el => this.applyOverride(el, ov));
+                    targets.forEach(el => {
+                        console.log(`   Applying to: <${el.tagName.toLowerCase()}> with content: "${el.textContent?.substring(0, 50)}..."`);
+                        this.applyOverride(el, ov);
+                    });
                     console.log(`✅ Applied override: ${ov.contentType} for selector "${selector}"`);
                 } else {
                     console.log(`⚠️ No targets found for selector: "${selector}"`);
