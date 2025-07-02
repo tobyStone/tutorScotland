@@ -11,7 +11,7 @@ export class OverrideEngine {
     }
 
     async init() {
-        console.log('[VE] OverrideEngine initializing...');
+        console.log('[VE] OverrideEngine initializing now...');
         await this.load();
     }
 
