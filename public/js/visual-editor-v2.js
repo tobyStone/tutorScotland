@@ -60,7 +60,7 @@ class VisualEditor {
     toggleEditMode() {
         console.log('🔄 Toggling edit mode...');
         editorState.toggleEditMode();
-        this.uiManager.updateUI();
+        this.uiManager.refreshEditableElements();
         
         if (editorState.isEditMode) {
             this.enableEditMode();
