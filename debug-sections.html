@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Sections API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { border: 1px solid #ccc; margin: 10px 0; padding: 10px; }
+        .override { background-color: #ffe6e6; }
+        .dynamic { background-color: #e6ffe6; }
+        .full-page { background-color: #e6f3ff; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Debug Sections API</h1>
+    
+    <div>
+        <button onclick="fetchSections()">Fetch Sections for Index Page</button>
+        <button onclick="fetchAllSections()">Fetch All Sections (Raw)</button>
+        <button onclick="fetchOverrides()">Fetch Content Overrides</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        async function fetchSections() {
+            try {
+                const response = await fetch('/api/sections?page=index');
+                const data = await response.json();
+                displayResults('Dynamic Sections for Index Page', data, 'dynamic');
+            } catch (error) {
+                displayError('Error fetching sections', error);
+            }
+        }
+
+        async function fetchAllSections() {
+            try {
+                const response = await fetch('/api/content-manager?operation=debug-sections');
+                const data = await response.json();
+                displayResults('All Sections (Raw Database)', data, 'section');
+            } catch (error) {
+                displayError('Error fetching all sections', error);
+            }
+        }
+
+        async function fetchOverrides() {
+            try {
+                const response = await fetch('/api/content-manager?operation=overrides&page=index');
+                const data = await response.json();
+                displayResults('Content Overrides for Index Page', data, 'override');
+            } catch (error) {
+                displayError('Error fetching overrides', error);
+            }
+        }
+
+        function displayResults(title, data, type) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <h2>${title}</h2>
+                <p>Count: ${Array.isArray(data) ? data.length : 'N/A'}</p>
+                <div class="section ${type}">
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+            results.appendChild(div);
+        }
+
+        function displayError(title, error) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <h2 style="color: red;">${title}</h2>
+                <div class="section" style="background-color: #ffeeee;">
+                    <pre>${error.message || error}</pre>
+                </div>
+            `;
+            results.appendChild(div);
+        }
+    </script>
+</body>
+</html>

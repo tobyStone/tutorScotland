@@ -79,6 +79,9 @@ function loadDynamicSections() {
     fetch(`/api/sections?page=${slug}`)
         .then(r => r.json())
         .then(list => {
+            // ✅ IMPROVED: Add debugging to verify we're only getting actual sections
+            console.log(`[DynSec] Fetched ${list?.length || 0} sections for page "${slug}":`, list);
+
             if (list && list.length > 0) {
                 // Create containers if they don't exist
                 createPositionContainer('all');

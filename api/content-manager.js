@@ -58,6 +58,11 @@ module.exports = async (req, res) => {
             if (operation === 'list-images') {
                 return handleListImages(req, res);
             }
+
+            // Debug sections (show all sections with their types)
+            if (operation === 'debug-sections') {
+                return handleDebugSections(req, res);
+            }
         }
 
         // POST Operations
@@ -400,6 +405,53 @@ async function getOrder(req, res) {
     } catch (error) {
         console.error('Get Order Error:', error);
         return res.status(500).json({ message: 'Error retrieving section order' });
+    }
+}
+
+// Debug function to show all sections with their classification
+async function handleDebugSections(req, res) {
+    try {
+        await connectDB();
+
+        // Get all sections from the database
+        const allSections = await Section.find({}).lean();
+
+        // Classify sections
+        const classified = allSections.map(section => ({
+            _id: section._id,
+            page: section.page,
+            heading: section.heading,
+            text: section.text?.substring(0, 100) + (section.text?.length > 100 ? '...' : ''),
+            isContentOverride: !!section.isContentOverride,
+            isFullPage: !!section.isFullPage,
+            targetPage: section.targetPage,
+            targetSelector: section.targetSelector,
+            contentType: section.contentType,
+            createdAt: section.createdAt,
+            classification: section.isContentOverride ? 'CONTENT_OVERRIDE' :
+                          section.isFullPage ? 'FULL_PAGE' : 'DYNAMIC_SECTION'
+        }));
+
+        // Group by classification
+        const grouped = {
+            contentOverrides: classified.filter(s => s.classification === 'CONTENT_OVERRIDE'),
+            fullPages: classified.filter(s => s.classification === 'FULL_PAGE'),
+            dynamicSections: classified.filter(s => s.classification === 'DYNAMIC_SECTION')
+        };
+
+        return res.status(200).json({
+            total: allSections.length,
+            breakdown: {
+                contentOverrides: grouped.contentOverrides.length,
+                fullPages: grouped.fullPages.length,
+                dynamicSections: grouped.dynamicSections.length
+            },
+            sections: grouped
+        });
+
+    } catch (error) {
+        console.error('Debug Sections Error:', error);
+        return res.status(500).json({ message: 'Error debugging sections' });
     }
 }
 

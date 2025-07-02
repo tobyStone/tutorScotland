@@ -460,7 +460,8 @@ module.exports = async (req, res) => {
             try {
                 const list = await Section.find({
                     page,
-                    isFullPage: { $ne: true } // Exclude full pages from regular sections
+                    isFullPage: { $ne: true }, // Exclude full pages from regular sections
+                    isContentOverride: { $ne: true } // ✅ FIXED: Exclude content overrides from dynamic sections
                 }).sort({ position: 1, createdAt: 1 }).lean();
                 return res.status(200).json(list);
             } catch (e) {

@@ -5,13 +5,15 @@ const PLACEHOLDER_IMAGE_URI = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.or
 function safeImg(img, originalUrl) {
     if (!img) return null;
 
-    // Cascading fallback: thumbnail → original → placeholder
+    // ✅ IMPROVED: Suppress console errors for expected 404s during fallback
     img.onerror = function () {
         if (this.src !== originalUrl && originalUrl) {
-            // First fallback: try original image
+            // First fallback: try original image (suppress error logging)
+            console.debug(`[ImageBrowser] Thumbnail not found, trying original: ${originalUrl}`);
             this.src = originalUrl;
         } else {
-            // Final fallback: placeholder
+            // Final fallback: placeholder (suppress error logging)
+            console.debug(`[ImageBrowser] Original image not found, using placeholder`);
             this.src = PLACEHOLDER_IMAGE_URI;
         }
     };
