@@ -313,8 +313,8 @@ export class OverrideEngine {
             return `.main-nav a[href="${href}"]`;
         }
 
-        // ✅ FIXED: For links, check if there's already a data-ve-block-id and use that
-        // This prevents creating new IDs when editing existing buttons
+        // ✅ FIXED: For links, prefer existing data-ve-block-id over creating new data-ve-button-id
+        // This maintains consistency with existing HTML structure
         if (type === 'link' && el.dataset.veBlockId) {
             const sectionEl = el.closest('[data-ve-section-id]');
             const sectionId = sectionEl?.dataset.veSectionId || '';
