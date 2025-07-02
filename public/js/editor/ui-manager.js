@@ -84,13 +84,16 @@ export class UIManager {
     }
 
     onEditModeChange(val) {
+        console.log(`[VE] onEditModeChange called with val: ${val}`);
         document.body.classList.toggle('ve-edit-active', val);
         const btn = document.getElementById('edit-mode-toggle');
         if (btn) btn.textContent = val ? 'Exit Edit' : 'Edit Mode';
 
         if (val) {
             // When entering edit mode, scan for elements and add overlays.
-            this.addOverlays(this.scanEditableElements());
+            const elements = this.scanEditableElements();
+            console.log(`[VE] Found ${elements.length} editable elements:`, elements);
+            this.addOverlays(elements);
             this.disableLinks();
         } else {
             // When exiting, remove all UI.
@@ -139,10 +142,15 @@ export class UIManager {
     }
 
     addOverlays(elements) {
-        elements.forEach(el => {
+        console.log(`[VE] addOverlays called with ${elements.length} elements`);
+        elements.forEach((el, index) => {
             const type = this.callbacks.getType(el);
+            console.log(`[VE] Element ${index}: type=${type}, tagName=${el.tagName}, element:`, el);
             const target = this.getOverlayMount(el, type);
-            if (target.querySelector(':scope > .edit-overlay')) return;
+            if (target.querySelector(':scope > .edit-overlay')) {
+                console.log(`[VE] Element ${index}: already has overlay, skipping`);
+                return;
+            }
 
             const overlay = document.createElement('div');
             overlay.className = 'edit-overlay';
@@ -156,6 +164,7 @@ export class UIManager {
                 target.style.position = 'relative';
             }
             target.appendChild(overlay);
+            console.log(`[VE] Element ${index}: overlay added to target:`, target);
         });
     }
 
