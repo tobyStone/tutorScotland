@@ -27,6 +27,9 @@ class VisualEditor {
     async init() {
         console.log('🎨 Visual Editor v2 initializing... (CACHE-BUST VERSION)');
 
+        // Wait for dynamic sections to load before applying overrides
+        await this.waitForDynamicSections();
+
         // Always initialize override engine first (loads and applies overrides for all users)
         await overrideEngine.init();
 
@@ -58,6 +61,17 @@ class VisualEditor {
         } catch (error) {
             console.error('🚫 Admin check failed, editing not enabled.', error);
         }
+    }
+
+    waitForDynamicSections() {
+        return new Promise(resolve => {
+            if (document.body.classList.contains('dyn-ready')) {
+                console.log('[VE] Dynamic sections already ready.');
+                return resolve();
+            }
+            console.log('[VE] Waiting for dyn-sections-loaded event...');
+            window.addEventListener('dyn-sections-loaded', resolve, { once: true });
+        });
     }
 
     enableEditorUI() {
