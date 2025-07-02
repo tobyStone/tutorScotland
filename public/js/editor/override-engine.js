@@ -20,6 +20,28 @@ export class OverrideEngine {
             const data = await apiService.loadOverrides(editorState.currentPage);
             data.forEach(ov => this.overrides.set(ov.targetSelector, ov));
             console.log(`🔄 Loaded ${data.length} content overrides for page "${editorState.currentPage}"`);
+
+            // Enhanced logging for debugging
+            if (data.length > 0) {
+                console.log('📋 Override details:');
+                data.forEach((ov, index) => {
+                    console.log(`  ${index + 1}. Type: ${ov.contentType}, Selector: "${ov.targetSelector}"`);
+                    console.log(`     Content: "${ov.text || ov.image || 'N/A'}"`);
+                    console.log(`     Override type: ${ov.overrideType}, Active: ${ov.isActive}`);
+                });
+
+                // Show current page elements that might match
+                console.log('🔍 Current page elements with data-ve attributes:');
+                const veElements = document.querySelectorAll('[data-ve-section-id], [data-ve-block-id]');
+                console.log(`   Found ${veElements.length} elements with VE attributes`);
+                if (veElements.length > 0 && veElements.length <= 10) {
+                    veElements.forEach((el, i) => {
+                        const sectionId = el.getAttribute('data-ve-section-id');
+                        const blockId = el.getAttribute('data-ve-block-id');
+                        console.log(`     ${i + 1}. <${el.tagName.toLowerCase()}> section="${sectionId}" block="${blockId}"`);
+                    });
+                }
+            }
         } catch (e) {
             console.error('❌ Failed to load content overrides', e);
         }
@@ -49,6 +71,26 @@ export class OverrideEngine {
                     console.log(`✅ Applied override: ${ov.contentType} for selector "${selector}"`);
                 } else {
                     console.log(`⚠️ No targets found for selector: "${selector}"`);
+                    console.log(`   Override details: type=${ov.contentType}, content="${ov.text || ov.image || 'N/A'}"`);
+
+                    // Try to find similar elements for debugging
+                    const selectorParts = selector.split(' ');
+                    if (selectorParts.length > 1) {
+                        const lastPart = selectorParts[selectorParts.length - 1];
+                        const similarElements = document.querySelectorAll(lastPart);
+                        console.log(`   Found ${similarElements.length} elements matching last part "${lastPart}"`);
+                        if (similarElements.length > 0 && similarElements.length <= 5) {
+                            similarElements.forEach((el, i) => {
+                                const attrs = [];
+                                if (el.id) attrs.push(`id="${el.id}"`);
+                                if (el.className) attrs.push(`class="${el.className}"`);
+                                if (el.getAttribute('data-ve-section-id')) attrs.push(`data-ve-section-id="${el.getAttribute('data-ve-section-id')}"`);
+                                if (el.getAttribute('data-ve-block-id')) attrs.push(`data-ve-block-id="${el.getAttribute('data-ve-block-id')}"`);
+                                console.log(`     ${i + 1}. <${el.tagName.toLowerCase()} ${attrs.join(' ')}>`);
+                            });
+                        }
+                    }
+
                     unappliedSelectors.push(selector);
                 }
             }
