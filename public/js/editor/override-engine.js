@@ -52,8 +52,34 @@ export class OverrideEngine {
                             console.log(`     ${i + 1}. <${el.tagName.toLowerCase()}> → selector: "${fullSelector}"`);
                             console.log(`        Expected: "${ov.targetSelector}"`);
                             console.log(`        Match: ${fullSelector === ov.targetSelector ? '✅' : '❌'}`);
+
+                            // Show parent elements to find section containers
+                            let parent = el.parentElement;
+                            let depth = 0;
+                            console.log(`        🔍 Parent chain for missing section ID:`);
+                            while (parent && depth < 5) {
+                                const parentSectionId = parent.getAttribute('data-ve-section-id');
+                                const parentBlockId = parent.getAttribute('data-ve-block-id');
+                                const parentId = parent.id;
+                                const parentClass = parent.className;
+                                console.log(`          ${depth + 1}. <${parent.tagName.toLowerCase()}> id="${parentId}" class="${parentClass}" section="${parentSectionId}" block="${parentBlockId}"`);
+                                if (parentSectionId) {
+                                    console.log(`          🎯 Found section container! Could use: [data-ve-section-id="${parentSectionId}"] [data-ve-block-id="${blockId}"]`);
+                                    break;
+                                }
+                                parent = parent.parentElement;
+                                depth++;
+                            }
                         });
                     }
+                });
+
+                // Show all section containers
+                const sectionElements = document.querySelectorAll('[data-ve-section-id]');
+                console.log(`   📍 Available sections: ${sectionElements.length}`);
+                sectionElements.forEach((el, i) => {
+                    const sectionId = el.getAttribute('data-ve-section-id');
+                    console.log(`     ${i + 1}. <${el.tagName.toLowerCase()}> section="${sectionId}"`);
                 });
 
                 // Show first 10 elements for general debugging
