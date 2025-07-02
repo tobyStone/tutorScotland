@@ -34,8 +34,32 @@ export class OverrideEngine {
                 console.log('🔍 Current page elements with data-ve attributes:');
                 const veElements = document.querySelectorAll('[data-ve-section-id], [data-ve-block-id]');
                 console.log(`   Found ${veElements.length} elements with VE attributes`);
+
+                // Show elements that have the specific block ID we're looking for
+                data.forEach((ov) => {
+                    const blockIdMatch = ov.targetSelector.match(/data-ve-block-id="([^"]+)"/);
+                    if (blockIdMatch) {
+                        const targetBlockId = blockIdMatch[1];
+                        const elementsWithBlockId = document.querySelectorAll(`[data-ve-block-id="${targetBlockId}"]`);
+                        console.log(`   🎯 Elements with target block ID "${targetBlockId}": ${elementsWithBlockId.length}`);
+
+                        elementsWithBlockId.forEach((el, i) => {
+                            const sectionId = el.getAttribute('data-ve-section-id');
+                            const blockId = el.getAttribute('data-ve-block-id');
+                            const fullSelector = sectionId ?
+                                `[data-ve-section-id="${sectionId}"] [data-ve-block-id="${blockId}"]` :
+                                `[data-ve-block-id="${blockId}"]`;
+                            console.log(`     ${i + 1}. <${el.tagName.toLowerCase()}> → selector: "${fullSelector}"`);
+                            console.log(`        Expected: "${ov.targetSelector}"`);
+                            console.log(`        Match: ${fullSelector === ov.targetSelector ? '✅' : '❌'}`);
+                        });
+                    }
+                });
+
+                // Show first 10 elements for general debugging
                 if (veElements.length > 0 && veElements.length <= 10) {
-                    veElements.forEach((el, i) => {
+                    console.log('   📝 All VE elements (first 10):');
+                    veElements.slice(0, 10).forEach((el, i) => {
                         const sectionId = el.getAttribute('data-ve-section-id');
                         const blockId = el.getAttribute('data-ve-block-id');
                         console.log(`     ${i + 1}. <${el.tagName.toLowerCase()}> section="${sectionId}" block="${blockId}"`);
