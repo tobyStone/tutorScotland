@@ -32,6 +32,15 @@ export class UIManager {
         editorState.on('activeEditorChange', ed => this.onActiveEditorChange(ed));
     }
 
+    init() {
+        console.log('[VE] UIManager initializing...');
+        // Initialize image browser if it has an init method
+        if (this.imageBrowser && typeof this.imageBrowser.init === 'function') {
+            this.imageBrowser.init();
+        }
+        this.refreshEditableElements();
+    }
+
     initialize() {
         this.loadStyles();
         this.createToggle();

@@ -28,6 +28,12 @@ export class ImageBrowser {
         this.container = null;
     }
 
+    init() {
+        console.log('[VE] ImageBrowser initializing...');
+        // Initialize any required state or load initial data if needed
+        // For now, this is just a placeholder for future initialization needs
+    }
+
     open(container) {
         this.container = container;
         container.style.display = 'block';
