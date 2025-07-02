@@ -18,12 +18,8 @@ export class OverrideEngine {
     async load() {
         try {
             const data = await apiService.loadOverrides(editorState.currentPage);
-            console.log(`[VE] Loaded ${data.length} overrides from API for page "${editorState.currentPage}"`);
-            data.forEach((ov, i) => {
-                console.log(`[VE] Override ${i}: selector="${ov.targetSelector}" (length: ${ov.targetSelector?.length})`);
-                this.overrides.set(ov.targetSelector, ov);
-            });
-            console.log('[VE] Overrides map populated:', this.overrides);
+            data.forEach(ov => this.overrides.set(ov.targetSelector, ov));
+            console.log(`[VE] Loaded ${data.length} overrides for page "${editorState.currentPage}"`);
         } catch (e) {
             console.error('[VE] Failed to load content overrides', e);
         }
@@ -51,25 +47,6 @@ export class OverrideEngine {
                 if (targets.length > 0) {
                     targets.forEach(el => this.applyOverride(el, ov));
                 } else {
-                    // Enhanced debugging for missing elements
-                    console.log(`[VE] ❌ No targets found for selector: "${selector}"`);
-
-                    // Check if the section exists
-                    const sectionMatch = selector.match(/\[data-ve-section-id="([^"]+)"\]/);
-                    if (sectionMatch) {
-                        const sectionId = sectionMatch[1];
-                        const sectionEl = document.querySelector(`[data-ve-section-id="${sectionId}"]`);
-                        console.log(`[VE] Section "${sectionId}" exists:`, !!sectionEl);
-
-                        // Check if the block exists within the section
-                        const blockMatch = selector.match(/\[data-ve-block-id="([^"]+)"\]/);
-                        if (blockMatch && sectionEl) {
-                            const blockId = blockMatch[1];
-                            const blockEl = sectionEl.querySelector(`[data-ve-block-id="${blockId}"]`);
-                            console.log(`[VE] Block "${blockId}" exists in section:`, !!blockEl);
-                        }
-                    }
-
                     unappliedSelectors.push(selector);
                 }
             }

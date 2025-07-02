@@ -27,10 +27,22 @@ class VisualEditor {
     async init() {
         console.log('🎨 Visual Editor v2 initializing... (CACHE-BUST VERSION)');
 
-        // Initialize override engine first
+        // Check admin status FIRST - only proceed if admin
+        try {
+            const { isAdmin } = await apiService.checkAdminStatus();
+            if (!isAdmin) {
+                console.log('🚫 Not an admin user, visual editor disabled');
+                return;
+            }
+        } catch (error) {
+            console.error('🚫 Admin check failed, editor not enabled.', error);
+            return;
+        }
+
+        // Initialize override engine first (this loads and applies overrides automatically)
         await overrideEngine.init();
 
-        // Initialize UI
+        // Initialize UI (only for admin users)
         this.uiManager.init();
 
         // Initialize section sorter
@@ -42,18 +54,8 @@ class VisualEditor {
         // Set up dynamic content listener
         this.setupDynamicContentListener();
 
-        // Apply any existing overrides
-        await this.applyOverrides();
-
-        // Check admin status and enable UI if admin
-        try {
-            const { isAdmin } = await apiService.checkAdminStatus();
-            if (isAdmin) {
-                this.enableEditorUI();
-            }
-        } catch (error) {
-            console.error('🚫 Admin check failed, editor not enabled.', error);
-        }
+        // Enable editor UI and set up periodic admin check
+        this.enableEditorUI();
 
         console.log('✅ Visual Editor v2 ready!');
     }
@@ -202,9 +204,8 @@ class VisualEditor {
         console.log('🔄 Applying existing overrides...');
 
         try {
-            const pageKey = window.location.pathname;
-            const result = await apiService.loadOverrides(pageKey);
-            const overrides = result.overrides || [];
+            const pageKey = (window.location.pathname.replace(/^\//, '') || 'index').replace(/\.html?$/i, '');
+            const overrides = await apiService.loadOverrides(pageKey);
 
             if (overrides && overrides.length > 0) {
                 console.log(`📝 Found ${overrides.length} overrides to apply`);
