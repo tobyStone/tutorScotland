@@ -89,6 +89,26 @@ class VisualEditor {
         this.uiManager.showEditDialog(element, type, originalContent);
     }
 
+    getElementSelector(element) {
+        // Generate a selector for the element
+        if (element.id) {
+            return `#${element.id}`;
+        }
+
+        // Use data-ve-block-id if available
+        if (element.dataset.veBlockId) {
+            return `[data-ve-block-id="${element.dataset.veBlockId}"]`;
+        }
+
+        // Fallback to tag + class combination
+        let selector = element.tagName.toLowerCase();
+        if (element.className) {
+            selector += '.' + element.className.split(' ').join('.');
+        }
+
+        return selector;
+    }
+
     async handleSave(element, newContent, type) {
         console.log('💾 Saving content for element:', element, 'Type:', type, 'Content:', newContent);
         
@@ -97,7 +117,13 @@ class VisualEditor {
             overrideEngine.applyOverride(element, newContent, type);
             
             // Save to backend
-            const result = await apiService.saveOverride(element, newContent, type);
+            const payload = {
+                targetPage: window.location.pathname,
+                targetSelector: this.getElementSelector(element),
+                contentType: type,
+                newContent: newContent
+            };
+            const result = await apiService.saveOverride(payload);
             
             if (result.success) {
                 console.log('✅ Content saved successfully');
@@ -156,7 +182,9 @@ class VisualEditor {
         console.log('🔄 Applying existing overrides...');
 
         try {
-            const overrides = await apiService.getOverrides();
+            const pageKey = window.location.pathname;
+            const result = await apiService.loadOverrides(pageKey);
+            const overrides = result.overrides || [];
 
             if (overrides && overrides.length > 0) {
                 console.log(`📝 Found ${overrides.length} overrides to apply`);
