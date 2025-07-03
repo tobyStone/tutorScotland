@@ -67,7 +67,7 @@
             if (!htmlString) return '';
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = htmlString;
-            const editableTags = ['p', 'img', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+            const editableTags = ['p', 'img', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'];
             editableTags.forEach(tag => {
                 tempDiv.querySelectorAll(tag).forEach(el => {
                     if (!el.hasAttribute('data-ve-block-id')) {

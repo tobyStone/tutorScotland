@@ -114,7 +114,8 @@ export class UIManager {
             'p:not(.no-edit)',
             '.editable',
             'img:not(.no-edit)',
-            `a.${BUTTON_CSS.replace(/\s/g, '.')}`
+            `a.${BUTTON_CSS.replace(/\s/g, '.')}`,
+            'li:not(.no-edit)'  // ✅ NEW: Add list items as editable elements
         ];
         selectors.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {
