@@ -15,7 +15,7 @@ class VisualEditor {
             onUpload: this.handleUpload.bind(this),
             getType: el => overrideEngine.getElementType(el),
             getOriginalContent: (el, type) => overrideEngine.getOriginalContent(el, type),
-        });
+        }, overrideEngine);
 
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.init());

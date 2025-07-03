@@ -23,8 +23,9 @@ function ensureBlockIds(html) {
 }
 
 export class UIManager {
-    constructor(callbacks) {
+    constructor(callbacks, overrideEngine = null) {
         this.callbacks = callbacks;
+        this.overrideEngine = overrideEngine;
         this.editableElements = [];
         this.dom = {};
         this.imageBrowser = new ImageBrowser({ onSelect: item => this.handleImageSelect(item) });
@@ -241,8 +242,8 @@ export class UIManager {
             overlay.className = 'edit-overlay';
 
             // ✅ NEW: Add context information to overlay
-            const context = this.callbacks.getType === overrideEngine?.getElementType ?
-                           overrideEngine.getElementContext(el) : 'main';
+            const context = this.overrideEngine?.getElementContext ?
+                           this.overrideEngine.getElementContext(el) : 'main';
             const contextLabel = this.getContextLabel(context);
             overlay.setAttribute('data-context', contextLabel);
 
