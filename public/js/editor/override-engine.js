@@ -3,7 +3,7 @@
 import { apiService } from './api-service.js';
 import { editorState } from './editor-state.js';
 
-const BUTTON_CSS = 'button';
+const BUTTON_CSS = 'button aurora';
 
 export class OverrideEngine {
     constructor() {
