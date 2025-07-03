@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Context Indicators Demo - Visual Editor</title>
+    <link rel="stylesheet" href="/styles2.css">
+    <link rel="stylesheet" href="/editor.css">
+    <style>
+        .demo-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .demo-instructions {
+            background: #e3f2fd;
+            border: 1px solid #1976d2;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .demo-instructions h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        .context-demo {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .context-demo > div {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .header-demo { background: #e3f2fd; border: 2px solid #1565c0; }
+        .main-demo { background: #fff3e0; border: 2px solid #ef6c00; }
+        .footer-demo { background: #f3e5f5; border: 2px solid #7b1fa2; }
+    </style>
+</head>
+<body data-page="demo-context-indicators">
+    
+    <!-- HEADER SECTION -->
+    <header>
+        <div class="demo-section">
+            <h1 data-ve-block-id="demo-header-title">🔝 Header Context Demo</h1>
+            <p data-ve-block-id="demo-header-text">This content is in the header context. When you edit it, you'll see a blue "Header" badge.</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                <a href="/contact.html" data-ve-block-id="demo-header-contact" class="button aurora">Contact Us</a>
+                <a href="/about-us.html" data-ve-block-id="demo-header-about" class="button aurora">About</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <div class="demo-instructions">
+            <h3>🎨 Context Indicators Demo</h3>
+            <p><strong>Instructions:</strong></p>
+            <ol>
+                <li>Click the "Enable Edit Mode" button below</li>
+                <li>Hover over different elements to see context labels appear</li>
+                <li>Click on elements to open the editing modal with context badges</li>
+                <li>Notice the different colors for header (blue), main (orange), and footer (purple) contexts</li>
+            </ol>
+            <p><strong>What to look for:</strong></p>
+            <ul>
+                <li>🔝 Header elements show blue styling and "Header" badges</li>
+                <li>📄 Main content shows orange styling and "Main Content" badges</li>
+                <li>🔻 Footer elements show purple styling and "Footer" badges</li>
+                <li>Context labels appear on hover over edit overlays</li>
+            </ul>
+        </div>
+
+        <section data-ve-section-id="demo-main-content">
+            <div class="demo-section">
+                <h2 data-ve-block-id="demo-main-title">📄 Main Content Context</h2>
+                <p data-ve-block-id="demo-main-text">This content is in the main context. When you edit it, you'll see an orange "Main Content" badge.</p>
+                <img src="/images/favicon.png" alt="Demo Image" data-ve-block-id="demo-main-image" style="max-width: 100px; margin: 10px 0;">
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                    <a href="/services.html" data-ve-block-id="demo-main-services" class="button aurora">Services</a>
+                    <a href="/portfolio.html" data-ve-block-id="demo-main-portfolio" class="button aurora">Portfolio</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="context-demo">
+            <div class="header-demo">
+                <h4>Header Context</h4>
+                <p>Blue styling<br>🔝 Icon<br>"Header" badge</p>
+            </div>
+            <div class="main-demo">
+                <h4>Main Context</h4>
+                <p>Orange styling<br>📄 Icon<br>"Main Content" badge</p>
+            </div>
+            <div class="footer-demo">
+                <h4>Footer Context</h4>
+                <p>Purple styling<br>🔻 Icon<br>"Footer" badge</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER SECTION -->
+    <footer>
+        <div class="demo-section">
+            <h3 data-ve-block-id="demo-footer-title">🔻 Footer Context Demo</h3>
+            <p data-ve-block-id="demo-footer-text">This content is in the footer context. When you edit it, you'll see a purple "Footer" badge.</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                <a href="/privacy.html" data-ve-block-id="demo-footer-privacy" class="button aurora">Privacy</a>
+                <a href="/terms.html" data-ve-block-id="demo-footer-terms" class="button aurora">Terms</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Visual Editor Scripts -->
+    <script type="module">
+        import { apiService } from '/js/editor/api-service.js';
+        import { editorState } from '/js/editor/editor-state.js';
+        import { overrideEngine } from '/js/editor/override-engine.js';
+        import { UIManager } from '/js/editor/ui-manager.js';
+
+        // Initialize visual editor components
+        const uiManager = new UIManager({
+            onToggle: () => {
+                const newMode = !editorState.isEditMode;
+                editorState.setEditMode(newMode);
+                updateEditButton();
+            },
+            onEdit: (el) => {
+                const type = overrideEngine.getElementType(el);
+                const selector = overrideEngine.getStableSelector(el, type);
+                const original = overrideEngine.getOriginalContent(el, type);
+                const canRestore = overrideEngine.overrides.has(selector);
+                editorState.setActiveEditor({ element: el, selector, type, original, canRestore });
+            },
+            onSave: () => console.log('Save'),
+            onPreview: () => console.log('Preview'),
+            onRestore: () => console.log('Restore'),
+            onUpload: () => console.log('Upload'),
+            getType: el => overrideEngine.getElementType(el),
+            getOriginalContent: (el, type) => overrideEngine.getOriginalContent(el, type),
+        });
+
+        // Make components available globally
+        window.demoComponents = { uiManager, overrideEngine, editorState };
+        
+        // Initialize
+        uiManager.initialize();
+        
+        // Update button text based on edit mode
+        function updateEditButton() {
+            const btn = document.getElementById('edit-mode-toggle');
+            if (btn) {
+                btn.textContent = editorState.isEditMode ? 'Exit Edit Mode' : 'Enable Edit Mode';
+                btn.style.background = editorState.isEditMode ? '#f44336' : '#4CAF50';
+            }
+        }
+        
+        // Set up edit mode toggle
+        editorState.on('editModeChange', (isEditMode) => {
+            if (isEditMode) {
+                const elements = uiManager.scanEditableElements();
+                uiManager.addOverlays(elements);
+                uiManager.disableLinks();
+            } else {
+                uiManager.removeOverlays();
+                uiManager.enableLinks();
+            }
+            updateEditButton();
+        });
+        
+        console.log('Context indicators demo loaded');
+    </script>
+
+    <!-- Edit Mode Toggle Button -->
+    <button id="edit-mode-toggle" onclick="window.demoComponents.uiManager.callbacks.onToggle()" 
+            style="position: fixed; bottom: 20px; right: 20px; padding: 12px 24px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; z-index: 9999; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        Enable Edit Mode
+    </button>
+
+    <!-- Status indicator -->
+    <div id="status-indicator" style="position: fixed; top: 20px; right: 20px; padding: 10px 15px; background: rgba(0,0,0,0.8); color: white; border-radius: 4px; font-size: 12px; z-index: 9999;">
+        Edit Mode: <span id="edit-status">Disabled</span>
+    </div>
+
+    <script>
+        // Update status indicator
+        if (window.demoComponents) {
+            window.demoComponents.editorState.on('editModeChange', (isEditMode) => {
+                const status = document.getElementById('edit-status');
+                if (status) {
+                    status.textContent = isEditMode ? 'Enabled' : 'Disabled';
+                    status.style.color = isEditMode ? '#4CAF50' : '#f44336';
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

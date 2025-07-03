@@ -375,10 +375,34 @@ export class OverrideEngine {
         return 'text';
     }
 
+    // ✅ NEW: Determine the context of an element for sandboxed editing
+    getElementContext(element) {
+        if (element.closest('header')) return 'header';
+        if (element.closest('footer')) return 'footer';
+        if (element.closest('.main-nav')) return 'nav';
+        return 'main';
+    }
+
     getStableSelector(el, type) {
-        if (el.closest('.main-nav')) {
+        // ✅ NEW: Context-aware selector generation for header/footer/nav/main isolation
+        const context = this.getElementContext(el);
+
+        // Handle navigation links (existing logic)
+        if (context === 'nav') {
             const href = el.getAttribute('href') || '#';
             return `.main-nav a[href="${href}"]`;
+        }
+
+        // ✅ NEW: Handle header and footer links with context isolation
+        if ((context === 'header' || context === 'footer') && type === 'link') {
+            const href = el.getAttribute('href') || '#';
+            const blockId = el.dataset.veBlockId;
+            if (blockId) {
+                return `${context} [data-ve-block-id="${blockId}"]`;
+            } else {
+                // Fallback to href-based selector with context
+                return `${context} a[href="${href}"]`;
+            }
         }
 
         // ✅ FIXED: For links, prefer existing data-ve-block-id over creating new data-ve-button-id
@@ -386,7 +410,8 @@ export class OverrideEngine {
         if (type === 'link' && el.dataset.veBlockId) {
             const sectionEl = el.closest('[data-ve-section-id]');
             const sectionId = sectionEl?.dataset.veSectionId || '';
-            return sectionId ? `[data-ve-section-id="${sectionId}"] [data-ve-block-id="${el.dataset.veBlockId}"]` : `[data-ve-block-id="${el.dataset.veBlockId}"]`;
+            const contextPrefix = context !== 'main' ? `${context} ` : '';
+            return sectionId ? `${contextPrefix}[data-ve-section-id="${sectionId}"] [data-ve-block-id="${el.dataset.veBlockId}"]` : `${contextPrefix}[data-ve-block-id="${el.dataset.veBlockId}"]`;
         }
 
         const idKey = (type === 'link') ? 'veButtonId' : 'veBlockId';
@@ -397,7 +422,11 @@ export class OverrideEngine {
         }
         const section = el.closest('[data-ve-section-id]');
         const idSelector = `[${attr}="${el.dataset[idKey]}"]`;
-        return section ? `[data-ve-section-id="${section.dataset.veSectionId}"] ${idSelector}` : idSelector;
+
+        // ✅ NEW: Add context prefix for non-main contexts to ensure isolation
+        const contextPrefix = context !== 'main' ? `${context} ` : '';
+
+        return section ? `${contextPrefix}[data-ve-section-id="${section.dataset.veSectionId}"] ${idSelector}` : `${contextPrefix}${idSelector}`;
     }
 
     findOverrideForElement(el) {

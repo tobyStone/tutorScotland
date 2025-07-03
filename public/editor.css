@@ -736,3 +736,98 @@ body.ve-edit-active #editor-modal[style*="display: block"] {
 .ve-notification.ve-success { background: #4CAF50; }
 .ve-notification.ve-error { background: #f44336; }
 .ve-notification.ve-info { background: #2196F3; }
+
+/* ===== Context-Aware Visual Indicators ===== */
+
+/* Context badges in modal titles */
+.context-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.context-badge.context-header {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #bbdefb;
+}
+
+.context-badge.context-footer {
+    background: #f3e5f5;
+    color: #7b1fa2;
+    border: 1px solid #ce93d8;
+}
+
+.context-badge.context-nav {
+    background: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+}
+
+.context-badge.context-main {
+    background: #fff3e0;
+    color: #ef6c00;
+    border: 1px solid #ffcc02;
+}
+
+/* Context-specific modal styling */
+.ve-modal-container.context-header .modal-content {
+    border-top: 4px solid #1565c0;
+}
+
+.ve-modal-container.context-footer .modal-content {
+    border-top: 4px solid #7b1fa2;
+}
+
+.ve-modal-container.context-nav .modal-content {
+    border-top: 4px solid #2e7d32;
+}
+
+.ve-modal-container.context-main .modal-content {
+    border-top: 4px solid #ef6c00;
+}
+
+/* Context-specific overlay colors */
+body.ve-edit-active header .edit-overlay:hover {
+    background: rgba(21, 101, 192, 0.15);
+    border-color: #1565c0;
+}
+
+body.ve-edit-active footer .edit-overlay:hover {
+    background: rgba(123, 31, 162, 0.15);
+    border-color: #7b1fa2;
+}
+
+body.ve-edit-active main .edit-overlay:hover {
+    background: rgba(239, 108, 0, 0.15);
+    border-color: #ef6c00;
+}
+
+/* Context labels on overlays */
+.edit-overlay::before {
+    content: attr(data-context);
+    position: absolute;
+    top: -20px;
+    left: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: 10000;
+}
+
+.edit-overlay:hover::before {
+    opacity: 1;
+}

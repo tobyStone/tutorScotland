@@ -189,11 +189,19 @@ export class UIManager {
             '.editable',
             'img:not(.no-edit)',
             `a.${BUTTON_CSS.replace(/\s/g, '.')}`,
-            'li:not(.no-edit)'  // ✅ NEW: Add list items as editable elements
+            'li:not(.no-edit)',  // ✅ NEW: Add list items as editable elements
+            'header a',  // ✅ NEW: Include header links
+            'footer a'   // ✅ NEW: Include footer links
         ];
         selectors.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {
-                if (el.closest('.ve-no-edit, #editor-modal, #edit-mode-toggle, .main-nav')) return;
+                // ✅ UPDATED: Modified exclusion logic for context-aware editing
+                // Exclude editor UI elements and navigation (but allow header/footer)
+                if (el.closest('.ve-no-edit, #editor-modal, #edit-mode-toggle')) return;
+
+                // ✅ NEW: Special handling for navigation - still exclude main nav
+                if (el.closest('.main-nav')) return;
+
                 // Exclude buttons that were dynamically added by the text editing system
                 if (el.dataset.veTextButton === 'true') return;
                 elements.add(el);
@@ -231,6 +239,13 @@ export class UIManager {
 
             const overlay = document.createElement('div');
             overlay.className = 'edit-overlay';
+
+            // ✅ NEW: Add context information to overlay
+            const context = this.callbacks.getType === overrideEngine?.getElementType ?
+                           overrideEngine.getElementContext(el) : 'main';
+            const contextLabel = this.getContextLabel(context);
+            overlay.setAttribute('data-context', contextLabel);
+
             overlay.innerHTML = `<div class="edit-controls"><button class="edit-btn">✏️ Edit</button></div>`;
             overlay.querySelector('.edit-btn').addEventListener('click', e => {
                 e.stopPropagation();
@@ -267,6 +282,8 @@ export class UIManager {
 
     disableLinks() {
         document.querySelectorAll('a').forEach(a => {
+            // ✅ UPDATED: Allow header and footer links to be disabled for editing
+            // Only exclude editor UI and main navigation
             if (a.closest('.ve-no-edit,#editor-modal,#edit-mode-toggle,.main-nav')) return;
             a.dataset.originalHref = a.href;
             a.href = 'javascript:void(0)';
@@ -282,7 +299,21 @@ export class UIManager {
 
     openModal(ed) {
         const { element, type, canRestore } = ed;
-        this.dom.modal.querySelector('#modal-title').textContent = `Edit ${type}`;
+
+        // ✅ NEW: Get context information for visual indicators
+        const context = this.callbacks.getType === overrideEngine?.getElementType ?
+                       overrideEngine.getElementContext(element) : 'main';
+
+        // ✅ NEW: Create context-aware title and styling
+        const contextLabel = this.getContextLabel(context);
+        const contextIcon = this.getContextIcon(context);
+
+        this.dom.modal.querySelector('#modal-title').innerHTML =
+            `${contextIcon} Edit ${type} <span class="context-badge context-${context}">${contextLabel}</span>`;
+
+        // ✅ NEW: Add context class to modal for styling
+        this.dom.modal.className = `ve-modal-container context-${context}`;
+
         this.dom.modal.querySelector('#content-type').value = type;
         ['text','html','image','link'].forEach(id => {
             const g = this.dom.modal.querySelector(`#${id}-group`);
@@ -298,6 +329,28 @@ export class UIManager {
         this.fillForm(element, type);
         this.dom.modal.querySelector('#restore-btn').disabled = !canRestore;
         this.dom.modal.style.display = 'block';
+    }
+
+    // ✅ NEW: Get user-friendly context label
+    getContextLabel(context) {
+        const labels = {
+            'header': 'Header',
+            'footer': 'Footer',
+            'nav': 'Navigation',
+            'main': 'Main Content'
+        };
+        return labels[context] || 'Content';
+    }
+
+    // ✅ NEW: Get context-specific icon
+    getContextIcon(context) {
+        const icons = {
+            'header': '🔝',
+            'footer': '🔻',
+            'nav': '🧭',
+            'main': '📄'
+        };
+        return icons[context] || '✏️';
     }
 
     fillForm(el, type) {
