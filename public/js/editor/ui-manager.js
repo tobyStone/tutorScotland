@@ -194,6 +194,8 @@ export class UIManager {
         selectors.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {
                 if (el.closest('.ve-no-edit, #editor-modal, #edit-mode-toggle, .main-nav')) return;
+                // Exclude buttons that were dynamically added by the text editing system
+                if (el.dataset.veTextButton === 'true') return;
                 elements.add(el);
             });
         });
