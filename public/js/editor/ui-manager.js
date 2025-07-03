@@ -81,6 +81,80 @@ export class UIManager {
         this.dom.modal.querySelector('#restore-btn').addEventListener('click', () => this.callbacks.onRestore());
         this.dom.modal.querySelector('#upload-btn').addEventListener('click', () => this.callbacks.onUpload());
         this.dom.modal.querySelector('#browse-btn').addEventListener('click', () => this.imageBrowser.open(this.dom.imageBrowser));
+
+        // Button management event listeners
+        this.setupButtonManagement();
+    }
+
+    setupButtonManagement() {
+        const modal = this.dom.modal;
+
+        // Add button functionality
+        modal.querySelector('#add-text-button').addEventListener('click', () => {
+            modal.querySelector('#new-button-form').style.display = 'block';
+            modal.querySelector('#add-text-button').style.display = 'none';
+        });
+
+        // Cancel new button
+        modal.querySelector('#cancel-new-button').addEventListener('click', () => {
+            modal.querySelector('#new-button-form').style.display = 'none';
+            modal.querySelector('#add-text-button').style.display = 'block';
+            this.clearButtonForm();
+        });
+
+        // Save new button
+        modal.querySelector('#save-new-button').addEventListener('click', () => {
+            this.addTextButton();
+        });
+    }
+
+    addTextButton() {
+        const modal = this.dom.modal;
+        const buttonText = modal.querySelector('#new-button-text').value.trim();
+        const buttonUrl = modal.querySelector('#new-button-url').value.trim();
+
+        if (!buttonText || !buttonUrl) {
+            alert('Please enter both button text and URL');
+            return;
+        }
+
+        // Add button to the list
+        this.renderTextButton(buttonText, buttonUrl);
+
+        // Hide form and clear inputs
+        modal.querySelector('#new-button-form').style.display = 'none';
+        modal.querySelector('#add-text-button').style.display = 'block';
+        this.clearButtonForm();
+    }
+
+    renderTextButton(text, url, index = null) {
+        const modal = this.dom.modal;
+        const buttonsList = modal.querySelector('#text-buttons-list');
+
+        const buttonItem = document.createElement('div');
+        buttonItem.className = 'text-button-item';
+        buttonItem.innerHTML = `
+            <div class="text-button-info">
+                <div class="button-text">${text}</div>
+                <div class="button-url">${url}</div>
+            </div>
+            <div class="text-button-actions">
+                <button type="button" class="btn btn-danger btn-sm remove-text-button">Remove</button>
+            </div>
+        `;
+
+        // Add remove functionality
+        buttonItem.querySelector('.remove-text-button').addEventListener('click', () => {
+            buttonItem.remove();
+        });
+
+        buttonsList.appendChild(buttonItem);
+    }
+
+    clearButtonForm() {
+        const modal = this.dom.modal;
+        modal.querySelector('#new-button-text').value = '';
+        modal.querySelector('#new-button-url').value = '';
     }
 
     onEditModeChange(val) {
@@ -212,6 +286,13 @@ export class UIManager {
             const g = this.dom.modal.querySelector(`#${id}-group`);
             if (g) g.style.display = id===type? 'block':'none';
         });
+
+        // Show/hide button management for text elements
+        const buttonManagement = this.dom.modal.querySelector('.text-button-management');
+        if (buttonManagement) {
+            buttonManagement.style.display = type === 'text' ? 'block' : 'none';
+        }
+
         this.fillForm(element, type);
         this.dom.modal.querySelector('#restore-btn').disabled = !canRestore;
         this.dom.modal.style.display = 'block';
@@ -223,7 +304,14 @@ export class UIManager {
 
         switch (type) {
             case 'text':
-                modal.querySelector('#content-text').value = content;
+                // Handle both old string format and new object format
+                if (typeof content === 'string') {
+                    modal.querySelector('#content-text').value = content;
+                    this.loadExistingTextButtons(el);
+                } else {
+                    modal.querySelector('#content-text').value = content.text || '';
+                    this.loadTextButtonsFromData(content.buttons || []);
+                }
                 break;
             case 'html':
                 modal.querySelector('#content-html').value = content;
@@ -240,11 +328,44 @@ export class UIManager {
         }
     }
 
+    loadExistingTextButtons(element) {
+        const modal = this.dom.modal;
+        const buttonsList = modal.querySelector('#text-buttons-list');
+
+        // Clear existing buttons
+        buttonsList.innerHTML = '';
+
+        // Find any existing buttons that are siblings after this text element
+        let nextSibling = element.nextElementSibling;
+        while (nextSibling && nextSibling.classList && nextSibling.classList.contains('button') && nextSibling.classList.contains('aurora')) {
+            const buttonText = nextSibling.textContent.trim();
+            const buttonUrl = nextSibling.href || '#';
+            this.renderTextButton(buttonText, buttonUrl);
+            nextSibling = nextSibling.nextElementSibling;
+        }
+    }
+
+    loadTextButtonsFromData(buttons) {
+        const modal = this.dom.modal;
+        const buttonsList = modal.querySelector('#text-buttons-list');
+
+        // Clear existing buttons
+        buttonsList.innerHTML = '';
+
+        // Load buttons from data
+        buttons.forEach(button => {
+            this.renderTextButton(button.text, button.url);
+        });
+    }
+
     getFormData() {
         const type = this.dom.modal.querySelector('#content-type').value;
         switch(type){
             case 'text':
-                return { text: this.dom.modal.querySelector('#content-text').value };
+                return {
+                    text: this.dom.modal.querySelector('#content-text').value,
+                    buttons: this.getTextButtons()
+                };
             case 'html':
                 return { text: ensureBlockIds(this.dom.modal.querySelector('#content-html').value) };
             case 'image':
@@ -253,6 +374,20 @@ export class UIManager {
                 return { href: this.dom.modal.querySelector('#link-url').value, text: this.dom.modal.querySelector('#link-text').value, isButton: this.dom.modal.querySelector('#link-is-button').checked };
             default: return {};
         }
+    }
+
+    getTextButtons() {
+        const modal = this.dom.modal;
+        const buttonItems = modal.querySelectorAll('.text-button-item');
+        const buttons = [];
+
+        buttonItems.forEach(item => {
+            const text = item.querySelector('.button-text').textContent;
+            const url = item.querySelector('.button-url').textContent;
+            buttons.push({ text, url });
+        });
+
+        return buttons;
     }
 
     closeModal() { if(this.dom.modal) this.dom.modal.style.display='none'; }

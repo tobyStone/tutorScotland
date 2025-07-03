@@ -106,9 +106,9 @@
                     <h2 data-ve-block-id="7dba7eec-9820-4a88-9ba7-9cc984439599">📩 Stay in the Loop with the TAS Newsletter!</h2>
                     <p data-ve-block-id="751e39ba-6c00-4cf0-93ad-f5f683647d70">Want to be at the heart of the movement to improve tuition in Scotland? Our TAS Newsletter keeps you updated on:</p>
                     <ul style="text-align:left; max-width: 600px; margin: 1rem auto;">
-                        <li>📢 Latest developments in tuition and education policy</li>
-                        <li>🤝 Opportunities to contribute to shaping the future of Scottish tutoring</li>
-                        <li>📅 Upcoming events and training for tutors and educators</li>
+                        <li data-ve-block-id="li-newsletter-developments-contact">📢 Latest developments in tuition and education policy</li>
+                        <li data-ve-block-id="li-newsletter-opportunities-contact">🤝 Opportunities to contribute to shaping the future of Scottish tutoring</li>
+                        <li data-ve-block-id="li-newsletter-events-contact">📅 Upcoming events and training for tutors and educators</li>
                     </ul>
                     <p data-ve-block-id="0706ff83-62f6-47fa-bc03-66fd66058caa">But this isn't just any newsletter, it's interactive! 🎯 We're launching our Scottish Tutoring Action Plan, a dynamic space where you can share your expertise, insights and ideas to help shape the future of tuition. This is your chance to add real value to the sector and make an impact!</p>
                     <div class="newsletter-cta">
@@ -145,11 +145,11 @@
             <div class="static-footer-left">
                 <h4 data-ve-block-id="0016f03b-d1c7-4e4a-b14d-779239398b62">Extra Information</h4>
                 <ul>
-                    <li><a href="tutoring-standards.html" data-ve-block-id="a8ba5f64-e7a1-4a02-92f8-4ae897af8b8f">The TAS Way: Governance and Guidance</a></li>
-                    <li><a href="faq.html" data-ve-block-id="f36baefc-c87d-44a3-be1d-b8e442ea6bc1">FAQ's</a></li>
-                    <li><a href="privacy-policy.html" data-ve-block-id="4199050e-356b-40d4-a8ef-bac05e9ecbeb">Privacy Policy</a></li>
-                    <li><a href="safeguarding-policy.html" data-ve-block-id="6defaa23-4b18-4fd4-892e-c91417407560">Safeguarding Policy</a></li>
-                    <li><a href="terms-and-conditions.html" data-ve-block-id="0126905e-0635-4f83-9428-847d035638bc">Terms and Conditions</a></li>
+                    <li data-ve-block-id="li-footer-governance-contact"><a href="tutoring-standards.html" data-ve-block-id="a8ba5f64-e7a1-4a02-92f8-4ae897af8b8f">The TAS Way: Governance and Guidance</a></li>
+                    <li data-ve-block-id="li-footer-faq-contact"><a href="faq.html" data-ve-block-id="f36baefc-c87d-44a3-be1d-b8e442ea6bc1">FAQ's</a></li>
+                    <li data-ve-block-id="li-footer-privacy-contact"><a href="privacy-policy.html" data-ve-block-id="4199050e-356b-40d4-a8ef-bac05e9ecbeb">Privacy Policy</a></li>
+                    <li data-ve-block-id="li-footer-safeguarding-contact"><a href="safeguarding-policy.html" data-ve-block-id="6defaa23-4b18-4fd4-892e-c91417407560">Safeguarding Policy</a></li>
+                    <li data-ve-block-id="li-footer-terms-contact"><a href="terms-and-conditions.html" data-ve-block-id="0126905e-0635-4f83-9428-847d035638bc">Terms and Conditions</a></li>
                 </ul>
                 <div class="static-footer-copyright">
                     <p data-ve-block-id="4f83a5ae-4f72-47ba-a8e0-3ea44236f8c2">ALL RIGHTS RESERVED © Tutors Alliance Scotland 2025</p>
@@ -189,7 +189,7 @@
                 <form id="content-form" onsubmit="return false;">
                     <div class="form-group">
                         <label for="content-type">Content Type:</label>
-                        <select id="content-type" disabled="">
+                        <select id="content-type" class="form-control" disabled="">
                             <option value="text">Text</option>
                             <option value="html">HTML</option>
                             <option value="image">Image</option>
@@ -198,22 +198,49 @@
                     </div>
                     <div class="form-group" id="text-group">
                         <label for="content-text">Text Content:</label>
-                        <textarea id="content-text" rows="4"></textarea>
+                        <textarea id="content-text" class="form-control" rows="8" placeholder="Enter your text content here..."></textarea>
+                        
+                        <!-- Button Management for Text Elements -->
+                        <div class="text-button-management">
+                            <h4>Add Button</h4>
+                            <p class="help-text">Add an aurora-style button at the end of this text element</p>
+                            
+                            <div id="text-buttons-list" class="text-buttons-list">
+                                <!-- Existing buttons will be listed here -->
+                            </div>
+                            
+                            <div class="button-form" id="new-button-form" style="display: none;">
+                                <div class="form-group">
+                                    <label for="new-button-text">Button Text:</label>
+                                    <input type="text" id="new-button-text" class="form-control" placeholder="Enter button text">
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-button-url">Button URL:</label>
+                                    <input type="url" id="new-button-url" class="form-control" placeholder="https://example.com">
+                                </div>
+                                <div class="button-form-actions">
+                                    <button type="button" id="save-new-button" class="btn btn-primary">Add Button</button>
+                                    <button type="button" id="cancel-new-button" class="btn btn-secondary">Cancel</button>
+                                </div>
+                            </div>
+                            
+                            <button type="button" id="add-text-button" class="btn btn-secondary">+ Add Button</button>
+                        </div>
                     </div>
                     <div class="form-group" id="html-group">
                         <label for="content-html">HTML Content:</label>
-                        <textarea id="content-html" rows="6"></textarea>
+                        <textarea id="content-html" class="form-control" rows="10" placeholder="Enter your HTML content here..."></textarea>
                     </div>
                     <div class="form-group" id="image-group">
                         <label for="content-image">Image URL:</label>
                         <div class="image-input-group">
-                            <input type="url" id="content-image">
+                            <input type="url" id="content-image" class="form-control" placeholder="Enter image URL or browse/upload below">
                             <button type="button" id="browse-btn" class="btn btn-secondary">Browse Images</button>
                         </div>
                         <div id="image-preview" style="display: none;"><img src="" alt="Preview" style="max-width: 200px; max-height: 200px;"></div>
                         <div class="upload-section">
                             <label for="image-upload">Or upload a new image:</label>
-                            <input type="file" id="image-upload" accept="image/*">
+                            <input type="file" id="image-upload" accept="image/*" class="form-control">
                             <button type="button" id="upload-btn" class="btn btn-secondary">Upload Image</button>
                             <div id="upload-progress" style="display: none;">
                                 <div class="progress-bar"><div class="progress-fill"></div></div>
@@ -221,14 +248,14 @@
                             </div>
                         </div>
                         <label for="image-alt">Alt Text:</label>
-                        <input type="text" id="image-alt">
+                        <input type="text" id="image-alt" class="form-control" placeholder="Describe the image for accessibility">
                     </div>
                     <div class="form-group" id="link-group">
                         <label for="link-url">Link URL:</label>
-                        <input type="url" id="link-url">
+                        <input type="url" id="link-url" class="form-control" placeholder="https://example.com">
                         <label for="link-text">Link Text:</label>
-                        <input type="text" id="link-text">
-                        <div class="form-check mt-2">
+                        <input type="text" id="link-text" class="form-control" placeholder="Enter the text to display">
+                        <div class="form-check">
                             <input type="checkbox" id="link-is-button" class="form-check-input">
                             <label for="link-is-button" class="form-check-label">Style as button</label>
                         </div>

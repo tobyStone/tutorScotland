@@ -265,6 +265,7 @@ export class OverrideEngine {
         switch (override.contentType) {
             case 'text':
                 element.textContent = override.text;
+                this.applyTextButtons(element, override.buttons);
                 console.log(`[VE-DBG] applyOverride → text [${override.targetSelector}]`, element);
                 break;
             case 'html':
@@ -292,6 +293,42 @@ export class OverrideEngine {
                 break;
             }
         }
+    }
+
+    applyTextButtons(element, buttons) {
+        if (!buttons || !Array.isArray(buttons)) return;
+
+        // Remove any existing buttons that were added by this system
+        this.removeExistingTextButtons(element);
+
+        // Add new buttons
+        buttons.forEach(button => {
+            const buttonElement = document.createElement('a');
+            buttonElement.href = button.url;
+            buttonElement.textContent = button.text;
+            buttonElement.className = BUTTON_CSS;
+            buttonElement.dataset.veTextButton = 'true';
+            buttonElement.dataset.veBlockId = this.generateUUID();
+
+            // Insert button after the text element
+            element.parentNode.insertBefore(buttonElement, element.nextSibling);
+        });
+    }
+
+    removeExistingTextButtons(element) {
+        // Find and remove any buttons that were added by this system
+        let nextSibling = element.nextElementSibling;
+        while (nextSibling && nextSibling.dataset && nextSibling.dataset.veTextButton === 'true') {
+            const toRemove = nextSibling;
+            nextSibling = nextSibling.nextElementSibling;
+            toRemove.remove();
+        }
+    }
+
+    generateUUID() {
+        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        );
     }
 
     getElementType(element) {
@@ -401,12 +438,31 @@ export class OverrideEngine {
         const clone = el.cloneNode(true);
         clone.querySelectorAll('.edit-overlay, .edit-controls, .ve-drag-handle').forEach(n => n.remove());
         switch (type) {
-            case 'text': return clone.textContent.trim();
+            case 'text':
+                // For text elements, also capture any existing text buttons
+                const textContent = clone.textContent.trim();
+                const existingButtons = this.getExistingTextButtons(el);
+                return { text: textContent, buttons: existingButtons };
             case 'html': return clone.innerHTML.trim();
             case 'image': return { src: el.src, alt: el.alt };
             case 'link': return { href: el.dataset.originalHref || el.href, text: clone.textContent.trim() };
             default: return clone.textContent.trim();
         }
+    }
+
+    getExistingTextButtons(element) {
+        const buttons = [];
+        let nextSibling = element.nextElementSibling;
+
+        while (nextSibling && nextSibling.classList && nextSibling.classList.contains('button') && nextSibling.classList.contains('aurora')) {
+            buttons.push({
+                text: nextSibling.textContent.trim(),
+                url: nextSibling.href || '#'
+            });
+            nextSibling = nextSibling.nextElementSibling;
+        }
+
+        return buttons;
     }
 }
 

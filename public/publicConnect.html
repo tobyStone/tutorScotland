@@ -243,7 +243,7 @@
                 <form id="content-form" onsubmit="return false;">
                     <div class="form-group">
                         <label for="content-type">Content Type:</label>
-                        <select id="content-type" disabled="">
+                        <select id="content-type" class="form-control" disabled="">
                             <option value="text">Text</option>
                             <option value="html">HTML</option>
                             <option value="image">Image</option>
@@ -252,22 +252,49 @@
                     </div>
                     <div class="form-group" id="text-group">
                         <label for="content-text">Text Content:</label>
-                        <textarea id="content-text" rows="4"></textarea>
+                        <textarea id="content-text" class="form-control" rows="8" placeholder="Enter your text content here..."></textarea>
+                        
+                        <!-- Button Management for Text Elements -->
+                        <div class="text-button-management">
+                            <h4>Add Button</h4>
+                            <p class="help-text">Add an aurora-style button at the end of this text element</p>
+                            
+                            <div id="text-buttons-list" class="text-buttons-list">
+                                <!-- Existing buttons will be listed here -->
+                            </div>
+                            
+                            <div class="button-form" id="new-button-form" style="display: none;">
+                                <div class="form-group">
+                                    <label for="new-button-text">Button Text:</label>
+                                    <input type="text" id="new-button-text" class="form-control" placeholder="Enter button text">
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-button-url">Button URL:</label>
+                                    <input type="url" id="new-button-url" class="form-control" placeholder="https://example.com">
+                                </div>
+                                <div class="button-form-actions">
+                                    <button type="button" id="save-new-button" class="btn btn-primary">Add Button</button>
+                                    <button type="button" id="cancel-new-button" class="btn btn-secondary">Cancel</button>
+                                </div>
+                            </div>
+                            
+                            <button type="button" id="add-text-button" class="btn btn-secondary">+ Add Button</button>
+                        </div>
                     </div>
                     <div class="form-group" id="html-group">
                         <label for="content-html">HTML Content:</label>
-                        <textarea id="content-html" rows="6"></textarea>
+                        <textarea id="content-html" class="form-control" rows="10" placeholder="Enter your HTML content here..."></textarea>
                     </div>
                     <div class="form-group" id="image-group">
                         <label for="content-image">Image URL:</label>
                         <div class="image-input-group">
-                            <input type="url" id="content-image">
+                            <input type="url" id="content-image" class="form-control" placeholder="Enter image URL or browse/upload below">
                             <button type="button" id="browse-btn" class="btn btn-secondary">Browse Images</button>
                         </div>
                         <div id="image-preview" style="display: none;"><img src="" alt="Preview" style="max-width: 200px; max-height: 200px;"></div>
                         <div class="upload-section">
                             <label for="image-upload">Or upload a new image:</label>
-                            <input type="file" id="image-upload" accept="image/*">
+                            <input type="file" id="image-upload" accept="image/*" class="form-control">
                             <button type="button" id="upload-btn" class="btn btn-secondary">Upload Image</button>
                             <div id="upload-progress" style="display: none;">
                                 <div class="progress-bar"><div class="progress-fill"></div></div>
@@ -275,14 +302,14 @@
                             </div>
                         </div>
                         <label for="image-alt">Alt Text:</label>
-                        <input type="text" id="image-alt">
+                        <input type="text" id="image-alt" class="form-control" placeholder="Describe the image for accessibility">
                     </div>
                     <div class="form-group" id="link-group">
                         <label for="link-url">Link URL:</label>
-                        <input type="url" id="link-url">
+                        <input type="url" id="link-url" class="form-control" placeholder="https://example.com">
                         <label for="link-text">Link Text:</label>
-                        <input type="text" id="link-text">
-                        <div class="form-check mt-2">
+                        <input type="text" id="link-text" class="form-control" placeholder="Enter the text to display">
+                        <div class="form-check">
                             <input type="checkbox" id="link-is-button" class="form-check-input">
                             <label for="link-is-button" class="form-check-label">Style as button</label>
                         </div>
