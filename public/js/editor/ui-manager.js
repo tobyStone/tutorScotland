@@ -362,9 +362,11 @@ export class UIManager {
         const type = this.dom.modal.querySelector('#content-type').value;
         switch(type){
             case 'text':
+                const buttons = this.getTextButtons();
+                console.log(`[VE-DBG] getFormData() - text type, buttons:`, buttons);
                 return {
                     text: this.dom.modal.querySelector('#content-text').value,
-                    buttons: this.getTextButtons()
+                    buttons: buttons
                 };
             case 'html':
                 return { text: ensureBlockIds(this.dom.modal.querySelector('#content-html').value) };
@@ -379,14 +381,17 @@ export class UIManager {
     getTextButtons() {
         const modal = this.dom.modal;
         const buttonItems = modal.querySelectorAll('.text-button-item');
+        console.log(`[VE-DBG] getTextButtons() - found ${buttonItems.length} button items:`, buttonItems);
         const buttons = [];
 
-        buttonItems.forEach(item => {
+        buttonItems.forEach((item, index) => {
             const text = item.querySelector('.button-text').textContent;
             const url = item.querySelector('.button-url').textContent;
+            console.log(`[VE-DBG] Button ${index + 1}: text="${text}", url="${url}"`);
             buttons.push({ text, url });
         });
 
+        console.log(`[VE-DBG] getTextButtons() returning:`, buttons);
         return buttons;
     }
 
