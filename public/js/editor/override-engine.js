@@ -265,7 +265,10 @@ export class OverrideEngine {
         switch (override.contentType) {
             case 'text':
                 element.textContent = override.text;
-                this.applyTextButtons(element, override.buttons);
+                // Apply buttons - check both override.buttons and override.buttons array
+                const buttons = override.buttons || [];
+                console.log(`[VE-DBG] Applying text buttons:`, buttons);
+                this.applyTextButtons(element, buttons);
                 console.log(`[VE-DBG] applyOverride → text [${override.targetSelector}]`, element);
                 break;
             case 'html':
@@ -296,13 +299,25 @@ export class OverrideEngine {
     }
 
     applyTextButtons(element, buttons) {
-        if (!buttons || !Array.isArray(buttons)) return;
+        console.log(`[VE-DBG] applyTextButtons called with:`, { element, buttons, isArray: Array.isArray(buttons) });
+
+        if (!buttons || !Array.isArray(buttons)) {
+            console.log(`[VE-DBG] No buttons to apply or invalid format`);
+            return;
+        }
+
+        if (buttons.length === 0) {
+            console.log(`[VE-DBG] Empty buttons array`);
+            return;
+        }
 
         // Remove any existing buttons that were added by this system
         this.removeExistingTextButtons(element);
 
         // Add new buttons
-        buttons.forEach(button => {
+        console.log(`[VE-DBG] Adding ${buttons.length} buttons`);
+        buttons.forEach((button, index) => {
+            console.log(`[VE-DBG] Creating button ${index + 1}:`, button);
             const buttonElement = document.createElement('a');
             buttonElement.href = button.url;
             buttonElement.textContent = button.text;
@@ -312,6 +327,7 @@ export class OverrideEngine {
 
             // Insert button after the text element
             element.parentNode.insertBefore(buttonElement, element.nextSibling);
+            console.log(`[VE-DBG] Button ${index + 1} inserted:`, buttonElement);
         });
     }
 
