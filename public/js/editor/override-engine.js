@@ -19,7 +19,22 @@ export class OverrideEngine {
         try {
             console.log(`🏁 [RACE] OverrideEngine.load() starting at ${Date.now()}`);
             const data = await apiService.loadOverrides(editorState.currentPage);
-            data.forEach(ov => this.overrides.set(ov.targetSelector, ov));
+
+            // Transform database format to expected format
+            data.forEach(ov => {
+                // Convert buttonLabel/buttonUrl to buttons array for text content
+                if (ov.contentType === 'text' && ov.buttonLabel && ov.buttonUrl) {
+                    ov.buttons = [{
+                        text: ov.buttonLabel,
+                        url: ov.buttonUrl
+                    }];
+                    console.log(`[VE-DBG] Converted button data for ${ov.targetSelector}:`, ov.buttons);
+                } else if (ov.contentType === 'text') {
+                    ov.buttons = []; // Ensure buttons array exists even if empty
+                }
+                this.overrides.set(ov.targetSelector, ov);
+            });
+
             console.log(`🔄 Loaded ${data.length} content overrides for page "${editorState.currentPage}"`);
 
             // Enhanced logging for debugging

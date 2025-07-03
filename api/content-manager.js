@@ -140,6 +140,7 @@ async function handleCreateOverride(req, res) {
             image, // For images
             href,  // For links
             isButton, // For link styling
+            buttons, // For text element buttons
             originalContent,
             overrideType = 'replace',
         } = req.body;
@@ -158,6 +159,19 @@ async function handleCreateOverride(req, res) {
             return res.status(400).json({ message: 'Missing required fields.' });
         }
 
+        // Process buttons array for text content type
+        let buttonLabel = '';
+        let buttonUrl = '';
+        if (contentType === 'text' && buttons && Array.isArray(buttons) && buttons.length > 0) {
+            // For now, take the first button (could be extended to support multiple buttons)
+            const firstButton = buttons[0];
+            if (firstButton && firstButton.text && firstButton.url) {
+                buttonLabel = firstButton.text;
+                buttonUrl = firstButton.url;
+                console.log('[handleCreateOverride] Processing button:', { buttonLabel, buttonUrl });
+            }
+        }
+
         /* ----------------------------- *
          * 2) UPDATE (id present)        *
          * ----------------------------- */
@@ -170,6 +184,8 @@ async function handleCreateOverride(req, res) {
                 text,
                 image: image || href, // Use href for links, image for images
                 isButton,
+                buttonLabel, // Add button fields
+                buttonUrl,
                 targetSelector, // Still allow selector migration if needed
                 updatedAt: new Date()
             };
@@ -206,6 +222,8 @@ async function handleCreateOverride(req, res) {
             doc.text = text ?? doc.text;
             doc.image = (image || href) ?? doc.image;
             doc.isButton = isButton ?? doc.isButton;
+            doc.buttonLabel = buttonLabel ?? doc.buttonLabel;
+            doc.buttonUrl = buttonUrl ?? doc.buttonUrl;
             // Do NOT touch originalContent
             doc.updatedAt = new Date();
             await doc.save();
@@ -221,6 +239,8 @@ async function handleCreateOverride(req, res) {
             text,
             image: image || href,
             isButton,
+            buttonLabel, // Add button fields
+            buttonUrl,
             originalContent, // Saved only on creation
             overrideType,
             isContentOverride: true,
