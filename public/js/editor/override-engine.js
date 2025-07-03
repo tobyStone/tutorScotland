@@ -3,7 +3,7 @@
 import { apiService } from './api-service.js';
 import { editorState } from './editor-state.js';
 
-const BUTTON_CSS = 'button aurora';
+const BUTTON_CSS = 'button';
 
 export class OverrideEngine {
     constructor() {
@@ -289,7 +289,7 @@ export class OverrideEngine {
                 if (a) {
                     a.href = override.image; // API stores URL in image field for compatibility
                     a.textContent = override.text;
-                    // Apply or remove aurora button styling based on isButton flag
+                    // Apply or remove button styling based on isButton flag
                     BUTTON_CSS.split(/\s+/).forEach(cls => a.classList.toggle(cls, !!override.isButton));
                     console.log(`[VE-DBG] applyOverride → link [${override.targetSelector}]`, a, `isButton: ${override.isButton}`);
                 }
@@ -470,7 +470,7 @@ export class OverrideEngine {
         const buttons = [];
         let nextSibling = element.nextElementSibling;
 
-        while (nextSibling && nextSibling.classList && nextSibling.classList.contains('button') && nextSibling.classList.contains('aurora')) {
+        while (nextSibling && nextSibling.classList && nextSibling.classList.contains('button')) {
             buttons.push({
                 text: nextSibling.textContent.trim(),
                 url: nextSibling.href || '#'

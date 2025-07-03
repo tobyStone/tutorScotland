@@ -1,7 +1,7 @@
 import { editorState } from './editor-state.js';
 import { ImageBrowser } from './features/image-browser.js';
 
-const BUTTON_CSS = 'button aurora';
+const BUTTON_CSS = 'button';
 
 function uuidv4() {
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
@@ -337,7 +337,7 @@ export class UIManager {
 
         // Find any existing buttons that are siblings after this text element
         let nextSibling = element.nextElementSibling;
-        while (nextSibling && nextSibling.classList && nextSibling.classList.contains('button') && nextSibling.classList.contains('aurora')) {
+        while (nextSibling && nextSibling.classList && nextSibling.classList.contains('button')) {
             const buttonText = nextSibling.textContent.trim();
             const buttonUrl = nextSibling.href || '#';
             this.renderTextButton(buttonText, buttonUrl);
