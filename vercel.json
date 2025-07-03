@@ -86,6 +86,10 @@
       "destination": "/api/sections.js"
     },
     {
+      "source": "/api/content-manager",
+      "destination": "/api/content-manager.js"
+    },
+    {
       "source": "/api/page",
       "destination": "/api/page.js"
     },
