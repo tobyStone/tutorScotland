@@ -389,7 +389,12 @@ export class OverrideEngine {
 
         // Handle navigation links (existing logic)
         if (context === 'nav') {
-            // ✅ FIXED: Use original href for cross-browser persistence
+            // ✅ FIXED: Use block ID for navigation links (more stable than href)
+            const blockId = el.dataset.veBlockId;
+            if (blockId) {
+                return `.main-nav a[data-ve-block-id="${blockId}"]`;
+            }
+            // Fallback to href-based selector
             const href = el.dataset.originalHref || el.getAttribute('href') || '#';
             return `.main-nav a[href="${href}"]`;
         }
