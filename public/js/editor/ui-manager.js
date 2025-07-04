@@ -190,7 +190,7 @@ export class UIManager {
             '.editable',
             'img:not(.no-edit)',
             `a.${BUTTON_CSS.replace(/\s/g, '.')}`,
-            'li:not(.no-edit):not(.main-nav li)',  // ✅ FIXED: Exclude navigation li elements to prevent duplicates
+            'li:not(.no-edit):not(.main-nav li):not(footer li)',  // ✅ FIXED: Exclude navigation and footer li elements to prevent duplicates
             'header a',  // ✅ NEW: Include header links
             'footer a',  // ✅ NEW: Include footer links
             '.main-nav a'  // ✅ NEW: Include navigation links for editing (only the <a> tags, not <li>)
