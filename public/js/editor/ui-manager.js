@@ -247,7 +247,9 @@ export class UIManager {
 
             overlay.innerHTML = `<div class="edit-controls"><button class="edit-btn">✏️ Edit</button></div>`;
             overlay.querySelector('.edit-btn').addEventListener('click', e => {
+                e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
                 this.callbacks.onEdit(el);
             });
 
@@ -281,9 +283,9 @@ export class UIManager {
 
     disableLinks() {
         document.querySelectorAll('a').forEach(a => {
-            // ✅ UPDATED: Allow header and footer links to be disabled for editing
-            // Only exclude editor UI and main navigation
-            if (a.closest('.ve-no-edit,#editor-modal,#edit-mode-toggle,.main-nav')) return;
+            // ✅ FIXED: Allow navigation links to be disabled for editing
+            // Only exclude editor UI elements, not navigation
+            if (a.closest('.ve-no-edit,#editor-modal,#edit-mode-toggle')) return;
             a.dataset.originalHref = a.href;
             a.href = 'javascript:void(0)';
         });
