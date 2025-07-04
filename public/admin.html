@@ -214,7 +214,8 @@
                             <!-- Populated dynamically -->
                         </select>
                         <small style="display:block;margin-top:4px;color:#666;font-style:italic;">
-                            Section will be moved to the selected page and admin view will switch automatically
+                            Section will be moved to the selected page and admin view will switch automatically.<br>
+                            <strong>Note:</strong> You may need to reorder sections on the target page after moving.
                         </small>
                     </label>
 
@@ -669,6 +670,17 @@
         pageSel.innerHTML      = pageOptionsHTML;
         movePageSelect.innerHTML = pageOptionsHTML;           // [MOVE-SECTION]
 
+        /* ── ✅ NEW: Handle URL parameters for deep linking ─────────────────── */
+        const params = new URLSearchParams(location.search);
+        const slugParam = params.get('slug');
+        const editSectionParam = params.get('editSection');
+        const addAfterParam = params.get('addAfter');
+
+        // If ?slug=page provided, preselect that page
+        if (slugParam && PAGES.includes(slugParam)) {
+            pageSel.value = slugParam;
+        }
+
         /* ── helper: keep 🔗 link consistent ────────────────────────────────── */
         function updatePageLink(slug) {
           if (slug === 'rolling-banner') {
@@ -676,6 +688,18 @@
           } else {
             viewPageLink.href = slug === 'index' ? '/' : `/${slug}.html`;
             viewPageLink.style.display = 'inline-block';
+
+            // ✅ NEW: Show special message when coming from visual editor
+            if (editSectionParam || addAfterParam) {
+              viewPageLink.textContent = '← Return to Page';
+              viewPageLink.style.background = '#e3f2fd';
+              viewPageLink.style.padding = '6px 12px';
+              viewPageLink.style.borderRadius = '4px';
+              viewPageLink.style.border = '1px solid #2196f3';
+              viewPageLink.style.textDecoration = 'none';
+              viewPageLink.style.color = '#1976d2';
+              viewPageLink.style.fontWeight = '500';
+            }
           }
         }
 
@@ -1011,9 +1035,76 @@
         // Wire up the add member button
         addMemberBtn.addEventListener('click', addTeamMember);
 
+        /* ── ✅ NEW: Section ordering cleanup when moving between pages ────── */
+        async function cleanupSectionOrdering(sectionId, fromPage, toPage) {
+            console.log(`[MOVE-SECTION] Cleaning up ordering: ${sectionId} from ${fromPage} to ${toPage}`);
+
+            try {
+                // Remove section from source page ordering
+                const removeResponse = await fetch('/api/content-manager?operation=remove-from-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        targetPage: fromPage,
+                        sectionId: sectionId
+                    })
+                });
+
+                if (!removeResponse.ok) {
+                    console.warn(`Failed to remove section from ${fromPage} ordering`);
+                }
+
+                // Note: We don't automatically add to target page ordering
+                // Let the user reorder manually on the target page
+                console.log(`[MOVE-SECTION] Section ordering cleanup completed`);
+
+            } catch (error) {
+                console.error('[MOVE-SECTION] Error during ordering cleanup:', error);
+                throw error;
+            }
+        }
+
         /* ── initial boot ──────────────────────────────────────────────────── */
         await loadSections();
         pageSel.dispatchEvent(new Event('change'));   // sets initial link
+
+        /* ── ✅ NEW: Handle deep linking parameters after sections are loaded ── */
+        if (editSectionParam) {
+            // Auto-edit specific section
+            console.log(`[Admin] Auto-editing section: ${editSectionParam}`);
+            const section = currentSections.find(s => s._id === editSectionParam);
+            if (section) {
+                // Simulate clicking the edit button
+                setTimeout(() => {
+                    const editBtn = document.querySelector(`button.edit[data-id="${editSectionParam}"]`);
+                    if (editBtn) {
+                        editBtn.click();
+                        console.log(`[Admin] Auto-clicked edit button for section: ${editSectionParam}`);
+                    }
+                }, 100);
+            } else {
+                console.warn(`[Admin] Section not found for auto-edit: ${editSectionParam}`);
+            }
+        } else if (addAfterParam) {
+            // Pre-configure new section to be added after specified section
+            console.log(`[Admin] Pre-configuring new section after: ${addAfterParam}`);
+            const afterSection = currentSections.find(s => s._id === addAfterParam);
+            if (afterSection) {
+                // Set the position based on the after section's position
+                const positionSelect = document.querySelector('[name="position"]');
+                if (positionSelect && afterSection.position) {
+                    positionSelect.value = afterSection.position;
+                }
+                // Focus on the heading field to start adding
+                setTimeout(() => {
+                    const headingField = document.querySelector('[name="heading"]');
+                    if (headingField) {
+                        headingField.focus();
+                        headingField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 100);
+            }
+        }
 
         // Handles form submission for both ADD and UPDATE
         addSectionForm.addEventListener('submit', async e => {
@@ -1102,6 +1193,15 @@
             // [MOVE-SECTION] If moved, switch the admin view *before* reset
             if (editId && newPage !== originalPage) {
                 console.log(`Moving section from ${originalPage} to ${newPage}`);
+
+                // ✅ NEW: Clean up section ordering when moving between pages
+                try {
+                    await cleanupSectionOrdering(editId, originalPage, newPage);
+                } catch (error) {
+                    console.warn('Failed to cleanup section ordering:', error);
+                    // Don't block the UI, just warn
+                }
+
                 pageSel.value = newPage;
                 pageSel.dispatchEvent(new Event('change'));
             }

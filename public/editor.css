@@ -831,3 +831,152 @@ body.ve-edit-active main .edit-overlay:hover {
 .edit-overlay:hover::before {
     opacity: 1;
 }
+
+/* === Enhanced Dynamic Section Overlays (Phase 1) === */
+.dyn-edit-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(200,162,200,0.08);
+    border: 2px dashed rgba(200,162,200,0.6);
+    border-radius: 8px;
+    pointer-events: auto;
+    z-index: 9980;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+body.ve-edit-active .dyn-edit-overlay {
+    opacity: 1;
+}
+
+.dyn-edit-overlay:hover {
+    background: rgba(200,162,200,0.15);
+    border-color: rgba(200,162,200,0.8);
+    box-shadow: 0 4px 12px rgba(200,162,200,0.3);
+}
+
+.dyn-edit-controls {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.dyn-edit-btn {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dyn-edit-btn.primary {
+    background: #c8a2c8;
+    color: #333;
+}
+
+.dyn-edit-btn.primary:hover {
+    background: #b891b8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.dyn-edit-btn.secondary {
+    background: #8bc34a;
+    color: white;
+}
+
+.dyn-edit-btn.secondary:hover {
+    background: #7cb342;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Tertiary button styles removed - no longer needed */
+
+/* Context label for dynamic sections */
+.dyn-edit-overlay::before {
+    content: "DYNAMIC SECTION";
+    position: absolute;
+    top: -24px;
+    left: 0;
+    background: rgba(200,162,200,0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: 10000;
+}
+
+.dyn-edit-overlay:hover::before {
+    opacity: 1;
+}
+
+/* === Responsive Design for Dynamic Section Overlays === */
+@media (max-width: 768px) {
+    .dyn-edit-controls {
+        top: 8px;
+        right: 8px;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .dyn-edit-btn {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+
+    .dyn-edit-overlay::before {
+        font-size: 9px;
+        padding: 2px 6px;
+    }
+}
+
+/* === Visual Consistency with Existing Editor === */
+/* Ensure dynamic overlays don't interfere with regular edit overlays */
+.dyn-edit-overlay + .edit-overlay,
+.edit-overlay + .dyn-edit-overlay {
+    z-index: 9981; /* Slightly higher to prevent conflicts */
+}
+
+/* Smooth transitions when switching between edit modes */
+.dyn-edit-overlay,
+.edit-overlay {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced focus states for accessibility */
+.dyn-edit-btn:focus {
+    outline: 2px solid #2196f3;
+    outline-offset: 2px;
+}
+
+/* Loading state for dynamic sections */
+.dyn-block.loading .dyn-edit-overlay {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.dyn-block.loading .dyn-edit-overlay::after {
+    content: "Loading...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+}

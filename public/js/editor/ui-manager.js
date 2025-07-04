@@ -494,4 +494,128 @@ export class UIManager {
         document.body.appendChild(n);
         setTimeout(()=>n.remove(),3000);
     }
+
+    /* ------------------------------------------------------------------ */
+    /* Enhanced Dynamic Section Overlays (Phase 1 Integration)            */
+    /* ------------------------------------------------------------------ */
+
+    addDynamicSectionOverlays() {
+        console.log('[VE] Adding dynamic section overlays...');
+        document.querySelectorAll('[data-ve-section-id]').forEach(section => {
+            if (section.querySelector(':scope > .dyn-edit-overlay')) {
+                console.log('[VE] Section already has overlay, skipping:', section.dataset.veSectionId);
+                return;
+            }
+
+            // ✅ SAFETY: Skip sections that are currently being edited in visual editor
+            if (section.dataset.veManaged === 'true') {
+                console.log('[VE] Section is managed by visual editor, skipping dynamic overlay:', section.dataset.veSectionId);
+                return;
+            }
+
+            // ✅ SAFETY: Check if section has any child elements being edited
+            const hasActiveEdits = section.querySelector('[data-ve-managed="true"]');
+            if (hasActiveEdits) {
+                console.log('[VE] Section has active visual editor edits, skipping dynamic overlay:', section.dataset.veSectionId);
+                return;
+            }
+
+            const overlay = document.createElement('div');
+            overlay.className = 'dyn-edit-overlay';
+
+            // Enhanced contextual buttons
+            const sectionId = section.dataset.veSectionId;
+            const currentPage = editorState.currentPage;
+
+            overlay.innerHTML = `
+                <div class="dyn-edit-controls">
+                    <button class="dyn-edit-btn primary" data-action="edit-content" title="Edit this section's content">
+                        ✏️ Edit Content
+                    </button>
+                    <button class="dyn-edit-btn secondary" data-action="add-after" title="Add a new section after this one">
+                        ➕ Add Section
+                    </button>
+                </div>
+            `;
+
+            overlay.addEventListener('click', e => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const action = e.target.dataset.action;
+                const adminUrl = `/admin.html?slug=${encodeURIComponent(currentPage)}`;
+
+                if (action === 'edit-content') {
+                    // Direct to specific section edit
+                    console.log(`[VE] Opening admin panel to edit section: ${sectionId}`);
+                    this.showNotification('Opening admin panel for section editing...', 'info');
+                    window.open(`${adminUrl}&editSection=${sectionId}`, '_blank');
+                } else if (action === 'add-after') {
+                    // Pre-position new section after this one
+                    console.log(`[VE] Opening admin panel to add section after: ${sectionId}`);
+                    this.showNotification('Opening admin panel to add new section...', 'info');
+                    window.open(`${adminUrl}&addAfter=${sectionId}`, '_blank');
+                }
+            });
+
+            // Ensure section is positioned for overlay
+            if (getComputedStyle(section).position === 'static') {
+                section.style.position = 'relative';
+            }
+
+            section.appendChild(overlay);
+            console.log(`[VE] Added dynamic section overlay to:`, section.dataset.veSectionId);
+        });
+    }
+
+    removeDynamicSectionOverlays() {
+        console.log('[VE] Removing dynamic section overlays...');
+        document.querySelectorAll('.dyn-edit-overlay').forEach(overlay => {
+            overlay.remove();
+        });
+    }
+
+    // ✅ NEW: Refresh editable elements after dynamic content changes
+    refreshEditableElements() {
+        if (!editorState.isEditMode) return;
+
+        console.log('[VE] Refreshing editable elements after dynamic content change...');
+
+        // ✅ SAFETY: Check for conflicts before refreshing
+        const activeEditor = editorState.activeEditor;
+        if (activeEditor && activeEditor.element) {
+            console.log('[VE] Active editor detected, deferring refresh to prevent conflicts');
+            setTimeout(() => this.refreshEditableElements(), 1000);
+            return;
+        }
+
+        // Remove existing overlays
+        this.removeOverlays();
+        this.removeDynamicSectionOverlays();
+
+        // Rescan and add overlays to new elements
+        const elements = this.scanEditableElements();
+        this.addOverlays(elements);
+        this.addDynamicSectionOverlays();
+
+        console.log(`[VE] Refreshed ${elements.length} editable elements and dynamic section overlays.`);
+    }
+
+    // ✅ NEW: Safety method to check for editing conflicts
+    hasEditingConflicts() {
+        // Check if any elements are currently being edited
+        const managedElements = document.querySelectorAll('[data-ve-managed="true"]');
+        const activeModal = document.querySelector('#editor-modal[style*="block"]');
+
+        return managedElements.length > 0 || activeModal !== null;
+    }
+
+    // ✅ NEW: Safe overlay addition with conflict detection
+    safeAddOverlays(elements) {
+        if (this.hasEditingConflicts()) {
+            console.log('[VE] Editing conflicts detected, skipping overlay addition');
+            return;
+        }
+        this.addOverlays(elements);
+    }
 }

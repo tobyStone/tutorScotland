@@ -117,10 +117,12 @@ class VisualEditor {
         if (newMode) {
             const els = this.uiManager.scanEditableElements();
             this.uiManager.addOverlays(els);
+            this.uiManager.addDynamicSectionOverlays(); // ✅ NEW: Add dynamic section overlays
             this.uiManager.disableLinks();
             sectionSorter.activate();
         } else {
             this.uiManager.removeOverlays();
+            this.uiManager.removeDynamicSectionOverlays(); // ✅ NEW: Remove dynamic section overlays
             this.uiManager.enableLinks();
             sectionSorter.deactivate();
         }
