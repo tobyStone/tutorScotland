@@ -302,8 +302,8 @@ export class UIManager {
         const { element, type, canRestore } = ed;
 
         // ✅ NEW: Get context information for visual indicators
-        const context = this.callbacks.getType === overrideEngine?.getElementType ?
-                       overrideEngine.getElementContext(element) : 'main';
+        const context = this.overrideEngine?.getElementContext ?
+                       this.overrideEngine.getElementContext(element) : 'main';
 
         // ✅ NEW: Create context-aware title and styling
         const contextLabel = this.getContextLabel(context);
