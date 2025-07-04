@@ -248,6 +248,13 @@ export class UIManager {
             overlay.innerHTML = `<div class="edit-controls"><button class="edit-btn">✏️ Edit</button></div>`;
             overlay.querySelector('.edit-btn').addEventListener('click', e => {
                 e.stopPropagation();
+
+                // ✅ DEBUG: Log element details to understand type detection issue
+                console.log(`[VE-DEBUG] Edit clicked on element:`, el);
+                console.log(`[VE-DEBUG] Element tagName: ${el.tagName}`);
+                console.log(`[VE-DEBUG] Element type detected: ${this.callbacks.getType(el)}`);
+                console.log(`[VE-DEBUG] Element context: ${this.overrideEngine?.getElementContext(el)}`);
+
                 this.callbacks.onEdit(el);
             });
 
