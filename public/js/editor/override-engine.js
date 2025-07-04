@@ -401,15 +401,14 @@ export class OverrideEngine {
 
         // ✅ NEW: Handle header and footer links with context isolation
         if ((context === 'header' || context === 'footer') && type === 'link') {
-            // ✅ FIXED: Use original href for cross-browser persistence
-            const href = el.dataset.originalHref || el.getAttribute('href') || '#';
+            // ✅ FIXED: Use block ID for footer links (same as navigation links)
             const blockId = el.dataset.veBlockId;
             if (blockId) {
-                return `${context} [data-ve-block-id="${blockId}"]`;
-            } else {
-                // Fallback to href-based selector with context
-                return `${context} a[href="${href}"]`;
+                return `${context} a[data-ve-block-id="${blockId}"]`;
             }
+            // Fallback to href-based selector with context
+            const href = el.dataset.originalHref || el.getAttribute('href') || '#';
+            return `${context} a[href="${href}"]`;
         }
 
         // ✅ FIXED: For links, prefer existing data-ve-block-id over creating new data-ve-button-id

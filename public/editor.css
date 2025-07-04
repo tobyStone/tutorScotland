@@ -40,7 +40,7 @@ body.ve-edit-active .edit-overlay:hover {
 .edit-controls {
     position: absolute;
     top: 8px;
-    right: 8px;
+    left: 8px;  /* ✅ MOVED: Edit tab now on the left side */
     z-index: 9991;
 }
 
