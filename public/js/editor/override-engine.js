@@ -389,13 +389,15 @@ export class OverrideEngine {
 
         // Handle navigation links (existing logic)
         if (context === 'nav') {
-            const href = el.getAttribute('href') || '#';
+            // ✅ FIXED: Use original href for cross-browser persistence
+            const href = el.dataset.originalHref || el.getAttribute('href') || '#';
             return `.main-nav a[href="${href}"]`;
         }
 
         // ✅ NEW: Handle header and footer links with context isolation
         if ((context === 'header' || context === 'footer') && type === 'link') {
-            const href = el.getAttribute('href') || '#';
+            // ✅ FIXED: Use original href for cross-browser persistence
+            const href = el.dataset.originalHref || el.getAttribute('href') || '#';
             const blockId = el.dataset.veBlockId;
             if (blockId) {
                 return `${context} [data-ve-block-id="${blockId}"]`;
