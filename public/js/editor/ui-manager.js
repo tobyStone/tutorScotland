@@ -192,16 +192,14 @@ export class UIManager {
             `a.${BUTTON_CSS.replace(/\s/g, '.')}`,
             'li:not(.no-edit)',  // ✅ NEW: Add list items as editable elements
             'header a',  // ✅ NEW: Include header links
-            'footer a'   // ✅ NEW: Include footer links
+            'footer a',  // ✅ NEW: Include footer links
+            '.main-nav a'  // ✅ NEW: Include navigation links for editing
         ];
         selectors.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {
                 // ✅ UPDATED: Modified exclusion logic for context-aware editing
-                // Exclude editor UI elements and navigation (but allow header/footer)
+                // Exclude editor UI elements only
                 if (el.closest('.ve-no-edit, #editor-modal, #edit-mode-toggle')) return;
-
-                // ✅ NEW: Special handling for navigation - still exclude main nav
-                if (el.closest('.main-nav')) return;
 
                 // Exclude buttons that were dynamically added by the text editing system
                 if (el.dataset.veTextButton === 'true') return;

@@ -18,10 +18,11 @@
                 // Use the DOM so we don’t accidentally mangle inline scripts/templates
                     const tmp = document.createElement('div');
                 tmp.innerHTML = rawHtml;
+                // ✅ UPDATED: Only remove data-ve-button-id, keep data-ve-block-id for navigation editing
                 tmp.querySelectorAll('[data-ve-button-id]')
                        .forEach(el => {
                              el.removeAttribute('data-ve-button-id');
-                             el.removeAttribute('data-ve-block-id');
+                             // Keep data-ve-block-id for navigation link editing
                            });
                 return tmp.innerHTML;
               };
