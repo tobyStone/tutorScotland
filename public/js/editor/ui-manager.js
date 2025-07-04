@@ -325,6 +325,20 @@ export class UIManager {
             buttonManagement.style.display = type === 'text' ? 'block' : 'none';
         }
 
+        // ✅ NEW: Hide button functionality for navigation and footer links
+        if (type === 'link' && (context === 'nav' || context === 'footer')) {
+            const buttonCheckbox = this.dom.modal.querySelector('#link-is-button');
+            if (buttonCheckbox && buttonCheckbox.parentElement) {
+                buttonCheckbox.parentElement.style.display = 'none';
+            }
+        } else if (type === 'link') {
+            // Show button functionality for main content links
+            const buttonCheckbox = this.dom.modal.querySelector('#link-is-button');
+            if (buttonCheckbox && buttonCheckbox.parentElement) {
+                buttonCheckbox.parentElement.style.display = 'block';
+            }
+        }
+
         this.fillForm(element, type);
         this.dom.modal.querySelector('#restore-btn').disabled = !canRestore;
         this.dom.modal.style.display = 'block';
@@ -427,7 +441,18 @@ export class UIManager {
             case 'image':
                 return { image: this.dom.modal.querySelector('#content-image').value, text: this.dom.modal.querySelector('#image-alt').value };
             case 'link':
-                return { href: this.dom.modal.querySelector('#link-url').value, text: this.dom.modal.querySelector('#link-text').value, isButton: this.dom.modal.querySelector('#link-is-button').checked };
+                const linkData = {
+                    href: this.dom.modal.querySelector('#link-url').value,
+                    text: this.dom.modal.querySelector('#link-text').value
+                };
+
+                // ✅ NEW: Only include isButton for main content links, not nav/footer
+                const buttonCheckbox = this.dom.modal.querySelector('#link-is-button');
+                if (buttonCheckbox && buttonCheckbox.parentElement.style.display !== 'none') {
+                    linkData.isButton = buttonCheckbox.checked;
+                }
+
+                return linkData;
             default: return {};
         }
     }
