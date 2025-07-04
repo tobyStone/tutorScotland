@@ -36,6 +36,7 @@ module.exports = async (req, res) => {
         /* ---------- NEW: section order endpoints ---------- */
         if (method === 'GET'  && operation === 'get-order') return getOrder(req, res);
         if (method === 'POST' && operation === 'set-order') return setOrder(req, res);
+        if (method === 'POST' && operation === 'remove-from-order') return removeFromOrder(req, res);
 
         // GET Operations
         if (method === 'GET') {
@@ -535,6 +536,73 @@ async function setOrder(req, res) {
     } catch (error) {
         console.error('Set Order Error:', error);
         return res.status(500).json({ message: 'Error saving section order' });
+    }
+}
+
+async function removeFromOrder(req, res) {
+    try {
+        const { targetPage, sectionId } = req.body;
+
+        if (!targetPage || !sectionId) {
+            return res.status(400).json({
+                message: 'targetPage and sectionId are required'
+            });
+        }
+
+        console.log('Removing section from order:', { targetPage, sectionId });
+
+        // Find the current order document
+        const orderDoc = await Order.findOne({ page: targetPage });
+
+        if (!orderDoc || !orderDoc.order) {
+            console.log('No existing order found for page:', targetPage);
+            return res.status(200).json({
+                message: 'No existing order to modify',
+                page: targetPage
+            });
+        }
+
+        // Remove the section ID from the order array
+        const originalOrder = orderDoc.order;
+        const newOrder = originalOrder.filter(id => id !== sectionId);
+
+        if (originalOrder.length === newOrder.length) {
+            console.log('Section ID not found in order:', sectionId);
+            return res.status(200).json({
+                message: 'Section not found in order',
+                page: targetPage,
+                order: originalOrder
+            });
+        }
+
+        // Update the order
+        const updatedDoc = await Order.findOneAndUpdate(
+            { page: targetPage },
+            {
+                order: newOrder,
+                updatedAt: new Date()
+            },
+            { new: true }
+        );
+
+        console.log(`Removed section ${sectionId} from ${targetPage} order:`, {
+            before: originalOrder.length,
+            after: newOrder.length
+        });
+
+        res.status(200).json({
+            message: 'Section removed from order successfully',
+            page: targetPage,
+            removedSection: sectionId,
+            order: updatedDoc.order
+        });
+
+    } catch (error) {
+        console.error('Error removing section from order:', error);
+        res.status(500).json({
+            message: 'Failed to remove section from order',
+            error: error.message
+        });
     }
 }
 

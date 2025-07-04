@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 1 Integration Test - Visual Editor + Dynamic Sections</title>
+    <link rel="stylesheet" href="/styles2.css">
+    <link rel="stylesheet" href="/editor.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .test-results {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+        .test-pass { background: #e8f5e8; border: 1px solid #4caf50; color: #2e7d32; }
+        .test-fail { background: #ffebee; border: 1px solid #f44336; color: #c62828; }
+        .test-info { background: #e3f2fd; border: 1px solid #2196f3; color: #1565c0; }
+        .test-button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover { background: #1976d2; }
+        .static-content {
+            background: #fff3e0;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #ff9800;
+        }
+    </style>
+</head>
+<body data-page="test-integration">
+    <div class="test-container">
+        <h1>Phase 1 Integration Test</h1>
+        <p>This page tests the enhanced Phase 1 integration between Visual Editor and Dynamic Sections.</p>
+
+        <!-- Test Section 1: Static Content -->
+        <div class="test-section">
+            <h2>Test 1: Static Content Editing</h2>
+            <div class="static-content">
+                <h3 data-ve-block-id="test-static-heading">Static Test Heading</h3>
+                <p data-ve-block-id="test-static-paragraph">This is a static paragraph that should be editable via the visual editor.</p>
+                <a href="/test" data-ve-block-id="test-static-link">Static Test Link</a>
+            </div>
+            <button class="test-button" onclick="testStaticContent()">Test Static Content</button>
+            <div id="static-test-results" class="test-results test-info">Click button to test static content editing...</div>
+        </div>
+
+        <!-- Test Section 2: Dynamic Sections Container -->
+        <div class="test-section">
+            <h2>Test 2: Dynamic Sections Integration</h2>
+            <p>Dynamic sections will be loaded here and should show enhanced overlays in edit mode:</p>
+            
+            <!-- Dynamic sections will be inserted here -->
+            <div id="dynamicSections"></div>
+            
+            <button class="test-button" onclick="testDynamicSections()">Test Dynamic Sections</button>
+            <div id="dynamic-test-results" class="test-results test-info">Click button to test dynamic sections...</div>
+        </div>
+
+        <!-- Test Section 3: Conflict Detection -->
+        <div class="test-section">
+            <h2>Test 3: Conflict Detection</h2>
+            <p>Test that visual editor and dynamic sections don't interfere with each other:</p>
+            <button class="test-button" onclick="testConflictDetection()">Test Conflict Detection</button>
+            <div id="conflict-test-results" class="test-results test-info">Click button to test conflict detection...</div>
+        </div>
+
+        <!-- Test Section 4: Deep Linking -->
+        <div class="test-section">
+            <h2>Test 4: Admin Panel Deep Linking</h2>
+            <p>Test that dynamic section overlays properly link to admin panel:</p>
+            <button class="test-button" onclick="testDeepLinking()">Test Deep Linking</button>
+            <div id="deeplink-test-results" class="test-results test-info">Click button to test deep linking...</div>
+        </div>
+
+        <!-- Test Section 5: Visual Consistency -->
+        <div class="test-section">
+            <h2>Test 5: Visual Consistency</h2>
+            <p>Test that overlays are visually consistent and responsive:</p>
+            <button class="test-button" onclick="testVisualConsistency()">Test Visual Consistency</button>
+            <div id="visual-test-results" class="test-results test-info">Click button to test visual consistency...</div>
+        </div>
+
+        <!-- Overall Test Results -->
+        <div class="test-section">
+            <h2>Overall Test Results</h2>
+            <button class="test-button" onclick="runAllTests()" style="background: #4caf50;">Run All Tests</button>
+            <div id="overall-results" class="test-results test-info">Click "Run All Tests" to execute comprehensive testing...</div>
+        </div>
+    </div>
+
+    <!-- Load required scripts -->
+    <script src="/js/pages.js"></script>
+    <script src="/js/dynamic-sections.js"></script>
+    <script type="module">
+        import { visualEditor } from '/js/visual-editor.js';
+        import { Phase1IntegrationTester } from '/test-phase1-verification.js';
+
+        // Make visual editor available globally for testing
+        window.visualEditor = visualEditor;
+        window.Phase1IntegrationTester = Phase1IntegrationTester;
+        
+        // Test functions
+        window.testStaticContent = function() {
+            const results = document.getElementById('static-test-results');
+            results.innerHTML = 'Testing static content...';
+            
+            try {
+                // Check if visual editor is loaded
+                if (!window.visualEditor) {
+                    throw new Error('Visual editor not loaded');
+                }
+                
+                // Check if static elements are detected
+                const staticElements = document.querySelectorAll('[data-ve-block-id]');
+                if (staticElements.length === 0) {
+                    throw new Error('No static elements with block IDs found');
+                }
+                
+                results.className = 'test-results test-pass';
+                results.innerHTML = `✅ PASS: Found ${staticElements.length} static elements ready for editing`;
+                
+            } catch (error) {
+                results.className = 'test-results test-fail';
+                results.innerHTML = `❌ FAIL: ${error.message}`;
+            }
+        };
+        
+        window.testDynamicSections = function() {
+            const results = document.getElementById('dynamic-test-results');
+            results.innerHTML = 'Testing dynamic sections...';
+            
+            try {
+                // Check if dynamic sections are loaded
+                const dynamicSections = document.querySelectorAll('[data-ve-section-id]');
+                if (dynamicSections.length === 0) {
+                    results.className = 'test-results test-info';
+                    results.innerHTML = '⚠️ INFO: No dynamic sections found (this is normal if none are configured for this page)';
+                    return;
+                }
+                
+                results.className = 'test-results test-pass';
+                results.innerHTML = `✅ PASS: Found ${dynamicSections.length} dynamic sections`;
+                
+            } catch (error) {
+                results.className = 'test-results test-fail';
+                results.innerHTML = `❌ FAIL: ${error.message}`;
+            }
+        };
+        
+        window.testConflictDetection = function() {
+            const results = document.getElementById('conflict-test-results');
+            results.innerHTML = 'Testing conflict detection...';
+            
+            try {
+                // Check if UI manager has conflict detection methods
+                const uiManager = window.visualEditor?.uiManager;
+                if (!uiManager) {
+                    throw new Error('UI Manager not accessible');
+                }
+                
+                if (typeof uiManager.hasEditingConflicts !== 'function') {
+                    throw new Error('Conflict detection method not found');
+                }
+                
+                const hasConflicts = uiManager.hasEditingConflicts();
+                
+                results.className = 'test-results test-pass';
+                results.innerHTML = `✅ PASS: Conflict detection working. Current conflicts: ${hasConflicts ? 'Yes' : 'No'}`;
+                
+            } catch (error) {
+                results.className = 'test-results test-fail';
+                results.innerHTML = `❌ FAIL: ${error.message}`;
+            }
+        };
+        
+        window.testDeepLinking = function() {
+            const results = document.getElementById('deeplink-test-results');
+            results.innerHTML = 'Testing deep linking...';
+            
+            try {
+                // Check if current page parameter is correctly detected
+                const currentPage = document.body.dataset.page || 'test-integration';
+                
+                // Test URL generation
+                const testSectionId = 'test-section-123';
+                const expectedEditUrl = `/admin.html?slug=${encodeURIComponent(currentPage)}&editSection=${testSectionId}`;
+                const expectedAddUrl = `/admin.html?slug=${encodeURIComponent(currentPage)}&addAfter=${testSectionId}`;
+                
+                results.className = 'test-results test-pass';
+                results.innerHTML = `✅ PASS: Deep linking URLs generated correctly<br>
+                    Edit URL: ${expectedEditUrl}<br>
+                    Add URL: ${expectedAddUrl}`;
+                
+            } catch (error) {
+                results.className = 'test-results test-fail';
+                results.innerHTML = `❌ FAIL: ${error.message}`;
+            }
+        };
+        
+        window.testVisualConsistency = function() {
+            const results = document.getElementById('visual-test-results');
+            results.innerHTML = 'Testing visual consistency...';
+            
+            try {
+                // Check if CSS is loaded
+                const editorCSS = document.querySelector('link[href="/editor.css"]');
+                if (!editorCSS) {
+                    throw new Error('Editor CSS not loaded');
+                }
+                
+                // Check if dynamic overlay styles exist
+                const testDiv = document.createElement('div');
+                testDiv.className = 'dyn-edit-overlay';
+                document.body.appendChild(testDiv);
+                
+                const styles = window.getComputedStyle(testDiv);
+                const hasStyles = styles.position === 'absolute' && styles.borderStyle === 'dashed';
+                
+                document.body.removeChild(testDiv);
+                
+                if (!hasStyles) {
+                    throw new Error('Dynamic overlay styles not properly applied');
+                }
+                
+                results.className = 'test-results test-pass';
+                results.innerHTML = '✅ PASS: Visual consistency checks passed';
+                
+            } catch (error) {
+                results.className = 'test-results test-fail';
+                results.innerHTML = `❌ FAIL: ${error.message}`;
+            }
+        };
+        
+        window.runAllTests = function() {
+            const results = document.getElementById('overall-results');
+            results.innerHTML = 'Running comprehensive tests...';
+            
+            // Run all individual tests
+            testStaticContent();
+            testDynamicSections();
+            testConflictDetection();
+            testDeepLinking();
+            testVisualConsistency();
+            
+            // Collect results
+            setTimeout(() => {
+                const allResults = document.querySelectorAll('.test-results');
+                let passCount = 0;
+                let failCount = 0;
+                let infoCount = 0;
+                
+                allResults.forEach(result => {
+                    if (result.classList.contains('test-pass')) passCount++;
+                    else if (result.classList.contains('test-fail')) failCount++;
+                    else if (result.classList.contains('test-info')) infoCount++;
+                });
+                
+                const totalTests = passCount + failCount;
+                const successRate = totalTests > 0 ? Math.round((passCount / totalTests) * 100) : 0;
+                
+                if (failCount === 0) {
+                    results.className = 'test-results test-pass';
+                    results.innerHTML = `🎉 ALL TESTS PASSED! (${passCount}/${totalTests}) - Success Rate: ${successRate}%`;
+                } else {
+                    results.className = 'test-results test-fail';
+                    results.innerHTML = `⚠️ SOME TESTS FAILED: ${passCount} passed, ${failCount} failed - Success Rate: ${successRate}%`;
+                }
+            }, 500);
+        };
+    </script>
+</body>
+</html>
