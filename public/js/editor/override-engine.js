@@ -364,13 +364,6 @@ export class OverrideEngine {
 
     getElementType(element) {
         const tagName = element.tagName.toLowerCase();
-
-        // ✅ DEBUG: Log element details for troubleshooting
-        console.log(`[VE-DEBUG] getElementType called on:`, element);
-        console.log(`[VE-DEBUG] tagName: ${tagName}`);
-        console.log(`[VE-DEBUG] element.href: ${element.href}`);
-        console.log(`[VE-DEBUG] element.textContent: "${element.textContent?.substring(0, 50)}"`);
-
         if (tagName === 'img') return 'image';
         if (tagName === 'a') return 'link';
         // ✅ FIXED: All text-based elements should be treated as 'text', not 'html'

@@ -190,10 +190,10 @@ export class UIManager {
             '.editable',
             'img:not(.no-edit)',
             `a.${BUTTON_CSS.replace(/\s/g, '.')}`,
-            'li:not(.no-edit)',  // ✅ NEW: Add list items as editable elements
+            'li:not(.no-edit):not(.main-nav li)',  // ✅ FIXED: Exclude navigation li elements to prevent duplicates
             'header a',  // ✅ NEW: Include header links
             'footer a',  // ✅ NEW: Include footer links
-            '.main-nav a'  // ✅ NEW: Include navigation links for editing
+            '.main-nav a'  // ✅ NEW: Include navigation links for editing (only the <a> tags, not <li>)
         ];
         selectors.forEach(sel => {
             document.querySelectorAll(sel).forEach(el => {
@@ -248,13 +248,6 @@ export class UIManager {
             overlay.innerHTML = `<div class="edit-controls"><button class="edit-btn">✏️ Edit</button></div>`;
             overlay.querySelector('.edit-btn').addEventListener('click', e => {
                 e.stopPropagation();
-
-                // ✅ DEBUG: Log element details to understand type detection issue
-                console.log(`[VE-DEBUG] Edit clicked on element:`, el);
-                console.log(`[VE-DEBUG] Element tagName: ${el.tagName}`);
-                console.log(`[VE-DEBUG] Element type detected: ${this.callbacks.getType(el)}`);
-                console.log(`[VE-DEBUG] Element context: ${this.overrideEngine?.getElementContext(el)}`);
-
                 this.callbacks.onEdit(el);
             });
 
