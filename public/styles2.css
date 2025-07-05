@@ -872,6 +872,13 @@ input[type="reset"] {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
+/* Ensure two-column layout images maintain proper sizing */
+.dyn-block.two-col-content img,
+.two-col-content.dyn-block img {
+    max-width: 260px !important;
+    border-radius: 1rem !important;
+}
+
 /* Style the dynamic section headings */
 .dyn-block h2 {
     color: #0057B7;
@@ -2225,6 +2232,13 @@ header h1 {
     margin: 0 auto 1.5rem auto;
     border-radius: 0.5rem;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Ensure two-column layout images maintain proper sizing (duplicate rule for specificity) */
+.dyn-block.two-col-content img,
+.two-col-content.dyn-block img {
+    max-width: 260px !important;
+    border-radius: 1rem !important;
 }
 
 .dyn-block h2 {
