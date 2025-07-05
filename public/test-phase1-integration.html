@@ -111,12 +111,13 @@
     <!-- Load required scripts -->
     <script src="/js/pages.js"></script>
     <script src="/js/dynamic-sections.js"></script>
+    <script type="module" src="/js/visual-editor-v2.js?v=20250101-CACHE-BUST&t=1735747800" defer=""></script>
     <script type="module">
-        import { visualEditor } from '/js/visual-editor.js';
+        // Note: visual-editor.js is deprecated, using global window.visualEditor from visual-editor-v2.js instead
         import { Phase1IntegrationTester } from '/test-phase1-verification.js';
 
-        // Make visual editor available globally for testing
-        window.visualEditor = visualEditor;
+        // Visual editor is already available globally from visual-editor-v2.js
+        // window.visualEditor is set by visual-editor-v2.js
         window.Phase1IntegrationTester = Phase1IntegrationTester;
         
         // Test functions
