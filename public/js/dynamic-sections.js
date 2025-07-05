@@ -370,18 +370,23 @@ function createDynamicSectionElement(section, index) {
 
     // Handle team layout
     if (section.layout === 'team') {
-        article.className = 'team-grid fade-in-section';
-        article.style.transitionDelay = `${index * 0.1}s`;
-        article.setAttribute('role', 'region');
-        article.setAttribute('aria-label', 'Team Members');
-        article.dataset.veSectionId = section._id || slugify(section.heading);
+        // Create the outer wrapper with strive-overlay-card styling to match static team sections
+        const teamWrapper = document.createElement('div');
+        teamWrapper.className = 'strive-overlay-card fade-in-section';
+        teamWrapper.style.transitionDelay = `${index * 0.1}s`;
+        teamWrapper.dataset.veSectionId = section._id || slugify(section.heading);
 
         // Add anchor ID for navigation linking
         if (section.navAnchor) {
-            article.id = section.navAnchor;  // ✅ ALWAYS use server-side anchor
+            teamWrapper.id = section.navAnchor;  // ✅ ALWAYS use server-side anchor
         } else if (section.heading) {
-            article.id = slugify(section.heading);  // fallback for legacy rows
+            teamWrapper.id = slugify(section.heading);  // fallback for legacy rows
         }
+
+        // Create the inner article for the team content
+        article.className = 'team-grid';
+        article.setAttribute('role', 'region');
+        article.setAttribute('aria-label', 'Team Members');
 
         if (section.heading) {
             const heading = document.createElement('h2');
@@ -420,7 +425,10 @@ function createDynamicSectionElement(section, index) {
             article.insertAdjacentHTML('beforeend', buttonHtml(section));
         }
 
-        return article;
+        // Wrap the article in the styled container
+        teamWrapper.appendChild(article);
+
+        return teamWrapper;
     }
 
     // For non-team sections, use two-col-content class to match about section styling
