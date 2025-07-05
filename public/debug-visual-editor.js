@@ -128,22 +128,24 @@ async function debugVisualEditor() {
     return results;
 }
 
-// Auto-run diagnostics only for admin users
-setTimeout(async () => {
-    try {
-        // Check if user is admin before running diagnostics
-        const response = await fetch('/api/protected');
-        if (response.ok) {
-            console.log('🚀 [DEBUG] Auto-running visual editor diagnostics for admin user...');
-            window.debugVisualEditor = debugVisualEditor;
-            debugVisualEditor();
-        } else {
-            console.log('🔒 [DEBUG] Debug script loaded but user is not admin - diagnostics skipped');
-        }
-    } catch (error) {
-        console.log('🔒 [DEBUG] Debug script loaded but admin check failed - diagnostics skipped');
-    }
-}, 3000);
+// Auto-run diagnostics only in development or when explicitly enabled
+// Check URL parameters or localStorage for debug flag
+const urlParams = new URLSearchParams(window.location.search);
+const debugEnabled = urlParams.has('debug') || localStorage.getItem('ve-debug-enabled') === 'true';
+
+if (debugEnabled) {
+    setTimeout(async () => {
+        console.log('🚀 [DEBUG] Auto-running visual editor diagnostics (debug mode enabled)...');
+        window.debugVisualEditor = debugVisualEditor;
+        debugVisualEditor();
+    }, 3000);
+} else {
+    // Silent mode - only make function available, don't auto-run
+    console.log('🔍 [DEBUG] Visual editor debug script loaded. Use debugVisualEditor() to run diagnostics or add ?debug to URL for auto-run.');
+}
+
+// Always make the debug function available globally
+window.debugVisualEditor = debugVisualEditor;
 
 // Make available globally
 if (typeof window !== 'undefined') {
