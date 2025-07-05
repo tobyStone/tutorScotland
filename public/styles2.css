@@ -2311,13 +2311,13 @@ header h1 {
   .strive-overlay-card{
       max-width:92vw;       /* same optical margin you already use */
   }
-    /* 💡 1. Drop the nested-flex that collapses */
-    .team-members {
+    /* 💡 1. Drop the nested-flex that collapses - only for static team sections */
+    .team-members[style*="display: flex"] {
         display: block !important; /* stack cards top-to-bottom        */
     }
 
-    /* 💡 2. Let each card take the full line    */
-    .team-member {
+    /* 💡 2. Let each card take the full line - only for static team sections */
+    .team-members[style*="display: flex"] .team-member {
         flex: none !important; /* cancel 1 1 300px                 */
         width: 100%;
         max-width: 320px; /* keeps the desktop look           */
