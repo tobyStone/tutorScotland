@@ -507,6 +507,14 @@ export class UIManager {
                 return;
             }
 
+            // ✅ RESTRICTION: Only add overlays to dynamic sections (not static sections)
+            // Dynamic sections are inside dynamic-section-container elements
+            const isDynamicSection = section.closest('.dynamic-section-container');
+            if (!isDynamicSection) {
+                console.log('[VE] Section is static, skipping dynamic overlay:', section.dataset.veSectionId);
+                return;
+            }
+
             // ✅ SAFETY: Skip sections that are currently being edited in visual editor
             if (section.dataset.veManaged === 'true') {
                 console.log('[VE] Section is managed by visual editor, skipping dynamic overlay:', section.dataset.veSectionId);
@@ -543,18 +551,20 @@ export class UIManager {
                 e.stopPropagation();
 
                 const action = e.target.dataset.action;
-                const adminUrl = `/admin.html?slug=${encodeURIComponent(currentPage)}`;
+                let adminUrl = `/admin.html?slug=${encodeURIComponent(currentPage)}`;
 
                 if (action === 'edit-content') {
-                    // Direct to specific section edit
+                    // ✅ Direct to specific section edit with section ID
+                    adminUrl += `&editSection=${encodeURIComponent(sectionId)}`;
                     console.log(`[VE] Opening admin panel to edit section: ${sectionId}`);
                     this.showNotification('Opening admin panel for section editing...', 'info');
-                    window.open(`${adminUrl}&editSection=${sectionId}`, '_blank');
+                    window.open(adminUrl, '_blank');
                 } else if (action === 'add-after') {
-                    // Pre-position new section after this one
+                    // ✅ Pre-position new section after this one
+                    adminUrl += `&addAfter=${encodeURIComponent(sectionId)}`;
                     console.log(`[VE] Opening admin panel to add section after: ${sectionId}`);
                     this.showNotification('Opening admin panel to add new section...', 'info');
-                    window.open(`${adminUrl}&addAfter=${sectionId}`, '_blank');
+                    window.open(adminUrl, '_blank');
                 }
             });
 
