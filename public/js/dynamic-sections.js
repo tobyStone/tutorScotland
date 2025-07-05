@@ -112,7 +112,16 @@ function loadDynamicSections() {
                 // Add sections to their respective containers
                 if (topSections.length > 0) {
                     topSections.forEach((s, index) => {
-                        topContainer.appendChild(createDynamicSectionElement(s, index));
+                        const sectionElement = createDynamicSectionElement(s, index);
+                        // Only wrap non-team sections in dyn-block
+                        if (s.layout === 'team') {
+                            topContainer.appendChild(sectionElement);
+                        } else {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'dyn-block';
+                            wrapper.appendChild(sectionElement);
+                            topContainer.appendChild(wrapper);
+                        }
                     });
                     topContainer.style.display = 'block';
                     const topSeparator = document.querySelector('.dynamic-sections-separator-top');
@@ -125,7 +134,16 @@ function loadDynamicSections() {
 
                 if (middleSections.length > 0) {
                     middleSections.forEach((s, index) => {
-                        middleContainer.appendChild(createDynamicSectionElement(s, index));
+                        const sectionElement = createDynamicSectionElement(s, index);
+                        // Only wrap non-team sections in dyn-block
+                        if (s.layout === 'team') {
+                            middleContainer.appendChild(sectionElement);
+                        } else {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'dyn-block';
+                            wrapper.appendChild(sectionElement);
+                            middleContainer.appendChild(wrapper);
+                        }
                     });
                     middleContainer.style.display = 'block';
                     const middleSeparator = document.querySelector('.dynamic-sections-separator-middle');
@@ -138,7 +156,16 @@ function loadDynamicSections() {
 
                 if (bottomSections.length > 0) {
                     bottomSections.forEach((s, index) => {
-                        bottomContainer.appendChild(createDynamicSectionElement(s, index));
+                        const sectionElement = createDynamicSectionElement(s, index);
+                        // Only wrap non-team sections in dyn-block
+                        if (s.layout === 'team') {
+                            bottomContainer.appendChild(sectionElement);
+                        } else {
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'dyn-block';
+                            wrapper.appendChild(sectionElement);
+                            bottomContainer.appendChild(wrapper);
+                        }
                     });
                     bottomContainer.style.display = 'block';
                     const bottomSeparator = document.querySelector('.dynamic-sections-separator');
@@ -332,9 +359,6 @@ function createPositionContainer(position) {
  */
 function createDynamicSectionElement(section, index) {
     const article = document.createElement('article');
-    // Use two-col-content class to match about section styling
-    article.className = 'two-col-content fade-in-section';
-    article.style.transitionDelay = `${index * 0.1}s`;
     article.dataset.veSectionId = section._id || slugify(section.heading);
 
     // Add anchor ID for navigation linking
@@ -346,13 +370,23 @@ function createDynamicSectionElement(section, index) {
 
     // Handle team layout
     if (section.layout === 'team') {
-        article.classList.add('team-grid');
+        article.className = 'team-grid fade-in-section';
+        article.style.transitionDelay = `${index * 0.1}s`;
         article.setAttribute('role', 'region');
         article.setAttribute('aria-label', 'Team Members');
+        article.dataset.veSectionId = section._id || slugify(section.heading);
+
+        // Add anchor ID for navigation linking
+        if (section.navAnchor) {
+            article.id = section.navAnchor;  // ✅ ALWAYS use server-side anchor
+        } else if (section.heading) {
+            article.id = slugify(section.heading);  // fallback for legacy rows
+        }
 
         if (section.heading) {
             const heading = document.createElement('h2');
             heading.textContent = section.heading;
+            heading.style.cssText = 'color: #0057B7; text-align: center; margin-bottom: 1.5rem; font-size: 1.8rem;';
             article.appendChild(heading);
         }
 
@@ -372,7 +406,6 @@ function createDynamicSectionElement(section, index) {
                     <div class="tm-content">
                         <p class="tm-bio">${m.bio}</p>
                         ${m.quote ? `<p><span class="tm-quote">${m.quote}</span></p>` : ''}
-
                     </div>
                 </div>
             `).join('');
@@ -389,6 +422,10 @@ function createDynamicSectionElement(section, index) {
 
         return article;
     }
+
+    // For non-team sections, use two-col-content class to match about section styling
+    article.className = 'two-col-content fade-in-section';
+    article.style.transitionDelay = `${index * 0.1}s`;
 
     // Image handling is now done in the two-column structure below
 
