@@ -230,6 +230,14 @@ export class UIManager {
         elements.forEach((el, index) => {
             const type = this.callbacks.getType(el);
             console.log(`[VE] Element ${index}: type=${type}, tagName=${el.tagName}, element:`, el);
+
+            // ✅ SKIP: Don't add static overlays to dynamic sections - they have their own overlays
+            const isDynamicSection = el.closest('.dynamic-section-container');
+            if (isDynamicSection && el.hasAttribute('data-ve-section-id')) {
+                console.log(`[VE] Element ${index}: is dynamic section, skipping static overlay (has dedicated dynamic overlay)`);
+                return;
+            }
+
             const target = this.getOverlayMount(el, type);
             if (target.querySelector(':scope > .edit-overlay')) {
                 console.log(`[VE] Element ${index}: already has overlay, skipping`);

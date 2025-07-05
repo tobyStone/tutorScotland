@@ -857,8 +857,9 @@ body.ve-edit-active .dyn-edit-overlay {
 
 .dyn-edit-controls {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
@@ -926,8 +927,7 @@ body.ve-edit-active .dyn-edit-overlay {
 /* === Responsive Design for Dynamic Section Overlays === */
 @media (max-width: 768px) {
     .dyn-edit-controls {
-        top: 8px;
-        right: 8px;
+        /* Keep centered positioning on mobile */
         flex-direction: column;
         gap: 4px;
     }
