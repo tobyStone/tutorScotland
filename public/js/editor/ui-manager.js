@@ -201,6 +201,10 @@ export class UIManager {
                 // Exclude editor UI elements only
                 if (el.closest('.ve-no-edit, #editor-modal, #edit-mode-toggle')) return;
 
+                // ✅ CRITICAL FIX: Exclude ALL elements inside dynamic sections from static editing
+                // This prevents the static editor from interfering with dynamic content
+                if (el.closest('.dynamic-section-container')) return;
+
                 // Exclude buttons that were dynamically added by the text editing system
                 if (el.dataset.veTextButton === 'true') return;
                 elements.add(el);
@@ -227,7 +231,7 @@ export class UIManager {
 
     addOverlays(elements) {
         console.log(`[VE] addOverlays called with ${elements.length} elements`);
-        elements.forEach((el, index) => {
+        elements.forEach((el) => {
             const type = this.callbacks.getType(el);
 
             // ✅ SKIP: Don't add static overlays to dynamic sections - they have their own overlays
@@ -553,26 +557,30 @@ export class UIManager {
                 </div>
             `;
 
-            overlay.addEventListener('click', e => {
+            // ✅ FIX: Attach event listeners to individual buttons, not the overlay
+            const editBtn = overlay.querySelector('[data-action="edit-content"]');
+            const addBtn = overlay.querySelector('[data-action="add-after"]');
+
+            editBtn.addEventListener('click', e => {
                 e.preventDefault();
                 e.stopPropagation();
 
-                const action = e.target.dataset.action;
                 let adminUrl = `/admin.html?slug=${encodeURIComponent(currentPage)}`;
+                adminUrl += `&editSection=${encodeURIComponent(sectionId)}`;
+                console.log(`[VE] Opening admin panel to edit section: ${sectionId}`);
+                this.showNotification('Opening admin panel for section editing...', 'info');
+                window.open(adminUrl, '_blank');
+            });
 
-                if (action === 'edit-content') {
-                    // ✅ Direct to specific section edit with section ID
-                    adminUrl += `&editSection=${encodeURIComponent(sectionId)}`;
-                    console.log(`[VE] Opening admin panel to edit section: ${sectionId}`);
-                    this.showNotification('Opening admin panel for section editing...', 'info');
-                    window.open(adminUrl, '_blank');
-                } else if (action === 'add-after') {
-                    // ✅ Pre-position new section after this one
-                    adminUrl += `&addAfter=${encodeURIComponent(sectionId)}`;
-                    console.log(`[VE] Opening admin panel to add section after: ${sectionId}`);
-                    this.showNotification('Opening admin panel to add new section...', 'info');
-                    window.open(adminUrl, '_blank');
-                }
+            addBtn.addEventListener('click', e => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                let adminUrl = `/admin.html?slug=${encodeURIComponent(currentPage)}`;
+                adminUrl += `&addAfter=${encodeURIComponent(sectionId)}`;
+                console.log(`[VE] Opening admin panel to add section after: ${sectionId}`);
+                this.showNotification('Opening admin panel to add new section...', 'info');
+                window.open(adminUrl, '_blank');
             });
 
             // Ensure section is positioned for overlay
