@@ -332,7 +332,8 @@ function createPositionContainer(position) {
  */
 function createDynamicSectionElement(section, index) {
     const article = document.createElement('article');
-    article.className = 'dyn-block fade-in-on-scroll';
+    // Use two-col-content class to match about section styling
+    article.className = 'two-col-content fade-in-section';
     article.style.transitionDelay = `${index * 0.1}s`;
     article.dataset.veSectionId = section._id || slugify(section.heading);
 
@@ -389,61 +390,69 @@ function createDynamicSectionElement(section, index) {
         return article;
     }
 
-    // Add image if available
-    if (section.image) {
-        // ✅ FIXED: Use stable block ID from database, generate only if missing
-        const imageBlockId = section.imageBlockId || uuidv4();
-        // Check for an editor-managed image with this block ID
-        const existingManagedImage = document.querySelector(`[data-ve-block-id="${imageBlockId}"][data-ve-managed="true"]`);
-        if (!existingManagedImage) {
-            article.insertAdjacentHTML(
-                'beforeend',
-                `<div class="dyn-image-container">
-                    <img src="${section.image}"
-                         alt="${section.heading || 'Section image'}"
-                         loading="lazy"
-                         data-ve-block-id="${imageBlockId}">
-                 </div>`
-            );
-        } else {
-            console.log(`[VE Integration] Preserving editor-managed image for block ID: ${imageBlockId}`);
-        }
-    }
+    // Image handling is now done in the two-column structure below
 
-    // Add heading (use stable block ID from database)
+    // Create two-column structure to match about section
+    const leftColumn = document.createElement('div');
+    const rightColumn = document.createElement('div');
+
+    // Add heading to left column (use stable block ID from database)
     const headingBlockId = section.headingBlockId || uuidv4();
     const existingManagedHeading = document.querySelector(`[data-ve-block-id="${headingBlockId}"][data-ve-managed="true"]`);
     if (!existingManagedHeading) {
         const heading = document.createElement('h2');
         heading.textContent = section.heading;
         heading.setAttribute('data-ve-block-id', headingBlockId);
-        article.appendChild(heading);
+        leftColumn.appendChild(heading);
     } else {
         console.log(`[VE Integration] Preserving editor-managed heading for block ID: ${headingBlockId}`);
+        leftColumn.appendChild(existingManagedHeading);
     }
 
-    // Add content (use stable block ID from database and ensure nested IDs)
+    // Add content to left column (use stable block ID from database and ensure nested IDs)
     const contentBlockId = section.contentBlockId || uuidv4();
     const existingManagedContent = document.querySelector(`[data-ve-block-id="${contentBlockId}"][data-ve-managed="true"]`);
     if (!existingManagedContent) {
-        const content = document.createElement('div');
-        content.className = 'dyn-content';
-        content.innerHTML = ensureBlockIds(section.text);
-        content.setAttribute('data-ve-block-id', contentBlockId);
-        article.appendChild(content);
+        const contentDiv = document.createElement('div');
+        contentDiv.innerHTML = ensureBlockIds(section.text);
+        contentDiv.setAttribute('data-ve-block-id', contentBlockId);
+        leftColumn.appendChild(contentDiv);
     } else {
         console.log(`[VE Integration] Preserving editor-managed content for block ID: ${contentBlockId}`);
+        leftColumn.appendChild(existingManagedContent);
     }
 
-    // Add button (if present, use stable block ID from database)
+    // Add button to left column (if present, use stable block ID from database)
     if (section.buttonLabel && section.buttonUrl) {
         const buttonBlockId = section.buttonBlockId || uuidv4();
         const existingManagedButton = document.querySelector(`[data-ve-button-id="${buttonBlockId}"][data-ve-managed="true"]`);
         if (!existingManagedButton) {
-            article.insertAdjacentHTML('beforeend', buttonHtml({ ...section, buttonBlockId }));
+            leftColumn.insertAdjacentHTML('beforeend', buttonHtml({ ...section, buttonBlockId }));
         } else {
             console.log(`[VE Integration] Preserving editor-managed button for block ID: ${buttonBlockId}`);
         }
+    }
+
+    // Add image to right column if present
+    if (section.image) {
+        const imageBlockId = section.imageBlockId || uuidv4();
+        const existingManagedImage = document.querySelector(`[data-ve-block-id="${imageBlockId}"][data-ve-managed="true"]`);
+        if (!existingManagedImage) {
+            const img = document.createElement('img');
+            img.src = section.image;
+            img.alt = section.heading || 'Dynamic section image';
+            img.setAttribute('data-ve-block-id', imageBlockId);
+            rightColumn.appendChild(img);
+        } else {
+            console.log(`[VE Integration] Preserving editor-managed image for block ID: ${imageBlockId}`);
+            rightColumn.appendChild(existingManagedImage);
+        }
+    }
+
+    // Append columns to article
+    article.appendChild(leftColumn);
+    if (section.image) {
+        article.appendChild(rightColumn);
     }
 
     // Add debug logging
