@@ -3,7 +3,7 @@
  * Run this in browser console to diagnose visual editor issues
  */
 
-function debugVisualEditor() {
+async function debugVisualEditor() {
     console.log('🔍 [DEBUG] Starting Visual Editor Diagnostics...');
     
     const results = {
@@ -30,35 +30,35 @@ function debugVisualEditor() {
     
     // 2. Check admin status
     console.log('👤 [DEBUG] Checking admin status...');
-    fetch('/api/protected')
-        .then(response => {
-            if (response.ok) {
-                console.log('✅ User is logged in as admin');
-                
-                // 3. Check edit mode status
-                console.log('🎨 [DEBUG] Checking edit mode status...');
-                const editModeToggle = document.getElementById('edit-mode-toggle');
-                if (!editModeToggle) {
-                    results.issues.push('❌ Edit mode toggle button not found');
-                    results.recommendations.push('Visual editor UI may not be initialized for admin users');
-                } else {
-                    console.log('✅ Edit mode toggle found');
-                    const isEditMode = document.body.classList.contains('ve-edit-active');
-                    console.log(`Edit mode active: ${isEditMode}`);
-                    
-                    if (!isEditMode) {
-                        results.recommendations.push('💡 Click "Edit Mode" button to activate visual editing');
-                    }
-                }
-                
+    try {
+        const response = await fetch('/api/protected');
+        if (response.ok) {
+            console.log('✅ User is logged in as admin');
+
+            // 3. Check edit mode status
+            console.log('🎨 [DEBUG] Checking edit mode status...');
+            const editModeToggle = document.getElementById('edit-mode-toggle');
+            if (!editModeToggle) {
+                results.issues.push('❌ Edit mode toggle button not found');
+                results.recommendations.push('Visual editor UI may not be initialized for admin users');
             } else {
-                results.issues.push('❌ User is not logged in as admin');
-                results.recommendations.push('Log in as admin to access visual editor features');
+                console.log('✅ Edit mode toggle found');
+                const isEditMode = document.body.classList.contains('ve-edit-active');
+                console.log(`Edit mode active: ${isEditMode}`);
+
+                if (!isEditMode) {
+                    results.recommendations.push('💡 Click "Edit Mode" button to activate visual editing');
+                }
             }
-        })
-        .catch(error => {
-            results.issues.push('❌ Failed to check admin status: ' + error.message);
-        });
+
+        } else {
+            results.issues.push('❌ User is not logged in as admin');
+            results.recommendations.push('Log in as admin to access visual editor features');
+        }
+    } catch (error) {
+        results.issues.push('❌ Failed to check admin status: ' + error.message);
+        results.recommendations.push('Make sure you are connected to the internet and the API is working');
+    }
     
     // 4. Check for dynamic sections
     console.log('🔄 [DEBUG] Checking dynamic sections...');
@@ -128,11 +128,21 @@ function debugVisualEditor() {
     return results;
 }
 
-// Auto-run diagnostics
-setTimeout(() => {
-    console.log('🚀 [DEBUG] Auto-running visual editor diagnostics...');
-    window.debugVisualEditor = debugVisualEditor;
-    debugVisualEditor();
+// Auto-run diagnostics only for admin users
+setTimeout(async () => {
+    try {
+        // Check if user is admin before running diagnostics
+        const response = await fetch('/api/protected');
+        if (response.ok) {
+            console.log('🚀 [DEBUG] Auto-running visual editor diagnostics for admin user...');
+            window.debugVisualEditor = debugVisualEditor;
+            debugVisualEditor();
+        } else {
+            console.log('🔒 [DEBUG] Debug script loaded but user is not admin - diagnostics skipped');
+        }
+    } catch (error) {
+        console.log('🔒 [DEBUG] Debug script loaded but admin check failed - diagnostics skipped');
+    }
 }, 3000);
 
 // Make available globally
