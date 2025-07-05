@@ -210,6 +210,7 @@ class VisualEditor {
         // Scan for editable elements and add overlays
         const elements = this.uiManager.scanEditableElements();
         this.uiManager.addOverlays(elements);
+        this.uiManager.addDynamicSectionOverlays(); // ✅ NEW: Add dynamic section overlays
         this.uiManager.disableLinks();
 
         // Activate section sorter for drag-and-drop functionality
@@ -222,6 +223,7 @@ class VisualEditor {
 
         // Remove overlays and restore links
         this.uiManager.removeOverlays();
+        this.uiManager.removeDynamicSectionOverlays(); // ✅ NEW: Remove dynamic section overlays
         this.uiManager.enableLinks();
 
         // Deactivate section sorter
