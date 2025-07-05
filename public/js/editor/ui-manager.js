@@ -229,19 +229,16 @@ export class UIManager {
         console.log(`[VE] addOverlays called with ${elements.length} elements`);
         elements.forEach((el, index) => {
             const type = this.callbacks.getType(el);
-            console.log(`[VE] Element ${index}: type=${type}, tagName=${el.tagName}, element:`, el);
 
             // ✅ SKIP: Don't add static overlays to dynamic sections - they have their own overlays
             const isDynamicSection = el.closest('.dynamic-section-container');
             if (isDynamicSection && el.hasAttribute('data-ve-section-id')) {
-                console.log(`[VE] Element ${index}: is dynamic section, skipping static overlay (has dedicated dynamic overlay)`);
-                return;
+                return; // Dynamic section has dedicated overlay
             }
 
             const target = this.getOverlayMount(el, type);
             if (target.querySelector(':scope > .edit-overlay')) {
-                console.log(`[VE] Element ${index}: already has overlay, skipping`);
-                return;
+                return; // Already has overlay
             }
 
             const overlay = document.createElement('div');
@@ -265,7 +262,6 @@ export class UIManager {
                 target.style.position = 'relative';
             }
             target.appendChild(overlay);
-            console.log(`[VE] Element ${index}: overlay added to target:`, target);
         });
     }
 
@@ -511,29 +507,32 @@ export class UIManager {
         console.log('[VE] Adding dynamic section overlays...');
         document.querySelectorAll('[data-ve-section-id]').forEach(section => {
             if (section.querySelector(':scope > .dyn-edit-overlay')) {
-                console.log('[VE] Section already has overlay, skipping:', section.dataset.veSectionId);
-                return;
+                return; // Already has overlay
             }
 
             // ✅ RESTRICTION: Only add overlays to dynamic sections (not static sections)
             // Dynamic sections are inside dynamic-section-container elements
             const isDynamicSection = section.closest('.dynamic-section-container');
             if (!isDynamicSection) {
-                console.log('[VE] Section is static, skipping dynamic overlay:', section.dataset.veSectionId);
-                return;
+                return; // Static section
+            }
+
+            // ✅ NEW: Skip empty container elements - only add overlays to sections with actual content
+            const hasContent = section.children.length > 0 &&
+                              !section.matches('#dynamicSectionsTop, #dynamicSectionsMiddle, #dynamicSections');
+            if (!hasContent) {
+                return; // Empty container
             }
 
             // ✅ SAFETY: Skip sections that are currently being edited in visual editor
             if (section.dataset.veManaged === 'true') {
-                console.log('[VE] Section is managed by visual editor, skipping dynamic overlay:', section.dataset.veSectionId);
-                return;
+                return; // Being edited
             }
 
             // ✅ SAFETY: Check if section has any child elements being edited
             const hasActiveEdits = section.querySelector('[data-ve-managed="true"]');
             if (hasActiveEdits) {
-                console.log('[VE] Section has active visual editor edits, skipping dynamic overlay:', section.dataset.veSectionId);
-                return;
+                return; // Has active edits
             }
 
             const overlay = document.createElement('div');
@@ -582,7 +581,6 @@ export class UIManager {
             }
 
             section.appendChild(overlay);
-            console.log(`[VE] Added dynamic section overlay to:`, section.dataset.veSectionId);
         });
     }
 
