@@ -119,17 +119,59 @@
             color: #666;
         }
         
-        .delete-btn {
-            background-color: #ff4d4d;
-            color: white;
+        .action-btn {
             border: none;
             padding: 5px 10px;
             border-radius: 4px;
             cursor: pointer;
+            margin-right: 5px;
+            font-size: 14px;
         }
-        
+
+        .edit-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+        }
+
         .delete-btn:hover {
             background-color: #ff0000;
+        }
+
+        .cancel-btn {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .cancel-btn:hover {
+            background-color: #545b62;
+        }
+
+        #currentImagePreview {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+        }
+
+        #currentImagePreview img {
+            max-width: 150px;
+            border-radius: 4px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -159,7 +201,7 @@
 
         <!-- Create Blog Section -->
         <section id="newBlogSection" class="tab-content active">
-            <h2 data-ve-block-id="3abe36c0-caac-4c55-a567-31ba5ca6d3fe">Create a New Blog Post</h2>
+            <h2 id="formHeading" data-ve-block-id="3abe36c0-caac-4c55-a567-31ba5ca6d3fe">Create a New Blog Post</h2>
 
             <form id="blogForm">
                 <label>Title:<input id="titleField" class="wide-input" name="title" required=""></label>
@@ -194,7 +236,17 @@
                     <input type="file" id="imageField" accept="image/*">
                 </label>
 
-                <button type="submit">Create Blog</button>
+                <!-- Current Image Preview -->
+                <div id="currentImagePreview" style="display: none;">
+                    <p style="margin-bottom: 5px;">Current Image:</p>
+                    <img src="" alt="Current Image">
+                    <label style="display: inline-flex; align-items: center; margin-left: 15px;">
+                        <input type="checkbox" name="removeImage" id="removeImageCheckbox" value="true" style="width: auto; margin-right: 5px;"> Remove Image
+                    </label>
+                </div>
+
+                <button type="submit" id="submitBtn">Create Blog</button>
+                <button type="button" id="cancelEditBtn" class="cancel-btn" style="display: none;">Cancel Edit</button>
             </form>
         </section>
 
@@ -235,6 +287,9 @@
         </section>
     </main>
 
+    <!-- Hidden JSON-LD for SEO -->
+    <script type="application/ld+json" id="blogMicrodata"></script>
+
     <!-- JS as module so we can import upload‑helper -->
     <script type="module">
         import { uploadImage } from '/js/upload-helper.js';
@@ -268,7 +323,79 @@
             newBlogSection.classList.remove('active');
             loadBlogs(); // Load blogs when tab is clicked
         });
-        
+
+        // Get form elements
+        const blogForm = document.getElementById('blogForm');
+        const formHeading = document.getElementById('formHeading');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const currentImagePreview = document.getElementById('currentImagePreview');
+        const removeImageCheckbox = document.getElementById('removeImageCheckbox');
+
+        // Form field references
+        const titleField = document.getElementById('titleField');
+        const authorField = document.getElementById('authorField');
+        const categoryField = document.getElementById('categoryField');
+        const excerptField = document.getElementById('excerptField');
+        const publishDateField = document.getElementById('publishDateField');
+        const contentField = document.getElementById('contentField');
+        const imageField = document.getElementById('imageField');
+        const blogMicrodata = document.getElementById('blogMicrodata');
+
+        // Store all blogs for editing
+        let allBlogs = [];
+
+        /* Helper: Reset form to create mode */
+        function resetBlogForm() {
+            blogForm.reset();
+            delete blogForm.dataset.editId;
+            formHeading.textContent = 'Create a New Blog Post';
+            submitBtn.textContent = 'Create Blog';
+            cancelEditBtn.style.display = 'none';
+            currentImagePreview.style.display = 'none';
+            removeImageCheckbox.checked = false;
+            blogMicrodata.textContent = '';
+        }
+
+        /* Helper: Populate form for editing */
+        function populateBlogForm(blog) {
+            titleField.value = blog.title || '';
+            authorField.value = blog.author || '';
+            excerptField.value = blog.excerpt || '';
+            contentField.value = blog.content || '';
+
+            // Set category
+            if (blog.category.includes('parent') && blog.category.includes('tutor')) {
+                categoryField.value = 'general';
+            } else if (blog.category.includes('parent')) {
+                categoryField.value = 'parent';
+            } else if (blog.category.includes('tutor')) {
+                categoryField.value = 'tutor';
+            } else {
+                categoryField.value = 'general';
+            }
+
+            // Set publish date
+            if (blog.publishDate) {
+                const date = new Date(blog.publishDate);
+                publishDateField.value = date.toISOString().slice(0, 16);
+            }
+
+            // Show current image if exists
+            if (blog.imagePath) {
+                currentImagePreview.style.display = 'block';
+                currentImagePreview.querySelector('img').src = blog.imagePath;
+            } else {
+                currentImagePreview.style.display = 'none';
+            }
+
+            // Update UI for edit mode
+            formHeading.textContent = 'Edit Blog Post';
+            submitBtn.textContent = 'Update Blog';
+            cancelEditBtn.style.display = 'inline-block';
+            blogForm.dataset.editId = blog._id;
+        }
+
         /* Load blogs function */
         async function loadBlogs(category = 'all') {
             const blogListBody = document.getElementById('blogListBody');
@@ -284,7 +411,8 @@
                 }
                 
                 const blogs = await response.json();
-                
+                allBlogs = blogs; // Store for editing
+
                 // Filter blogs by category if needed
                 let filteredBlogs = blogs;
                 if (category !== 'all') {
@@ -331,7 +459,8 @@
                         <td>${categoryText}</td>
                         <td>${formattedDate}</td>
                         <td>
-                            <button class="delete-btn" data-id="${blog._id}">Delete</button>
+                            <button class="action-btn edit-btn" data-id="${blog._id}" title="Edit">✏️</button>
+                            <button class="action-btn delete-btn" data-id="${blog._id}" title="Delete">🗑️</button>
                         </td>
                     `;
                     
@@ -343,10 +472,24 @@
             }
         }
         
-        /* Delete blog function */
+        /* Handle edit and delete actions */
         document.getElementById('blogListBody').addEventListener('click', async (e) => {
-            if (e.target.classList.contains('delete-btn')) {
-                const blogId = e.target.dataset.id;
+            const blogId = e.target.dataset.id;
+
+            if (e.target.classList.contains('edit-btn')) {
+                // Find the blog to edit
+                const blog = allBlogs.find(b => b._id === blogId);
+                if (!blog) {
+                    alert('Blog not found for editing');
+                    return;
+                }
+
+                // Populate form and switch to create tab
+                populateBlogForm(blog);
+                createTabBtn.click();
+                blogForm.scrollIntoView({ behavior: 'smooth' });
+            }
+            else if (e.target.classList.contains('delete-btn')) {
                 
                 if (confirm('Are you sure you want to delete this blog post? This action cannot be undone.')) {
                     try {
@@ -379,9 +522,17 @@
             loadBlogs(document.getElementById('blogCategoryFilter').value);
         });
 
-        /* form workflow for creating blogs */
+        /* Cancel edit button */
+        cancelEditBtn.addEventListener('click', () => {
+            resetBlogForm();
+        });
+
+        /* Enhanced form workflow for creating and editing blogs */
         blogForm.addEventListener('submit', async e => {
             e.preventDefault();
+
+            const isEditing = !!blogForm.dataset.editId;
+            const blogId = blogForm.dataset.editId;
 
             const title = titleField.value.trim();
             const author = authorField.value.trim();
@@ -390,45 +541,89 @@
             const publishDate = publishDateField.value;
             const content = contentField.value.trim();
 
-            /* image first */
-            let imagePath = '';
-            if (imageField.files[0]) {
-                try { imagePath = await uploadImage(imageField.files[0], 'blog'); }
-                catch (err) { return alert('Upload failed: ' + err.message); }
+            // Validate required fields
+            if (!title || !content) {
+                alert('Title and content are required');
+                return;
             }
 
-            /* JSON‑LD for SEO */
-            const nowISO = new Date().toISOString();
-            blogMicrodata.textContent = JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "BlogPosting",
-                "mainEntityOfPage": { "@id": "https://tutorsalliancescotland.co.uk/blog", "@type": "WebPage" },
-                headline: title,
-                author: { "@type": "Person", name: author || "Tutors Alliance Scotland" },
-                publisher: {
-                    "@type": "Organization",
-                    name: "Tutors Alliance Scotland",
-                    logo: { "@type": "ImageObject", url: "https://tutorsalliancescotland.co.uk/images/bannerShield2.png" }
-                },
-                datePublished: publishDate ? new Date(publishDate).toISOString() : nowISO,
-                dateModified: nowISO,
-                description: excerpt || (content.slice(0, 160) + '…'),
-                image: imagePath || "https://tutorsalliancescotland.co.uk/images/defaultBlog.png"
-            }, null, 2);
+            /* Handle image upload */
+            let uploadedImagePath = '';
+            if (imageField.files[0]) {
+                try {
+                    uploadedImagePath = await uploadImage(imageField.files[0], 'blog');
+                }
+                catch (err) {
+                    return alert('Upload failed: ' + err.message);
+                }
+            }
 
-            /* send to server */
-            const payload = { title, author, category, excerpt, publishDate, content, imagePath };
-            const r = await fetch('/api/blog-writer', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                credentials: 'include' // Important: include cookies for authentication
-            });
+            /* Determine method and URL based on mode */
+            const method = isEditing ? 'PUT' : 'POST';
+            const url = isEditing ? `/api/blog-writer?id=${blogId}` : '/api/blog-writer';
 
-            if (!r.ok) return alert('Server: ' + await r.text());
-            alert('Blog created!');
-            blogForm.reset();
-            blogMicrodata.textContent = '';
+            /* Build payload */
+            const payload = {
+                title,
+                author: author || 'Tutors Alliance Scotland',
+                category,
+                excerpt,
+                publishDate,
+                content,
+                imagePath: uploadedImagePath || '',
+                removeImage: removeImageCheckbox.checked
+            };
+
+            // For POST fallback, add editId to payload
+            if (isEditing) {
+                payload.editId = blogId;
+            }
+
+            /* JSON LD for SEO (only for new blogs) */
+            if (!isEditing) {
+                const nowISO = new Date().toISOString();
+                blogMicrodata.textContent = JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BlogPosting",
+                    "mainEntityOfPage": { "@id": "https://tutorsalliancescotland.co.uk/blog", "@type": "WebPage" },
+                    headline: title,
+                    author: { "@type": "Person", name: author || "Tutors Alliance Scotland" },
+                    publisher: {
+                        "@type": "Organization",
+                        name: "Tutors Alliance Scotland",
+                        logo: { "@type": "ImageObject", url: "https://tutorsalliancescotland.co.uk/images/bannerShield2.png" }
+                    },
+                    datePublished: publishDate ? new Date(publishDate).toISOString() : nowISO,
+                    dateModified: nowISO,
+                    description: excerpt || (content.slice(0, 160) + '…'),
+                    image: uploadedImagePath || "https://tutorsalliancescotland.co.uk/images/defaultBlog.png"
+                }, null, 2);
+            }
+
+            try {
+                /* Send to server */
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                const result = await response.json();
+                alert(`Blog ${isEditing ? 'updated' : 'created'} successfully!`);
+
+                resetBlogForm();
+                loadBlogs(document.getElementById('blogCategoryFilter').value); // Refresh list
+                manageTabBtn.click(); // Switch to manage tab
+
+            } catch (error) {
+                console.error('Submit error:', error);
+                alert('Error: ' + error.message);
+            }
         });
     </script>
 

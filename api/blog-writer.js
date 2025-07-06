@@ -141,8 +141,67 @@ module.exports = async (req, res) => {
             }
         }
 
-        // For POST requests, continue with blog creation
+        // Handle PUT request - Update existing blog
+        if (req.method === 'PUT') {
+            console.log('Processing PUT request for blog update');
+            const { id } = req.query;
+
+            if (!id) {
+                return res.status(400).json({ message: 'Blog ID is required for update.' });
+            }
+
+            const updateData = buildUpdatePayload(req.body);
+
+            try {
+                const updatedBlog = await Blog.findByIdAndUpdate(id, updateData, { new: true });
+
+                if (!updatedBlog) {
+                    return res.status(404).json({ message: 'Blog post not found for update.' });
+                }
+
+                console.log('Blog updated successfully:', updatedBlog._id);
+                return res.status(200).json({
+                    message: "Blog post updated successfully",
+                    blog: updatedBlog
+                });
+            } catch (error) {
+                console.error('Error updating blog:', error);
+                return res.status(500).json({
+                    message: 'Error updating blog post',
+                    error: error.message
+                });
+            }
+        }
+
+        // For POST requests, continue with blog creation or update fallback
         console.log('Processing POST request');
+
+        // Check for update fallback (editId in body)
+        const { editId } = req.body;
+        if (editId) {
+            console.log('POST request with editId - processing as update fallback');
+            const updateData = buildUpdatePayload(req.body);
+
+            try {
+                const updatedBlog = await Blog.findByIdAndUpdate(editId, updateData, { new: true });
+
+                if (!updatedBlog) {
+                    return res.status(404).json({ message: 'Blog post not found for update.' });
+                }
+
+                console.log('Blog updated successfully via POST fallback:', updatedBlog._id);
+                return res.status(200).json({
+                    message: "Blog post updated successfully",
+                    blog: updatedBlog
+                });
+            } catch (error) {
+                console.error('Error updating blog via POST fallback:', error);
+                return res.status(500).json({
+                    message: 'Error updating blog post',
+                    error: error.message
+                });
+            }
+        }
 
         // Log the request body for debugging
         console.log('Request body:', req.body);
@@ -278,6 +337,52 @@ module.exports = async (req, res) => {
         });
     }
 };
+
+// Shared helper function to build update payload
+function buildUpdatePayload(body) {
+    const {
+        title, author, category, excerpt, publishDate, content, imagePath, removeImage
+    } = body;
+
+    // Process category field
+    let categoryArray = [];
+    if (category === 'general') {
+        categoryArray = ['parent', 'tutor'];
+    } else if (category === 'parent' || category === 'tutor') {
+        categoryArray = [category];
+    } else {
+        // Default to general if category is invalid
+        categoryArray = ['parent', 'tutor'];
+    }
+
+    // Process content for SEO
+    const cleanContent = content
+        .replace(/<[^>]*>/g, '') // Remove any HTML tags
+        .replace(/\s+/g, ' ') // Normalize whitespace
+        .trim();
+
+    const updateData = {
+        title,
+        author: author || 'Tutors Alliance Scotland',
+        content,
+        excerpt: excerpt || cleanContent.substring(0, 150) + (cleanContent.length > 150 ? '...' : ''),
+        publishDate: publishDate ? new Date(publishDate) : new Date(),
+        category: categoryArray,
+        updatedAt: new Date()
+    };
+
+    // Only update imagePath if a new one was provided
+    if (imagePath) {
+        updateData.imagePath = imagePath;
+    }
+
+    // Clear imagePath if removal is requested
+    if (removeImage === 'true' || removeImage === true) {
+        updateData.imagePath = '';
+    }
+
+    return updateData;
+}
 
 // Tell Vercel we need the Node runtime
 module.exports.config = { runtime: 'nodejs18.x' };

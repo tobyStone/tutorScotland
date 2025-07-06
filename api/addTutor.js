@@ -53,9 +53,9 @@ function verifyToken(req) {
 }
 
 module.exports = async (req, res) => {
-    // Allow both POST and DELETE methods
-    if (!['POST', 'DELETE'].includes(req.method)) {
-        res.setHeader('Allow', ['POST', 'DELETE']);
+    // Allow POST, PUT, and DELETE methods
+    if (!['POST', 'PUT', 'DELETE'].includes(req.method)) {
+        res.setHeader('Allow', ['POST', 'PUT', 'DELETE']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 
@@ -115,11 +115,163 @@ module.exports = async (req, res) => {
             }
         }
 
-        // Handle POST request (add tutor)
+        // Handle PUT request (update tutor)
+        if (req.method === 'PUT') {
+            const tutorId = req.query.id;
+
+            if (!tutorId) {
+                console.log('Missing tutor ID for update');
+                return res.status(400).json({
+                    message: "Missing tutor ID for update"
+                });
+            }
+
+            console.log(`Attempting to update tutor with ID: ${tutorId}`);
+            console.log('Update data:', req.body);
+
+            const {
+                name,
+                subjects,
+                costRange,
+                badges,
+                contact,
+                description,
+                postcodes,
+                imagePath,
+                removeImage,
+                editId
+            } = req.body;
+
+            // Validate required fields
+            if (!name || !subjects || !costRange) {
+                console.log('Missing required fields for update:', { name, subjects, costRange });
+                return res.status(400).json({
+                    message: "Missing required fields: name, subjects, and costRange are required"
+                });
+            }
+
+            // Build update data
+            const updateData = {
+                name,
+                subjects: Array.isArray(subjects) ? subjects : [subjects],
+                costRange,
+                badges: Array.isArray(badges) ? badges : [badges],
+                contact,
+                description,
+                postcodes: Array.isArray(postcodes) ? postcodes : [postcodes],
+                updatedAt: new Date()
+            };
+
+            // Handle image updates
+            if (imagePath) {
+                updateData.imagePath = imagePath;
+            }
+
+            // Clear imagePath if removal is requested
+            if (removeImage === 'true' || removeImage === true) {
+                updateData.imagePath = '';
+            }
+
+            try {
+                const updatedTutor = await Tutor.findByIdAndUpdate(tutorId, updateData, { new: true });
+
+                if (!updatedTutor) {
+                    console.log(`Tutor with ID ${tutorId} not found for update`);
+                    return res.status(404).json({
+                        message: "Tutor not found for update"
+                    });
+                }
+
+                console.log('Tutor updated successfully:', updatedTutor._id);
+                return res.status(200).json({
+                    message: "Tutor updated successfully",
+                    tutor: updatedTutor
+                });
+            } catch (updateError) {
+                console.error(`Error updating tutor with ID ${tutorId}:`, updateError);
+                return res.status(500).json({
+                    message: "Error updating tutor",
+                    error: updateError.message
+                });
+            }
+        }
+
+        // Handle POST request (add tutor or update fallback)
         // Log the request body for debugging
         console.log('Request body:', req.body);
 
-        // Extract fields from request body
+        // Check for update fallback (editId in body)
+        const { editId } = req.body;
+        if (editId) {
+            console.log('POST request with editId - processing as update fallback');
+
+            const {
+                name,
+                subjects,
+                costRange,
+                badges,
+                contact,
+                description,
+                postcodes,
+                imagePath,
+                removeImage
+            } = req.body;
+
+            // Validate required fields
+            if (!name || !subjects || !costRange) {
+                console.log('Missing required fields for update:', { name, subjects, costRange });
+                return res.status(400).json({
+                    message: "Missing required fields: name, subjects, and costRange are required"
+                });
+            }
+
+            // Build update data
+            const updateData = {
+                name,
+                subjects: Array.isArray(subjects) ? subjects : [subjects],
+                costRange,
+                badges: Array.isArray(badges) ? badges : [badges],
+                contact,
+                description,
+                postcodes: Array.isArray(postcodes) ? postcodes : [postcodes],
+                updatedAt: new Date()
+            };
+
+            // Handle image updates
+            if (imagePath) {
+                updateData.imagePath = imagePath;
+            }
+
+            // Clear imagePath if removal is requested
+            if (removeImage === 'true' || removeImage === true) {
+                updateData.imagePath = '';
+            }
+
+            try {
+                const updatedTutor = await Tutor.findByIdAndUpdate(editId, updateData, { new: true });
+
+                if (!updatedTutor) {
+                    console.log(`Tutor with ID ${editId} not found for update`);
+                    return res.status(404).json({
+                        message: "Tutor not found for update"
+                    });
+                }
+
+                console.log('Tutor updated successfully via POST fallback:', updatedTutor._id);
+                return res.status(200).json({
+                    message: "Tutor updated successfully",
+                    tutor: updatedTutor
+                });
+            } catch (updateError) {
+                console.error(`Error updating tutor via POST fallback:`, updateError);
+                return res.status(500).json({
+                    message: "Error updating tutor",
+                    error: updateError.message
+                });
+            }
+        }
+
+        // Extract fields from request body for new tutor creation
         const {
             name,
             subjects,

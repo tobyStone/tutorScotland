@@ -390,7 +390,7 @@
         <div id="tutors-tab" class="tab-content">
             <!-- ░░░░░░ ADD‑TUTOR FORM ░░░░░░ -->
             <div class="admin-form-container">
-                <h3 data-ve-block-id="13e6c683-aa50-44ba-92dd-feee30f7c319">Add a Tutor</h3>
+                <h3 id="tutorFormHeading" data-ve-block-id="13e6c683-aa50-44ba-92dd-feee30f7c319">Add a Tutor</h3>
 
                 <!-- handled completely in JS  -->
                 <form id="tutorForm" autocomplete="off">
@@ -428,7 +428,17 @@
                         <input type="text" name="postcodes">
                     </label>
 
-                    <button type="submit">Add Tutor</button>
+                    <!-- Current Image Preview -->
+                    <div id="currentTutorImagePreview" style="display: none; margin-top: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa;">
+                        <p style="margin-bottom: 5px;">Current Image:</p>
+                        <img src="" alt="Current Image" style="max-width: 150px; border-radius: 4px; margin-bottom: 10px;">
+                        <label style="display: inline-flex; align-items: center; margin-left: 15px;">
+                            <input type="checkbox" name="removeImage" value="true" style="width: auto; margin-right: 5px;"> Remove Image
+                        </label>
+                    </div>
+
+                    <button type="submit" id="submitTutorBtn">Add Tutor</button>
+                    <button type="button" id="cancelTutorEditBtn" style="display: none; background-color: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">Cancel Edit</button>
                 </form>
             </div>
 
@@ -502,20 +512,88 @@
             });
         });
 
-        /* ░░░ 1. ADD‑TUTOR WORKFLOW  ░░░ */
+        /* ░░░ 1. TUTOR MANAGEMENT (CREATE/UPDATE) ░░░ */
+
+        // Get form elements
+        const tutorForm = document.getElementById('tutorForm');
+        const tutorFormHeading = document.getElementById('tutorFormHeading');
+        const submitTutorBtn = document.getElementById('submitTutorBtn');
+        const cancelTutorEditBtn = document.getElementById('cancelTutorEditBtn');
+        const currentTutorImagePreview = document.getElementById('currentTutorImagePreview');
+        const imageField = document.getElementById('imageField');
+        const removeImageCheckbox = tutorForm.querySelector('[name="removeImage"]');
+
+        // Store all tutors for editing
+        let allTutors = [];
+
+        /* Helper: Reset form to create mode */
+        function resetTutorForm() {
+            tutorForm.reset();
+            delete tutorForm.dataset.editId;
+            tutorFormHeading.textContent = 'Add a Tutor';
+            submitTutorBtn.textContent = 'Add Tutor';
+            cancelTutorEditBtn.style.display = 'none';
+            currentTutorImagePreview.style.display = 'none';
+            if (removeImageCheckbox) removeImageCheckbox.checked = false;
+        }
+
+        /* Helper: Populate form for editing */
+        function populateTutorForm(tutor) {
+            tutorForm.name.value = tutor.name || '';
+            tutorForm.subjects.value = (tutor.subjects || []).join(', ');
+            tutorForm.costRange.value = tutor.costRange || '';
+            tutorForm.badges.value = (tutor.badges || []).join(', ');
+            tutorForm.contact.value = tutor.contact || '';
+            tutorForm.description.value = tutor.description || '';
+            tutorForm.postcodes.value = (tutor.postcodes || []).join(', ');
+
+            // Show current image if exists
+            if (tutor.imagePath) {
+                currentTutorImagePreview.style.display = 'block';
+                currentTutorImagePreview.querySelector('img').src = tutor.imagePath;
+            } else {
+                currentTutorImagePreview.style.display = 'none';
+            }
+
+            if (removeImageCheckbox) removeImageCheckbox.checked = false;
+
+            // Update UI for edit mode
+            tutorFormHeading.textContent = 'Edit Tutor';
+            submitTutorBtn.textContent = 'Update Tutor';
+            cancelTutorEditBtn.style.display = 'inline-block';
+            tutorForm.dataset.editId = tutor._id;
+        }
+
+        /* Cancel edit button */
+        cancelTutorEditBtn.addEventListener('click', () => {
+            resetTutorForm();
+        });
+
         tutorForm.addEventListener('submit', async e => {
             e.preventDefault();
+
+            const isEditing = !!tutorForm.dataset.editId;
+            const tutorId = tutorForm.dataset.editId;
+
             const fd = new FormData(tutorForm);
             const csv = s => s.split(',').map(x => x.trim()).filter(Boolean);
 
             /* optional image upload */
-            let imagePath = '';
+            let uploadedImagePath = '';
             if (imageField.files[0]) {
                 const f = imageField.files[0];
                 if (f.size > 2 * 1024 * 1024) return alert('Image > 2 MB');
-                try { imagePath = await uploadImage(f, 'tutors'); }
-                catch (err) { return alert(err.message); }
+                try {
+                    uploadedImagePath = await uploadImage(f, 'tutors');
+                }
+                catch (err) {
+                    return alert(err.message);
+                }
             }
+
+            /* Determine method and URL based on mode */
+            const method = isEditing ? 'PUT' : 'POST';
+            const url = isEditing ? `/api/addTutor?id=${tutorId}` : '/api/addTutor';
 
             const payload = {
                 name: fd.get('name').trim(),
@@ -525,43 +603,51 @@
                 contact: fd.get('contact').trim(),
                 description: fd.get('description').trim(),
                 postcodes: csv(fd.get('postcodes')),
-                imagePath
+                imagePath: uploadedImagePath || '',
+                removeImage: removeImageCheckbox ? removeImageCheckbox.checked : false
             };
+
+            // For POST fallback, add editId to payload
+            if (isEditing) {
+                payload.editId = tutorId;
+            }
 
             try {
                 console.log('Sending tutor data to API:', payload);
-                const r = await fetch('/api/addTutor', {
-                    method: 'POST',
+                const r = await fetch(url, {
+                    method,
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
-                    credentials: 'include' // Important: Include cookies with the request
+                    credentials: 'include'
                 });
 
                 if (!r.ok) {
                     // Try to parse the error response as JSON
                     try {
                         const errorData = await r.json();
-                        console.error('Error adding tutor:', errorData);
-                        return alert(`Error adding tutor: ${errorData.message || 'Unknown error'}`);
+                        console.error('Error with tutor operation:', errorData);
+                        return alert(`Error: ${errorData.message || 'Unknown error'}`);
                     } catch (parseError) {
                         // If JSON parsing fails, use text response
                         const errorText = await r.text();
-                        console.error('Error adding tutor (text):', errorText);
-                        return alert(`Error adding tutor: ${errorText || 'Unknown error'}`);
+                        console.error('Error with tutor operation (text):', errorText);
+                        return alert(`Error: ${errorText || 'Unknown error'}`);
                     }
                 }
 
-                console.log('Tutor added successfully');
-                alert('Tutor added successfully!');
-                tutorForm.reset();
+                const result = await r.json();
+                console.log(`Tutor ${isEditing ? 'updated' : 'added'} successfully`);
+                alert(`Tutor ${isEditing ? 'updated' : 'added'} successfully!`);
+
+                resetTutorForm();
                 loadTutors(); // Refresh the tutor list
             } catch (error) {
-                console.error('Exception while adding tutor:', error);
+                console.error('Exception while processing tutor:', error);
                 alert(`An error occurred: ${error.message}`);
             }
         });
 
-        /* ░░░ LOAD AND DELETE TUTORS ░░░ */
+        /* ░░░ LOAD TUTORS AND HANDLE EDIT/DELETE ░░░ */
         // Function to load tutors
         async function loadTutors() {
             try {
@@ -571,11 +657,13 @@
                 }
 
                 const tutors = await response.json();
+                allTutors = tutors; // Store for editing
                 const tutorTableBody = document.querySelector('#tutorTable tbody');
                 tutorTableBody.innerHTML = '';
 
                 tutors.forEach(tutor => {
                     const row = document.createElement('tr');
+                    row.dataset.id = tutor._id;
 
                     // Image cell
                     const imageCell = document.createElement('td');
@@ -607,12 +695,23 @@
 
                     // Actions cell
                     const actionsCell = document.createElement('td');
+
+                    const editButton = document.createElement('button');
+                    editButton.innerHTML = '✏️';
+                    editButton.title = 'Edit Tutor';
+                    editButton.className = 'edit-tutor';
+                    editButton.dataset.id = tutor._id;
+                    actionsCell.appendChild(editButton);
+
                     const deleteButton = document.createElement('button');
                     deleteButton.innerHTML = '🗑️';
                     deleteButton.title = 'Delete Tutor';
-                    deleteButton.onclick = () => deleteTutor(tutor._id);
+                    deleteButton.className = 'delete-tutor';
+                    deleteButton.dataset.id = tutor._id;
                     actionsCell.appendChild(deleteButton);
+
                     row.appendChild(actionsCell);
+                    row.dataset.id = tutor._id;
 
                     tutorTableBody.appendChild(row);
                 });
@@ -622,30 +721,46 @@
             }
         }
 
-        // Function to delete a tutor
-        async function deleteTutor(tutorId) {
-            if (!confirm('Are you sure you want to delete this tutor?')) {
-                return;
-            }
+        /* Handle edit and delete actions with event delegation */
+        document.querySelector('#tutorTable tbody').addEventListener('click', async (e) => {
+            const tutorId = e.target.dataset.id;
 
-            try {
-                const response = await fetch(`/api/addTutor?id=${tutorId}`, {
-                    method: 'DELETE',
-                    credentials: 'include' // Include cookies for authentication
-                });
-
-                if (response.ok) {
-                    alert('Tutor deleted successfully!');
-                    loadTutors(); // Refresh the tutor list
-                } else {
-                    const error = await response.text();
-                    alert(`Failed to delete tutor: ${error}`);
+            if (e.target.classList.contains('edit-tutor')) {
+                // Find the tutor to edit
+                const tutor = allTutors.find(t => t._id === tutorId);
+                if (!tutor) {
+                    alert('Tutor not found for editing');
+                    return;
                 }
-            } catch (error) {
-                console.error('Error deleting tutor:', error);
-                alert('An error occurred while deleting the tutor.');
+
+                // Populate form and scroll to it
+                populateTutorForm(tutor);
+                tutorForm.scrollIntoView({ behavior: 'smooth' });
             }
-        }
+            else if (e.target.classList.contains('delete-tutor')) {
+                if (!confirm('Are you sure you want to delete this tutor?')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/addTutor?id=${tutorId}`, {
+                        method: 'DELETE',
+                        credentials: 'include'
+                    });
+
+                    if (response.ok) {
+                        alert('Tutor deleted successfully!');
+                        loadTutors(); // Refresh the tutor list
+                    } else {
+                        const error = await response.text();
+                        alert(`Failed to delete tutor: ${error}`);
+                    }
+                } catch (error) {
+                    console.error('Error deleting tutor:', error);
+                    alert('An error occurred while deleting the tutor.');
+                }
+            }
+        });
 
         // Load tutors when the page loads
         loadTutors();
