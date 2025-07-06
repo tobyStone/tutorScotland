@@ -1243,6 +1243,14 @@ header h1 {
     border: 2px solid red !important;
 }
 
+/* Fix the container overflow issue that clips rounded corners */
+.dynamic-section-container:has(.strive-team-card),
+.dynamic-section-container .strive-team-card {
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    overflow: visible !important;
+}
+
 /* Pronounced curves */
 .curve-bottom-left {
     border-bottom-left-radius: 5rem 7rem !important;
