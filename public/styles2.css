@@ -1223,6 +1223,13 @@ header h1 {
     text-align: center;
 }
 
+/* Override flex display for team sections to allow grid layout */
+.strive-overlay-card:has(.team-grid),
+.strive-team-card {
+    display: block;
+    text-align: initial;
+}
+
 /* Pronounced curves */
 .curve-bottom-left {
     border-bottom-left-radius: 5rem 7rem !important;

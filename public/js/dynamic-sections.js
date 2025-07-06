@@ -372,7 +372,7 @@ function createDynamicSectionElement(section, index) {
     if (section.layout === 'team') {
         // Create the outer wrapper with strive-overlay-card styling to match static team sections
         const teamWrapper = document.createElement('div');
-        teamWrapper.className = 'strive-overlay-card fade-in-section';
+        teamWrapper.className = 'strive-overlay-card strive-team-card fade-in-section';
         teamWrapper.style.transitionDelay = `${index * 0.1}s`;
         teamWrapper.dataset.veSectionId = section._id || slugify(section.heading);
 
