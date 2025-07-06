@@ -1226,9 +1226,21 @@ header h1 {
 /* Override flex display for team sections to allow grid layout */
 .strive-overlay-card:has(.team-grid),
 .strive-team-card {
-    display: block;
+    display: block !important;
     text-align: initial;
-    border-radius: 2rem; /* Ensure all corners are equally rounded */
+    border-radius: 2rem !important; /* Ensure all corners are equally rounded */
+    overflow: visible !important; /* Ensure rounded corners aren't clipped */
+    position: relative !important; /* Ensure proper positioning context */
+}
+
+/* Additional debugging - force border-radius on all corners specifically */
+.strive-team-card {
+    border-top-left-radius: 2rem !important;
+    border-top-right-radius: 2rem !important;
+    border-bottom-left-radius: 2rem !important;
+    border-bottom-right-radius: 2rem !important;
+    /* Temporary debugging border to see the actual element boundaries */
+    border: 2px solid red !important;
 }
 
 /* Pronounced curves */
