@@ -402,8 +402,8 @@
                     </label>
 
                     <label>
-                        Cost Range (e.g. __P__ for £, __P____P__ for ££):
-                        <input type="text" name="costRange" required="">
+                        Cost Range (e.g. £ for £, ££ for ££):
+                        <input type="text" name="costRange" required="" id="costRangeInput">
                     </label>
 
                     <label>
@@ -541,7 +541,8 @@
         function populateTutorForm(tutor) {
             tutorForm.name.value = tutor.name || '';
             tutorForm.subjects.value = (tutor.subjects || []).join(', ');
-            tutorForm.costRange.value = tutor.costRange || '';
+            // Convert __P__ back to £ for display in the form
+            tutorForm.costRange.value = (tutor.costRange || '').replace(/__P__/g, '£');
             tutorForm.badges.value = (tutor.badges || []).join(', ');
             tutorForm.contact.value = tutor.contact || '';
             tutorForm.description.value = tutor.description || '';
@@ -567,6 +568,17 @@
         /* Cancel edit button */
         cancelTutorEditBtn.addEventListener('click', () => {
             resetTutorForm();
+        });
+
+        // Add event listener to convert £ symbols to __P__ in cost range field
+        const costRangeInput = document.getElementById('costRangeInput');
+        costRangeInput.addEventListener('input', function(e) {
+            // Convert £ symbols to __P__ as user types
+            const value = e.target.value;
+            const convertedValue = value.replace(/£/g, '__P__');
+            if (value !== convertedValue) {
+                e.target.value = convertedValue;
+            }
         });
 
         tutorForm.addEventListener('submit', async e => {
@@ -595,10 +607,14 @@
             const method = isEditing ? 'PUT' : 'POST';
             const url = isEditing ? `/api/addTutor?id=${tutorId}` : '/api/addTutor';
 
+            // Convert £ symbols to __P__ before sending to database
+            let costRange = fd.get('costRange').trim();
+            costRange = costRange.replace(/£/g, '__P__');
+
             const payload = {
                 name: fd.get('name').trim(),
                 subjects: csv(fd.get('subjects')),
-                costRange: fd.get('costRange').trim(),
+                costRange: costRange,
                 badges: csv(fd.get('badges')),
                 contact: fd.get('contact').trim(),
                 description: fd.get('description').trim(),
