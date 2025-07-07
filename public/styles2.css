@@ -395,14 +395,14 @@ input[type="reset"] {
     position: absolute;
 }
 
-/* Move them to the right and closer together */
+/* Move them to the right and position banner below shield's bottom edge */
 .tutor-directory-page #imageShield {
-    top: 10% !important;
+    top: 177px !important;
     left: 60% !important;
 }
 
 .tutor-directory-page #imageBanner {
-    top: 12% !important;
+    top: 507px !important; /* Position banner below shield's bottom edge */
     left: 60% !important;
 }
 
