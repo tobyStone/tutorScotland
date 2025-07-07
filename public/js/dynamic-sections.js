@@ -118,7 +118,7 @@ function loadDynamicSections() {
                             topContainer.appendChild(sectionElement);
                         } else {
                             const wrapper = document.createElement('div');
-                            wrapper.className = 'dyn-block';
+                            wrapper.className = 'dyn-block fade-in-on-scroll';
                             wrapper.appendChild(sectionElement);
                             topContainer.appendChild(wrapper);
                         }
@@ -140,7 +140,7 @@ function loadDynamicSections() {
                             middleContainer.appendChild(sectionElement);
                         } else {
                             const wrapper = document.createElement('div');
-                            wrapper.className = 'dyn-block';
+                            wrapper.className = 'dyn-block fade-in-on-scroll';
                             wrapper.appendChild(sectionElement);
                             middleContainer.appendChild(wrapper);
                         }
@@ -162,7 +162,7 @@ function loadDynamicSections() {
                             bottomContainer.appendChild(sectionElement);
                         } else {
                             const wrapper = document.createElement('div');
-                            wrapper.className = 'dyn-block';
+                            wrapper.className = 'dyn-block fade-in-on-scroll';
                             wrapper.appendChild(sectionElement);
                             bottomContainer.appendChild(wrapper);
                         }
