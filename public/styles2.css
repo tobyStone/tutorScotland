@@ -1142,6 +1142,8 @@ input[type="reset"] {
 .main-ribbons {
     max-width: 200px;
     width: 100%;
+    margin-top: 257px;
+    margin-left: 0.42rem;
     opacity: 0;
     transform: translateX(20px);
     animation: growRight 0.8s ease-out 0.3s forwards;
