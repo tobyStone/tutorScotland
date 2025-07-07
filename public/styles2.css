@@ -423,13 +423,13 @@ input[type="reset"] {
 body[data-page="tutorMembership"] #imageShield {
     top: 5% !important;
     left: 65% !important;
-    z-index: 3 !important;
+    z-index: 5 !important; /* Higher z-index to appear over section */
 }
 
 body[data-page="tutorMembership"] #imageBanner {
     top: 7% !important;
     left: 65% !important;
-    z-index: 2 !important;
+    z-index: 5 !important; /* Higher z-index to appear over section */
 }
 
 /* Parents page - positioned to avoid content overlap */
@@ -440,7 +440,7 @@ body[data-page="parents"] #imageShield {
 
 body[data-page="parents"] #imageBanner {
     left: 70% !important;
-    z-index: 2 !important;
+    z-index: 5 !important; /* Higher z-index to appear over top section */
 }
 
 /* Partnerships page - positioned to avoid content overlap */

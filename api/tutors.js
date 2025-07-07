@@ -133,7 +133,11 @@ module.exports = async (req, res) => {
                 <title>Tutors Alliance Scotland - Find Your Tutor</title>
                 <link rel="icon" href="/images/bannerShield2.png" type="image/png">
                 <link rel="stylesheet" href="/styles2.css">
+                <link rel="stylesheet" href="/header-banner.css">
+                <link rel="stylesheet" href="/css/nav.css">
                 <script src="/responsive-helper.js"></script>
+                <script src="/js/nav-loader.js" defer></script>
+                <script src="/js/dynamic-nav.js" defer></script>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <style>
                     /* Ensure tutor cards are visible by default */
@@ -146,13 +150,17 @@ module.exports = async (req, res) => {
                     }
                     .tutor-directory-page #imageShield {
                         top: 177px !important;
-                        left: 60% !important;
+                        left: calc(60% - 27px) !important; /* Move left by 27px */
+                        width: 90% !important; /* Reduce size by 10% */
+                        height: 90% !important; /* Reduce size by 10% */
                     }
 
                     /* Make #imageBanner just below shield�s bottom edge */
                     .tutor-directory-page #imageBanner {
-                      top: 507px !important; /* Example: you may need to tweak 25% or 28% or 30% */
-                      left: 60% !important;
+                      top: calc(177px + 330px) !important; /* Position top of banner at bottom of shield */
+                      left: calc(60% - 27px) !important; /* Move left by 27px */
+                      width: 90% !important; /* Reduce size by 10% */
+                      height: 90% !important; /* Reduce size by 10% */
                     }
 
 
@@ -380,17 +388,7 @@ module.exports = async (req, res) => {
             </div>
     </header>
 
-    <!-- Dark-blue nav below banner -->
-    <nav class="main-nav">
-        <ul>
-            <li><a href="/about-us.html">About Us</a></li>
-            <li><a href="/tutorMembership.html">Tutor Membership</a></li>
-            <li><a href="/parents.html">Enter Parent Zone</a></li>
-            <li><a href="/contact.html">Contact Us</a></li>
-            <li><a href="/blog">Blog</a></li>
-            <li><a href="/tutorDirectory.html">Tutor Directory</a></li>
-        </ul>
-    </nav>
+    <!-- Navigation will be loaded here by nav-loader.js -->
 
 
     <!-- Rolling banner container -->
