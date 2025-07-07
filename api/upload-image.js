@@ -201,15 +201,20 @@ module.exports = async (req, res) => {
             });
         }
 
-        // Check for suspiciously small file size relative to dimensions (may indicate corruption)
-        const expectedMinSize = (metadata.width * metadata.height) / 50; // Very conservative estimate
-        if (buffer.length < expectedMinSize) {
-            console.warn(`Suspicious file size: ${buffer.length} bytes for ${metadata.width}x${metadata.height} image`);
+        // ✅ IMPROVED: Minimal size validation - only catch truly corrupted files
+        // Modern JPEG compression can achieve very high ratios, so be very conservative
+        const minFileSize = 50; // Absolute minimum - anything smaller is likely corrupted
+
+        // Only flag files that are impossibly small (likely truncated during upload)
+        if (buffer.length < minFileSize) {
+            console.warn(`File too small: ${buffer.length} bytes for ${metadata.width}x${metadata.height} image`);
             fs.unlink(uploadedFile.filepath, ()=>{}); // cleanup
             return res.status(400).json({
                 message: 'Image file appears to be corrupted or incomplete. Please try uploading again.'
             });
         }
+
+        console.log(`✅ Size validation passed: ${buffer.length} bytes for ${metadata.width}x${metadata.height}`);
         // ──────────────────────────────────────────────────────────────────
 
         if (metadata.width > MAX_DIMENSIONS || metadata.height > MAX_DIMENSIONS) {
