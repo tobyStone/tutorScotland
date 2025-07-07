@@ -432,8 +432,8 @@ function createDynamicSectionElement(section, index) {
     }
 
     // For non-team sections, use two-col-content class to match about section styling
-    article.className = 'two-col-content fade-in-section';
-    article.style.transitionDelay = `${index * 0.1}s`;
+    article.className = 'two-col-content';
+    // Remove individual transition delay since wrapper handles the fade-in
 
     // Image handling is now done in the two-column structure below
 
