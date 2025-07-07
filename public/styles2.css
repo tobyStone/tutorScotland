@@ -1249,6 +1249,29 @@ header h1 {
     overflow: visible !important;
 }
 
+/* Apply the same rounded corner fix to standard dynamic sections */
+.dyn-block {
+    border-radius: 1.5rem !important; /* Ensure all corners are equally rounded */
+    overflow: visible !important; /* Ensure rounded corners aren't clipped */
+    position: relative !important; /* Ensure proper positioning context */
+}
+
+/* Additional debugging - force border-radius on all corners specifically for standard sections */
+.dyn-block {
+    border-top-left-radius: 1.5rem !important;
+    border-top-right-radius: 1.5rem !important;
+    border-bottom-left-radius: 1.5rem !important;
+    border-bottom-right-radius: 1.5rem !important;
+}
+
+/* Fix the container overflow issue that clips rounded corners for standard sections */
+.dynamic-section-container:has(.dyn-block),
+.dynamic-section-container .dyn-block {
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    overflow: visible !important;
+}
+
 /* Pronounced curves */
 .curve-bottom-left {
     border-bottom-left-radius: 5rem 7rem !important;

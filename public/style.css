@@ -1578,7 +1578,7 @@ body.has-dynamic-sections {
     float: none; /* Prevent floating */
     display: block; /* Ensure block display */
     border: 1px solid rgba(200,162,200,0.3); /* Subtle lilac border */
-    overflow: hidden; /* Contain floated children */
+    overflow: visible; /* Allow rounded corners to show properly */
 }
 
 .dyn-block img {
