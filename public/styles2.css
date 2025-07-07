@@ -342,19 +342,7 @@ input[type="reset"] {
         z-index: -1;
     }
 
-/* Shield and Banner Positioning */
-.main-shield {
-    max-width: 250px;
-    width: 100%;
-    margin-bottom: 0.5rem;
-}
-
-.main-ribbons {
-    max-width: 200px;
-    width: 100%;
-    margin-top: 257px;
-    margin-left: 0.42rem; /* shift horizontally if needed */
-}
+/* Shield and Banner Positioning - moved to animation section below */
 
 /* Adjust top positions & animation delays as needed */
 #imageShield {
@@ -1147,8 +1135,6 @@ input[type="reset"] {
     opacity: 0;
     transform: translateX(20px);
     animation: growRight 0.8s ease-out 0.3s forwards;
-    margin: 0 auto;
-    margin-top: -50px;
 }
 
 @keyframes growRight {
