@@ -25,11 +25,41 @@ const ALLOWED_MIME = [
 // NEW: Add a mapping for sharp format verification
 const ALLOWED_SHARP_FORMATS = ['jpeg', 'png', 'webp', 'gif'];
 
+// ✅ RACE CONDITION PREVENTION: Upload guard to prevent simultaneous uploads
+const activeUploads = new Map();
+const MAX_CONCURRENT_UPLOADS = 2;
+
+// ✅ CLEANUP: Periodic cleanup of stale upload entries (every 5 minutes)
+setInterval(() => {
+    const now = Date.now();
+    const staleThreshold = 5 * 60 * 1000; // 5 minutes
+
+    for (const [uploadId, timestamp] of activeUploads.entries()) {
+        if (now - timestamp > staleThreshold) {
+            console.log(`🧹 Cleaning up stale upload: ${uploadId}`);
+            activeUploads.delete(uploadId);
+        }
+    }
+}, 5 * 60 * 1000);
+
 module.exports = async (req, res) => {
     if (req.method !== 'POST') {
         res.setHeader('Allow', ['POST']);
         return res.status(405).end('Method Not Allowed');
     }
+
+    // ✅ UPLOAD GUARD: Prevent too many concurrent uploads
+    if (activeUploads.size >= MAX_CONCURRENT_UPLOADS) {
+        console.warn(`⚠️ Upload rejected: ${activeUploads.size} concurrent uploads already active`);
+        return res.status(429).json({
+            message: 'Too many uploads in progress. Please wait and try again.'
+        });
+    }
+
+    const uploadId = `upload_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    activeUploads.set(uploadId, Date.now());
+
+    console.log(`🔄 Starting upload ${uploadId} (${activeUploads.size}/${MAX_CONCURRENT_UPLOADS} active)`);
 
     try {
         const form = formidable({
@@ -129,7 +159,12 @@ module.exports = async (req, res) => {
             });
         }
 
-        const img = sharp(buffer, { failOnError: false });
+        // ✅ IMPROVED: More robust Sharp initialization with strict error handling
+        const img = sharp(buffer, {
+            failOnError: true,  // Changed to true to catch corruption early
+            sequentialRead: true,  // Ensure complete buffer read
+            limitInputPixels: MAX_DIMENSIONS * MAX_DIMENSIONS * 4  // Prevent memory issues
+        });
 
         /* -------------------------------------------------------------
             2️⃣  Metadata check
@@ -206,40 +241,143 @@ module.exports = async (req, res) => {
             });
         }
 
-        // Create thumbnail with high quality settings to prevent artifacts
+        // ✅ IMPROVED: More robust thumbnail generation with validation
         let thumbnailBuffer;
         try {
-            thumbnailBuffer = await img
+            console.log('🖼️ Generating thumbnail...');
+
+            // Create a fresh Sharp instance for thumbnail to avoid conflicts
+            const thumbImg = sharp(buffer, {
+                failOnError: true,
+                sequentialRead: true
+            });
+
+            thumbnailBuffer = await thumbImg
                 .resize(240, 240, {
                     fit: 'cover',
                     position: 'center',
-                    kernel: 'lanczos3'  // ✅ FIXED: High-quality resampling
+                    kernel: 'lanczos3',  // High-quality resampling
+                    withoutEnlargement: false  // Allow enlargement for small images
                 })
-                .jpeg({ quality: 95 })  // Higher quality for thumbnails
+                .jpeg({
+                    quality: 95,
+                    progressive: true,  // Better for web display
+                    mozjpeg: true  // Use mozjpeg encoder if available
+                })
                 .toBuffer();
+
+            // ✅ VALIDATION: Ensure thumbnail was created successfully
+            if (!thumbnailBuffer || thumbnailBuffer.length === 0) {
+                throw new Error('Thumbnail generation produced empty buffer');
+            }
+
+            console.log(`✅ Thumbnail generated: ${thumbnailBuffer.length} bytes`);
+
         } catch (kernelError) {
-            console.warn('Lanczos3 kernel failed, falling back to default:', kernelError.message);
-            // Fallback to default kernel if lanczos3 is not supported
-            thumbnailBuffer = await img
+            console.warn('Advanced thumbnail generation failed, using fallback:', kernelError.message);
+
+            // Fallback to simpler thumbnail generation
+            const fallbackImg = sharp(buffer, { failOnError: true });
+            thumbnailBuffer = await fallbackImg
                 .resize(240, 240, { fit: 'cover', position: 'center' })
-                .jpeg({ quality: 95 })
+                .jpeg({ quality: 90 })
                 .toBuffer();
+
+            if (!thumbnailBuffer || thumbnailBuffer.length === 0) {
+                throw new Error('Fallback thumbnail generation also failed');
+            }
+
+            console.log(`✅ Fallback thumbnail generated: ${thumbnailBuffer.length} bytes`);
         }
 
         const putOpts = { access: 'public', contentType: uploadedFile.mimetype, overwrite: true };
         const mainKey = `${folder}/${filename}`;
         const thumbKey = `${folder}/thumbnails/${filename}`;
 
-        // Upload original + thumb directly from buffers
-        const { url } = await put(mainKey, buffer, putOpts);
-        const { url: thumbnailUrl } = await put(thumbKey, thumbnailBuffer, putOpts);
+        // ✅ RACE CONDITION FIX: Sequential uploads with verification
+        console.log('🔄 Starting sequential blob uploads...');
 
-        console.log(`✅ Upload complete: ${url}`);
+        // Upload main image first with retry logic
+        let url, thumbnailUrl;
+        let uploadAttempts = 0;
+        const maxRetries = 3;
+
+        while (uploadAttempts < maxRetries) {
+            try {
+                uploadAttempts++;
+                console.log(`📤 Uploading main image (attempt ${uploadAttempts}/${maxRetries})...`);
+
+                const uploadResult = await put(mainKey, buffer, putOpts);
+                url = uploadResult.url;
+
+                // ✅ VERIFICATION: Immediately verify the uploaded image is complete
+                const verifyResponse = await fetch(url, { method: 'HEAD' });
+                if (!verifyResponse.ok) {
+                    throw new Error(`Upload verification failed: ${verifyResponse.status}`);
+                }
+
+                const uploadedSize = parseInt(verifyResponse.headers.get('content-length') || '0');
+                if (uploadedSize !== buffer.length) {
+                    throw new Error(`Size mismatch: uploaded ${uploadedSize} vs expected ${buffer.length}`);
+                }
+
+                console.log(`✅ Main image verified: ${uploadedSize} bytes`);
+                break; // Success, exit retry loop
+
+            } catch (uploadError) {
+                console.warn(`⚠️ Main upload attempt ${uploadAttempts} failed:`, uploadError.message);
+                if (uploadAttempts >= maxRetries) {
+                    throw new Error(`Main image upload failed after ${maxRetries} attempts: ${uploadError.message}`);
+                }
+                // Wait before retry with exponential backoff
+                await new Promise(resolve => setTimeout(resolve, 1000 * uploadAttempts));
+            }
+        }
+
+        // Upload thumbnail with same verification
+        uploadAttempts = 0;
+        while (uploadAttempts < maxRetries) {
+            try {
+                uploadAttempts++;
+                console.log(`📤 Uploading thumbnail (attempt ${uploadAttempts}/${maxRetries})...`);
+
+                const thumbResult = await put(thumbKey, thumbnailBuffer, putOpts);
+                thumbnailUrl = thumbResult.url;
+
+                // ✅ VERIFICATION: Verify thumbnail upload
+                const verifyThumbResponse = await fetch(thumbnailUrl, { method: 'HEAD' });
+                if (!verifyThumbResponse.ok) {
+                    throw new Error(`Thumbnail verification failed: ${verifyThumbResponse.status}`);
+                }
+
+                const thumbUploadedSize = parseInt(verifyThumbResponse.headers.get('content-length') || '0');
+                if (thumbUploadedSize !== thumbnailBuffer.length) {
+                    throw new Error(`Thumbnail size mismatch: uploaded ${thumbUploadedSize} vs expected ${thumbnailBuffer.length}`);
+                }
+
+                console.log(`✅ Thumbnail verified: ${thumbUploadedSize} bytes`);
+                break; // Success, exit retry loop
+
+            } catch (thumbError) {
+                console.warn(`⚠️ Thumbnail upload attempt ${uploadAttempts} failed:`, thumbError.message);
+                if (uploadAttempts >= maxRetries) {
+                    throw new Error(`Thumbnail upload failed after ${maxRetries} attempts: ${thumbError.message}`);
+                }
+                // Wait before retry
+                await new Promise(resolve => setTimeout(resolve, 1000 * uploadAttempts));
+            }
+        }
+
+        console.log(`✅ All uploads complete and verified: ${url}`);
 
         // Clean up temp file
         fs.unlink(uploadedFile.filepath, (err) => {
             if (err) console.error('Error deleting temp file:', err);
         });
+
+        // ✅ CLEANUP: Remove from active uploads
+        activeUploads.delete(uploadId);
+        console.log(`✅ Upload ${uploadId} completed successfully`);
 
         return res.status(200).json({
             url,
@@ -252,6 +390,10 @@ module.exports = async (req, res) => {
     } catch (error) {
         console.error('[upload-image] Unexpected error:', error);
         console.error('[upload-image] Error stack:', error.stack);
+
+        // ✅ CLEANUP: Remove from active uploads on error
+        activeUploads.delete(uploadId);
+        console.log(`❌ Upload ${uploadId} failed and cleaned up`);
 
         // Clean up temp file if it exists
         if (uploadedFile?.filepath) {

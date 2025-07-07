@@ -37,17 +37,63 @@ export async function uploadImage(file, folder = 'content-images') {
     fd.append('folder', folder);
 
     console.log('Uploading to /api/upload-image...');
-    const r = await fetch('/api/upload-image', { method: 'POST', body: fd });
 
-    if (!r.ok) {
-        const errorText = await r.text();
-        console.error('Upload failed:', r.status, errorText);
-        throw new Error(`Upload failed: ${r.status} ${errorText}`);
+    // ✅ IMPROVED: Client-side retry logic for network issues
+    let uploadAttempts = 0;
+    const maxRetries = 3;
+
+    while (uploadAttempts < maxRetries) {
+        try {
+            uploadAttempts++;
+            console.log(`📤 Upload attempt ${uploadAttempts}/${maxRetries}...`);
+
+            const r = await fetch('/api/upload-image', {
+                method: 'POST',
+                body: fd,
+                // ✅ Add timeout to prevent hanging requests
+                signal: AbortSignal.timeout(60000) // 60 second timeout
+            });
+
+            if (r.status === 429) {
+                // Too many concurrent uploads - wait and retry
+                console.warn('⚠️ Server busy, waiting before retry...');
+                await new Promise(resolve => setTimeout(resolve, 2000 * uploadAttempts));
+                continue;
+            }
+
+            if (!r.ok) {
+                const errorText = await r.text();
+                console.error('Upload failed:', r.status, errorText);
+
+                // Don't retry on client errors (4xx), only server errors (5xx)
+                if (r.status >= 400 && r.status < 500 && r.status !== 429) {
+                    throw new Error(`Upload failed: ${r.status} ${errorText}`);
+                }
+
+                if (uploadAttempts >= maxRetries) {
+                    throw new Error(`Upload failed after ${maxRetries} attempts: ${r.status} ${errorText}`);
+                }
+
+                // Wait before retry with exponential backoff
+                await new Promise(resolve => setTimeout(resolve, 1000 * uploadAttempts));
+                continue;
+            }
+
+            const result = await r.json();
+            console.log('✅ Upload successful:', result.url);
+            return result.url;
+
+        } catch (error) {
+            console.error(`❌ Upload attempt ${uploadAttempts} failed:`, error.message);
+
+            if (uploadAttempts >= maxRetries) {
+                throw new Error(`Upload failed after ${maxRetries} attempts: ${error.message}`);
+            }
+
+            // Wait before retry
+            await new Promise(resolve => setTimeout(resolve, 1000 * uploadAttempts));
+        }
     }
-
-    const result = await r.json();
-    console.log('Upload successful:', result.url);
-    return result.url;
 }
 
 /* ✅ IMPROVED: More robust image resizing with better error handling */
