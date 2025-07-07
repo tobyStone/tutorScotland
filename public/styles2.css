@@ -377,45 +377,101 @@ input[type="reset"] {
     }
 }
 
-/* Tutor Directory overrides */
+/* Page-specific shield and banner positioning overrides */
+
+/* Tutor Directory page - positioned to avoid content overlap */
 .tutor-directory-page #imageShield,
 .tutor-directory-page #imageBanner {
     position: absolute;
 }
 
-/* Move them to the right and position banner below shield's bottom edge */
 .tutor-directory-page #imageShield {
-    top: 177px !important;
+    top: 10% !important;
     left: 60% !important;
-    z-index: 3 !important; /* Shield should be on top */
+    z-index: 3 !important;
 }
 
 .tutor-directory-page #imageBanner {
-    top: 507px !important; /* Position banner below shield's bottom edge */
+    top: 12% !important; /* Closer to shield, not at bottom */
     left: 60% !important;
-    z-index: 2 !important; /* Banner should be behind shield */
+    z-index: 2 !important;
 }
 
-/* About page overrides */
+/* About page - positioned to right to avoid text overlap */
 .about-page #imageShield {
     left: 73% !important;
-    z-index: 3 !important; /* Shield should be on top */
+    z-index: 3 !important;
 }
 
 .about-page #imageBanner {
     left: 73% !important;
-    z-index: 2 !important; /* Banner should be behind shield */
+    z-index: 2 !important;
 }
 
-/* Contact page overrides */
+/* Contact page - positioned to right to avoid form overlap */
 .contact-page #imageShield {
     left: 73% !important;
-    z-index: 3 !important; /* Shield should be on top */
+    z-index: 3 !important;
 }
 
 .contact-page #imageBanner {
     left: 73% !important;
-    z-index: 2 !important; /* Banner should be behind shield */
+    z-index: 2 !important;
+}
+
+/* Tutor Membership page - positioned to avoid hero section overlap */
+body[data-page="tutorMembership"] #imageShield {
+    top: 5% !important;
+    left: 65% !important;
+    z-index: 3 !important;
+}
+
+body[data-page="tutorMembership"] #imageBanner {
+    top: 7% !important;
+    left: 65% !important;
+    z-index: 2 !important;
+}
+
+/* Parents page - positioned to avoid content overlap */
+body[data-page="parents"] #imageShield {
+    left: 70% !important;
+    z-index: 3 !important;
+}
+
+body[data-page="parents"] #imageBanner {
+    left: 70% !important;
+    z-index: 2 !important;
+}
+
+/* Partnerships page - positioned to avoid content overlap */
+body[data-page="partnerships"] #imageShield {
+    left: 70% !important;
+    z-index: 3 !important;
+}
+
+body[data-page="partnerships"] #imageBanner {
+    left: 70% !important;
+    z-index: 2 !important;
+}
+
+/* Tutors Zone page - positioned to avoid content overlap */
+body[data-page="tutorszone"] #imageShield {
+    left: 70% !important;
+    z-index: 3 !important;
+}
+
+body[data-page="tutorszone"] #imageBanner {
+    left: 70% !important;
+    z-index: 2 !important;
+}
+
+/* Dynamic pages - positioned to work with mission-row layout */
+.dynamic-page #imageShield {
+    /* Uses default positioning from main rules above */
+}
+
+.dynamic-page #imageBanner {
+    /* Uses default positioning from main rules above */
 }
 
 /* Show class for animations */
