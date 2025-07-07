@@ -364,7 +364,7 @@ input[type="reset"] {
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1s; /* or 1s if you want it later */
-    z-index: 2;
+    z-index: 3; /* Shield should be on top */
 }
 
 #imageBanner {
@@ -374,7 +374,7 @@ input[type="reset"] {
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1.5s; /* ribbons appear last */
-    z-index: 2;
+    z-index: 2; /* Banner should be behind shield */
 }
 
 @keyframes growLeft {
@@ -399,11 +399,35 @@ input[type="reset"] {
 .tutor-directory-page #imageShield {
     top: 177px !important;
     left: 60% !important;
+    z-index: 3 !important; /* Shield should be on top */
 }
 
 .tutor-directory-page #imageBanner {
     top: 507px !important; /* Position banner below shield's bottom edge */
     left: 60% !important;
+    z-index: 2 !important; /* Banner should be behind shield */
+}
+
+/* About page overrides */
+.about-page #imageShield {
+    left: 73% !important;
+    z-index: 3 !important; /* Shield should be on top */
+}
+
+.about-page #imageBanner {
+    left: 73% !important;
+    z-index: 2 !important; /* Banner should be behind shield */
+}
+
+/* Contact page overrides */
+.contact-page #imageShield {
+    left: 73% !important;
+    z-index: 3 !important; /* Shield should be on top */
+}
+
+.contact-page #imageBanner {
+    left: 73% !important;
+    z-index: 2 !important; /* Banner should be behind shield */
 }
 
 /* Show class for animations */
