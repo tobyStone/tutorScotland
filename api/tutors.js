@@ -151,16 +151,14 @@ module.exports = async (req, res) => {
                     .tutor-directory-page #imageShield {
                         top: 177px !important;
                         left: calc(60% - 27px) !important; /* Move left by 27px */
-                        width: 90% !important; /* Reduce size by 10% */
-                        height: 90% !important; /* Reduce size by 10% */
+                        transform: scale(0.9) !important; /* Reduce size by 10% while maintaining proportions */
                     }
 
-                    /* Make #imageBanner just below shield�s bottom edge */
+                    /* Make #imageBanner just below shield's bottom edge */
                     .tutor-directory-page #imageBanner {
-                      top: calc(177px + 330px) !important; /* Position top of banner at bottom of shield */
+                      top: calc(177px + 297px) !important; /* Position top of banner at bottom of scaled shield (330px * 0.9 = 297px) */
                       left: calc(60% - 27px) !important; /* Move left by 27px */
-                      width: 90% !important; /* Reduce size by 10% */
-                      height: 90% !important; /* Reduce size by 10% */
+                      transform: scale(0.9) !important; /* Reduce size by 10% while maintaining proportions */
                     }
 
 
