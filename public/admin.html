@@ -570,16 +570,9 @@
             resetTutorForm();
         });
 
-        // Add event listener to convert £ symbols to __P__ in cost range field
+        // Note: £ symbols are converted to __P__ only during form submission
+        // This allows users to see £ in the form but stores __P__ in the database
         const costRangeInput = document.getElementById('costRangeInput');
-        costRangeInput.addEventListener('input', function(e) {
-            // Convert £ symbols to __P__ as user types
-            const value = e.target.value;
-            const convertedValue = value.replace(/£/g, '__P__');
-            if (value !== convertedValue) {
-                e.target.value = convertedValue;
-            }
-        });
 
         tutorForm.addEventListener('submit', async e => {
             e.preventDefault();

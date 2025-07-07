@@ -132,7 +132,7 @@ module.exports = async (req, res) => {
                 <meta charset="UTF-8">
                 <title>Tutors Alliance Scotland - Find Your Tutor</title>
                 <link rel="icon" href="/images/bannerShield2.png" type="image/png">
-                <link rel="stylesheet" href="/style.css">
+                <link rel="stylesheet" href="/styles2.css">
                 <script src="/responsive-helper.js"></script>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <style>
@@ -446,6 +446,45 @@ module.exports = async (req, res) => {
                 </div>
                 </div>
                 </main>
+
+                <!-- SOCIAL ICONS FOOTER -->
+                <footer class="site-footer fade-in-section">
+                    <div class="footer-icons">
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    </div>
+                </footer>
+
+                <!-- STATIC BOTTOM FOOTER -->
+                <footer class="static-footer">
+                    <div class="static-footer-container">
+                        <div class="static-footer-left">
+                            <h4>Extra Information</h4>
+                            <ul>
+                                <li><a href="/tutoring-standards.html">The TAS Way: Governance and Guidance</a></li>
+                                <li><a href="/faq.html">FAQ's</a></li>
+                                <li><a href="/privacy-policy.html">Privacy Policy</a></li>
+                                <li><a href="/safeguarding-policy.html">Safeguarding Policy</a></li>
+                                <li><a href="/terms-and-conditions.html">Terms and Conditions</a></li>
+                            </ul>
+                            <div class="static-footer-copyright">
+                                <p>ALL RIGHTS RESERVED © Tutors Alliance Scotland 2025</p>
+                            </div>
+                            <div class="static-footer-credits">
+                                <p>Website by <a href="#" target="_blank">Tutors Alliance Scotland</a></p>
+                            </div>
+                        </div>
+                        <div class="static-footer-right">
+                            <div class="website-url">
+                                <p>www.tutorsalliancescotland.org.uk</p>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+
+                <!-- Font Awesome for social icons -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
             </body>
             </html>
         `;
@@ -481,3 +520,7 @@ module.exports = async (req, res) => {
         return res.status(500).send(errorHtml);
     }
 };
+
+
+
+
