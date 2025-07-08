@@ -104,6 +104,80 @@ module.exports = async (req, res) => {
                 }
             }
 
+            // Check if migration is requested
+            if (req.query.migrate === 'true') {
+                console.log('Running migration to add default values to existing blogs');
+                try {
+                    const blogsToUpdate = await Blog.find({
+                        $or: [
+                            { metaDescription: { $exists: false } },
+                            { slug: { $exists: false } },
+                            { tags: { $exists: false } },
+                            { featured: { $exists: false } },
+                            { status: { $exists: false } },
+                            { focusKeyword: { $exists: false } },
+                            { readingTime: { $exists: false } }
+                        ]
+                    });
+
+                    console.log(`Found ${blogsToUpdate.length} blogs to migrate`);
+
+                    for (const blog of blogsToUpdate) {
+                        const updateData = {};
+
+                        // Add missing fields with defaults
+                        if (!blog.metaDescription) {
+                            const fallback = blog.excerpt || blog.content.replace(/<[^>]*>/g, '').substring(0, 160);
+                            updateData.metaDescription = fallback.length > 160 ? fallback.substring(0, 160) + '...' : fallback;
+                        }
+
+                        if (!blog.slug) {
+                            const generatedSlug = blog.title
+                                .toLowerCase()
+                                .replace(/[^a-z0-9\s-]/g, '')
+                                .replace(/\s+/g, '-')
+                                .replace(/-+/g, '-')
+                                .replace(/^-|-$/g, '');
+
+                            // Ensure uniqueness
+                            let uniqueSlug = generatedSlug;
+                            let counter = 1;
+                            while (await Blog.findOne({ slug: uniqueSlug, _id: { $ne: blog._id } })) {
+                                uniqueSlug = `${generatedSlug}-${counter}`;
+                                counter++;
+                            }
+                            updateData.slug = uniqueSlug;
+                        }
+
+                        if (!blog.tags) updateData.tags = [];
+                        if (blog.featured === undefined) updateData.featured = false;
+                        if (!blog.status) updateData.status = 'published';
+                        if (!blog.focusKeyword) updateData.focusKeyword = '';
+                        if (!blog.readingTime) {
+                            const cleanContent = blog.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+                            const wordCount = cleanContent.split(/\s+/).length;
+                            updateData.readingTime = Math.ceil(wordCount / 200);
+                        }
+
+                        if (Object.keys(updateData).length > 0) {
+                            await Blog.findByIdAndUpdate(blog._id, updateData);
+                            console.log(`Updated blog: ${blog.title}`);
+                        }
+                    }
+
+                    return res.status(200).json({
+                        message: `Migration completed. Updated ${blogsToUpdate.length} blogs.`,
+                        updated: blogsToUpdate.length
+                    });
+                } catch (error) {
+                    console.error('Migration error:', error);
+                    return res.status(500).json({
+                        message: 'Migration failed',
+                        error: error.message
+                    });
+                }
+            }
+
             // Return all blogs, sorted by newest first
             console.log('Fetching all blog posts');
             const blogs = await Blog.find().sort({ createdAt: -1 });

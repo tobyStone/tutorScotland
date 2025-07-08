@@ -15,14 +15,19 @@ const blogSchema = new mongoose.Schema({
     // SEO and metadata fields
     metaDescription: {
         type: String,
-        maxlength: 160 // Google's recommended limit
+        maxlength: 160, // Google's recommended limit
+        default: ''
     },
     slug: {
         type: String,
         unique: true,
-        sparse: true // allows null values but ensures uniqueness when present
+        sparse: true, // allows null values but ensures uniqueness when present
+        default: null
     },
-    tags: [String], // Array of tags for categorization
+    tags: {
+        type: [String], // Array of tags for categorization
+        default: []
+    },
     featured: {
         type: Boolean,
         default: false
@@ -33,12 +38,27 @@ const blogSchema = new mongoose.Schema({
         default: 'published'
     },
     // Social media metadata
-    socialImage: String, // Custom image for social sharing
-    socialTitle: String, // Custom title for social sharing
-    socialDescription: String, // Custom description for social sharing
+    socialImage: {
+        type: String,
+        default: ''
+    }, // Custom image for social sharing
+    socialTitle: {
+        type: String,
+        default: ''
+    }, // Custom title for social sharing
+    socialDescription: {
+        type: String,
+        default: ''
+    }, // Custom description for social sharing
     // SEO fields
-    focusKeyword: String, // Primary keyword for SEO
-    readingTime: Number, // Estimated reading time in minutes
+    focusKeyword: {
+        type: String,
+        default: ''
+    }, // Primary keyword for SEO
+    readingTime: {
+        type: Number,
+        default: 1
+    }, // Estimated reading time in minutes
     createdAt: {
         type: Date,
         default: Date.now,
