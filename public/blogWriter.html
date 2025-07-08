@@ -566,8 +566,10 @@
             newBlogSection.classList.add('active');
             manageBlogSection.classList.remove('active');
 
-            // Reset form when switching to create tab to prevent pre-population
-            resetBlogForm();
+            // Only reset form when switching to create tab if we're not in edit mode
+            if (!blogForm.dataset.editId) {
+                resetBlogForm();
+            }
         });
         
         manageTabBtn.addEventListener('click', () => {
@@ -857,6 +859,10 @@
                 }
 
                 console.log('Editing blog:', blog);
+
+                // Set form to edit mode BEFORE switching tabs
+                blogForm.dataset.editId = blogId;
+                submitBtn.textContent = 'Update Blog Post';
 
                 // Populate form and switch to create tab
                 populateBlogForm(blog);
