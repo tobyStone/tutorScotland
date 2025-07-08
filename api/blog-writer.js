@@ -55,9 +55,9 @@ module.exports = async (req, res) => {
     console.log('Blog writer API called with method:', req.method);
     console.log('Request headers:', req.headers);
 
-    // Allow POST, GET, and DELETE requests
-    if (!['POST', 'GET', 'DELETE'].includes(req.method)) {
-        res.setHeader('Allow', ['POST', 'GET', 'DELETE']);
+    // Allow POST, GET, PUT, and DELETE requests
+    if (!['POST', 'GET', 'PUT', 'DELETE'].includes(req.method)) {
+        res.setHeader('Allow', ['POST', 'GET', 'PUT', 'DELETE']);
         return res.status(405).json({ message: `Method ${req.method} Not Allowed` });
     }
 
