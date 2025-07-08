@@ -699,7 +699,8 @@
 
                     // Cost cell
                     const costCell = document.createElement('td');
-                    costCell.textContent = tutor.costRange;
+                    // Convert __P__ back to £ for display in the table
+                    costCell.textContent = (tutor.costRange || '').replace(/__P__/g, '£');
                     row.appendChild(costCell);
 
                     // Actions cell
