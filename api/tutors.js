@@ -245,7 +245,7 @@ module.exports = async (req, res) => {
                     .tutor-directory-page #imageBanner {
                         opacity: 0;
                         position: absolute;
-                        top: 18% !important; /* Position closer to shield bottom tip */
+                        top: calc(18% + 77px) !important; /* Position 77px lower than previous position */
                         left: 60% !important;
                         animation: growLeft 2s forwards ease-in-out;
                         animation-delay: 1.5s; /* ribbons appear after shield */
