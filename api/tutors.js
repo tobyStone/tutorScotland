@@ -228,27 +228,41 @@ module.exports = async (req, res) => {
                         grid-template-columns: repeat(3, 1fr);
                         gap: 20px;
                         margin: 20px 0;
-                        opacity: 1 !important;
+                        opacity: 0; /* Initially hidden */
+                        transition: opacity 0.5s ease;
                     }
                     .tutor-directory-page #imageShield {
-                        top: 177px !important;
-                        left: calc(53% - 127px) !important; /* Move 7% of viewport left (60% - 7% = 53%) */
-                        transform: scale(0.5) !important; /* Make smaller */
-                        opacity: 1 !important; /* Ensure shield is visible */
-                        animation: none !important; /* Remove animation delays */
+                        opacity: 0;
+                        position: absolute;
+                        top: 10% !important;
+                        left: 60% !important;
+                        animation: growLeft 2s forwards ease-in-out;
+                        animation-delay: 1s;
+                        z-index: 3 !important;
                     }
 
-                    /* Make #imageBanner center just touch the bottom of the shield */
+                    /* Make #imageBanner appear below shield with proper animation */
                     .tutor-directory-page #imageBanner {
-                      display: block !important; /* Ensure banner is visible */
-                      opacity: 1 !important; /* Ensure banner is visible */
-                      animation: none !important; /* Remove animation delays */
-                      top: calc(177px + 165px - 25px) !important; /* Position center of banner at bottom of scaled shield (330px * 0.5 = 165px, minus half banner height) */
-                      left: calc(53% - 127px) !important; /* Move 7% of viewport left to match shield */
-                      transform: scale(0.5) !important; /* Make smaller to match shield */
-                      z-index: 2 !important; /* Ensure banner appears below shield but above other content */
+                        opacity: 0;
+                        position: absolute;
+                        top: 12% !important; /* Closer to shield, not at bottom */
+                        left: 60% !important;
+                        animation: growLeft 2s forwards ease-in-out;
+                        animation-delay: 1.5s; /* ribbons appear after shield */
+                        z-index: 2 !important;
                     }
 
+                    /* Add the growLeft animation keyframes */
+                    @keyframes growLeft {
+                        0% {
+                            opacity: 0;
+                            transform: translateX(-37%) scale(0.5);
+                        }
+                        100% {
+                            opacity: 1;
+                            transform: translateX(-37%) scale(0.9);
+                        }
+                    }
 
                     /* Adjust for smaller screens */
                     @media (max-width: 900px) {
@@ -307,9 +321,14 @@ module.exports = async (req, res) => {
                         border-radius: 8px;
                         padding: 15px;
                         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-                        opacity: 1 !important;
-                        transform: none !important;
-                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        opacity: 0; /* Initially hidden */
+                        transform: translateY(20px);
+                        transition: opacity 0.8s ease, transform 0.8s ease, box-shadow 0.3s ease;
+                    }
+
+                    .tutor-card.show {
+                        opacity: 1;
+                        transform: translateY(0);
                     }
 
                     .tutor-card:hover {
@@ -347,7 +366,11 @@ module.exports = async (req, res) => {
                         padding: 10px;
                         border-radius: 4px;
                         margin-bottom: 20px;
-                        opacity: 1 !important;
+                        opacity: 0; /* Initially hidden */
+                        font-size: 0.9rem;
+                        color: #800080;
+                        text-align: center;
+                        transition: opacity 0.5s ease;
                     }
 
                     .purple-pound {
@@ -535,48 +558,37 @@ module.exports = async (req, res) => {
                         <div class="tutor-grid">${tutorsHtml}</div>
                     </div>
                     <script>
-                        // Immediately show tutor cards without waiting for animation
+                        // Staggered animation for tutor cards - like cards being placed on a table
                         document.addEventListener('DOMContentLoaded', function() {
                             const tutorCards = document.querySelectorAll('.tutor-card');
+                            const tutorGrid = document.querySelector('.tutor-grid');
+                            const pricingKey = document.querySelector('.pricing-key');
+
+                            // Show the grid container first
+                            if (tutorGrid) {
+                                tutorGrid.style.opacity = '1';
+                            }
+
+                            // Show pricing key
+                            if (pricingKey) {
+                                pricingKey.style.opacity = '1';
+                            }
+
+                            // Animate tutor cards one by one with increasing delays
                             tutorCards.forEach((card, index) => {
                                 setTimeout(() => {
                                     card.classList.add('show');
-                                }, index * 300);  // Delay each card by 300ms
+                                }, (index + 1) * 200);  // Start from 200ms, then 400ms, 600ms, etc.
                             });
 
-                            const tutorGrid = document.querySelector('.tutor-grid');
-                            if (tutorGrid) {
-                                tutorGrid.classList.add('show');
-                            }
-
-                            const pricingKey = document.querySelector('.pricing-key');
-                            if (pricingKey) {
-                                pricingKey.classList.add('show');
-                            }
-
-                            // Debug image loading issues
+                            // Debug image loading issues (reduced logging)
                             const tutorImages = document.querySelectorAll('.tutor-image');
                             tutorImages.forEach((img, index) => {
-                                img.addEventListener('load', function() {
-                                    console.log(\`Image \${index} loaded successfully: \${this.src}\`);
-                                });
                                 img.addEventListener('error', function() {
-                                    console.log(\`Image \${index} failed to load: \${this.src}\`);
+                                    console.log(\`Image \${index} failed to load: \${this.src}, using fallback\`);
                                     this.src = '/images/tutor0.jpg';
                                 });
                             });
-
-                            // Ensure banner and shield are visible
-                            const shield = document.getElementById('imageShield');
-                            const banner = document.getElementById('imageBanner');
-                            if (shield) {
-                                shield.style.opacity = '1';
-                                console.log('Shield made visible');
-                            }
-                            if (banner) {
-                                banner.style.opacity = '1';
-                                console.log('Banner made visible');
-                            }
                         });
                     </script>
                 </div>
