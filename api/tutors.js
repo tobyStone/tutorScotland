@@ -663,7 +663,7 @@ module.exports = async (req, res) => {
             <body>
                 <h1>Something went wrong</h1>
                 <div class="error">${error.message}</div>
-                <div class="message">We're having trouble connecting to the database. Please try again later.</div>
+                <div class="message">We're having some trouble connecting to the database. Please try again later.</div>
                 <div class="stack">${error.stack}</div>
                 <p><a href="/">Return to home page</a></p>
             </body>
