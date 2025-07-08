@@ -132,7 +132,7 @@ module.exports = async (req, res) => {
                     class="tutor-image" loading="lazy"
                     decoding="async"
                     width="300" height="200"
-                    style="object-fit:cover">
+                    style="object-fit:cover; object-position: center center; display: block;">
                     <h3>${tutor.name}</h3>
                     <p>Subjects: ${tutor.subjects.join(', ')}</p>
                     <p>Cost: <span class="purple-pound">${tutor.costRange.replace(/__P__/g, '&pound')} per hour</span></p>
@@ -234,13 +234,19 @@ module.exports = async (req, res) => {
                         top: 177px !important;
                         left: calc(53% - 127px) !important; /* Move 7% of viewport left (60% - 7% = 53%) */
                         transform: scale(0.5) !important; /* Make smaller */
+                        opacity: 1 !important; /* Ensure shield is visible */
+                        animation: none !important; /* Remove animation delays */
                     }
 
                     /* Make #imageBanner center just touch the bottom of the shield */
                     .tutor-directory-page #imageBanner {
+                      display: block !important; /* Ensure banner is visible */
+                      opacity: 1 !important; /* Ensure banner is visible */
+                      animation: none !important; /* Remove animation delays */
                       top: calc(177px + 165px - 25px) !important; /* Position center of banner at bottom of scaled shield (330px * 0.5 = 165px, minus half banner height) */
                       left: calc(53% - 127px) !important; /* Move 7% of viewport left to match shield */
                       transform: scale(0.5) !important; /* Make smaller to match shield */
+                      z-index: 2 !important; /* Ensure banner appears below shield but above other content */
                     }
 
 
@@ -315,10 +321,11 @@ module.exports = async (req, res) => {
                         width: 100%;
                         height: 200px; /* Fixed height for consistency */
                         object-fit: cover; /* Maintain aspect ratio while filling the container */
-                        object-position: center; /* Center the image */
+                        object-position: center center; /* Center the image both horizontally and vertically */
                         border-radius: 4px;
                         margin-bottom: 10px;
                         border: 1px solid #ddd;
+                        display: block; /* Ensure proper block-level display */
                     }
 
                     .tutor-card h3 {
@@ -545,6 +552,30 @@ module.exports = async (req, res) => {
                             const pricingKey = document.querySelector('.pricing-key');
                             if (pricingKey) {
                                 pricingKey.classList.add('show');
+                            }
+
+                            // Debug image loading issues
+                            const tutorImages = document.querySelectorAll('.tutor-image');
+                            tutorImages.forEach((img, index) => {
+                                img.addEventListener('load', function() {
+                                    console.log(\`Image \${index} loaded successfully: \${this.src}\`);
+                                });
+                                img.addEventListener('error', function() {
+                                    console.log(\`Image \${index} failed to load: \${this.src}\`);
+                                    this.src = '/images/tutor0.jpg';
+                                });
+                            });
+
+                            // Ensure banner and shield are visible
+                            const shield = document.getElementById('imageShield');
+                            const banner = document.getElementById('imageBanner');
+                            if (shield) {
+                                shield.style.opacity = '1';
+                                console.log('Shield made visible');
+                            }
+                            if (banner) {
+                                banner.style.opacity = '1';
+                                console.log('Banner made visible');
                             }
                         });
                     </script>
