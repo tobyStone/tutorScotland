@@ -241,11 +241,11 @@ module.exports = async (req, res) => {
                         z-index: 3 !important;
                     }
 
-                    /* Make #imageBanner appear below shield with proper animation */
+                    /* Make #imageBanner appear at bottom tip of shield with proper animation */
                     .tutor-directory-page #imageBanner {
                         opacity: 0;
                         position: absolute;
-                        top: 12% !important; /* Closer to shield, not at bottom */
+                        top: 97% !important; /* Position at bottom like other static pages */
                         left: 60% !important;
                         animation: growLeft 2s forwards ease-in-out;
                         animation-delay: 1.5s; /* ribbons appear after shield */
@@ -329,6 +329,11 @@ module.exports = async (req, res) => {
                     .tutor-card.show {
                         opacity: 1;
                         transform: translateY(0);
+                    }
+
+                    /* Remove flag background from tutor cards */
+                    .tutor-card::before {
+                        display: none !important;
                     }
 
                     .tutor-card:hover {
