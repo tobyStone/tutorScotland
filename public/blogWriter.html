@@ -173,6 +173,176 @@
             border-radius: 4px;
             margin-bottom: 10px;
         }
+
+        /* Enhanced Blog form styling */
+        .enhanced-blog-form {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .form-section {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #fafafa;
+        }
+
+        .form-section legend {
+            font-weight: bold;
+            color: #0057B7;
+            font-size: 1.1em;
+            padding: 0 10px;
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            flex: 1 1 100%;
+        }
+
+        .form-group.half-width {
+            flex: 1 1 calc(50% - 10px);
+        }
+
+        .form-group.third-width {
+            flex: 1 1 calc(33.333% - 14px);
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .wide-input, .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .wide-input:focus, .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #0057B7;
+            box-shadow: 0 0 0 3px rgba(0, 87, 183, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .char-counter {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .checkbox-label {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center;
+            cursor: pointer;
+            font-weight: normal !important;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: auto !important;
+            margin-right: 8px;
+            margin-bottom: 0 !important;
+        }
+
+        .file-input {
+            padding: 8px !important;
+            background-color: white;
+        }
+
+        .current-image-preview {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+
+        .current-image-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-start;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #0057B7;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #003d82;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .form-group.half-width,
+            .form-group.third-width {
+                flex: 1 1 100%;
+            }
+
+            .form-row {
+                gap: 10px;
+            }
+
+            .form-section {
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -203,50 +373,135 @@
         <section id="newBlogSection" class="tab-content active">
             <h2 id="formHeading" data-ve-block-id="3abe36c0-caac-4c55-a567-31ba5ca6d3fe">Create a New Blog Post</h2>
 
-            <form id="blogForm">
-                <label>Title:<input id="titleField" class="wide-input" name="title" required=""></label>
-                <label>Author:<input id="authorField" class="wide-input" name="author" required=""></label>
+            <form id="blogForm" class="enhanced-blog-form">
+                <!-- Basic Information Section -->
+                <fieldset class="form-section">
+                    <legend>Basic Information</legend>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="titleField">Title *</label>
+                            <input id="titleField" class="wide-input" name="title" required placeholder="Enter your blog post title">
+                        </div>
+                    </div>
 
-                <label>
-                    Category:
-                    <select id="categoryField" name="category">
-                        <option value="general">General</option>
-                        <option value="parent">Parent</option>
-                        <option value="tutor">Tutor</option>
-                    </select>
-                </label>
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label for="authorField">Author *</label>
+                            <input id="authorField" class="wide-input" name="author" required placeholder="Author name">
+                        </div>
+                        <div class="form-group half-width">
+                            <label for="slugField">URL Slug</label>
+                            <input id="slugField" class="wide-input" name="slug" placeholder="url-friendly-title (auto-generated if empty)">
+                        </div>
+                    </div>
+                </fieldset>
 
-                <label>
-                    Excerpt (short summary):
-                    <textarea id="excerptField" rows="2" maxlength="200"></textarea>
-                </label>
+                <!-- Content Section -->
+                <fieldset class="form-section">
+                    <legend>Content</legend>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="excerptField">Excerpt (Short Summary) *</label>
+                            <textarea id="excerptField" rows="3" maxlength="200" placeholder="Brief summary of your blog post (max 200 characters)" required></textarea>
+                            <small class="char-counter">0/200 characters</small>
+                        </div>
+                    </div>
 
-                <label>
-                    Publish Date/Time:
-                    <input type="datetime-local" id="publishDateField" name="publishDate">
-                </label>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="contentField">Main Content *</label>
+                            <textarea id="contentField" rows="15" required placeholder="Write your blog post content here..."></textarea>
+                        </div>
+                    </div>
+                </fieldset>
 
-                <label>
-                    Content:
-                    <textarea id="contentField" rows="6" required=""></textarea>
-                </label>
+                <!-- SEO & Metadata Section -->
+                <fieldset class="form-section">
+                    <legend>SEO & Metadata</legend>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="metaDescriptionField">Meta Description</label>
+                            <textarea id="metaDescriptionField" rows="2" maxlength="160" placeholder="SEO description for search engines (max 160 characters)"></textarea>
+                            <small class="char-counter">0/160 characters</small>
+                        </div>
+                    </div>
 
-                <label>
-                    Image:
-                    <input type="file" id="imageField" accept="image/*">
-                </label>
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label for="focusKeywordField">Focus Keyword</label>
+                            <input id="focusKeywordField" class="wide-input" name="focusKeyword" placeholder="Primary SEO keyword">
+                        </div>
+                        <div class="form-group half-width">
+                            <label for="tagsField">Tags</label>
+                            <input id="tagsField" class="wide-input" name="tags" placeholder="tag1, tag2, tag3 (comma-separated)">
+                        </div>
+                    </div>
+                </fieldset>
 
-                <!-- Current Image Preview -->
-                <div id="currentImagePreview" style="display: none;">
-                    <p style="margin-bottom: 5px;">Current Image:</p>
-                    <img src="" alt="Current Image">
-                    <label style="display: inline-flex; align-items: center; margin-left: 15px;">
-                        <input type="checkbox" name="removeImage" id="removeImageCheckbox" value="true" style="width: auto; margin-right: 5px;"> Remove Image
-                    </label>
+                <!-- Publishing Options Section -->
+                <fieldset class="form-section">
+                    <legend>Publishing Options</legend>
+                    <div class="form-row">
+                        <div class="form-group third-width">
+                            <label for="categoryField">Category</label>
+                            <select id="categoryField" name="category">
+                                <option value="general">General</option>
+                                <option value="parent">Parent</option>
+                                <option value="tutor">Tutor</option>
+                            </select>
+                        </div>
+                        <div class="form-group third-width">
+                            <label for="statusField">Status</label>
+                            <select id="statusField" name="status">
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                                <option value="archived">Archived</option>
+                            </select>
+                        </div>
+                        <div class="form-group third-width">
+                            <label for="publishDateField">Publish Date/Time</label>
+                            <input type="datetime-local" id="publishDateField" name="publishDate">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="featuredField" name="featured">
+                                <span class="checkmark"></span>
+                                Featured Post
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Media Section -->
+                <fieldset class="form-section">
+                    <legend>Media</legend>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="imageField">Featured Image</label>
+                            <input type="file" id="imageField" accept="image/*" class="file-input">
+                        </div>
+                    </div>
+
+                    <!-- Current image preview (for editing) -->
+                    <div id="currentImagePreview" style="display: none;" class="current-image-preview">
+                        <p>Current Image:</p>
+                        <img src="" alt="Current blog image">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="removeImageCheckbox">
+                            <span class="checkmark"></span>
+                            Remove Current Image
+                        </label>
+                    </div>
+                </fieldset>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" id="submitBtn" class="btn-primary">Create Blog</button>
+                    <button type="button" id="cancelEditBtn" class="btn-secondary" style="display: none;">Cancel Edit</button>
                 </div>
-
-                <button type="submit" id="submitBtn">Create Blog</button>
-                <button type="button" id="cancelEditBtn" class="cancel-btn" style="display: none;">Cancel Edit</button>
             </form>
         </section>
 
@@ -290,18 +545,13 @@
     <!-- Hidden JSON-LD for SEO -->
     <script type="application/ld+json" id="blogMicrodata"></script>
 
+    <!-- Load rolling banner script -->
+    <script src="/responsive-helper.js" defer></script>
+    <script src="/js/rolling-banner.js" defer></script>
+
     <!-- JS as module so we can import upload‑helper -->
     <script type="module">
         import { uploadImage } from '/js/upload-helper.js';
-
-        /* rolling banner */
-        fetch('/api/tutors?format=json')
-            .then(r => r.json())
-            .then(list => {
-                tutorBanner.textContent =
-                    list.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
-            })
-            .catch(console.error);
 
         /* Tab switching functionality */
         const createTabBtn = document.getElementById('createTabBtn');
@@ -314,6 +564,9 @@
             manageTabBtn.classList.remove('active');
             newBlogSection.classList.add('active');
             manageBlogSection.classList.remove('active');
+
+            // Reset form when switching to create tab to prevent pre-population
+            resetBlogForm();
         });
         
         manageTabBtn.addEventListener('click', () => {
@@ -335,12 +588,51 @@
         // Form field references
         const titleField = document.getElementById('titleField');
         const authorField = document.getElementById('authorField');
+        const slugField = document.getElementById('slugField');
         const categoryField = document.getElementById('categoryField');
+        const statusField = document.getElementById('statusField');
         const excerptField = document.getElementById('excerptField');
+        const metaDescriptionField = document.getElementById('metaDescriptionField');
+        const focusKeywordField = document.getElementById('focusKeywordField');
+        const tagsField = document.getElementById('tagsField');
+        const featuredField = document.getElementById('featuredField');
         const publishDateField = document.getElementById('publishDateField');
         const contentField = document.getElementById('contentField');
         const imageField = document.getElementById('imageField');
         const blogMicrodata = document.getElementById('blogMicrodata');
+
+        // Character counters
+        function updateCharCounter(field, maxLength) {
+            const counter = field.parentElement.querySelector('.char-counter');
+            if (counter) {
+                const currentLength = field.value.length;
+                counter.textContent = `${currentLength}/${maxLength} characters`;
+                counter.style.color = currentLength > maxLength ? '#dc3545' : '#666';
+            }
+        }
+
+        // Add character counting for excerpt and meta description
+        excerptField.addEventListener('input', () => updateCharCounter(excerptField, 200));
+        metaDescriptionField.addEventListener('input', () => updateCharCounter(metaDescriptionField, 160));
+
+        // Auto-generate slug from title
+        titleField.addEventListener('input', () => {
+            if (!slugField.value || slugField.dataset.autoGenerated === 'true') {
+                const slug = titleField.value
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+                slugField.value = slug;
+                slugField.dataset.autoGenerated = 'true';
+            }
+        });
+
+        // Mark slug as manually edited when user types in it
+        slugField.addEventListener('input', () => {
+            slugField.dataset.autoGenerated = 'false';
+        });
 
         // Store all blogs for editing
         let allBlogs = [];
@@ -355,14 +647,31 @@
             currentImagePreview.style.display = 'none';
             removeImageCheckbox.checked = false;
             blogMicrodata.textContent = '';
+
+            // Reset character counters
+            updateCharCounter(excerptField, 200);
+            updateCharCounter(metaDescriptionField, 160);
+
+            // Reset slug auto-generation flag
+            slugField.dataset.autoGenerated = 'true';
         }
 
         /* Helper: Populate form for editing */
         function populateBlogForm(blog) {
             titleField.value = blog.title || '';
             authorField.value = blog.author || '';
+            slugField.value = blog.slug || '';
             excerptField.value = blog.excerpt || '';
             contentField.value = blog.content || '';
+            metaDescriptionField.value = blog.metaDescription || '';
+            focusKeywordField.value = blog.focusKeyword || '';
+            tagsField.value = blog.tags ? blog.tags.join(', ') : '';
+            featuredField.checked = blog.featured || false;
+            statusField.value = blog.status || 'published';
+
+            // Update character counters
+            updateCharCounter(excerptField, 200);
+            updateCharCounter(metaDescriptionField, 160);
 
             // Set category
             if (blog.category.includes('parent') && blog.category.includes('tutor')) {
@@ -536,14 +845,20 @@
 
             const title = titleField.value.trim();
             const author = authorField.value.trim();
+            const slug = slugField.value.trim();
             const category = categoryField.value;
+            const status = statusField.value;
             const excerpt = excerptField.value.trim();
+            const metaDescription = metaDescriptionField.value.trim();
+            const focusKeyword = focusKeywordField.value.trim();
+            const tags = tagsField.value.trim();
+            const featured = featuredField.checked;
             const publishDate = publishDateField.value;
             const content = contentField.value.trim();
 
             // Validate required fields
-            if (!title || !content) {
-                alert('Title and content are required');
+            if (!title || !content || !excerpt) {
+                alert('Title, content, and excerpt are required');
                 return;
             }
 
@@ -566,8 +881,14 @@
             const payload = {
                 title,
                 author: author || 'Tutors Alliance Scotland',
+                slug,
                 category,
+                status,
                 excerpt,
+                metaDescription,
+                focusKeyword,
+                tags: tags ? tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
+                featured,
                 publishDate,
                 content,
                 imagePath: uploadedImagePath || '',

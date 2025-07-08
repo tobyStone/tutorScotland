@@ -210,18 +210,24 @@ module.exports = async (req, res) => {
         const {
             title,
             author,
+            slug,
             category,
+            status,
             excerpt,
+            metaDescription,
+            focusKeyword,
+            tags,
+            featured,
             publishDate,
             content,
             imagePath
         } = req.body;
 
         // Validate required fields
-        if (!title || !content) {
-            console.log('Missing required fields:', { title, content });
+        if (!title || !content || !excerpt) {
+            console.log('Missing required fields:', { title, content, excerpt });
             return res.status(400).json({
-                message: "Missing required fields: title and content are required"
+                message: "Missing required fields: title, content, and excerpt are required"
             });
         }
 
@@ -260,16 +266,43 @@ module.exports = async (req, res) => {
             .replace(/\s+/g, ' ')    // Normalize whitespace
             .trim();
 
-        // Create excerpt if not provided
-        const processedExcerpt = excerpt || cleanContent.substring(0, 150) + (cleanContent.length > 150 ? '...' : '');
+        // Generate slug if not provided
+        let processedSlug = slug;
+        if (!processedSlug) {
+            processedSlug = title
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+        }
+
+        // Ensure slug uniqueness
+        let uniqueSlug = processedSlug;
+        let counter = 1;
+        while (await Blog.findOne({ slug: uniqueSlug })) {
+            uniqueSlug = `${processedSlug}-${counter}`;
+            counter++;
+        }
+
+        // Calculate reading time (average 200 words per minute)
+        const wordCount = cleanContent.split(/\s+/).length;
+        const readingTime = Math.ceil(wordCount / 200);
 
         // Create a new Blog post with enhanced SEO metadata
         const newBlog = new Blog({
             title,
             author: author || 'Tutors Alliance Scotland',
+            slug: uniqueSlug,
             content,
             imagePath: imagePath || '',
-            excerpt: processedExcerpt,
+            excerpt: excerpt || cleanContent.substring(0, 150) + (cleanContent.length > 150 ? '...' : ''),
+            metaDescription: metaDescription || excerpt || cleanContent.substring(0, 160) + (cleanContent.length > 160 ? '...' : ''),
+            focusKeyword: focusKeyword || '',
+            tags: Array.isArray(tags) ? tags : [],
+            featured: featured || false,
+            status: status || 'published',
+            readingTime: readingTime,
             publishDate: publishDate ? new Date(publishDate) : new Date(),
             category: categoryArray
         });
@@ -341,7 +374,8 @@ module.exports = async (req, res) => {
 // Shared helper function to build update payload
 function buildUpdatePayload(body) {
     const {
-        title, author, category, excerpt, publishDate, content, imagePath, removeImage
+        title, author, slug, category, status, excerpt, metaDescription, focusKeyword,
+        tags, featured, publishDate, content, imagePath, removeImage
     } = body;
 
     // Process category field
@@ -361,15 +395,30 @@ function buildUpdatePayload(body) {
         .replace(/\s+/g, ' ') // Normalize whitespace
         .trim();
 
+    // Calculate reading time (average 200 words per minute)
+    const wordCount = cleanContent.split(/\s+/).length;
+    const readingTime = Math.ceil(wordCount / 200);
+
     const updateData = {
         title,
         author: author || 'Tutors Alliance Scotland',
         content,
         excerpt: excerpt || cleanContent.substring(0, 150) + (cleanContent.length > 150 ? '...' : ''),
+        metaDescription: metaDescription || excerpt || cleanContent.substring(0, 160) + (cleanContent.length > 160 ? '...' : ''),
+        focusKeyword: focusKeyword || '',
+        tags: Array.isArray(tags) ? tags : [],
+        featured: featured || false,
+        status: status || 'published',
+        readingTime: readingTime,
         publishDate: publishDate ? new Date(publishDate) : new Date(),
         category: categoryArray,
         updatedAt: new Date()
     };
+
+    // Handle slug updates (only if provided and different)
+    if (slug) {
+        updateData.slug = slug;
+    }
 
     // Only update imagePath if a new one was provided
     if (imagePath) {
