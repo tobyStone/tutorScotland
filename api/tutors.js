@@ -1,6 +1,44 @@
 const connectToDatabase = require('./connectToDatabase');
 const mongoose = require('mongoose');
 
+/**
+ * Builds a safe and descriptive contact link object from a contact string.
+ * @param {string} contact - The contact string from the database.
+ * @returns {object|null} An object with link details or null if contact is empty.
+ */
+function buildContactLink(contact = '') {
+  const raw = (contact || '').trim();
+  if (!raw) {
+    return null; // Return null if contact is empty after trimming
+  }
+
+  // A robust-enough regex for email validation
+  const emailRE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmail = emailRE.test(raw.replace(/^mailto:/i, ''));
+
+  if (isEmail) {
+    const emailAddress = raw.replace(/^mailto:/i, '');
+    const subject = encodeURIComponent("Tutoring Enquiry via Tutors Alliance Scotland");
+    const body = encodeURIComponent("Hi,\n\nI found your profile on the Tutors Alliance Scotland website and I am interested in tutoring services.\n\n");
+
+    return {
+      type: 'email',
+      href: `mailto:${emailAddress}?subject=${subject}&body=${body}`,
+      text: 'Email Tutor',
+      address: emailAddress // We need this for the "Copy" button
+    };
+  }
+
+  // Treat anything else as a web address – add protocol if missing
+  const url = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  return {
+    type: 'website',
+    href: url,
+    target: '_blank',
+    text: 'Visit Website'
+  };
+}
+
 // Import the Tutor model
 let Tutor;
 try {
@@ -108,13 +146,40 @@ module.exports = async (req, res) => {
                     <p class="available-in custom-style">
                         <strong>Available in:</strong> ${tutor.postcodes.join(', ')}
                     </p>
-                    ${tutor.contact ? `
-                    <div class="tutor-contact">
-                        <a href="${tutor.contact.includes('@') ? 'mailto:' + tutor.contact : tutor.contact}" class="contact-btn" target="${tutor.contact.includes('@') ? '_self' : '_blank'}">
-                            ${tutor.contact.includes('@') ? 'Email Tutor' : 'Visit Website'}
-                        </a>
-                    </div>
-                    ` : ''}
+                    ${(() => {
+                        if (!tutor.contact) return ''; // Exit if no contact info
+
+                        const link = buildContactLink(tutor.contact);
+                        if (!link) return ''; // Exit if contact was empty string
+
+                        // If it's a website, show one button
+                        if (link.type === 'website') {
+                          return `
+                            <div class="tutor-contact">
+                              <a href="${link.href}"
+                                 class="contact-btn"
+                                 target="${link.target}"
+                                 rel="noopener noreferrer">
+                                 ${link.text}
+                              </a>
+                            </div>`;
+                        }
+
+                        // If it's an email, show BOTH buttons
+                        if (link.type === 'email') {
+                          return `
+                            <div class="tutor-contact is-email">
+                              <a href="${link.href}" class="contact-btn email-btn" title="Open in your default email app">
+                                ${link.text}
+                              </a>
+                              <button onclick="copyToClipboard(this, '${link.address}')" class="contact-btn copy-btn" title="Copy email address">
+                                Copy Email
+                              </button>
+                            </div>`;
+                        }
+
+                        return ''; // Fallback for any other case
+                    })()}
                 </section>
             `).join('');
         } else {
@@ -139,6 +204,23 @@ module.exports = async (req, res) => {
                 <script src="/js/nav-loader.js" defer></script>
                 <script src="/js/dynamic-nav.js" defer></script>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+                <script>
+                    function copyToClipboard(buttonElement, textToCopy) {
+                        navigator.clipboard.writeText(textToCopy).then(() => {
+                            const originalText = buttonElement.textContent;
+                            buttonElement.textContent = 'Copied!';
+                            buttonElement.disabled = true;
+                            setTimeout(() => {
+                                buttonElement.textContent = originalText;
+                                buttonElement.disabled = false;
+                            }, 2000);
+                        }).catch(err => {
+                            console.error('Failed to copy: ', err);
+                            alert('Failed to copy. Please copy manually.');
+                        });
+                    }
+                </script>
                 <style>
                     /* Ensure tutor cards are visible by default */
                     .tutor-grid {
@@ -150,15 +232,15 @@ module.exports = async (req, res) => {
                     }
                     .tutor-directory-page #imageShield {
                         top: 177px !important;
-                        left: calc(60% - 127px) !important; /* Move 77px further left (50px + 77px = 127px) */
-                        transform: scale(0.664) !important; /* Reduce by 17% from 0.8 (0.8 * 0.83 = 0.664) */
+                        left: calc(53% - 127px) !important; /* Move 7% of viewport left (60% - 7% = 53%) */
+                        transform: scale(0.5) !important; /* Make smaller */
                     }
 
                     /* Make #imageBanner center just touch the bottom of the shield */
                     .tutor-directory-page #imageBanner {
-                      top: calc(177px + 219px - 25px) !important; /* Position center of banner at bottom of scaled shield (330px * 0.664 = 219px, minus half banner height) */
-                      left: calc(60% - 127px) !important; /* Move 77px further left to match shield */
-                      transform: scale(0.664) !important; /* Reduce by 17% from 0.8 (0.8 * 0.83 = 0.664) */
+                      top: calc(177px + 165px - 25px) !important; /* Position center of banner at bottom of scaled shield (330px * 0.5 = 165px, minus half banner height) */
+                      left: calc(53% - 127px) !important; /* Move 7% of viewport left to match shield */
+                      transform: scale(0.5) !important; /* Make smaller to match shield */
                     }
 
 
@@ -351,10 +433,37 @@ module.exports = async (req, res) => {
                         border-radius: 4px;
                         font-size: 0.9em;
                         transition: background-color 0.3s ease;
+                        border: none; /* For accessibility in high-contrast modes */
+                        cursor: pointer;
+                        font-family: inherit;
                     }
 
                     .contact-btn:hover {
                         background-color: #b48fb4;
+                    }
+
+                    /* WCAG-compliant focus ring */
+                    .contact-btn:focus-visible {
+                        outline: 2px solid #0057B7;
+                        outline-offset: 2px;
+                    }
+
+                    .tutor-contact.is-email {
+                        display: flex;
+                        gap: 8px;
+                        justify-content: center;
+                    }
+
+                    .copy-btn {
+                         background-color: #A9A9A9;
+                    }
+                    .copy-btn:hover {
+                        background-color: #8c8c8c;
+                    }
+                    .copy-btn:disabled {
+                        background-color: #4CAF50;
+                        cursor: default;
+                        color: white;
                     }
 
                     .tutor-results-container {
