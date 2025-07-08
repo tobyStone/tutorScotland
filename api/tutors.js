@@ -150,15 +150,15 @@ module.exports = async (req, res) => {
                     }
                     .tutor-directory-page #imageShield {
                         top: 177px !important;
-                        left: calc(60% - 27px) !important; /* Move left by 27px */
-                        transform: scale(0.9) !important; /* Reduce size by 10% while maintaining proportions */
+                        left: calc(60% - 50px) !important; /* Move further left */
+                        transform: scale(0.8) !important; /* Reduce size by 20% while maintaining proportions */
                     }
 
-                    /* Make #imageBanner just below shield's bottom edge */
+                    /* Make #imageBanner center just touch the bottom of the shield */
                     .tutor-directory-page #imageBanner {
-                      top: calc(177px + 297px) !important; /* Position top of banner at bottom of scaled shield (330px * 0.9 = 297px) */
-                      left: calc(60% - 27px) !important; /* Move left by 27px */
-                      transform: scale(0.9) !important; /* Reduce size by 10% while maintaining proportions */
+                      top: calc(177px + 264px - 25px) !important; /* Position center of banner at bottom of scaled shield (330px * 0.8 = 264px, minus half banner height) */
+                      left: calc(60% - 50px) !important; /* Move further left to match shield */
+                      transform: scale(0.8) !important; /* Reduce size by 20% while maintaining proportions */
                     }
 
 
