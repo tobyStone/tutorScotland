@@ -182,34 +182,61 @@
                 console.log('Page data received:', page);
                 document.title = `${page.heading} - Tutors Alliance Scotland`;
 
-                // Build the HTML content step by step to avoid nested template literal issues
-                let contentHTML = `<h1>${page.heading}</h1>`;
+                // Build the HTML content using the two-col-content structure like other pages
+                let contentHTML = '';
 
-                if (page.image) {
-                    contentHTML += `<img src="${page.image}" alt="${page.heading}" class="page-featured-image">`;
-                }
+                // Determine if we have an image for layout purposes
+                const hasImage = page.image && page.image.trim() !== '';
+                const sectionClass = hasImage ? 'two-col-content fade-in-section' : 'two-col-content single-column fade-in-section';
 
+                // Create the white content section with curved corners
+                contentHTML += `<section class="${sectionClass}">`;
+
+                // Left column: text content
+                contentHTML += `<div>`;
+                contentHTML += `<h2>${page.heading}</h2>`;
                 contentHTML += `<div class="page-content">${page.text}</div>`;
 
+                // Add button if provided
                 if (page.buttonLabel && page.buttonUrl) {
                     contentHTML += `<div style="text-align:center;margin:2rem 0;">
                                       <a class="button aurora" href="${page.buttonUrl}">${page.buttonLabel}</a>
                                     </div>`;
                 }
+                contentHTML += `</div>`;
+
+                // Right column: image (only if provided)
+                if (hasImage) {
+                    contentHTML += `<div>`;
+                    contentHTML += `<img src="${page.image}" alt="${page.heading}">`;
+                    contentHTML += `</div>`;
+                }
+
+                contentHTML += `</section>`;
 
                 document.getElementById('pageContent').innerHTML = contentHTML;
+
+                // Re-observe fade-in elements after content is loaded
+                observeFadeElements();
             })
             .catch(error => {
                 console.error('Error loading page:', error);
                 const errorHTML = `
-                    <h1>Page Not Found</h1>
-                    <p>Sorry, the page you requested could not be found.</p>
-                    <p><strong>Debug info:</strong> ${error.message}</p>
-                    <p><strong>Slug:</strong> ${slug}</p>
-                    <p><strong>URL:</strong> ${location.pathname}</p>
-                    <p><a href="/">Return to Home</a></p>
+                    <section class="two-col-content fade-in-section">
+                        <div>
+                            <h2>Page Not Found</h2>
+                            <p>Sorry, the page you requested could not be found.</p>
+                            <p><strong>Debug info:</strong> ${error.message}</p>
+                            <p><strong>Slug:</strong> ${slug}</p>
+                            <p><strong>URL:</strong> ${location.pathname}</p>
+                            <p><a href="/" class="button aurora">Return to Home</a></p>
+                        </div>
+                    </section>
                 `;
                 document.getElementById('pageContent').innerHTML = errorHTML;
+
+                // Re-observe fade-in elements after error content is loaded
+                observeFadeElements();
             });
 
         // ✅ NEW: Add UUID generator utility function (same as dynamic-sections.js)

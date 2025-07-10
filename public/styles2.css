@@ -1549,9 +1549,28 @@ body[data-page="tutorszone"] #imageBanner {
     margin: 0 auto;
 }
 
-/* About section H2 color to lilac */
+/* About section H2 color to light blue */
 .two-col-content h2 {
     color: #7CA7D9;
+}
+
+/* Dynamic page content styling */
+.page-content {
+    line-height: 1.6;
+}
+
+.page-content p {
+    margin-bottom: 1rem;
+}
+
+/* Single column layout for dynamic pages without images */
+.two-col-content.single-column {
+    justify-content: center;
+}
+
+.two-col-content.single-column > div:first-child {
+    max-width: 800px;
+    text-align: left;
 }
 
 /* Footer style with tartan/tile pattern and fade-in */
