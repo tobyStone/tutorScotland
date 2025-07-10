@@ -474,30 +474,10 @@ body[data-page="tutorszone"] #imageBanner {
     /* Uses default positioning from main rules above */
 }
 
-/* Dynamic pages only - 20% smaller shield and ribbons with closer positioning */
-.dynamic-page .main-shield {
-    transform: translateX(20px) scale(0.8); /* 20% smaller */
-    transform-origin: center center;
-    animation: growRightScaled 0.8s ease-out forwards; /* Use scaled animation */
-}
-
+/* Dynamic pages only - hide shield and ribbons completely */
+.dynamic-page .main-shield,
 .dynamic-page .main-ribbons {
-    margin-top: 205.6px; /* 20% closer: 257px * 0.8 = 205.6px */
-    transform: translateX(20px) scale(0.8); /* 20% smaller */
-    transform-origin: center center;
-    animation: growRightScaled 0.8s ease-out 0.3s forwards; /* Use scaled animation */
-}
-
-/* Animation keyframe for dynamic pages with scaling */
-@keyframes growRightScaled {
-    from {
-        opacity: 0;
-        transform: translateX(20px) scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0) scale(0.8);
-    }
+    display: none !important;
 }
 
 /* Show class for animations */
@@ -1347,7 +1327,7 @@ body[data-page="tutorszone"] #imageBanner {
 /* Ensure two-column layout images maintain proper sizing */
 .dyn-block.two-col-content img,
 .two-col-content.dyn-block img {
-    max-width: 442px !important; /* Increased by 70% from 260px (260 * 1.70 = 442) */
+    max-width: 782px !important; /* Increased by 77% from 442px (442 * 1.77 = 782.34) */
     border-radius: 1rem !important;
     transform-origin: left top; /* Expand left and downward */
 }
@@ -2778,7 +2758,7 @@ header h1 {
 /* Ensure two-column layout images maintain proper sizing (duplicate rule for specificity) */
 .dyn-block.two-col-content img,
 .two-col-content.dyn-block img {
-    max-width: 442px !important; /* Increased by 70% from 260px (260 * 1.70 = 442) */
+    max-width: 782px !important; /* Increased by 77% from 442px (442 * 1.77 = 782.34) */
     border-radius: 1rem !important;
     transform-origin: left top; /* Expand left and downward */
 }
