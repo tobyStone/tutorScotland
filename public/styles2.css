@@ -1253,8 +1253,8 @@ body[data-page="tutorszone"] #imageBanner {
 /* Ensure dynamic blocks also fade in */
 /* Dynamic Sections Container */
 #dynamicSections {
-    margin-top: 6rem; /* Increased space above dynamic sections */
-    padding-top: 3rem; /* Increased padding */
+    margin-top: 2rem; /* Reduced space above dynamic sections to match static section spacing */
+    padding-top: 1rem; /* Reduced padding */
     width: 100%;
     max-width: 1080px;
     margin-left: auto;
@@ -2769,7 +2769,7 @@ header h1 {
         width: 92%;
         margin-left: auto;
         margin-right: auto;
-        transform: translateX(-2%); /* Shift slightly left to align with static content */
+        transform: translateX(-7%); /* Shift more to the left to align with static content */
     }
 
     .dynamic-section-container {
