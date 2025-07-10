@@ -1255,7 +1255,6 @@ body[data-page="tutorszone"] #imageBanner {
 #dynamicSections {
     margin-top: 6rem; /* Increased space above dynamic sections */
     padding-top: 3rem; /* Increased padding */
-    border-top: 2px solid rgba(0, 87, 183, 0.3); /* More visible separator line */
     width: 100%;
     max-width: 1080px;
     margin-left: auto;
@@ -2758,6 +2757,31 @@ header h1 {
 
     .dyn-block h2 {
         font-size: 1.5rem;
+    }
+}
+
+/* Portrait-specific adjustments for dynamic sections alignment */
+@media (max-width: 1200px) and (orientation: portrait) {
+    #dynamicSections,
+    #dynamicSectionsTop,
+    #dynamicSectionsMiddle,
+    #dynamicSectionsBottom {
+        width: 92%;
+        margin-left: auto;
+        margin-right: auto;
+        transform: translateX(-2%); /* Shift slightly left to align with static content */
+    }
+
+    .dynamic-section-container {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .dyn-block {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
