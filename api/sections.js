@@ -222,27 +222,44 @@ module.exports = async (req, res) => {
                 // If no editId, we proceed with creating a new section.
                 console.log('Create operation detected');
 
+                // Check if this is a full page first
+                const isFullPage = fields.isFullPage ?
+                    (Array.isArray(fields.isFullPage) ? fields.isFullPage[0] : fields.isFullPage) === 'true'
+                    : false;
 
-                // Get the raw page field. It is REQUIRED.
+                // Get the raw page field. It is REQUIRED for sections but not for full pages.
                 const rawPage = getField('page');
-                if (!rawPage) {
+                if (!rawPage && !isFullPage) {
                     return res.status(400).json({ message: 'Target Page is a required field and was not provided.' });
                 }
 
-                // Now that we know rawPage exists, we can safely normalize it.
-                const page = rawPage.toString().trim().toLowerCase().replace(/\s+/g, '-');
+                // Handle page field differently for sections vs full pages
+                let page = '';
+                if (!isFullPage) {
+                    // For sections, normalize the page field
+                    page = rawPage.toString().trim().toLowerCase().replace(/\s+/g, '-');
 
-                // 💡 Safety net: Strip irrelevant fields for rolling-banner
-                if (page === 'rolling-banner') {
-                    delete fields.layout;
-                    delete fields.buttonLabel;
-                    delete fields.buttonUrl;
-                    delete fields.imagePath;
-                    delete fields.showInNav;
-                    delete fields.navCategory;
-                    delete fields.position;
-                    delete fields.team;
-                    console.log('Stripped irrelevant fields for rolling-banner submission');
+                    // Validate page for sections
+                    const validPages = ['index', 'about', 'contact', 'tutors', 'blog', 'rolling-banner'];
+                    if (!validPages.includes(page)) {
+                        return res.status(400).json({ message: `Invalid page: ${page}. Valid pages are: ${validPages.join(', ')}` });
+                    }
+
+                    // 💡 Safety net: Strip irrelevant fields for rolling-banner
+                    if (page === 'rolling-banner') {
+                        delete fields.layout;
+                        delete fields.buttonLabel;
+                        delete fields.buttonUrl;
+                        delete fields.imagePath;
+                        delete fields.showInNav;
+                        delete fields.navCategory;
+                        delete fields.position;
+                        delete fields.team;
+                        console.log('Stripped irrelevant fields for rolling-banner submission');
+                    }
+                } else {
+                    // For full pages, we'll set the page field from the slug later
+                    console.log('Full page detected, page field will be set from slug');
                 }
                 const heading = getField('heading')?.toString().trim() || '';
                 const text = getField('text')?.toString().trim() || '';
@@ -279,12 +296,7 @@ module.exports = async (req, res) => {
                     }
                 }
 
-                // Check if this is a full page
-                const isFullPage = fields.isFullPage ?
-                    (Array.isArray(fields.isFullPage) ? fields.isFullPage[0] : fields.isFullPage) === 'true'
-                    : false;
-
-                // If it's a full page, we need a slug
+                // Handle slug for full pages
                 let slug = '';
                 if (isFullPage) {
                     slug = fields.slug ?
@@ -300,6 +312,9 @@ module.exports = async (req, res) => {
                     if (existingPage) {
                         return res.status(400).json({ message: 'A page with this slug already exists' });
                     }
+
+                    // For full pages, set the page field to the slug
+                    page = slug;
                 }
 
                 // Check if page should be published
