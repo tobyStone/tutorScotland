@@ -168,36 +168,61 @@
 
         console.log('Loading page with slug:', slug);
 
+        // Add detailed debugging
+        console.log('DEBUG: Full pathname:', location.pathname);
+        console.log('DEBUG: Path parts:', pathParts);
+        console.log('DEBUG: Extracted slug:', slug);
+        console.log('DEBUG: API URL will be:', `/api/page?slug=${slug}`);
+
         // Fetch the page content
         fetch(`/api/page?slug=${slug}`)
             .then(r => {
+                console.log('DEBUG: API response status:', r.status);
+                console.log('DEBUG: API response headers:', [...r.headers.entries()]);
                 if (!r.ok) {
                     console.error('API response not OK:', r.status, r.statusText);
-                    throw new Error('Page not found');
+                    // Try to get the error message from the response
+                    return r.text().then(errorText => {
+                        console.error('API error details:', errorText);
+                        throw new Error(`Page not found: ${r.status} - ${errorText}`);
+                    });
                 }
                 return r.json();
             })
             .then(page => {
-                console.log('Page data received:', page);
+                console.log('DEBUG: Page data received:', page);
+                console.log('DEBUG: Page fields - heading:', page.heading, 'text:', page.text, 'isPublished:', page.isPublished);
                 document.title = `${page.heading} - Tutors Alliance Scotland`;
 
-                document.getElementById('pageContent').innerHTML = `
-                    <h1>${page.heading}</h1>
-                    ${page.image ? `<img src="${page.image}" alt="${page.heading}" class="page-featured-image">` : ''}
-                    <div class="page-content">${page.text}</div>
-                    ${page.buttonLabel && page.buttonUrl ?
-                        `<div style="text-align:center;margin:2rem 0;">
-                           <a class="button aurora" href="${page.buttonUrl}">${page.buttonLabel}</a>
-                         </div>` : ''}
-                `;
+                // Build the HTML content step by step to avoid nested template literal issues
+                let contentHTML = `<h1>${page.heading}</h1>`;
+
+                if (page.image) {
+                    contentHTML += `<img src="${page.image}" alt="${page.heading}" class="page-featured-image">`;
+                }
+
+                contentHTML += `<div class="page-content">${page.text}</div>`;
+
+                if (page.buttonLabel && page.buttonUrl) {
+                    contentHTML += `<div style="text-align:center;margin:2rem 0;">
+                                      <a class="button aurora" href="${page.buttonUrl}">${page.buttonLabel}</a>
+                                    </div>`;
+                }
+
+                document.getElementById('pageContent').innerHTML = contentHTML;
+                console.log('DEBUG: Page content updated successfully');
             })
             .catch(error => {
                 console.error('Error loading page:', error);
-                document.getElementById('pageContent').innerHTML = `
+                const errorHTML = `
                     <h1>Page Not Found</h1>
                     <p>Sorry, the page you requested could not be found.</p>
+                    <p><strong>Debug info:</strong> ${error.message}</p>
+                    <p><strong>Slug:</strong> ${slug}</p>
+                    <p><strong>URL:</strong> ${location.pathname}</p>
                     <p><a href="/">Return to Home</a></p>
                 `;
+                document.getElementById('pageContent').innerHTML = errorHTML;
             });
 
         // ✅ NEW: Add UUID generator utility function (same as dynamic-sections.js)

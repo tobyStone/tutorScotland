@@ -12,19 +12,50 @@ module.exports = async (req, res) => {
         // GET - Fetch a page by slug
         if (req.method === 'GET') {
             const slug = req.query.slug;
-            
+
+            console.log('DEBUG: Page API called with slug:', slug);
+            console.log('DEBUG: Full query params:', req.query);
+
             if (!slug) {
+                console.log('DEBUG: No slug provided');
                 return res.status(400).json({ message: 'Slug parameter is required' });
             }
 
             try {
-                const page = await Section.findOne({ 
+                console.log('DEBUG: Searching for page with criteria:', {
+                    isFullPage: true,
+                    slug: slug,
+                    isPublished: true
+                });
+
+                const page = await Section.findOne({
                     isFullPage: true,
                     slug: slug,
                     isPublished: true
                 }).lean();
 
+                console.log('DEBUG: Database query result:', page ? 'Found page' : 'No page found');
+                if (page) {
+                    console.log('DEBUG: Page data:', {
+                        id: page._id,
+                        heading: page.heading,
+                        slug: page.slug,
+                        isPublished: page.isPublished,
+                        isFullPage: page.isFullPage
+                    });
+                }
+
                 if (!page) {
+                    // Let's also check if there are any pages with this slug but different criteria
+                    const anyPageWithSlug = await Section.findOne({ slug: slug }).lean();
+                    console.log('DEBUG: Any page with this slug (ignoring other criteria):', anyPageWithSlug ? 'Found' : 'Not found');
+                    if (anyPageWithSlug) {
+                        console.log('DEBUG: Found page but criteria mismatch:', {
+                            isFullPage: anyPageWithSlug.isFullPage,
+                            isPublished: anyPageWithSlug.isPublished
+                        });
+                    }
+
                     return res.status(404).json({ message: 'Page not found' });
                 }
 
