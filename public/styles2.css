@@ -1175,7 +1175,7 @@ body[data-page="tutorszone"] #imageBanner {
 }
 
 .main-shield {
-    max-width: 313px; /* Increased by 25% from 250px */
+    max-width: 250px;
     width: 100%;
     margin-bottom: 0.5rem;
     opacity: 0;
@@ -1184,10 +1184,10 @@ body[data-page="tutorszone"] #imageBanner {
 }
 
 .main-ribbons {
-    max-width: 250px; /* Increased by 25% from 200px */
+    max-width: 200px;
     width: 100%;
-    margin-top: 321px; /* Adjusted to maintain touching position (257px * 1.25) */
-    margin-left: 0.53rem; /* Adjusted to maintain centering (0.42rem * 1.25) */
+    margin-top: 257px;
+    margin-left: 0.42rem;
     opacity: 0;
     transform: translateX(20px);
     animation: growRight 0.8s ease-out 0.3s forwards;
@@ -1321,8 +1321,9 @@ body[data-page="tutorszone"] #imageBanner {
 /* Ensure two-column layout images maintain proper sizing */
 .dyn-block.two-col-content img,
 .two-col-content.dyn-block img {
-    max-width: 325px !important; /* Increased by 25% from 260px */
+    max-width: 330px !important; /* Increased by 27% from 260px (260 * 1.27 = 330.2) */
     border-radius: 1rem !important;
+    transform-origin: left top; /* Expand left and downward */
 }
 
 /* Style the dynamic section headings */
@@ -2751,8 +2752,9 @@ header h1 {
 /* Ensure two-column layout images maintain proper sizing (duplicate rule for specificity) */
 .dyn-block.two-col-content img,
 .two-col-content.dyn-block img {
-    max-width: 325px !important; /* Increased by 25% from 260px */
+    max-width: 330px !important; /* Increased by 27% from 260px (260 * 1.27 = 330.2) */
     border-radius: 1rem !important;
+    transform-origin: left top; /* Expand left and downward */
 }
 
 .dyn-block h2 {

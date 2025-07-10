@@ -800,6 +800,7 @@
         const slugParam = params.get('slug');
         const editSectionParam = params.get('editSection');
         const addAfterParam = params.get('addAfter');
+        const editPageParam = params.get('editPage'); // ✅ NEW: Handle page editing
 
         // If ?slug=page provided, preselect that page
         if (slugParam && PAGES.includes(slugParam)) {
@@ -815,7 +816,7 @@
             viewPageLink.style.display = 'inline-block';
 
             // ✅ NEW: Show special message when coming from visual editor
-            if (editSectionParam || addAfterParam) {
+            if (editSectionParam || addAfterParam || editPageParam) {
               viewPageLink.textContent = '← Return to Page';
               viewPageLink.style.background = '#e3f2fd';
               viewPageLink.style.padding = '6px 12px';
@@ -1210,6 +1211,33 @@
             } else {
                 console.warn(`[Admin] Section not found for auto-edit: ${editSectionParam}`);
             }
+        }
+
+        /* ── ✅ NEW: Handle page editing parameter ─────────────────────────────── */
+        if (editPageParam) {
+            // Auto-edit specific page
+            console.log(`[Admin] Auto-editing page: ${editPageParam}`);
+
+            // Wait for pages to load, then find and edit the page
+            setTimeout(async () => {
+                await loadPages(); // Ensure pages are loaded
+                const page = allPages.find(p => p.slug === editPageParam);
+                if (page) {
+                    // Simulate clicking the edit button for this page
+                    const editBtn = document.querySelector(`button.edit-page[data-id="${page._id}"]`);
+                    if (editBtn) {
+                        editBtn.click();
+                        console.log(`[Admin] Auto-clicked edit button for page: ${editPageParam}`);
+
+                        // Scroll to the page editing form
+                        setTimeout(() => {
+                            document.getElementById('pageForm').scrollIntoView({behavior: 'smooth'});
+                        }, 200);
+                    }
+                } else {
+                    console.warn(`[Admin] Page not found for auto-edit: ${editPageParam}`);
+                }
+            }, 200);
         } else if (addAfterParam) {
             // Pre-configure new section to be added after specified section
             console.log(`[Admin] Pre-configuring new section after: ${addAfterParam}`);
