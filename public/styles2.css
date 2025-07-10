@@ -474,6 +474,32 @@ body[data-page="tutorszone"] #imageBanner {
     /* Uses default positioning from main rules above */
 }
 
+/* Dynamic pages only - 20% smaller shield and ribbons with closer positioning */
+.dynamic-page .main-shield {
+    transform: translateX(20px) scale(0.8); /* 20% smaller */
+    transform-origin: center center;
+    animation: growRightScaled 0.8s ease-out forwards; /* Use scaled animation */
+}
+
+.dynamic-page .main-ribbons {
+    margin-top: 205.6px; /* 20% closer: 257px * 0.8 = 205.6px */
+    transform: translateX(20px) scale(0.8); /* 20% smaller */
+    transform-origin: center center;
+    animation: growRightScaled 0.8s ease-out 0.3s forwards; /* Use scaled animation */
+}
+
+/* Animation keyframe for dynamic pages with scaling */
+@keyframes growRightScaled {
+    from {
+        opacity: 0;
+        transform: translateX(20px) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(0.8);
+    }
+}
+
 /* Show class for animations */
 .show {
     opacity: 1;
