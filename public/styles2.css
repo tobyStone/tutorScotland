@@ -1321,7 +1321,7 @@ body[data-page="tutorszone"] #imageBanner {
 /* Ensure two-column layout images maintain proper sizing */
 .dyn-block.two-col-content img,
 .two-col-content.dyn-block img {
-    max-width: 330px !important; /* Increased by 27% from 260px (260 * 1.27 = 330.2) */
+    max-width: 442px !important; /* Increased by 70% from 260px (260 * 1.70 = 442) */
     border-radius: 1rem !important;
     transform-origin: left top; /* Expand left and downward */
 }
@@ -2752,7 +2752,7 @@ header h1 {
 /* Ensure two-column layout images maintain proper sizing (duplicate rule for specificity) */
 .dyn-block.two-col-content img,
 .two-col-content.dyn-block img {
-    max-width: 330px !important; /* Increased by 27% from 260px (260 * 1.27 = 330.2) */
+    max-width: 442px !important; /* Increased by 70% from 260px (260 * 1.70 = 442) */
     border-radius: 1rem !important;
     transform-origin: left top; /* Expand left and downward */
 }
