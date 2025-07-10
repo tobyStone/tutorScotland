@@ -55,11 +55,8 @@
     <!-- SOCIAL ICONS FOOTER -->
     <footer class="site-footer fade-in-section">
         <div class="footer-icons">
-            <a href="#" aria-label="Pinterest" data-ve-block-id="f5c70ff6-bd54-472b-84a3-8e81a27fd77f"><i class="fab fa-pinterest-p"></i></a>
-            <a href="#" aria-label="LinkedIn" data-ve-block-id="3b0508d1-63ac-4ed3-a0a6-c92c9e4a9426"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#" aria-label="Instagram" data-ve-block-id="23a5117d-77a3-46fb-a656-e67e24d8c0a3"><i class="fab fa-instagram"></i></a>
             <a href="#" aria-label="Facebook" data-ve-block-id="07339341-5ece-4d8d-ae1e-97b363e3f852"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" aria-label="Twitter" data-ve-block-id="c6177683-da14-43d4-87b3-6880b2af8195"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram" data-ve-block-id="23a5117d-77a3-46fb-a656-e67e24d8c0a3"><i class="fab fa-instagram"></i></a>
         </div>
     </footer>
 
@@ -168,17 +165,9 @@
 
         console.log('Loading page with slug:', slug);
 
-        // Add detailed debugging
-        console.log('DEBUG: Full pathname:', location.pathname);
-        console.log('DEBUG: Path parts:', pathParts);
-        console.log('DEBUG: Extracted slug:', slug);
-        console.log('DEBUG: API URL will be:', `/api/page?slug=${slug}`);
-
         // Fetch the page content
         fetch(`/api/page?slug=${slug}`)
             .then(r => {
-                console.log('DEBUG: API response status:', r.status);
-                console.log('DEBUG: API response headers:', [...r.headers.entries()]);
                 if (!r.ok) {
                     console.error('API response not OK:', r.status, r.statusText);
                     // Try to get the error message from the response
@@ -190,8 +179,7 @@
                 return r.json();
             })
             .then(page => {
-                console.log('DEBUG: Page data received:', page);
-                console.log('DEBUG: Page fields - heading:', page.heading, 'text:', page.text, 'isPublished:', page.isPublished);
+                console.log('Page data received:', page);
                 document.title = `${page.heading} - Tutors Alliance Scotland`;
 
                 // Build the HTML content step by step to avoid nested template literal issues
@@ -210,7 +198,6 @@
                 }
 
                 document.getElementById('pageContent').innerHTML = contentHTML;
-                console.log('DEBUG: Page content updated successfully');
             })
             .catch(error => {
                 console.error('Error loading page:', error);
@@ -324,20 +311,6 @@
                 window.dispatchEvent(new CustomEvent('dyn-sections-loaded'));
                 document.body.classList.add('dyn-ready');
                 console.log('[Page] Dispatched "dyn-sections-loaded" event after error.');
-
-                    // Force layout recalculation to ensure proper positioning
-                    document.body.offsetHeight;
-
-                    // Observe the newly added dynamic blocks for fade-in animation
-                    document.querySelectorAll('.dyn-block').forEach(block => {
-                        fadeObserver.observe(block);
-                    });
-                } else {
-                    // If no dynamic sections, hide the container and separator
-                    const host = document.getElementById('dynamicSections');
-                    host.style.display = 'none';
-                    document.querySelector('.dynamic-sections-separator').style.display = 'none';
-                }
             })
             .catch(error => {
                 console.error('Error loading dynamic sections:', error);
