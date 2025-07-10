@@ -507,6 +507,52 @@ export class UIManager {
     /* Enhanced Dynamic Section Overlays (Phase 1 Integration)            */
     /* ------------------------------------------------------------------ */
 
+    addDynamicPageOverlay() {
+        console.log('[VE] Adding dynamic page content overlay...');
+
+        // Only add on dynamic pages
+        if (!document.body.classList.contains('dynamic-page')) return;
+
+        const pageContent = document.querySelector('#pageContent .two-col-content');
+        if (!pageContent || pageContent.querySelector(':scope > .page-edit-overlay')) {
+            return; // No content or already has overlay
+        }
+
+        // Get current page slug from URL
+        const pathParts = window.location.pathname.split('/');
+        const slug = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2];
+
+        const overlay = document.createElement('div');
+        overlay.className = 'page-edit-overlay';
+
+        overlay.innerHTML = `
+            <div class="page-edit-controls">
+                <button class="page-edit-btn primary" data-action="edit-page" title="Edit this page's content">
+                    ✏️ Edit Page Content
+                </button>
+            </div>
+        `;
+
+        const editBtn = overlay.querySelector('[data-action="edit-page"]');
+        editBtn.addEventListener('click', e => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Route to admin.html with page slug for editing
+            const adminUrl = `/admin.html?editPage=${encodeURIComponent(slug)}`;
+            console.log(`[VE] Opening admin panel to edit page: ${slug}`);
+            this.showNotification('Opening admin panel to edit page content...', 'info');
+            window.open(adminUrl, '_blank');
+        });
+
+        // Ensure section is positioned for overlay
+        if (getComputedStyle(pageContent).position === 'static') {
+            pageContent.style.position = 'relative';
+        }
+
+        pageContent.appendChild(overlay);
+    }
+
     addDynamicSectionOverlays() {
         console.log('[VE] Adding dynamic section overlays...');
         document.querySelectorAll('[data-ve-section-id]').forEach(section => {
@@ -592,6 +638,13 @@ export class UIManager {
         });
     }
 
+    removeDynamicPageOverlay() {
+        console.log('[VE] Removing dynamic page overlay...');
+        document.querySelectorAll('.page-edit-overlay').forEach(overlay => {
+            overlay.remove();
+        });
+    }
+
     removeDynamicSectionOverlays() {
         console.log('[VE] Removing dynamic section overlays...');
         document.querySelectorAll('.dyn-edit-overlay').forEach(overlay => {
@@ -615,14 +668,16 @@ export class UIManager {
 
         // Remove existing overlays
         this.removeOverlays();
+        this.removeDynamicPageOverlay();
         this.removeDynamicSectionOverlays();
 
         // Rescan and add overlays to new elements
         const elements = this.scanEditableElements();
         this.addOverlays(elements);
+        this.addDynamicPageOverlay();
         this.addDynamicSectionOverlays();
 
-        console.log(`[VE] Refreshed ${elements.length} editable elements and dynamic section overlays.`);
+        console.log(`[VE] Refreshed ${elements.length} editable elements, page overlay, and dynamic section overlays.`);
     }
 
     // ✅ NEW: Safety method to check for editing conflicts

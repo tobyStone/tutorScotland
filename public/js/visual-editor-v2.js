@@ -210,6 +210,7 @@ class VisualEditor {
         // Scan for editable elements and add overlays
         const elements = this.uiManager.scanEditableElements();
         this.uiManager.addOverlays(elements);
+        this.uiManager.addDynamicPageOverlay(); // ✅ NEW: Add dynamic page content overlay
         this.uiManager.addDynamicSectionOverlays(); // ✅ NEW: Add dynamic section overlays
         this.uiManager.disableLinks();
 

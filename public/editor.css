@@ -23,8 +23,22 @@
     border-radius: 4px;
 }
 
+/* Dynamic page content overlay */
+.page-edit-overlay {
+    position: absolute;
+    inset: 0;  /* cover parent */
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    z-index: 9990;
+    background: rgba(124, 167, 217, 0.08); /* Light blue tint for page content */
+    border: 2px dashed transparent;
+    border-radius: 1.5rem; /* Match the two-col-content border radius */
+}
+
 /* Active state with improved hover effects */
-body.ve-edit-active .edit-overlay {
+body.ve-edit-active .edit-overlay,
+body.ve-edit-active .page-edit-overlay {
     pointer-events: auto;
 }
 
@@ -36,8 +50,16 @@ body.ve-edit-active .edit-overlay:hover {
     box-shadow: 0 2px 8px rgba(0, 87, 183, 0.2);
 }
 
+body.ve-edit-active .page-edit-overlay:hover {
+    opacity: 1;
+    border-color: #7CA7D9;
+    background: rgba(124, 167, 217, 0.15);
+    box-shadow: 0 2px 8px rgba(124, 167, 217, 0.3);
+}
+
 /* Enhanced edit controls positioning */
-.edit-controls {
+.edit-controls,
+.page-edit-controls {
     position: absolute;
     top: 8px;
     left: 8px;  /* ✅ MOVED: Edit tab now on the left side */
@@ -45,7 +67,8 @@ body.ve-edit-active .edit-overlay:hover {
 }
 
 /* Enhanced edit button styling - larger and more prominent */
-.edit-btn {
+.edit-btn,
+.page-edit-btn {
     background: linear-gradient(90deg, #B8D4FF 0%, #0057B7 50%, #001B44 100%);
     color: white;
     border: none;
