@@ -2866,6 +2866,31 @@ header h1 {
     }
 }
 
+/* Landscape-specific adjustments for dynamic sections alignment */
+@media (max-width: 1200px) and (orientation: landscape) {
+    #dynamicSections,
+    #dynamicSectionsTop,
+    #dynamicSectionsMiddle,
+    #dynamicSectionsBottom {
+        width: 92%;
+        margin-left: auto;
+        margin-right: auto;
+        transform: translateX(-7%); /* Shift more to the left to align with static content */
+    }
+
+    .dynamic-section-container {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .dyn-block {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
 /* ======================================================================
    Mobile viewport hot-fix for full-bleed sections
    ====================================================================== */
