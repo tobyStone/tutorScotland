@@ -352,7 +352,7 @@ input[type="reset"] {
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1s; /* or 1s if you want it later */
-    z-index: 3; /* Shield should be on top */
+    z-index: 50; /* Shield should be on top of all content */
 }
 
 #imageBanner {
@@ -362,7 +362,7 @@ input[type="reset"] {
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1.5s; /* ribbons appear last */
-    z-index: 2; /* Banner should be behind shield */
+    z-index: 49; /* Banner should be behind shield but above content */
 }
 
 @keyframes growLeft {
@@ -388,91 +388,84 @@ input[type="reset"] {
 .tutor-directory-page #imageShield {
     top: 10% !important;
     left: 60% !important;
-    z-index: 3 !important;
+    z-index: 50 !important;
 }
 
 .tutor-directory-page #imageBanner {
     top: 12% !important; /* Closer to shield, not at bottom */
     left: 60% !important;
-    z-index: 2 !important;
+    z-index: 49 !important;
 }
 
 /* About page - positioned to right to avoid text overlap */
 .about-page #imageShield {
     left: 73% !important;
-    z-index: 3 !important;
+    z-index: 50 !important;
 }
 
 .about-page #imageBanner {
     left: 73% !important;
-    z-index: 2 !important;
+    z-index: 49 !important;
 }
 
 /* Contact page - positioned to right to avoid form overlap */
 .contact-page #imageShield {
     left: 73% !important;
-    z-index: 3 !important;
+    z-index: 50 !important;
 }
 
 .contact-page #imageBanner {
     left: 73% !important;
-    z-index: 2 !important;
+    z-index: 49 !important;
 }
 
 /* Tutor Membership page - positioned to avoid hero section overlap */
 body[data-page="tutorMembership"] #imageShield {
     top: 5% !important;
     left: 65% !important;
-    z-index: 5 !important; /* Higher z-index to appear over section */
+    z-index: 100 !important; /* Highest z-index to appear over all content */
 }
 
 body[data-page="tutorMembership"] #imageBanner {
     top: 7% !important;
     left: 65% !important;
-    z-index: 5 !important; /* Higher z-index to appear over section */
+    z-index: 99 !important; /* Second highest z-index, behind shield */
 }
 
 /* Parents page - positioned to avoid content overlap */
 body[data-page="parents"] #imageShield {
     left: 70% !important;
-    z-index: 3 !important;
+    z-index: 50 !important;
 }
 
 body[data-page="parents"] #imageBanner {
     left: 70% !important;
-    z-index: 5 !important; /* Higher z-index to appear over top section */
+    z-index: 49 !important;
 }
 
 /* Partnerships page - positioned to avoid content overlap */
 body[data-page="partnerships"] #imageShield {
     left: 70% !important;
-    z-index: 3 !important;
+    z-index: 50 !important;
 }
 
 body[data-page="partnerships"] #imageBanner {
     left: 70% !important;
-    z-index: 2 !important;
+    z-index: 49 !important;
 }
 
 /* Tutors Zone page - positioned to avoid content overlap */
 body[data-page="tutorszone"] #imageShield {
     left: 70% !important;
-    z-index: 3 !important;
+    z-index: 50 !important;
 }
 
 body[data-page="tutorszone"] #imageBanner {
     left: 70% !important;
-    z-index: 2 !important;
+    z-index: 49 !important;
 }
 
-/* Dynamic pages - positioned to work with mission-row layout */
-.dynamic-page #imageShield {
-    /* Uses default positioning from main rules above */
-}
-
-.dynamic-page #imageBanner {
-    /* Uses default positioning from main rules above */
-}
+/* Dynamic pages use default positioning from main rules above */
 
 /* Dynamic pages only - hide shield and ribbons completely */
 .dynamic-page .main-shield,

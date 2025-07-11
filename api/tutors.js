@@ -238,7 +238,7 @@ module.exports = async (req, res) => {
                         left: 60% !important;
                         animation: growLeft 2s forwards ease-in-out;
                         animation-delay: 1s;
-                        z-index: 3 !important;
+                        z-index: 50 !important;
                     }
 
                     /* Make #imageBanner appear at bottom tip of shield with proper animation */
@@ -249,7 +249,7 @@ module.exports = async (req, res) => {
                         left: 60% !important;
                         animation: growLeft 2s forwards ease-in-out;
                         animation-delay: 1.5s; /* ribbons appear after shield */
-                        z-index: 2 !important;
+                        z-index: 49 !important;
                     }
 
                     /* Add the growLeft animation keyframes */
