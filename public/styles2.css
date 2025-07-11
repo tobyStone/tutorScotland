@@ -480,6 +480,58 @@ body[data-page="tutorszone"] #imageBanner {
     display: none !important;
 }
 
+/* Dynamic pages only - make sections 80% of page width with proportional height */
+.dynamic-page .dynamic-section-container {
+    max-width: 80% !important;
+    width: 80% !important;
+}
+
+.dynamic-page .dyn-block {
+    max-width: none !important;
+    width: 100% !important;
+    /* Increase padding proportionally to maintain visual balance */
+    padding: 3.2rem !important; /* Increased from 2rem (2 * 1.6 = 3.2) */
+}
+
+.dynamic-page .dyn-block.two-col-content {
+    padding: 4rem 3.2rem !important; /* Proportional increase for two-column sections */
+}
+
+/* Ensure images scale proportionally within the larger sections */
+.dynamic-page .dyn-block img {
+    max-width: 100% !important;
+}
+
+.dynamic-page .dyn-block.two-col-content img,
+.dynamic-page .two-col-content.dyn-block img {
+    max-width: 782px !important; /* Keep the 77% larger image size we set earlier */
+}
+
+/* Responsive adjustments for dynamic pages - maintain 80% width but adjust padding */
+@media (max-width: 900px) {
+    .dynamic-page .dyn-block {
+        padding: 2.4rem !important; /* Proportionally reduced for mobile (3.2 * 0.75 = 2.4) */
+    }
+
+    .dynamic-page .dyn-block.two-col-content {
+        padding: 3rem 2.4rem !important; /* Proportionally reduced for mobile */
+    }
+}
+
+@media (max-width: 600px) {
+    .dynamic-page .dynamic-section-container {
+        width: 95% !important; /* Slightly narrower on very small screens */
+    }
+
+    .dynamic-page .dyn-block {
+        padding: 2rem !important; /* Further reduced for very small screens */
+    }
+
+    .dynamic-page .dyn-block.two-col-content {
+        padding: 2.5rem 2rem !important; /* Further reduced for very small screens */
+    }
+}
+
 /* Show class for animations */
 .show {
     opacity: 1;
