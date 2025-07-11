@@ -3,10 +3,10 @@ export const PAGES = [
   'about-us',
   'contact',
   'parents',
-  'tutorconnect',
-  'tutordirectory',
-  'tutormembership',
+  'tutorConnect',
+  'tutorDirectory',
+  'tutorMembership',
   'tutorszone',
-  'partnerships',        // ★ NEW
+  'partnerships',
   'rolling-banner'
 ];

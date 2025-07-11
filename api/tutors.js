@@ -235,7 +235,7 @@ module.exports = async (req, res) => {
                         opacity: 0;
                         position: absolute;
                         top: 10% !important;
-                        left: 60% !important;
+                        left: calc(60% - 77px) !important; /* Shift left by 77px */
                         animation: growLeft 2s forwards ease-in-out;
                         animation-delay: 1s;
                         z-index: 50 !important;
@@ -245,8 +245,8 @@ module.exports = async (req, res) => {
                     .tutor-directory-page #imageBanner {
                         opacity: 0;
                         position: absolute;
-                        top: calc(18% + 207px) !important; /* Position 77px lower than previous position */
-                        left: 60% !important;
+                        top: calc(18% + 207px + 77px) !important; /* Position 77px lower + additional 77px down */
+                        left: calc(60% - 77px) !important; /* Shift left by 77px */
                         animation: growLeft 2s forwards ease-in-out;
                         animation-delay: 1.5s; /* ribbons appear after shield */
                         z-index: 49 !important;

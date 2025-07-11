@@ -239,8 +239,19 @@ module.exports = async (req, res) => {
                     // For sections, normalize the page field
                     page = rawPage.toString().trim().toLowerCase().replace(/\s+/g, '-');
 
-                    // Validate page for sections
-                    const validPages = ['index', 'about', 'contact', 'tutors', 'blog', 'rolling-banner'];
+                    // Validate page for sections - updated to match actual HTML filenames
+                    const validPages = [
+                        'index',
+                        'about-us',
+                        'contact',
+                        'parents',
+                        'tutorconnect',  // normalized to lowercase
+                        'tutordirectory', // normalized to lowercase
+                        'tutormembership', // normalized to lowercase
+                        'tutorszone',
+                        'partnerships',
+                        'rolling-banner'
+                    ];
                     if (!validPages.includes(page)) {
                         return res.status(400).json({ message: `Invalid page: ${page}. Valid pages are: ${validPages.join(', ')}` });
                     }

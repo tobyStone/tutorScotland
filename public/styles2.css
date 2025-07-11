@@ -432,6 +432,11 @@ body[data-page="tutorMembership"] #imageBanner {
     z-index: 99 !important; /* Second highest z-index, behind shield */
 }
 
+/* Push down first content section to avoid banner overlap */
+body[data-page="tutorMembership"] .two-col-content:first-of-type {
+    margin-top: 6rem !important; /* Extra space to clear banner ribbons */
+}
+
 /* Parents page - positioned to avoid content overlap */
 body[data-page="parents"] #imageShield {
     left: 70% !important;
