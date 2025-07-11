@@ -484,6 +484,7 @@ body[data-page="tutorszone"] #imageBanner {
 .dynamic-page .dynamic-section-container {
     max-width: 80% !important;
     width: 80% !important;
+    margin: 0 auto !important; /* Center the container horizontally */
 }
 
 .dynamic-page .dyn-block {
@@ -2640,17 +2641,18 @@ header h1 {
         position: relative;
         margin-top: 5px; /* Small gap between curl and period */
     }
-    /* Narrow floating footer for social links and move left */
+    /* Narrow floating footer for social links - full width */
     .site-footer .footer-icons {
         gap: 0.7rem;
         font-size: 1.5rem;
         flex-wrap: wrap;
-        max-width: 98vw;
+        max-width: 100vw; /* Allow full viewport width */
     }
     .site-footer {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
-        left: -50px;
+        left: 0; /* Start from left edge instead of -50px */
+        width: 100vw; /* Ensure full viewport width */
     }
     /* Center legoRight.png below section in portrait mode only */
     @media (orientation: portrait) {
