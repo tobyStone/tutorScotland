@@ -84,7 +84,7 @@
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1s;
-    z-index: 50;
+    z-index: 9999; /* High z-index to stay above all content */
 }
 
 /* Banner positioning and animation - positioned close to shield like tutorDirectory */
@@ -95,7 +95,7 @@
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1.5s;
-    z-index: 49;
+    z-index: 9998; /* Second highest z-index, behind shield but above content */
 }
 
 /* Main shield and ribbons animations */

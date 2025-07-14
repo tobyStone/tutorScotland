@@ -1,0 +1,400 @@
+/* ===================================================================
+   LAYOUT MODULE - EXTRACTED FROM STYLES2.CSS
+   Grid systems, flex layouts, positioning, and container structures
+   =================================================================== */
+
+/* ===================================================================
+   CONTAINER LAYOUTS AND CENTERING
+   =================================================================== */
+
+/* Main content containers */
+.main-image, .two-col-content, .icon-panel, .aurora-buttons, .testimonials-row, .confidence-block, .footer-grid {
+    max-width: 1080px;
+    margin: 2rem auto;
+}
+
+/* Dynamic section containers */
+.dynamic-section-container {
+    max-width: 1080px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+/* Zone section containers */
+.parents-zone-section, .tutor-zone-section, .pupil-zone-section, .strive-zone-section, .newsletter-zone-section {
+    max-width: 1080px;
+    margin: 3.6rem auto;
+    padding: 2.5rem 2rem;
+    border-radius: 1.5rem;
+    background: #fff;
+    box-shadow: 0 2px 18px rgba(0,87,183,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Hero and CTA banners */
+.hero-banner, .cta-banner {
+    max-width: 1080px;
+    margin: 3.6rem auto;
+    border-radius: 1.5rem;
+}
+
+/* ===================================================================
+   FLEXBOX LAYOUTS
+   =================================================================== */
+
+/* Hero banner layout */
+.hero-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Two-column content layout */
+.two-col-content {
+    display: flex;
+    gap: 2rem;
+    margin: 2.5rem 0;
+}
+
+/* Icon panel layout */
+.icon-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.icon-symbol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* CTA banner layout */
+.cta-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+/* Content flex wrapper */
+.content-flex-wrapper {
+    display: flex;
+    position: relative;
+}
+
+.content-flex-wrapper .left-col {
+    flex: 0 0 23%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+}
+
+.content-flex-wrapper .right-col {
+    margin-left: auto;
+    position: relative;
+}
+
+/* Mission row layout */
+.mission-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px;
+    flex-direction: row-reverse;
+}
+
+.mission-row .left-col {
+    flex: 0 0 23%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* ===================================================================
+   GRID LAYOUTS
+   =================================================================== */
+
+/* Tutor grid */
+.tutor-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0px;
+}
+
+/* Navigation grid (responsive) */
+.main-nav ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ===================================================================
+   POSITIONING SYSTEMS
+   =================================================================== */
+
+/* Relative positioning containers */
+.tutor-card {
+    position: relative;
+}
+
+.nav-item {
+    position: relative;
+}
+
+.nav-dropdown {
+    position: absolute;
+}
+
+.dyn-block {
+    position: relative;
+}
+
+.strive-overlay-card, .testimonials-overlay-card, .faq-overlay-card {
+    position: relative;
+}
+
+/* Absolute positioning for special elements */
+.testimonial-quote-card {
+    position: absolute;
+}
+
+.strive-small-card {
+    position: absolute;
+    top: 50%;
+    right: 10vw;
+    transform: translateY(-50%);
+}
+
+/* Zone image positioning */
+.parent-img-outer, .tutor-img-outer, .pupil-img-outer {
+    position: absolute;
+    top: 55%;
+    transform: translateY(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ===================================================================
+   SPECIALIZED LAYOUTS
+   =================================================================== */
+
+/* Testimonials layout */
+.testimonials-row {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.testimonial-card {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.testimonials-laced {
+    position: relative;
+    min-height: 420px;
+    padding: 0;
+}
+
+/* Business insurance layout */
+.business-insurance {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* Dynamic block layout */
+.dyn-block {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* STRIVE values layout */
+.strive-values {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    max-width: 700px;
+    margin: 2rem auto;
+}
+
+.strive-value {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.strive-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* FAQ layout */
+.faq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Zone image rows */
+.parent-img-row, .tutor-img-row, .pupil-img-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.questionmark-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Zone gradient backgrounds */
+.zone-gradient-bg {
+    position: relative;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.newsletter-gradient-bg {
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+}
+
+/* Zone list layout */
+.zone-list-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    gap: 0;
+}
+
+/* ===================================================================
+   FULL-WIDTH SECTIONS
+   =================================================================== */
+
+/* STRIVE and testimonials full-width backgrounds */
+.strive-bg-section, .testimonials-bg-section {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.strive-bg-section {
+    position: relative;
+    min-height: 800px;
+    height: auto;
+    display: block;
+}
+
+/* ===================================================================
+   RESPONSIVE LAYOUT ADJUSTMENTS
+   =================================================================== */
+
+/* Tablet and smaller screens */
+@media (max-width: 900px) {
+    .tutor-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .two-col-content {
+        flex-direction: column;
+    }
+    
+    .mission-row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .content-flex-wrapper {
+        flex-direction: column;
+    }
+    
+    .main-nav ul {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .strive-small-card {
+        position: static;
+        margin: 2.5rem auto;
+        transform: none;
+    }
+}
+
+/* Mobile portrait screens */
+@media (max-width: 600px) and (orientation: portrait) {
+    .tutor-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .main-nav ul {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+    }
+    
+    .two-col-content {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+    }
+}
+
+/* ===================================================================
+   LAYOUT MODULE NOTES:
+   
+   This module contains all layout-related styles extracted from styles2.css:
+   - Container layouts and centering systems
+   - Flexbox layouts for content organization
+   - Grid systems for tutor cards and navigation
+   - Positioning systems (relative, absolute)
+   - Specialized layouts for testimonials, STRIVE, zones
+   - Full-width section layouts
+   - Responsive layout adjustments
+   
+   Test this module by:
+   1. Adding <link rel="stylesheet" href="/css/layout-module.css"> to HTML
+   2. Commenting out layout styles in styles2.css
+   3. Verifying all page layouts work correctly
+   4. Testing responsive layout behavior on mobile devices
+   5. Only remove commented styles after confirmation
+   =================================================================== */
