@@ -84,9 +84,12 @@
     <Content Include="public\contact.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\css\animation-module.css" />
     <Content Include="public\css\button-module.css" />
     <Content Include="public\css\footer-module.css" />
+    <Content Include="public\css\layout-module.css" />
     <Content Include="public\css\nav.css" />
+    <Content Include="public\css\typography-module.css" />
     <Content Include="public\debug-visual-editor.js" />
     <Content Include="public\editor.css" />
     <Content Include="public\header-banner.css" />

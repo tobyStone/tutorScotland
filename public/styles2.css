@@ -1,3 +1,6 @@
+/* Import contact responsive module */
+@import url('css/contact-responsive-module.css');
+
 /* Brand palette and background */
 body {
     background: #E6F0FF;
@@ -159,29 +162,7 @@ body {
 
 
 
-/* Responsive adjustments for contact buttons */
-@media (max-width: 768px) {
-    .contact-btn {
-        padding: 10px 20px;
-        font-size: 0.9em;
-        min-width: 100px;
-    }
-}
-
-@media (max-width: 480px) {
-    .contact-btn {
-        padding: 8px 16px;
-        font-size: 0.85em;
-        min-width: 90px;
-        display: block;
-        margin: 0 auto;
-        max-width: 200px;
-    }
-
-    .tutor-contact {
-        margin: 10px 0;
-    }
-}
+/* Responsive adjustments for contact buttons - MOVED TO contact-responsive-module.css */
 
 /* Content Layout */
 .content-flex-wrapper {
