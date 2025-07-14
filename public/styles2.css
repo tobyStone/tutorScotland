@@ -151,7 +151,8 @@ body {
     flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
-/* Button group for multiple buttons in a container */
+/* Button group and aurora buttons - COMMENTED OUT - NOW IN button-module.css */
+/*
 .button-group {
     display: flex;
     gap: 1rem;
@@ -179,8 +180,10 @@ body {
         box-shadow: 0 4px 16px rgba(0,27,68,0.12);
         background: #b37cb3; /* Lilac color */
     }
+*/
 
-/* General button style for page body */
+/* General button style for page body - COMMENTED OUT - NOW IN button-module.css */
+/*
 body button,
 .button, /* for <a> or <input> with class="button" */
 input[type="button"],
@@ -208,8 +211,10 @@ input[type="reset"] {
         background: #b37cb3; /* Lilac */
         color: #fff;
     }
+*/
 
-/* Tutor contact buttons - responsive styling */
+/* Tutor contact buttons - COMMENTED OUT - NOW IN button-module.css */
+/*
 .tutor-contact {
     margin: 15px 0;
     text-align: center;
@@ -238,6 +243,7 @@ input[type="reset"] {
     color: #fff !important;
     text-decoration: none;
 }
+*/
 
 /* Responsive adjustments for contact buttons */
 @media (max-width: 768px) {
@@ -1555,10 +1561,12 @@ header h1 {
     color: #fff !important;
 }
 
-/* Aurora button in mission statement: start gradient with slightly darker blue */
+/* Aurora button in mission statement - COMMENTED OUT - NOW IN button-module.css */
+/*
 .about-us-landing .button.aurora {
     background: linear-gradient(90deg, #7CA7D9 0%, #0057B7 50%, #001B44 100%);
 }
+*/
 
 /* Mission statement color is now defined in the main .mission-statement rule */
 
@@ -2564,11 +2572,14 @@ header h1 {
         margin-left: auto !important;
         margin-right: auto !important;
     }
+    /* Aurora button responsive - COMMENTED OUT - NOW IN button-module.css */
+    /*
     .about-us-landing .button.aurora {
         display: block;
         margin: 1.5rem auto 0 auto !important;
         text-align: center;
     }
+    */
 
     /* Landscape-specific adjustments for restricted viewports */
     @media (orientation: landscape) {
@@ -2577,10 +2588,12 @@ header h1 {
             transform: translateX(15px) !important;
         }
 
-        /* Move aurora join us button 23px to the right */
+        /* Move aurora join us button - COMMENTED OUT - NOW IN button-module.css */
+        /*
         .about-us-landing .button.aurora {
             transform: translateX(23px) !important;
         }
+        */
 
         /* Move STRIVE section 10px to the right */
         .strive-bg-section {

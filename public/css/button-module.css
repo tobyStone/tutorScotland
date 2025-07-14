@@ -1,0 +1,144 @@
+/* ===================================================================
+   BUTTON MODULE - EXTRACTED FROM STYLES2.CSS
+   All button-related styles in one module for testing
+   =================================================================== */
+
+/* Button group for multiple buttons in a container */
+.button-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1.5rem 0 0.5rem;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.button.aurora {
+    background: linear-gradient(90deg, #B8D4FF 0%, #0057B7 50%, #001B44 100%);
+    color: #fff;
+    border: none;
+    border-radius: 2rem;
+    padding: 0.9em 2.2em;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,87,183,0.10);
+    text-decoration: none;
+    transition: transform 0.12s, box-shadow 0.12s;
+    cursor: pointer;
+}
+
+.button.aurora:hover, .button.aurora:focus {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 4px 16px rgba(0,27,68,0.12);
+    background: #b37cb3; /* Lilac color */
+}
+
+/* General button style for page body */
+body button,
+.button, /* for <a> or <input> with class="button" */
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+    background: linear-gradient(90deg, #E6F0FF 0%, #0057B7 100%);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: none;
+    outline: none;
+    display: inline-block;
+}
+
+body button:hover,
+.button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover {
+    background: #b37cb3; /* Lilac */
+    color: #fff;
+}
+
+/* Tutor contact buttons - responsive styling */
+.tutor-contact {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.contact-btn {
+    background: linear-gradient(90deg, #E6F0FF 0%, #0057B7 100%);
+    color: #fff !important;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: none;
+    outline: none;
+    display: inline-block;
+    text-decoration: none;
+    min-width: 120px;
+    text-align: center;
+}
+
+.contact-btn:hover {
+    background: #b37cb3; /* Lilac */
+    color: #fff !important;
+    text-decoration: none;
+}
+
+/* Aurora button in mission statement: start gradient with slightly darker blue */
+.about-us-landing .button.aurora {
+    background: linear-gradient(90deg, #7CA7D9 0%, #0057B7 50%, #001B44 100%);
+}
+
+/* ===================================================================
+   RESPONSIVE BUTTON STYLES
+   =================================================================== */
+
+/* Responsive adjustments for contact buttons */
+@media (max-width: 768px) {
+    .contact-btn {
+        padding: 10px 20px;
+        font-size: 0.9em;
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-btn {
+        padding: 8px 16px;
+        font-size: 0.85em;
+        min-width: 90px;
+        display: block;
+        margin: 0 auto;
+        max-width: 200px;
+    }
+
+    .tutor-contact {
+        margin: 10px 0;
+    }
+}
+
+/* ===================================================================
+   BUTTON MODULE NOTES:
+   
+   This module contains all button-related styles extracted from styles2.css:
+   - .button-group and button grouping
+   - .button.aurora (aurora gradient buttons)
+   - General button styles (body button, .button, input buttons)
+   - .contact-btn (tutor contact buttons)
+   - .about-us-landing .button.aurora (mission statement variant)
+   - All responsive button adjustments
+   
+   Test this module by:
+   1. Adding <link rel="stylesheet" href="/css/button-module.css"> to HTML
+   2. Commenting out button styles in styles2.css
+   3. Verifying all button types work correctly across all pages
+   4. Testing responsive behavior on mobile devices
+   5. Only remove commented styles after confirmation
+   =================================================================== */

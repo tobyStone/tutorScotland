@@ -199,6 +199,7 @@ module.exports = async (req, res) => {
                 <link rel="icon" href="/images/bannerShield2.png" type="image/png">
                 <link rel="stylesheet" href="/styles2.css">
                 <link rel="stylesheet" href="/css/footer-module.css">
+                <link rel="stylesheet" href="/css/button-module.css">
                 <link rel="stylesheet" href="/header-banner.css">
                 <link rel="stylesheet" href="/css/nav.css">
                 <script src="/responsive-helper.js"></script>
