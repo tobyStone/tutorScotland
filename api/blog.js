@@ -166,6 +166,7 @@ module.exports = async (req, res) => {
           <link rel="icon" href="/images/bannerShield2.png" type="image/png">
           <title>Tutors Alliance Scotland Blog</title>
           <link rel="stylesheet" href="/styles2.css">
+          <link rel="stylesheet" href="/css/footer-module.css">
           <link rel="stylesheet" href="/header-banner.css">
           <link rel="stylesheet" href="/css/nav.css">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">

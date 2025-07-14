@@ -153,9 +153,9 @@
     width: 100%;
     min-height: 48px;
     background-image: url('/images/bannerBackground.PNG');
-    background-repeat: repeat-x;
+    background-repeat: repeat;
     background-position: center;
-    background-size: cover;
+    background-size: 20%; /* 5 times smaller than cover - creates 5x more tiling */
     color: white;
     text-align: center;
     padding: 12px 0;
