@@ -1,0 +1,323 @@
+/* ===================================================================
+   ANIMATION MODULE - EXTRACTED FROM STYLES2.CSS
+   All animation-related styles: keyframes, transitions, transforms
+   =================================================================== */
+
+/* ===================================================================
+   KEYFRAME ANIMATIONS
+   =================================================================== */
+
+/* Shield and banner grow animation */
+@keyframes growLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-37%) scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-37%) scale(0.9);
+    }
+}
+
+/* Right-side grow animation */
+@keyframes growRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Fade and grow animation for mission statement */
+@keyframes fadeGrow {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===================================================================
+   FADE-IN ANIMATIONS
+   =================================================================== */
+
+/* General fade-in animation for sections */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    will-change: opacity, transform;
+    visibility: visible !important;
+}
+
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Staggered fade-in delays */
+.fade-in-section:nth-child(2) { transition-delay: 0.1s; }
+.fade-in-section:nth-child(3) { transition-delay: 0.2s; }
+.fade-in-section:nth-child(4) { transition-delay: 0.3s; }
+.fade-in-section:nth-child(5) { transition-delay: 0.4s; }
+
+/* Show class for animations */
+.show {
+    opacity: 1;
+}
+
+/* ===================================================================
+   SHIELD AND BANNER ANIMATIONS
+   =================================================================== */
+
+/* Shield positioning and animation */
+#imageShield {
+    opacity: 0;
+    animation: growLeft 2s forwards ease-in-out;
+    animation-delay: 1s;
+}
+
+/* Banner positioning and animation */
+#imageBanner {
+    opacity: 0;
+    animation: growLeft 2s forwards ease-in-out;
+    animation-delay: 1.5s;
+}
+
+/* Main shield and ribbons animations */
+.main-shield {
+    opacity: 0;
+    transform: translateX(20px);
+    animation: growRight 0.8s ease-out forwards;
+}
+
+.main-ribbons {
+    opacity: 0;
+    transform: translateX(20px);
+    animation: growRight 0.8s ease-out 0.3s forwards;
+}
+
+/* ===================================================================
+   DYNAMIC CONTENT ANIMATIONS
+   =================================================================== */
+
+/* Dynamic block fade-in */
+.dyn-block {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    will-change: opacity, transform;
+    visibility: visible !important;
+}
+
+.dyn-block.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Dynamic image hover effects */
+.dyn-image-container img {
+    transition: transform 0.3s ease;
+}
+
+.dyn-image-container img:hover {
+    transform: scale(1.02);
+}
+
+/* ===================================================================
+   NAVIGATION ANIMATIONS
+   =================================================================== */
+
+/* Navigation transitions */
+.nav-item {
+    transition: background-color 0.3s ease;
+}
+
+.nav-link {
+    transition: background-color 0.3s ease;
+}
+
+.nav-dropdown a {
+    transition: background-color 0.3s ease;
+}
+
+/* ===================================================================
+   FOOTER ANIMATIONS
+   =================================================================== */
+
+/* Site footer fade-in */
+.site-footer {
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.site-footer.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.site-footer .footer-icons a {
+    transition: color 0.2s;
+}
+
+/* ===================================================================
+   HOVER EFFECTS AND INTERACTIONS
+   =================================================================== */
+
+/* Subscribe link hover effects */
+.subscribe-link {
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.subscribe-link:hover {
+    transform: translateY(-5px);
+}
+
+.subscribe-image {
+    transition: filter 0.3s ease;
+}
+
+/* STRIVE value hover effects */
+.strive-value {
+    transition: transform 0.2s ease-out;
+}
+
+.strive-value:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,87,183,0.1);
+}
+
+/* FAQ item hover effects */
+.faq-item {
+    transition: transform 0.2s ease-out;
+}
+
+.faq-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,87,183,0.1);
+}
+
+/* ===================================================================
+   INITIAL STATES AND OPACITY
+   =================================================================== */
+
+/* Initially hidden elements */
+.tutor-grid {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.tutor-card {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* ===================================================================
+   TRANSFORM UTILITIES
+   =================================================================== */
+
+/* Image rotations */
+.parent-img-left {
+    transform: rotate(-35deg);
+}
+
+.parent-img-right {
+    transform: rotate(35deg);
+}
+
+/* Transform origins */
+.dyn-image-container img {
+    transform-origin: left top;
+}
+
+/* ===================================================================
+   RESPONSIVE ANIMATIONS
+   =================================================================== */
+
+/* Mobile and tablet adjustments */
+@media (max-width: 900px) {
+    .strive-small-card {
+        transform: none;
+    }
+    
+    .parent-img-left, .tutor-img-left, .pupil-img-left {
+        transform: translate(-50%, 0);
+    }
+}
+
+/* Portrait-specific transforms */
+@media (orientation: portrait) {
+    .main-nav {
+        transform: translateX(-1.5%) !important;
+    }
+    
+    .parent-stack-left {
+        transform: translateX(-50%);
+    }
+}
+
+/* Landscape-specific transforms */
+@media (orientation: landscape) {
+    .mission-statement {
+        transform: translateX(15px) !important;
+    }
+    
+    .strive-bg-section {
+        transform: translateX(10px) !important;
+    }
+    
+    .cta-banner {
+        transform: translateX(-7px) !important;
+    }
+    
+    .main-nav {
+        transform: translateX(-12px) !important;
+    }
+}
+
+/* Dynamic sections alignment transforms */
+@media (max-width: 1200px) and (orientation: portrait) {
+    #dynamicSections,
+    #dynamicSectionsTop,
+    #dynamicSectionsMiddle,
+    #dynamicSectionsBottom {
+        transform: translateX(-7%);
+    }
+}
+
+@media (max-width: 1200px) and (orientation: landscape) {
+    #dynamicSections,
+    #dynamicSectionsTop,
+    #dynamicSectionsMiddle,
+    #dynamicSectionsBottom {
+        transform: translateX(-7%);
+    }
+}
+
+/* ===================================================================
+   ANIMATION MODULE NOTES:
+   
+   This module contains all animation-related styles extracted from styles2.css:
+   - @keyframes animations (growLeft, growRight, fadeGrow)
+   - Fade-in animations for sections and dynamic content
+   - Shield and banner animations
+   - Navigation transitions
+   - Footer animations
+   - Hover effects and interactions
+   - Transform utilities and responsive animations
+   
+   Test this module by:
+   1. Adding <link rel="stylesheet" href="/css/animation-module.css"> to HTML
+   2. Commenting out animation styles in styles2.css
+   3. Verifying all animations work correctly (fade-ins, hover effects, etc.)
+   4. Testing responsive animation behavior on mobile devices
+   5. Only remove commented styles after confirmation
+   =================================================================== */

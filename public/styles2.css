@@ -12,7 +12,8 @@ body {
     margin: 2rem auto;
 }
 
-/* Fade-in animation for sections */
+/* Fade-in animations - COMMENTED OUT - NOW IN animation-module.css */
+/*
 .fade-in-section {
     opacity: 0;
     transform: translateY(20px);
@@ -23,6 +24,7 @@ body {
     opacity: 1;
     transform: translateY(0);
 }
+*/
 
 /* Header and navigation styles are now in header-banner.css */
 
@@ -260,17 +262,16 @@ body {
         z-index: -1;
     }
 
-/* Shield and Banner Positioning - moved to animation section below */
-
-/* Adjust top positions & animation delays as needed */
+/* Shield and Banner animations - COMMENTED OUT - NOW IN animation-module.css */
+/*
 #imageShield {
     opacity: 0;
     position: absolute;
     top: 2%;
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
-    animation-delay: 1s; /* or 1s if you want it later */
-    z-index: 50; /* Shield should be on top of all content */
+    animation-delay: 1s;
+    z-index: 50;
 }
 
 #imageBanner {
@@ -279,10 +280,13 @@ body {
     top: 97%;
     left: 2%;
     animation: growLeft 2s forwards ease-in-out;
-    animation-delay: 1.5s; /* ribbons appear last */
-    z-index: 49; /* Banner should be behind shield but above content */
+    animation-delay: 1.5s;
+    z-index: 49;
 }
+*/
 
+/* Keyframes growLeft - COMMENTED OUT - NOW IN animation-module.css */
+/*
 @keyframes growLeft {
     0% {
         opacity: 0;
@@ -294,6 +298,7 @@ body {
         transform: translateX(-37%) scale(0.9);
     }
 }
+*/
 
 /* Page-specific shield and banner positioning overrides */
 
@@ -1050,18 +1055,7 @@ body[data-page="tutorszone"] #imageBanner {
     margin: 0 auto;
 }
 
-/* Mission statement - COMMENTED OUT - NOW IN typography-module.css */
-/*
-.mission-statement {
-    font-size: 3.3em;
-    color: #7CA7D9;
-    margin-bottom: 2.5rem;
-    line-height: 1.3;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeGrow 0.8s ease-out 0.6s forwards;
-}
-*/
+
 
 @keyframes fadeGrow {
     from {
@@ -1465,16 +1459,7 @@ header {
     position: relative;
 }
 
-/* Headings and typography - COMMENTED OUT - NOW IN typography-module.css */
-/*
-h1, h2, h3, h4, h5, h6 {
-    color: #001B44;
-}
 
-header h1 {
-    color: #fff !important;
-}
-*/
 
 /* STRIVE and TESTIMONIALS full-width background sections */
 .strive-bg-section, .testimonials-bg-section {
@@ -2546,12 +2531,7 @@ header h1 {
     }
 }
 
-/* Mission statement h1 - COMMENTED OUT - NOW IN typography-module.css */
-/*
-.mission-statement h1 {
-    color: #001B44;
-}
-*/
+
 
 /* Dynamic sections styling */
 .dynamic-section-container {

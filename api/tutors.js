@@ -201,6 +201,7 @@ module.exports = async (req, res) => {
                 <link rel="stylesheet" href="/css/footer-module.css">
                 <link rel="stylesheet" href="/css/button-module.css">
                 <link rel="stylesheet" href="/css/typography-module.css">
+                <link rel="stylesheet" href="/css/animation-module.css">
                 <link rel="stylesheet" href="/header-banner.css">
                 <link rel="stylesheet" href="/css/nav.css">
                 <script src="/responsive-helper.js"></script>
