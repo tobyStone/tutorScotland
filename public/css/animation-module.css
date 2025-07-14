@@ -79,15 +79,23 @@
 /* Shield positioning and animation */
 #imageShield {
     opacity: 0;
+    position: absolute;
+    top: 2%;
+    left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1s;
+    z-index: 50;
 }
 
-/* Banner positioning and animation */
+/* Banner positioning and animation - positioned close to shield like tutorDirectory */
 #imageBanner {
     opacity: 0;
+    position: absolute;
+    top: 4%; /* Only 2% gap from shield, matching tutorDirectory spacing */
+    left: 2%;
     animation: growLeft 2s forwards ease-in-out;
     animation-delay: 1.5s;
+    z-index: 49;
 }
 
 /* Main shield and ribbons animations */
