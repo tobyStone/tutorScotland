@@ -1,5 +1,5 @@
-/* Import contact responsive module */
-@import url('css/contact-responsive-module.css');
+/* Import UI responsive module (contact buttons, hero/CTA banners) */
+@import url('css/ui-responsive-module.css');
 
 /* Brand palette and background */
 body {
@@ -746,27 +746,7 @@ body[data-page="tutorszone"] #imageBanner {
 
 /* Responsive tweaks */
 @media (max-width: 900px) {
-    .hero-banner {
-        min-height: 300px;
-        padding: 2rem 1rem;
-    }
-
-    .hero-content {
-        padding: 1.5rem;
-    }
-
-    .hero-content h1 {
-        font-size: 2rem;
-    }
-
-    .hero-content p {
-        font-size: 1rem;
-    }
-
-    .cta-banner {
-        min-height: 180px;
-        padding: 1.5rem 1rem;
-    }
+    /* Hero and CTA banner responsive styles - MOVED TO contact-responsive-module.css */
 
     .two-col-content {
         flex-direction: column;
@@ -2066,25 +2046,7 @@ header {
         }
     }
 
-    /* Portrait-specific adjustments for hero banner */
-    @media (orientation: portrait) {
-        .hero-banner {
-            width: 92%;
-            margin-left: auto;
-            margin-right: auto;
-            transform: translateX(-2%); /* Shift slightly left */
-        }
-    }
-
-    /* Portrait-specific adjustments for CTA banner */
-    @media (orientation: portrait) {
-        .cta-banner {
-            width: 92%;
-            margin-left: auto;
-            margin-right: auto;
-            transform: translateX(-2%); /* Shift slightly left */
-        }
-    }
+    /* Portrait-specific adjustments for hero and CTA banners - MOVED TO contact-responsive-module.css */
 
     /* Responsive testimonials for smaller screens */
     @media (max-width: 900px) {
@@ -2146,13 +2108,7 @@ header {
         }
     }
 
-    /* Portrait-specific adjustments for nav */
-    @media (orientation: portrait) {
-        .main-nav {
-            transform: translateX(-1.5%) !important; /* Shift slightly left */
-            width: 102% !important; /* Slightly wider to ensure it reaches the left edge */
-        }
-    }
+    /* Portrait-specific adjustments for nav - REMOVED TRANSFORM to align with header/banner */
 
     /* Portrait-specific border adjustments */
     @media (orientation: portrait) {
@@ -2466,10 +2422,7 @@ header {
             transform: translateX(10px) !important;
         }
 
-        /* Move CTA BUTTONS section 7px to the left */
-        .cta-banner {
-            transform: translateX(-7px) !important;
-        }
+        /* CTA banner landscape adjustment - MOVED TO contact-responsive-module.css */
     }
     /* Header: position heading to the right with line breaks, button bottom right */
     header {
@@ -2509,13 +2462,7 @@ header {
         text-align: center !important;
     }
 
-    /* Landscape-specific nav adjustment */
-    @media (orientation: landscape) {
-        /* Move nav section 12px to the left */
-        .main-nav {
-            transform: translateX(-12px) !important;
-        }
-    }
+    /* Landscape-specific nav adjustment - REMOVED TRANSFORM to align with header/banner */
 }
 
 

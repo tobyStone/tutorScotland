@@ -1,0 +1,86 @@
+/* ui-responsive-module.css */
+/* This file contains responsive styles for UI elements: contact buttons, hero/CTA banners */
+
+/* ====================================================================== */
+/*                    CONTACT BUTTON RESPONSIVE STYLES                  */
+/* ====================================================================== */
+
+/* Responsive adjustments for contact buttons */
+@media (max-width: 768px) {
+    .contact-btn {
+        padding: 10px 20px;
+        font-size: 0.9em;
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-btn {
+        padding: 8px 16px;
+        font-size: 0.85em;
+        min-width: 90px;
+        display: block;
+        margin: 0 auto;
+        max-width: 200px;
+    }
+
+    .tutor-contact {
+        margin: 10px 0;
+    }
+}
+
+/* ====================================================================== */
+/*                    HERO & CTA BANNER RESPONSIVE STYLES              */
+/* ====================================================================== */
+
+/* Responsive tweaks for hero and CTA banners */
+@media (max-width: 900px) {
+    .hero-banner {
+        min-height: 300px;
+        padding: 2rem 1rem;
+    }
+
+    .hero-content {
+        padding: 1.5rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .cta-banner {
+        min-height: 180px;
+        padding: 1.5rem 1rem;
+    }
+}
+
+/* Portrait-specific adjustments for hero banner */
+@media (orientation: portrait) {
+    .hero-banner {
+        width: 92%;
+        margin-left: auto;
+        margin-right: auto;
+        transform: translateX(-2%); /* Shift slightly left */
+    }
+}
+
+/* Portrait-specific adjustments for CTA banner */
+@media (orientation: portrait) {
+    .cta-banner {
+        width: 92%;
+        margin-left: auto;
+        margin-right: auto;
+        transform: translateX(-2%); /* Shift slightly left */
+    }
+}
+
+/* Landscape-specific CTA banner adjustment */
+@media (orientation: landscape) {
+    .cta-banner {
+        transform: translateX(-7px) !important;
+    }
+}
