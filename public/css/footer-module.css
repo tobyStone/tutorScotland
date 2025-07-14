@@ -218,6 +218,15 @@
     }
 }
 
+/* Full viewport and restricted landscape - ensure full width footer */
+@media (orientation: landscape) {
+    .site-footer {
+        left: 0 !important; /* Extend fully to left edge */
+        right: 0 !important; /* Extend fully to right edge */
+        width: 100vw !important; /* Full viewport width */
+    }
+}
+
 /* Mobile portrait screens */
 @media (max-width: 600px) and (orientation: portrait) {
     /* Narrow floating footer for social links - full width */
@@ -227,12 +236,13 @@
         flex-wrap: wrap;
         max-width: 100vw; /* Allow full viewport width */
     }
-    
+
     .site-footer {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
         left: 0; /* Start from left edge instead of -50px */
         right: 0;
+        width: 100vw; /* Full viewport width */
     }
 }
 
