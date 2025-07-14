@@ -1,0 +1,253 @@
+/* ===================================================================
+   FOOTER MODULE - EXTRACTED FROM STYLES2.CSS
+   All footer-related styles in one module for testing
+   =================================================================== */
+
+/* Footer grid */
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 2rem;
+    background: #0057B7;
+    color: #fff;
+    padding: 2.5rem 1.5rem 1.2rem 1.5rem;
+    margin-top: 2.5rem;
+}
+
+/* Site footer with fade-in effect */
+.site-footer {
+    position: fixed;
+    width: 100%;
+    background: rgba(0, 27, 68, 0.9); /* Semi-transparent dark blue */
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    z-index: 100;
+    opacity: 0; /* Start hidden */
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.site-footer.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.footer-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.footer-icons a {
+    color: white;
+    font-size: 1.2rem;
+    transition: color 0.3s;
+}
+
+.footer-icons a:hover {
+    color: #C8A2C8;
+}
+
+/* Static bottom footer */
+.static-footer {
+    width: 100%;
+    background-color: #003F8F; /* Slightly darker blue from the tartan tiling */
+    color: white;
+    padding: 40px 0;
+    margin-top: 40px;
+}
+
+.static-footer-container {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 20px;
+}
+
+.static-footer-left {
+    flex: 2;
+    padding-right: 40px;
+}
+
+.static-footer-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.static-footer h4 {
+    color: #0057B7; /* Lilac color for headings */
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+.static-footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+}
+
+.static-footer li {
+    margin-bottom: 10px;
+}
+
+.static-footer a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.static-footer a:hover {
+    color: #C8A2C8;
+    text-decoration: underline;
+}
+
+.static-footer-copyright {
+    margin: 30px 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.static-footer-copyright p {
+    margin: 5px 0;
+}
+
+.static-footer-credits {
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+/* Footer grid styles within responsive sections */
+.footer-grid h4 {
+    color: #0057B7;
+    margin-bottom: 0.8rem;
+}
+
+.footer-grid ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-grid li {
+    margin-bottom: 0.6rem;
+}
+
+.footer-grid a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.footer-grid a:hover, .footer-grid a:focus {
+    color: #0057B7;
+}
+
+/* Footer style with tartan/tile pattern and fade-in */
+.site-footer {
+    width: 100%;
+    min-height: 48px;
+    background-image: url('/images/bannerBackground.PNG');
+    background-repeat: repeat-x;
+    background-position: center;
+    background-size: cover;
+    color: white;
+    text-align: center;
+    padding: 12px 0;
+    position: fixed;
+    bottom: 0;
+    left: -50px;
+    right: -50px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.site-footer.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.site-footer .footer-icons {
+    display: flex;
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.site-footer .footer-icons a {
+    color: #fff;
+    font-size: 2.5rem;
+    transition: color 0.2s;
+}
+
+.site-footer .footer-icons a:hover {
+    color: #C8A2C8;
+}
+
+/* ===================================================================
+   RESPONSIVE FOOTER STYLES
+   =================================================================== */
+
+/* Tablet and smaller screens */
+@media (max-width: 900px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+        text-align: center;
+    }
+
+    /* Responsive static footer */
+    .static-footer-container {
+        flex-direction: column;
+    }
+
+    .static-footer-left {
+        padding-right: 0;
+        margin-bottom: 30px;
+    }
+
+    .static-footer-right {
+        align-items: center;
+        text-align: center;
+    }
+}
+
+/* Mobile portrait screens */
+@media (max-width: 600px) and (orientation: portrait) {
+    /* Narrow floating footer for social links - full width */
+    .site-footer .footer-icons {
+        gap: 0.7rem;
+        font-size: 1.5rem;
+        flex-wrap: wrap;
+        max-width: 100vw; /* Allow full viewport width */
+    }
+    
+    .site-footer {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        left: 0; /* Start from left edge instead of -50px */
+        right: 0;
+    }
+}
+
+/* ===================================================================
+   FOOTER MODULE NOTES:
+   
+   This module contains all footer-related styles extracted from styles2.css:
+   - .footer-grid and related styles
+   - .site-footer (floating social media footer)
+   - .static-footer and all its components
+   - All responsive footer adjustments
+   
+   Test this module by:
+   1. Adding <link rel="stylesheet" href="/css/footer-module.css"> to HTML
+   2. Commenting out footer styles in styles2.css
+   3. Verifying all footer functionality works correctly
+   4. Only remove commented styles after confirmation
+   =================================================================== */
