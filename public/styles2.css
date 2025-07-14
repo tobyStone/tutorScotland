@@ -355,6 +355,12 @@ body[data-page="tutorMembership"] #imageBanner {
     z-index: 9998 !important; /* Second highest z-index, behind shield but above content */
 }
 
+/* Fix stacking context issue: mission-row containing shield/banner needs higher z-index than later sections */
+body[data-page="tutorMembership"] .mission-row.fade-in-section {
+    z-index: 100 !important; /* Higher than other fade-in sections to keep shield/banner visible */
+    position: relative !important; /* Ensure z-index takes effect */
+}
+
 /* Push down first content section to avoid banner overlap */
 body[data-page="tutorMembership"] .two-col-content:first-of-type {
     margin-top: 6rem !important; /* Extra space to clear banner ribbons */
