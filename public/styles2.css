@@ -151,99 +151,11 @@ body {
     flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
-/* Button group and aurora buttons - COMMENTED OUT - NOW IN button-module.css */
-/*
-.button-group {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin: 1.5rem 0 0.5rem;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-}
 
-.button.aurora {
-    background: linear-gradient(90deg, #B8D4FF 0%, #0057B7 50%, #001B44 100%);
-    color: #fff;
-    border: none;
-    border-radius: 2rem;
-    padding: 0.9em 2.2em;
-    font-size: 1.1rem;
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(0,87,183,0.10);
-    text-decoration: none;
-    transition: transform 0.12s, box-shadow 0.12s;
-    cursor: pointer;
-}
 
-    .button.aurora:hover, .button.aurora:focus {
-        transform: translateY(-2px) scale(1.03);
-        box-shadow: 0 4px 16px rgba(0,27,68,0.12);
-        background: #b37cb3; /* Lilac color */
-    }
-*/
 
-/* General button style for page body - COMMENTED OUT - NOW IN button-module.css */
-/*
-body button,
-.button, /* for <a> or <input> with class="button" */
-input[type="button"],
-input[type="submit"],
-input[type="reset"] {
-    background: linear-gradient(90deg, #E6F0FF 0%, #0057B7 100%);
-    color: #fff;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 4px;
-    font-size: 1em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-    box-shadow: none;
-    outline: none;
-    display: inline-block;
-}
 
-    body button:hover,
-    .button:hover,
-    input[type="button"]:hover,
-    input[type="submit"]:hover,
-    input[type="reset"]:hover {
-        background: #b37cb3; /* Lilac */
-        color: #fff;
-    }
-*/
 
-/* Tutor contact buttons - COMMENTED OUT - NOW IN button-module.css */
-/*
-.tutor-contact {
-    margin: 15px 0;
-    text-align: center;
-}
-
-.contact-btn {
-    background: linear-gradient(90deg, #E6F0FF 0%, #0057B7 100%);
-    color: #fff !important;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 4px;
-    font-size: 1em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-    box-shadow: none;
-    outline: none;
-    display: inline-block;
-    text-decoration: none;
-    min-width: 120px;
-    text-align: center;
-}
-
-.contact-btn:hover {
-    background: #b37cb3; /* Lilac */
-    color: #fff !important;
-    text-decoration: none;
-}
-*/
 
 /* Responsive adjustments for contact buttons */
 @media (max-width: 768px) {
@@ -1138,15 +1050,18 @@ body[data-page="tutorszone"] #imageBanner {
     margin: 0 auto;
 }
 
+/* Mission statement - COMMENTED OUT - NOW IN typography-module.css */
+/*
 .mission-statement {
-    font-size: 3.3em; /* 50% bigger than 2.2em */
-    color: #7CA7D9; /* Lilac color from buttons:hover */
+    font-size: 3.3em;
+    color: #7CA7D9;
     margin-bottom: 2.5rem;
     line-height: 1.3;
     opacity: 0;
     transform: translateY(20px);
     animation: fadeGrow 0.8s ease-out 0.6s forwards;
 }
+*/
 
 @keyframes fadeGrow {
     from {
@@ -1550,25 +1465,16 @@ header {
     position: relative;
 }
 
-/* Headings: dark blue except .mission-statement h2 */
+/* Headings and typography - COMMENTED OUT - NOW IN typography-module.css */
+/*
 h1, h2, h3, h4, h5, h6 {
     color: #001B44;
 }
 
-
-/* Header H1 back to white */
 header h1 {
     color: #fff !important;
 }
-
-/* Aurora button in mission statement - COMMENTED OUT - NOW IN button-module.css */
-/*
-.about-us-landing .button.aurora {
-    background: linear-gradient(90deg, #7CA7D9 0%, #0057B7 50%, #001B44 100%);
-}
 */
-
-/* Mission statement color is now defined in the main .mission-statement rule */
 
 /* STRIVE and TESTIMONIALS full-width background sections */
 .strive-bg-section, .testimonials-bg-section {
@@ -2572,14 +2478,7 @@ header h1 {
         margin-left: auto !important;
         margin-right: auto !important;
     }
-    /* Aurora button responsive - COMMENTED OUT - NOW IN button-module.css */
-    /*
-    .about-us-landing .button.aurora {
-        display: block;
-        margin: 1.5rem auto 0 auto !important;
-        text-align: center;
-    }
-    */
+
 
     /* Landscape-specific adjustments for restricted viewports */
     @media (orientation: landscape) {
@@ -2588,12 +2487,7 @@ header h1 {
             transform: translateX(15px) !important;
         }
 
-        /* Move aurora join us button - COMMENTED OUT - NOW IN button-module.css */
-        /*
-        .about-us-landing .button.aurora {
-            transform: translateX(23px) !important;
-        }
-        */
+
 
         /* Move STRIVE section 10px to the right */
         .strive-bg-section {
@@ -2652,9 +2546,12 @@ header h1 {
     }
 }
 
+/* Mission statement h1 - COMMENTED OUT - NOW IN typography-module.css */
+/*
 .mission-statement h1 {
     color: #001B44;
 }
+*/
 
 /* Dynamic sections styling */
 .dynamic-section-container {

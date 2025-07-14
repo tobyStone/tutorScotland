@@ -1,0 +1,304 @@
+/* ===================================================================
+   TYPOGRAPHY MODULE - EXTRACTED FROM STYLES2.CSS
+   All typography-related styles: headings, text, fonts, colors
+   =================================================================== */
+
+/* Base typography */
+body {
+    color: #222;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* Headings: dark blue except .mission-statement h2 */
+h1, h2, h3, h4, h5, h6 {
+    color: #001B44;
+}
+
+/* Header H1 back to white */
+header h1 {
+    color: #fff !important;
+}
+
+/* Mission statement - special styling */
+.mission-statement {
+    font-size: 3.3em; /* 50% bigger than 2.2em */
+    color: #7CA7D9; /* Lilac color from buttons:hover */
+    margin-bottom: 2.5rem;
+    line-height: 1.3;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeGrow 0.8s ease-out 0.6s forwards;
+}
+
+.mission-statement h1 {
+    color: #001B44;
+}
+
+/* Mission statement color is now defined in the main .mission-statement rule */
+
+/* Hero content typography */
+.hero-content {
+    text-align: center;
+    color: white;
+}
+
+.hero-content h1 {
+    color: white;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Icon symbol typography */
+.icon-symbol {
+    font-size: 2.2rem;
+    color: #0057B7;
+}
+
+.icon-symbol p {
+    font-size: 1rem;
+    margin: 0.5rem 0 0;
+    color: #333;
+}
+
+/* CTA banner typography */
+.cta-content {
+    text-align: center;
+}
+
+/* Two-column content typography */
+.two-col-content h2 {
+    color: #7CA7D9;
+}
+
+.two-col-content {
+    text-align: left;
+}
+
+/* Dynamic content typography */
+.dyn-block h2 {
+    color: #0057B7;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+.dyn-block p {
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.dyn-content {
+    line-height: 1.6;
+}
+
+/* Page content typography */
+.page-content {
+    line-height: 1.6;
+}
+
+.page-content p {
+    text-align: left;
+}
+
+/* Badge and special text styling */
+.badge-item {
+    font-weight: bold;
+}
+
+.badge-tick {
+    color: #800080;
+    font-size: 1.2em;
+}
+
+.purple-pound {
+    color: #800080;
+    font-weight: bold;
+}
+
+/* Testimonial typography */
+.testimonial-card span {
+    color: #0057B7;
+    font-size: 0.98rem;
+}
+
+.testimonial-quote-card {
+    font-size: 1.08rem;
+    color: #222;
+    text-align: left;
+}
+
+.testimonial-quote-card span {
+    color: #0057B7;
+    font-size: 0.98rem;
+}
+
+/* Insurance and website info typography */
+.insurance-info p {
+    font-size: 0.9rem;
+}
+
+.insurance-link {
+    color: #0057B7;
+    font-size: 0.9rem;
+}
+
+.website-url {
+    font-weight: bold;
+}
+
+/* Zone box typography */
+.parents-box, .tutor-box, .pupil-box, .newsletter-box {
+    text-align: center;
+}
+
+.newsletter-box h2 {
+    color: #0057B7;
+    font-size: 1.8em;
+}
+
+.parents-box ul, .tutor-box ul, .pupil-box ul, .newsletter-box ul {
+    text-align: left;
+    line-height: 1.5;
+}
+
+.parents-box p, .tutor-box p, .pupil-box p, .newsletter-box p {
+    line-height: 1.6;
+}
+
+/* FAQ typography */
+.faq-item {
+    text-align: left;
+}
+
+.faq-item h3 {
+    color: #0057B7;
+    font-size: 1.2rem;
+}
+
+.faq-item p {
+    line-height: 1.6;
+}
+
+/* Navigation typography */
+.main-nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+
+.nav-dropdown a {
+    text-decoration: none;
+    text-align: left;
+}
+
+/* Footer typography */
+.site-footer .footer-icons a {
+    color: #fff;
+    font-size: 2.5rem;
+}
+
+.site-footer .footer-icons a:hover {
+    color: #C8A2C8;
+}
+
+/* ===================================================================
+   RESPONSIVE TYPOGRAPHY
+   =================================================================== */
+
+/* Tablet and smaller screens */
+@media (max-width: 900px) {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .dyn-block h2 {
+        font-size: 1.5em;
+    }
+
+    .mission-statement {
+        font-size: 2.5em; /* Smaller on mobile but still larger than original */
+    }
+
+    .main-nav ul li a {
+        font-size: 0.95em;
+    }
+}
+
+/* Mobile portrait screens */
+@media (max-width: 600px) and (orientation: portrait) {
+    header h1 {
+        font-size: 1.5rem !important;
+        text-align: right !important;
+    }
+
+    .main-nav ul li a {
+        font-size: 0.9em;
+    }
+
+    .testimonials-laced .testimonial-quote-card {
+        font-size: 0.95rem !important;
+    }
+
+    .site-footer .footer-icons {
+        font-size: 1.5rem;
+    }
+}
+
+/* Restricted viewport adjustments */
+@media (max-width: 1200px) and (orientation: portrait) {
+    .mission-statement {
+        text-align: center !important;
+    }
+}
+
+@media (orientation: landscape) {
+    .mission-statement {
+        transform: translateX(15px) !important;
+    }
+}
+
+/* Dynamic sections responsive typography */
+@media (max-width: 900px) {
+    .dyn-block h2 {
+        font-size: 1.5rem;
+    }
+}
+
+/* ===================================================================
+   TYPOGRAPHY MODULE NOTES:
+   
+   This module contains all typography-related styles extracted from styles2.css:
+   - Base font family and body text color
+   - All heading styles (h1-h6) and color overrides
+   - Mission statement special typography
+   - Hero and CTA content text styling
+   - Dynamic content typography
+   - Navigation text styling
+   - Footer text styling
+   - All responsive typography adjustments
+   
+   Test this module by:
+   1. Adding <link rel="stylesheet" href="/css/typography-module.css"> to HTML
+   2. Commenting out typography styles in styles2.css
+   3. Verifying all text appears correctly across all pages
+   4. Testing responsive text behavior on mobile devices
+   5. Only remove commented styles after confirmation
+   =================================================================== */
