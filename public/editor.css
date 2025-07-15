@@ -102,6 +102,24 @@ body.ve-edit-active .page-edit-overlay:hover {
     box-shadow: 0 2px 8px rgba(124, 167, 217, 0.3);
 }
 
+/* ====================================================================== */
+/*                          EDIT CONTROLS & BUTTONS                      */
+/* ====================================================================== */
+
+/**
+ * Edit Controls System
+ *
+ * @description Interactive buttons and controls for content editing
+ * @usage Appears on hover over editable elements when in edit mode
+ * @components
+ *   - .edit-controls: Standard content edit controls
+ *   - .page-edit-controls: Dynamic page content edit controls
+ *   - .edit-btn: Primary edit button with gradient styling
+ *   - .page-edit-btn: Page-specific edit button variant
+ * @styling Blue gradient with lilac hover state for visual feedback
+ * @positioning Top-left corner of editable elements with high z-index
+ */
+
 /* Enhanced edit controls positioning */
 .edit-controls,
 .page-edit-controls {
@@ -136,6 +154,26 @@ body.ve-edit-active .page-edit-overlay:hover {
     transform: translateY(-1px) scale(1.05);
     box-shadow: 0 4px 16px rgba(179, 124, 179, 0.4);
 }
+
+/* ====================================================================== */
+/*                          MODAL SYSTEM & UI ELEMENTS                   */
+/* ====================================================================== */
+
+/**
+ * Modal System & UI Elements
+ *
+ * @description Core UI components for the visual editor interface
+ * @components
+ *   - #editor-modal: Main editing modal container
+ *   - #edit-mode-toggle: Fixed toggle button for entering/exiting edit mode
+ *   - #edit-instructions: Contextual help overlay
+ *   - .ve-img-wrap: Image wrapper for edit overlay positioning
+ * @behavior
+ *   - Modal hidden by default, shown via JavaScript
+ *   - Toggle button changes color based on edit mode state
+ *   - Instructions appear with slide-down animation
+ * @positioning Fixed positioning for overlay elements with high z-index
+ */
 
 /* Modal hidden until JS opens it */
 #editor-modal {
@@ -192,6 +230,25 @@ body.ve-edit-active #editor-modal[style*="display: block"] {
     z-index: 10001;
     animation: slideDown 0.3s ease;
 }
+
+/* ====================================================================== */
+/*                          MODAL COMPONENTS                             */
+/* ====================================================================== */
+
+/**
+ * Modal Components System
+ *
+ * @description Complete modal system for content editing forms
+ * @components
+ *   - .modal-backdrop: Semi-transparent overlay with blur effect
+ *   - .modal-content: Main modal container with rounded corners
+ *   - .modal-header: Gradient header with title and close button
+ *   - .modal-body: Scrollable content area for forms
+ *   - .modal-footer: Action buttons area
+ * @styling Enhanced UX with gradients, shadows, and smooth animations
+ * @responsive Adapts to viewport size with max-width and max-height constraints
+ * @accessibility High z-index layering and proper focus management
+ */
 
 /* Modal styles - Enhanced for better UX */
 .modal-backdrop {
@@ -284,6 +341,28 @@ body.ve-edit-active #editor-modal[style*="display: block"] {
     color: #333;
     font-size: 1rem;
 }
+
+/* ====================================================================== */
+/*                          FORM CONTROLS                                */
+/* ====================================================================== */
+
+/**
+ * Form Controls System
+ *
+ * @description Enhanced form inputs and controls for content editing
+ * @components
+ *   - .form-control: Base styling for all form inputs
+ *   - #content-text: Large textarea for text content editing
+ *   - #content-html: Monospace textarea for HTML editing
+ *   - .btn: Base button styling with site theme integration
+ *   - .btn-primary: Primary action buttons with gradient styling
+ * @styling
+ *   - Consistent padding, borders, and focus states
+ *   - Larger text areas for better editing experience
+ *   - Gradient buttons matching site branding
+ * @accessibility Focus indicators and proper contrast ratios
+ * @responsive Adapts to container width with proper sizing
+ */
 
 .form-control {
     width: 100%;
@@ -991,6 +1070,23 @@ body.ve-edit-active .dyn-edit-overlay {
 .dyn-edit-overlay:hover::before {
     opacity: 1;
 }
+
+/* ====================================================================== */
+/*                          RESPONSIVE & MOBILE STYLES                   */
+/* ====================================================================== */
+
+/**
+ * Responsive Design System
+ *
+ * @description Mobile-friendly adaptations for the visual editor
+ * @breakpoints 768px primary mobile breakpoint
+ * @adaptations
+ *   - Smaller button sizes and padding for touch interfaces
+ *   - Vertical layout for edit controls on narrow screens
+ *   - Reduced font sizes for overlay labels
+ *   - Maintained functionality across all viewport sizes
+ * @accessibility Proper touch targets and focus states maintained
+ */
 
 /* === Responsive Design for Dynamic Section Overlays === */
 @media (max-width: 768px) {

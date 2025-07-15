@@ -1,6 +1,14 @@
 <!DOCTYPE html><html lang="en"><head>
+    <!-- ====================================================================== -->
+    <!--                          BLOG WRITER METADATA                         -->
+    <!-- ====================================================================== -->
+
     <meta charset="UTF-8">
     <title>Blog Writer – Tutors Alliance Scotland</title>
+
+    <!-- ====================================================================== -->
+    <!--                          STYLESHEETS & ASSETS                         -->
+    <!-- ====================================================================== -->
 
     <!-- assets -->
     <link rel="icon" href="/images/bannerShield2.png" type="image/png">
@@ -16,11 +24,24 @@
     <script src="/js/nav-loader.js" defer=""></script>
     <script src="/js/dynamic-nav.js" defer=""></script>
 
+    <!-- ====================================================================== -->
+    <!--                          SEO & SOCIAL METADATA                        -->
+    <!-- ====================================================================== -->
+
+    <!--
+        Blog Writer SEO Configuration
+
+        @description Comprehensive metadata for blog management interface
+        @seo Optimized for search engines with relevant keywords
+        @social Open Graph tags for social media sharing
+        @structured JSON-LD microdata for rich snippets
+    -->
+
     <!-- SEO metadata -->
     <meta name="description" content="Tutors Alliance Scotland blog management system - create and manage educational blog posts for tutors and parents in Scotland.">
     <meta name="keywords" content="tutoring, Scotland, education, blog, tutors alliance">
     <meta name="author" content="Tutors Alliance Scotland">
-    
+
     <!-- Open Graph metadata for social sharing -->
     <meta property="og:title" content="Blog Writer - Tutors Alliance Scotland">
     <meta property="og:description" content="Create and manage educational blog posts for tutors and parents in Scotland.">
@@ -30,6 +51,20 @@
 
     <!-- JSON‑LD placeholder (filled on submit) -->
     <script id="blogMicrodata" type="application/ld+json"></script>
+
+    <!-- ====================================================================== -->
+    <!--                          AUTHENTICATION GUARD                         -->
+    <!-- ====================================================================== -->
+
+    <!--
+        Blog Writer Authentication System
+
+        @description Protects blog writer interface from unauthorized access
+        @role Requires 'blogwriter' role authentication
+        @behavior Redirects to login page if authentication fails
+        @api-endpoint /api/protected?role=blogwriter
+        @security Uses HTTP-only cookies for session management
+    -->
 
     <!-- blog‑writer guard -->
     <script>
@@ -350,6 +385,27 @@
     </style>
 </head>
 <body>
+    <!-- ====================================================================== -->
+    <!--                          BLOG WRITER INTERFACE                        -->
+    <!-- ====================================================================== -->
+
+    <!--
+        Blog Writer HTML Structure
+
+        @description Complete blog management interface for content creators
+        @sections
+          - Header/Navigation: Site branding and navigation links
+          - Blog Form: Comprehensive form for creating/editing blog posts
+          - Blog List: Table displaying existing blog posts with edit/delete actions
+        @features
+          - Rich text editing with image upload support
+          - SEO metadata fields (title, description, keywords)
+          - Category and tag management
+          - Draft/publish workflow
+        @dependencies upload-helper.js for image handling
+        @api-endpoints /api/blog-writer for CRUD operations
+    -->
+
     <!-- HEADER / NAV identical to other pages -->
     <header>
         <h1 data-ve-block-id="df1818f1-65ca-4f6a-96c5-f1a8570c778c">Tutors Alliance Scotland</h1>
