@@ -1,5 +1,13 @@
+/* ====================================================================== */
+/*                              IMPORTS                                   */
+/* ====================================================================== */
+
 /* Import UI responsive module (contact buttons, hero/CTA banners) */
 @import url('css/ui-responsive-module.css');
+
+/* ====================================================================== */
+/*                          BASE STYLES                                  */
+/* ====================================================================== */
 
 /* Brand palette and background */
 body {
@@ -30,6 +38,21 @@ body {
 */
 
 /* Header and navigation styles are now in header-banner.css */
+
+/* ====================================================================== */
+/*                          HERO BANNER COMPONENT                        */
+/* ====================================================================== */
+
+/**
+ * Hero Banner Component
+ *
+ * @description Full-width banner with gradient overlay and centered content
+ * @usage Applied to homepage and key landing pages for primary messaging
+ * @background Uses parentAndChild.png with dark gradient overlay for readability
+ * @responsive Adjusts min-height and padding on mobile (handled in ui-responsive-module.css)
+ * @dependencies Requires .hero-content child element for proper text styling
+ * @layout Flexbox centered, with backdrop-filter blur effect on content
+ */
 
 /* HERO full-width banner with background image */
 .hero-banner {
@@ -125,6 +148,21 @@ body {
         color: #333;
     }
 
+/* ====================================================================== */
+/*                          CTA BANNER COMPONENT                         */
+/* ====================================================================== */
+
+/**
+ * Call-to-Action Banner Component
+ *
+ * @description Secondary banner for action-oriented messaging and buttons
+ * @usage Placed strategically throughout pages to drive user engagement
+ * @background Customizable background image with overlay support
+ * @responsive Reduces min-height and adjusts padding on mobile (ui-responsive-module.css)
+ * @layout Similar to hero banner but smaller min-height (200px vs 400px)
+ * @positioning Can be positioned at top/middle/bottom of page content
+ */
+
 /* CTA Banner with background image */
 .cta-banner {
     position: relative;
@@ -164,6 +202,26 @@ body {
 
 /* Responsive adjustments for contact buttons - MOVED TO contact-responsive-module.css */
 
+/* ====================================================================== */
+/*                          CONTENT LAYOUT SYSTEM                        */
+/* ====================================================================== */
+
+/**
+ * Content Layout System
+ *
+ * @description Core layout structure for page content organization
+ * @usage Provides the foundation for all page layouts with left/right columns
+ * @components
+ *   - content-flex-wrapper: Main container for two-column layout
+ *   - left-col: Left column (23% width) for shield/ribbon images
+ *   - right-col: Right column (77% width) for main content
+ * @responsive
+ *   - Maintains two-column layout until 600px breakpoint
+ *   - Collapses to single column on mobile portrait orientation
+ *   - Hides left-col (shield/ribbons) on mobile portrait
+ * @relationships Works with shield/banner positioning system
+ */
+
 /* Content Layout */
 .content-flex-wrapper {
     display: flex;
@@ -184,6 +242,24 @@ body {
     text-align: left; /* paragraphs left-aligned within this half */
     position: relative; /* optional if you want to position child elements absolutely */
 }
+
+/* ====================================================================== */
+/*                          TUTOR GRID COMPONENT                        */
+/* ====================================================================== */
+
+/**
+ * Tutor Grid Component
+ *
+ * @description CSS Grid layout for displaying tutor cards in organized columns
+ * @usage Primary layout for tutors.js page and tutor directory displays
+ * @layout
+ *   - Desktop: 3 columns (repeat(3, 1fr))
+ *   - Tablet (≤900px): 2 columns (repeat(2, 1fr))
+ *   - Mobile Portrait (≤600px): 1 column (1fr)
+ * @responsive Responsive behavior handled in ui-responsive-module.css
+ * @positioning 5vw left margin for alignment with other page elements
+ * @dependencies Works with .tutor-card child elements for individual tutor display
+ */
 
 /* Tutor Grid */
 .tutor-grid {
@@ -380,6 +456,29 @@ body[data-page="tutorszone"] #imageBanner {
     z-index: 9998 !important;
 }
 
+/* ====================================================================== */
+/*                          DYNAMIC PAGES SYSTEM                        */
+/* ====================================================================== */
+
+/**
+ * Dynamic Pages System
+ *
+ * @description Specialized styling for dynamically generated content pages
+ * @usage Applied to pages created through the admin content management system
+ * @structure
+ *   - .dynamic-page: Parent class for all dynamic pages
+ *   - .dynamic-section-container: Container for dynamic sections (80% width)
+ *   - .dyn-block: Individual content blocks within dynamic sections
+ * @responsive
+ *   - Maintains 80% width until 600px breakpoint
+ *   - Adjusts to 95% width on very small screens
+ *   - Proportionally reduces padding on mobile breakpoints
+ * @differences
+ *   - No shield/ribbons (explicitly hidden)
+ *   - Larger padding (3.2rem vs 2rem) for better content spacing
+ *   - Special handling for two-column layouts
+ */
+
 /* Dynamic pages use default positioning from main rules above */
 
 /* Dynamic pages only - hide shield and ribbons completely */
@@ -472,6 +571,30 @@ body[data-page="tutorszone"] #imageBanner {
         padding: 0 15px;
     }
 }
+
+/* ====================================================================== */
+/*                          NAVIGATION SYSTEM                           */
+/* ====================================================================== */
+
+/**
+ * Navigation System
+ *
+ * @description Main site navigation with responsive behavior
+ * @usage Primary navigation bar appearing on all pages
+ * @structure
+ *   - .main-nav: Container with navy background (#001B44)
+ *   - .main-nav ul: Flex container for navigation items
+ *   - .main-nav ul li: Individual navigation items with borders
+ *   - .main-nav ul li a: Navigation links with hover effects
+ * @responsive
+ *   - Desktop: Horizontal flex layout with centered items
+ *   - ≤900px: Grid layout with auto-fit columns (min 150px)
+ *   - Portrait: 2-column grid layout
+ * @styling
+ *   - Light blue borders (#ADD8E6) between items
+ *   - Hover effect with darker blue background (#003F8F)
+ *   - White text with proper padding and font sizing
+ */
 
 /* Navigation Bar Styling */
 .main-nav {
@@ -623,6 +746,31 @@ body[data-page="tutorszone"] #imageBanner {
     font-weight: bold;
 }
 
+/* ====================================================================== */
+/*                          TESTIMONIALS SYSTEM                         */
+/* ====================================================================== */
+
+/**
+ * Testimonials System
+ *
+ * @description Multiple testimonial display formats for social proof
+ * @usage Throughout the site to showcase parent/student feedback
+ * @components
+ *   - .testimonials-row: Simple flex row for basic testimonial cards
+ *   - .testimonials-bg-section: Full-width background section
+ *   - .testimonials-overlay-card: White card overlay on background
+ *   - .testimonials-laced: Overlapping quote layout with staggered positioning
+ *   - .testimonial-quote-card: Individual quote cards within laced layout
+ * @responsive
+ *   - Desktop: Horizontal layout with overlapping quotes
+ *   - ≤900px: Stacked layout with increased min-height
+ *   - Portrait: Further height increase and font size reduction
+ * @styling
+ *   - Light backgrounds with subtle shadows
+ *   - Rounded corners for cards (border-radius: 1.2-2rem)
+ *   - Specific positioning for overlapping effect
+ */
+
 /* Testimonials row */
 .testimonials-row {
     display: flex;
@@ -743,6 +891,32 @@ body[data-page="tutorszone"] #imageBanner {
 .dynamic-sections-separator-middle {
     height: 2rem;
 }
+
+/* ====================================================================== */
+/*                          RESPONSIVE STYLES                           */
+/* ====================================================================== */
+
+/**
+ * Responsive Styles System
+ *
+ * @description Media queries for responsive layout adjustments
+ * @breakpoints
+ *   - 900px: Primary tablet/small screen breakpoint
+ *   - 768px: Secondary breakpoint for specific components
+ *   - 700px: Breakpoint for overlay cards
+ *   - 600px: Mobile breakpoint for smallest screens
+ *   - 480px: Extra small device breakpoint
+ * @orientations
+ *   - portrait: Special handling for portrait orientation
+ *   - landscape: Special handling for landscape orientation
+ * @components Affects multiple components:
+ *   - Layout (flex → column)
+ *   - Grid columns (3 → 2 → 1)
+ *   - Font sizes (reduction)
+ *   - Padding/margins (proportional reduction)
+ *   - Component visibility (selective hiding)
+ * @note Some responsive styles moved to ui-responsive-module.css
+ */
 
 /* Responsive tweaks */
 @media (max-width: 900px) {
@@ -1240,6 +1414,32 @@ body[data-page="tutorszone"] #imageBanner {
     filter: hue-rotate(-10deg) saturate(1.5) brightness(1.05);
     box-shadow: 0 6px 16px rgba(200,162,200,0.3);
 }
+
+/* ====================================================================== */
+/*                          STRIVE COMPONENTS                           */
+/* ====================================================================== */
+
+/**
+ * STRIVE Components System
+ *
+ * @description Components for displaying STRIVE values and mission content
+ * @usage Core branding elements showcasing organizational values
+ * @components
+ *   - .strive-values: Container for all STRIVE value items
+ *   - .strive-value: Individual value item with icon and text
+ *   - .strive-icon: Circular icon container for value symbols
+ *   - .strive-bg-section: Full-width background section
+ *   - .strive-overlay-card: White content card over background
+ *   - .strive-small-card: Smaller variant for specific layouts
+ * @responsive
+ *   - Desktop: Full layout with proper spacing
+ *   - ≤900px: Reduced icon sizes and gap spacing
+ *   - Mobile: Static positioning instead of absolute
+ * @styling
+ *   - Light blue color scheme matching brand palette
+ *   - Hover effects with subtle transforms and shadows
+ *   - Background image: childStudy.PNG with gradient overlay
+ */
 
 /* STRIVE values styling */
 .strive-values {
