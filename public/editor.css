@@ -1,4 +1,33 @@
-/* ===== Visual Editor UI - Loaded only for admins ===== */
+/* ====================================================================== */
+/*                          VISUAL EDITOR STYLES                         */
+/* ====================================================================== */
+
+/**
+ * Visual Editor CSS - Admin-Only Interface
+ *
+ * @description Comprehensive styling for the visual editor interface
+ * @usage Loaded only when admin users are logged in for content editing
+ * @structure
+ *   - Animations: Keyframes for UI transitions and feedback
+ *   - Overlays: Edit indicators and hover states
+ *   - Modal System: Edit forms and image browser
+ *   - Form Controls: Input styling and button layouts
+ *   - Responsive: Mobile-friendly editor interface
+ * @dependencies Requires admin authentication and visual-editor.js
+ * @theme Consistent with site branding using blue (#0057B7) and lilac accents
+ */
+
+/* ====================================================================== */
+/*                          EDITOR ANIMATIONS                            */
+/* ====================================================================== */
+
+/**
+ * Editor Animation System
+ *
+ * @description Smooth transitions for editor UI elements
+ * @usage Applied to modals, overlays, and interactive elements
+ * @animations slideDown, slideUp for modal appearance/disappearance
+ */
 
 @keyframes slideDown {
     from { opacity: 0; transform: translateY(-20px); }
@@ -9,6 +38,22 @@
     from { opacity: 1; transform: translateY(0); }
     to { opacity: 0; transform: translateY(-20px); }
 }
+
+/* ====================================================================== */
+/*                          EDITOR OVERLAYS                              */
+/* ====================================================================== */
+
+/**
+ * Editor Overlay System
+ *
+ * @description Visual indicators for editable content areas
+ * @usage Appears when admin enters edit mode to show clickable regions
+ * @types
+ *   - .edit-overlay: Standard content editing overlay
+ *   - .page-edit-overlay: Dynamic page content overlay with rounded corners
+ * @styling Semi-transparent blue backgrounds with dashed borders
+ * @interaction Hover states provide visual feedback before clicking
+ */
 
 /* Enhanced overlays with better visual feedback */
 .edit-overlay {
