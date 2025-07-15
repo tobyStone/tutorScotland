@@ -1,0 +1,80 @@
+/* admin-tables.css */
+/* Admin Dashboard Table Styling */
+
+/**
+ * Admin Tables System
+ * 
+ * @description Responsive table layouts for admin data display
+ * @usage Applied to tutor tables and content management tables
+ * @responsive Mobile-friendly with horizontal scrolling and text wrapping
+ * @styling Consistent with admin theme using borders and hover effects
+ */
+
+/* Admin table styling */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,.1)
+}
+
+.admin-table th, .admin-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd
+}
+
+.admin-table th {
+    background: #f8f9fa;
+    font-weight: bold;
+    color: #333
+}
+
+.admin-table tr:hover {
+    background: #f5f5f5
+}
+
+.admin-table button {
+    margin: 2px;
+    padding: 6px 12px;
+    font-size: 0.9em
+}
+
+/* Responsive table behavior */
+@media (max-width: 768px) {
+    .admin-table {
+        font-size: 0.9em
+    }
+    
+    .admin-table th, .admin-table td {
+        padding: 8px 4px
+    }
+}
+
+/* Text wrapping for table cells */
+.admin-table td {
+    overflow-wrap: anywhere; /* let the browser insert soft-wraps */
+    word-break: break-word; /* older fallback, same idea        */
+}
+
+/* Tutor table specific styles */
+#tutorTable img {
+    max-width: 60px;
+    max-height: 60px;
+    border-radius: 4px;
+}
+
+.tutor-subjects {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tutor-subjects:hover {
+    white-space: normal;
+    overflow: visible;
+}

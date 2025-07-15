@@ -11,12 +11,44 @@
     <link rel="stylesheet" href="/css/animation-module.css">
     <link rel="stylesheet" href="/header-banner.css">
     <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/admin-forms.css">
+    <link rel="stylesheet" href="/css/admin-tables.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="/responsive-helper.js" defer=""></script>
     <script src="/js/nav-loader.js" defer=""></script>
     <script src="/js/dynamic-nav.js" defer=""></script>
 
+    <!-- ====================================================================== -->
+    <!--                          ADMIN DASHBOARD STYLES                       -->
+    <!-- ====================================================================== -->
+
+    <!--
+        Admin Dashboard Styles - PARTIALLY EXTERNALIZED
+
+        @description Some CSS styles moved to separate modules for better organization
+        @modules
+          - admin-forms.css: Basic form containers and controls
+          - admin-tables.css: Basic table layouts
+        @remaining Some complex styles remain embedded for now (tabs, specific overrides)
+        @benefits Improved maintainability and AI comprehension
+    -->
+
     <style>
+        /* Remaining embedded styles for complex admin functionality */
+
+        /* ================================================================== */
+        /*                    ADMIN FORM CONTAINERS                           */
+        /* ================================================================== */
+
+        /**
+         * Admin Form Container System
+         *
+         * @description Lilac-themed containers for all admin forms
+         * @usage Applied to both content management and tutor management forms
+         * @styling Consistent lilac background (#C8A2C8) with rounded corners
+         * @responsive Maintains max-width of 700px with auto margins
+         */
+
         /* lilac panel used by both forms */
         .admin-form-container {
             max-width: 700px;
@@ -30,6 +62,19 @@
             .admin-form-container h3 {
                 margin-top: 0
             }
+
+        /* ================================================================== */
+        /*                    FORM CONTROLS STYLING                          */
+        /* ================================================================== */
+
+        /**
+         * Form Controls System
+         *
+         * @description Consistent styling for all form elements
+         * @components Labels, inputs, textareas, selects, buttons
+         * @styling Blue theme (#0057B7) with hover effects and transitions
+         * @accessibility Proper focus states and cursor indicators
+         */
 
         form label {
             display: block;
@@ -169,6 +214,23 @@
 </head>
 
 <body data-page="admin">
+    <!-- ====================================================================== -->
+    <!--                          ADMIN DASHBOARD HTML                         -->
+    <!-- ====================================================================== -->
+
+    <!--
+        Admin Dashboard Structure
+
+        @description Main admin interface for content and tutor management
+        @sections
+          - Header/Banner: Site branding and navigation links
+          - Tab Navigation: Switch between content and tutor management
+          - Content Management: Dynamic sections, pages, and blog posts
+          - Tutor Management: CRUD operations for tutor profiles
+        @dependencies upload-helper.js, dynamic-sections.js
+        @api-endpoints Multiple endpoints for content and tutor operations
+    -->
+
     <!-- ─────────────── HEADER/BANNER ─────────────── -->
     <header>
         <h1 data-ve-block-id="0a085027-3a19-49be-87ae-b06a6e36d043">Tutors Alliance Scotland</h1>
@@ -468,6 +530,32 @@
             </div>
         </div>
     </main>
+
+    <!-- ====================================================================== -->
+    <!--                          ADMIN DASHBOARD JAVASCRIPT                   -->
+    <!-- ====================================================================== -->
+
+    <!--
+        Admin Dashboard JavaScript Logic
+
+        @description Main JavaScript module for admin dashboard functionality
+        @structure
+          - Module Imports: upload-helper.js, pages.js, dynamic-sections.js
+          - Tutor Management: CRUD operations for tutor profiles
+          - Content Management: Dynamic sections and page management
+          - Form Handling: Form validation, submission, and reset logic
+          - API Communication: Fetch operations to backend endpoints
+          - UI State Management: Tab switching, form visibility, table updates
+        @dependencies
+          - upload-helper.js: Image upload functionality
+          - pages.js: Page configuration and routing
+          - dynamic-sections.js: Dynamic content management
+        @api-endpoints
+          - /api/tutors: Tutor data operations
+          - /api/addTutor: Add new tutor
+          - /api/sections: Dynamic section management
+          - /api/pages: Page management operations
+    -->
 
     <!-- ───────────────  MODULE SCRIPT  ─────────────── -->
     <script type="module">

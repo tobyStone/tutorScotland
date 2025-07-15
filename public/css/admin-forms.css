@@ -1,0 +1,109 @@
+/* admin-forms.css */
+/* Admin Dashboard Form Styling */
+
+/**
+ * Admin Form Container System
+ * 
+ * @description Lilac-themed containers for all admin forms
+ * @usage Applied to both content management and tutor management forms
+ * @styling Consistent lilac background (#C8A2C8) with rounded corners
+ * @responsive Maintains max-width of 700px with auto margins
+ */
+
+/* lilac panel used by both forms */
+.admin-form-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background: #C8A2C8;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,.1)
+}
+
+/**
+ * Form Controls System
+ * 
+ * @description Consistent styling for all form elements
+ * @components Labels, inputs, textareas, selects, buttons
+ * @styling Blue theme (#0057B7) with hover effects and transitions
+ * @accessibility Proper focus states and cursor indicators
+ */
+
+form label {
+    display: block;
+    margin-top: 14px;
+    font-weight: bold
+}
+
+form input, form textarea, form select {
+    width: 100%;
+    padding: 9px;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px
+}
+
+form button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: #0057B7;
+    color: #fff;
+    border: 0;
+    border-radius: 4px;
+    font-size: 1.05em;
+    cursor: pointer;
+    transition: .25s
+}
+
+form button:hover {
+    background: #003F8F
+}
+
+/* Tab styling */
+.tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ddd
+}
+
+.tab {
+    padding: 10px 20px;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    cursor: pointer;
+    margin-right: 5px;
+    border-radius: 5px 5px 0 0
+}
+
+.tab.active {
+    background: #C8A2C8;
+    color: #fff
+}
+
+.tab-content {
+    display: none
+}
+
+.tab-content.active {
+    display: block
+}
+
+/* Image preview styling */
+.image-preview {
+    max-width: 200px;
+    max-height: 200px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px
+}
+
+/* Remove image checkbox styling */
+.remove-image-container {
+    margin-top: 10px
+}
+
+.remove-image-container input[type="checkbox"] {
+    width: auto;
+    margin-right: 5px
+}

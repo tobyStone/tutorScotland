@@ -23,19 +23,7 @@ body {
     margin: 2rem auto;
 }
 
-/* Fade-in animations - COMMENTED OUT - NOW IN animation-module.css */
-/*
-.fade-in-section {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-}
-
-.fade-in-section.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-*/
+/* Fade-in animations - NOW IN animation-module.css */
 
 /* Header and navigation styles are now in header-banner.css */
 
@@ -186,6 +174,23 @@ body {
     z-index: 2;
 }
 
+/* ====================================================================== */
+/*                          BUTTON COMPONENTS                           */
+/* ====================================================================== */
+
+/**
+ * Button Components System
+ *
+ * @description Reusable button styles for various contexts
+ * @usage Throughout the site for actions, CTAs, and navigation
+ * @types
+ *   - .button.aurora: Primary action buttons with gradient styling
+ *   - .cta-buttons: Container for call-to-action button groups
+ *   - .contact-btn: Contact-specific buttons (responsive in ui-responsive-module.css)
+ * @responsive Button sizing and spacing handled in ui-responsive-module.css
+ * @styling Aurora gradient theme with hover effects and transitions
+ */
+
 .cta-buttons {
     display: flex;
     gap: 1.5rem;
@@ -319,43 +324,9 @@ body {
         z-index: -1;
     }
 
-/* Shield and Banner animations - COMMENTED OUT - NOW IN animation-module.css */
-/*
-#imageShield {
-    opacity: 0;
-    position: absolute;
-    top: 2%;
-    left: 2%;
-    animation: growLeft 2s forwards ease-in-out;
-    animation-delay: 1s;
-    z-index: 50;
-}
+/* Shield and Banner animations - NOW IN animation-module.css */
 
-#imageBanner {
-    opacity: 0;
-    position: absolute;
-    top: 97%;
-    left: 2%;
-    animation: growLeft 2s forwards ease-in-out;
-    animation-delay: 1.5s;
-    z-index: 49;
-}
-*/
-
-/* Keyframes growLeft - COMMENTED OUT - NOW IN animation-module.css */
-/*
-@keyframes growLeft {
-    0% {
-        opacity: 0;
-        transform: translateX(-37%) scale(0.5);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateX(-37%) scale(0.9);
-    }
-}
-*/
+/* Keyframes growLeft - NOW IN animation-module.css */
 
 /* Page-specific shield and banner positioning overrides */
 

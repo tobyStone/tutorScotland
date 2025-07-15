@@ -59,22 +59,22 @@
 }
 
 /* Portrait-specific adjustments for hero banner */
-@media (orientation: portrait) {
+@media (max-width: 1200px) and (orientation: portrait) {
     .hero-banner {
         width: 92%;
         margin-left: auto;
         margin-right: auto;
-        transform: translateX(-2%); /* Shift slightly left */
+        transform: translateX(-7%); /* Align with other sections in restricted viewports */
     }
 }
 
 /* Portrait-specific adjustments for CTA banner */
-@media (orientation: portrait) {
+@media (max-width: 1200px) and (orientation: portrait) {
     .cta-banner {
         width: 92%;
         margin-left: auto;
         margin-right: auto;
-        transform: translateX(-2%); /* Shift slightly left */
+        transform: translateX(-7%); /* Align with other sections in restricted viewports */
     }
 }
 
