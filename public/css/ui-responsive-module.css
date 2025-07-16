@@ -1,5 +1,14 @@
 /* ui-responsive-module.css */
 /* This file contains responsive styles for UI elements: contact buttons, hero/CTA banners */
+/*
+ * CROSS-MODULE DEPENDENCIES:
+ * - Extends: styles2.css base responsive patterns
+ * - Coordinates with: layout-module.css for container widths
+ * - Uses: Same max-width pattern as main content containers
+ *
+ * LOAD ORDER: Not in standard load order - included separately where needed
+ * PURPOSE: Responsive adjustments for specific UI components
+ */
 
 /* ====================================================================== */
 /*                    CONTACT BUTTON RESPONSIVE STYLES                  */
@@ -59,9 +68,10 @@
 }
 
 /* Portrait-specific adjustments for hero banner */
+/* Specificity: 0,0,1,0 + media query - Overrides base hero-banner styles */
 @media (max-width: 1200px) and (orientation: portrait) {
     .hero-banner {
-        max-width: 1080px;
+        max-width: 1080px; /* Matches layout-module.css container pattern */
         width: 100%;
         margin-left: auto;
         margin-right: auto;

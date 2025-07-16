@@ -2,6 +2,15 @@
    ANIMATION MODULE - EXTRACTED FROM STYLES2.CSS
    All animation-related styles: keyframes, transitions, transforms
    =================================================================== */
+/*
+ * CROSS-MODULE DEPENDENCIES:
+ * - Coordinates with: nav.css for nav transforms
+ * - Extends: styles2.css base animations
+ * - May override: layout positioning in restricted viewports
+ *
+ * LOAD ORDER: 5th - loads before nav.css to allow nav overrides
+ * PURPOSE: Animation and transform effects across all components
+ */
 
 /* ===================================================================
    KEYFRAME ANIMATIONS
@@ -263,8 +272,9 @@
 
 /* Portrait-specific transforms */
 @media (orientation: portrait) {
+    /* Specificity: 0,0,1,0 + !important - Overrides nav.css base positioning */
     .main-nav {
-        transform: translateX(-1.5%) !important;
+        transform: translateX(-1.5%) !important; /* Fine-tune nav alignment in portrait */
     }
     
     .parent-stack-left {
@@ -286,8 +296,9 @@
         transform: translateX(-7px) !important;
     }
     
+    /* Specificity: 0,0,1,0 + !important - Overrides nav.css base positioning */
     .main-nav {
-        transform: translateX(-12px) !important;
+        transform: translateX(-12px) !important; /* Fine-tune nav alignment in landscape */
     }
 }
 

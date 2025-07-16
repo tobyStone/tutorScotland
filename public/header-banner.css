@@ -1,7 +1,17 @@
 /* header-banner.css */
 /* This file contains the header and rolling banner styles from styles2.css */
+/*
+ * CROSS-MODULE DEPENDENCIES:
+ * - Establishes: 40px padding pattern used by nav.css
+ * - Coordinates with: nav.css for vertical alignment
+ * - Extended by: responsive modules for mobile adjustments
+ *
+ * LOAD ORDER: 6th - loads before nav.css to establish base patterns
+ * PURPOSE: Header, rolling banner, and login elements
+ */
 
 /* Header styles */
+/* Specificity: 0,0,0,1 - Base header styling */
 header {
     /* Two layered backgrounds: shield on top, tartan behind */
     background-image: url('/images/bannerShield2.png'), url('/images/bannerBackground.PNG');
@@ -12,7 +22,7 @@ header {
     /* Scale the shield to 100px wide,
        the tartan tiles to 50px wide. */
     background-size: 100px auto, 150px auto;
-    /* Banner padding (height) */
+    /* Banner padding (height) - PATTERN: Used by nav.css for alignment */
     padding: 40px;
     color: #fff;
     display: flex;
@@ -100,7 +110,7 @@ header h1 {
     display: flex;
     align-items: center; /* vertically center the text */
     margin-bottom: 10px;
-    padding: 0 40px; /* Match header padding for alignment */
+    padding: 0 40px; /* PATTERN: Matches header padding - used by nav.css */
     box-sizing: border-box; /* Include padding in width calculation */
 }
 

@@ -2,6 +2,15 @@
     <meta charset="UTF-8">
     <title>Tutors Alliance Scotland - Helping all Scottish children grow</title>
     <link rel="icon" href="/images/bannerShield2.png" type="image/png">
+    <!-- CSS LOAD ORDER (specificity increases with load order):
+         1. styles2.css - Base styles, layout containers, main components
+         2. footer-module.css - Footer-specific styles
+         3. button-module.css - Button components and variants
+         4. typography-module.css - Font styles, text formatting
+         5. animation-module.css - Animations, transitions, transforms
+         6. header-banner.css - Header and rolling banner styles
+         7. nav.css - Navigation styles (HIGHEST SPECIFICITY - loads last)
+    -->
     <link rel="stylesheet" href="/styles2.css">
     <link rel="stylesheet" href="/css/footer-module.css">
     <link rel="stylesheet" href="/css/button-module.css">

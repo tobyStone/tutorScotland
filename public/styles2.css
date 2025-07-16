@@ -1,6 +1,17 @@
 /* ====================================================================== */
 /*                              IMPORTS                                   */
 /* ====================================================================== */
+/*
+ * STYLES2.CSS - Main stylesheet for Tutors Alliance Scotland
+ *
+ * CROSS-MODULE DEPENDENCIES:
+ * - Base for: All other CSS modules extend these styles
+ * - Overridden by: nav.css, animation-module.css, typography-module.css
+ * - Establishes: Container patterns (max-width: 1080px, margin: 2rem auto)
+ *
+ * LOAD ORDER: 1st (lowest specificity) - provides base styles
+ * PURPOSE: Core layout, components, and responsive base patterns
+ */
 
 /* Import UI responsive module (contact buttons, hero/CTA banners) */
 @import url('css/ui-responsive-module.css');
@@ -17,10 +28,12 @@ body {
     padding-bottom: 0; /* Remove padding as we now have a static footer */
 }
 
+/* PATTERN: Standard container layout - used by ui-responsive-module.css */
+/* Specificity: 0,0,1,0 each - Base container styling */
 .main-image, .two-col-content, .icon-panel, .aurora-buttons, .testimonials-row, .confidence-block, .footer-grid {
     background: #E6F0FF;
-    max-width: 1080px;
-    margin: 2rem auto;
+    max-width: 1080px; /* PATTERN: Standard container width */
+    margin: 2rem auto; /* PATTERN: Standard container centering */
 }
 
 /* Fade-in animations - NOW IN animation-module.css */
@@ -568,6 +581,7 @@ body[data-page="tutorszone"] #imageBanner {
  */
 
 /* Navigation Bar Styling */
+/* Specificity: 0,0,1,0 - Overridden by nav.css .main-nav (same specificity, later load order) */
 .main-nav {
     background-color: #001B44; /* a deep navy, or #003F8F, etc. */
 }
@@ -577,7 +591,6 @@ body[data-page="tutorszone"] #imageBanner {
         justify-content: center;
         align-items: center;
         list-style: none;
-        padding: 0 40px; /* Match header and rolling banner padding for alignment */
     }
 
         .main-nav ul li {

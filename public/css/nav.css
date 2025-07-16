@@ -1,8 +1,18 @@
 /* ===================================================================== */
 /* MAIN NAVIGATION STYLES - Dropdown & Mobile Responsive                */
 /* ===================================================================== */
+/*
+ * CROSS-MODULE DEPENDENCIES:
+ * - Overrides: styles2.css .main-nav (specificity 0,0,1,0)
+ * - Extends: header-banner.css padding pattern (40px)
+ * - Coordinates with: animation-module.css nav transforms
+ *
+ * LOAD ORDER: 7th (highest specificity) - loads after all other modules
+ * PURPOSE: Final nav styling with dropdown functionality
+ */
 
 /* === GENERAL LAYOUT ================================================== */
+/* Specificity: 0,0,1,0 - Overrides styles2.css .main-nav */
 .main-nav {
     background: #001B44;
     position: relative;
@@ -10,6 +20,7 @@
     width: 100%;
 }
 
+/* Specificity: 0,0,2,0 - Overrides styles2.css .main-nav ul (0,0,1,1) */
 .main-nav .menu {
     display: flex;
     justify-content: center;
@@ -17,7 +28,7 @@
     gap: 0;
     list-style: none;
     margin: 0;
-    padding: 0 40px; /* Match header padding for alignment */
+    padding: 0 40px; /* Match header-banner.css padding pattern */
 }
 
 .main-nav .menu-item {
@@ -58,6 +69,7 @@
 }
 
 /* 🔑 CRITICAL: Hide ALL nested ul elements by default */
+/* Specificity: 0,0,1,2 - High specificity for dropdown control */
 .main-nav ul ul {
     display: none;
     position: absolute;
