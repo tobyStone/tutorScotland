@@ -14,10 +14,10 @@
 /* === GENERAL LAYOUT ================================================== */
 /* Specificity: 0,0,1,0 - Overrides styles2.css .main-nav */
 .main-nav {
-    background: #001B44;
     position: relative;
     z-index: 1000;
     width: 100%;
+    background: transparent; /* Remove full-width background for alignment */
 }
 
 /* Specificity: 0,0,2,0 - Overrides styles2.css .main-nav ul (0,0,1,1) */
@@ -27,8 +27,9 @@
     align-items: center;
     gap: 0;
     list-style: none;
-    margin: 0;
-    padding: 0 40px; /* Match header-banner.css padding pattern */
+    margin: 0 40px; /* Use margin to constrain background width */
+    padding: 0;
+    background: #001B44; /* Apply background to constrained menu area */
 }
 
 .main-nav .menu-item {
@@ -144,9 +145,14 @@
 
 /* === MOBILE RESPONSIVE STYLES ======================================= */
 @media (max-width: 900px) {
-    /* Remove padding on mobile for full-width navigation */
+    /* Full-width navigation on mobile */
+    .main-nav {
+        background: #001B44; /* Restore full-width background on mobile */
+    }
+
     .main-nav .menu {
-        padding: 0;
+        margin: 0; /* Remove margin for full-width on mobile */
+        background: transparent; /* Remove constrained background on mobile */
     }
 
     /* Show hamburger button and position it below rolling banner */

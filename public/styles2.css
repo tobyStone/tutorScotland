@@ -2376,6 +2376,7 @@ header {
     @media (orientation: portrait) {
         .tutor-img-list-left {
             left: 0;
+            top: 10px !important; /* Move up to avoid overlapping "Tutor Highlight" heading */
         }
         .tutor-img-list-right {
             right: 0;
