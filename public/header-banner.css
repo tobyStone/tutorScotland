@@ -100,6 +100,8 @@ header h1 {
     display: flex;
     align-items: center; /* vertically center the text */
     margin-bottom: 10px;
+    padding: 0 40px; /* Match header padding for alignment */
+    box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .rolling-content {
@@ -118,5 +120,13 @@ header h1 {
 
     100% {
         transform: translateX(-100%);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    /* Remove padding on mobile for full-width rolling banner */
+    .rolling-banner {
+        padding: 0;
     }
 }
