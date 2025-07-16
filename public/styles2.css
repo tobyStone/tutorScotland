@@ -577,6 +577,7 @@ body[data-page="tutorszone"] #imageBanner {
         justify-content: center;
         align-items: center;
         list-style: none;
+        padding: 0 40px; /* Match header and rolling banner padding for alignment */
     }
 
         .main-nav ul li {
