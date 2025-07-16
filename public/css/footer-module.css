@@ -22,7 +22,7 @@
     color: white;
     padding: 15px 0;
     text-align: center;
-    z-index: 100;
+    z-index: 10000; /* Highest z-index - above shield (9999) and banner (9998) */
     opacity: 0; /* Start hidden */
     transform: translateY(20px);
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
@@ -163,7 +163,7 @@
     bottom: 0;
     left: -50px;
     right: -50px;
-    z-index: 1000;
+    z-index: 10000; /* Highest z-index - above shield (9999) and banner (9998) */
     opacity: 0;
     transform: translateY(20px);
 }

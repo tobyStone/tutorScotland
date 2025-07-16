@@ -587,6 +587,19 @@
             })
             .catch(console.error);
 
+        /* ====================================================================== */
+        /*                          TAB SYSTEM MANAGEMENT                        */
+        /* ====================================================================== */
+
+        /**
+         * Tab Switching Functionality
+         *
+         * @description Handles switching between content and tutor management tabs
+         * @elements .tab-button (clickable tabs), .tab-content (tab panels)
+         * @behavior Removes active class from all tabs, adds to clicked tab
+         * @accessibility Uses data-tab attribute to link buttons to content
+         */
+
         /* ── tab switching functionality ──────────────────────────── */
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -603,6 +616,27 @@
                 document.getElementById(tabId).classList.add('active');
             });
         });
+
+        /* ====================================================================== */
+        /*                          TUTOR MANAGEMENT SYSTEM                      */
+        /* ====================================================================== */
+
+        /**
+         * Tutor Management (CREATE/UPDATE)
+         *
+         * @description Complete CRUD operations for tutor profiles
+         * @features
+         *   - Create new tutor profiles with image upload
+         *   - Edit existing tutor information
+         *   - Delete tutor profiles with confirmation
+         *   - Image management (upload, preview, remove)
+         * @api-endpoints
+         *   - GET /api/tutors: Fetch all tutors
+         *   - POST /api/addTutor: Create new tutor
+         *   - PUT /api/tutors/:id: Update existing tutor
+         *   - DELETE /api/tutors/:id: Delete tutor
+         * @dependencies upload-helper.js for image handling
+         */
 
         /* ░░░ 1. TUTOR MANAGEMENT (CREATE/UPDATE) ░░░ */
 

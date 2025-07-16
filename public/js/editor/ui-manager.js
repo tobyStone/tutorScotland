@@ -1,5 +1,38 @@
+/* ====================================================================== */
+/*                          UI MANAGER MODULE                            */
+/* ====================================================================== */
+
+/**
+ * UI Manager for Visual Editor
+ *
+ * @description Core UI management system for the visual editor interface
+ * @responsibilities
+ *   - Modal creation and management
+ *   - Editable element detection and overlay creation
+ *   - Form handling and validation
+ *   - Image browser integration
+ *   - Edit mode state management
+ * @dependencies
+ *   - editor-state.js: Global state management
+ *   - image-browser.js: Image selection functionality
+ * @exports UIManager class
+ */
+
 import { editorState } from './editor-state.js';
 import { ImageBrowser } from './features/image-browser.js';
+
+/* ====================================================================== */
+/*                          UTILITY FUNCTIONS                            */
+/* ====================================================================== */
+
+/**
+ * Utility Functions
+ *
+ * @description Helper functions for UI operations
+ * @functions
+ *   - uuidv4(): Generate unique identifiers for content blocks
+ *   - ensureBlockIds(): Add data-ve-block-id to HTML elements
+ */
 
 const BUTTON_CSS = 'button aurora';
 
@@ -21,6 +54,27 @@ function ensureBlockIds(html) {
   });
   return tmp.innerHTML;
 }
+
+/* ====================================================================== */
+/*                          UI MANAGER CLASS                             */
+/* ====================================================================== */
+
+/**
+ * UIManager Class
+ *
+ * @description Main class for managing visual editor UI components
+ * @constructor
+ *   @param {Object} callbacks - Event callbacks for editor operations
+ *   @param {Object} overrideEngine - Optional engine override for testing
+ * @properties
+ *   - editableElements: Array of detected editable elements
+ *   - dom: DOM element references cache
+ *   - imageBrowser: Image selection component instance
+ * @methods
+ *   - init(): Initialize the UI manager
+ *   - initialize(): Create core UI components
+ *   - refreshEditableElements(): Scan for editable content
+ */
 
 export class UIManager {
     constructor(callbacks, overrideEngine = null) {
