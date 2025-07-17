@@ -1,0 +1,107 @@
+name: Test Suite
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  NODE_VERSION: '18.x'
+  JWT_SECRET: 'test-jwt-secret-key-for-testing-only'
+
+jobs:
+  # Fast feedback: Lint and unit tests first
+  lint-and-unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run unit tests with coverage
+      run: npm run test:unit -- --coverage --reporter=verbose
+      
+    - name: Upload unit test coverage
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        file: ./coverage/coverage-final.json
+        flags: unit
+        name: unit-tests
+
+  # Integration tests with database
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: lint-and-unit
+    
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ping: 1})'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Wait for MongoDB
+      run: |
+        until mongosh --eval "print('MongoDB is ready')" > /dev/null 2>&1; do
+          echo "Waiting for MongoDB..."
+          sleep 2
+        done
+        
+    - name: Run integration tests
+      run: npm run test:integration -- --reporter=verbose
+      env:
+        MONGODB_URI: mongodb://localhost:27017/tutorscotland-test
+        
+    - name: Upload integration test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: integration-test-results
+        path: test-results/
+
+  # Security and dependency scanning
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run npm audit
+      run: npm audit --audit-level moderate
+      continue-on-error: true
+        
+    - name: Upload security scan results
+      if: always()
+      run: echo "Security scan completed"

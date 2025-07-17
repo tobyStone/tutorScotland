@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Admin User",
+    "email": "admin@tutorscotland.test",
+    "password": "testpassword123",
+    "role": "admin"
+  },
+  {
+    "name": "Parent User",
+    "email": "parent@tutorscotland.test",
+    "password": "testpassword123",
+    "role": "parent"
+  },
+  {
+    "name": "Tutor User",
+    "email": "tutor@tutorscotland.test",
+    "password": "testpassword123",
+    "role": "tutor"
+  },
+  {
+    "name": "Blog Writer",
+    "email": "blogger@tutorscotland.test",
+    "password": "testpassword123",
+    "role": "blogwriter"
+  }
+]

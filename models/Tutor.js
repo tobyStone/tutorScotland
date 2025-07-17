@@ -12,4 +12,4 @@ const tutorSchema = new mongoose.Schema({
     contact: String       // NEW: a simple field for email/website address
 });
 
-module.exports = mongoose.model('Tutor', tutorSchema);
+module.exports = mongoose.models.Tutor || mongoose.model('Tutor', tutorSchema);
