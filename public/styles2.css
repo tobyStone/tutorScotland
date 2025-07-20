@@ -2715,10 +2715,10 @@ header {
     #dynamicSectionsTop,
     #dynamicSectionsMiddle,
     #dynamicSectionsBottom {
-        width: 83%; /* Further reduced to move standard sections more left */
-        margin-left: auto;
-        margin-right: auto;
-        transform: translateX(-9%); /* Increased transform to shift further left */
+        width: 83% !important; /* Further reduced to move standard sections more left - !important to override conflicting rules */
+        margin-left: auto !important;
+        margin-right: auto !important;
+        transform: translateX(-9%) !important; /* Increased transform to shift further left */
     }
 
     /* Specific fix for team member sections only */
@@ -2730,7 +2730,7 @@ header {
         width: 99% !important; /* Keep almost full width for team sections */
         margin-left: auto !important;
         margin-right: auto !important;
-        transform: translateX(-3%) !important; /* Slightly more left shift for better alignment */
+        transform: translateX(-1%) !important; /* Reduced from -3% to shift team sections slightly right */
     }
 
     .dynamic-section-container {
