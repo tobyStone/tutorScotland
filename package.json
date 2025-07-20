@@ -17,6 +17,11 @@
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
     "test:ci": "npm run test:coverage && npm run test:e2e",
     "test:pre-commit": "npm run test:unit",
+    "test:dynamic-sections:baseline": "node scripts/test-dynamic-sections.js baseline",
+    "test:dynamic-sections:validate": "node scripts/test-dynamic-sections.js validate",
+    "test:dynamic-sections:styling": "playwright test tests/e2e/dynamic-sections-styling.spec.js",
+    "test:dynamic-sections:visual": "playwright test tests/e2e/dynamic-sections-visual-regression.spec.js",
+    "test:dynamic-sections:cross-browser": "playwright test tests/e2e/dynamic-sections-cross-browser.spec.js",
     "prepare": "husky install",
     "pre-push": "npm run test:all"
   },

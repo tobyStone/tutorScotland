@@ -472,7 +472,8 @@ describe('Dynamic Sections Integration Tests', () => {
         content: 'Test content'
       };
 
-      const validTypes = ['text', 'image', 'team-member', 'video', 'gallery'];
+      // Updated to include future section types
+      const validTypes = ['text', 'image', 'team-member', 'video', 'gallery', 'list', 'testimonial'];
       const isValidType = validTypes.includes(invalidSection.type);
 
       expect(isValidType).toBe(false);
@@ -489,6 +490,38 @@ describe('Dynamic Sections Integration Tests', () => {
       if (!incompleteSection.pageSlug) errors.push('Page slug is required');
 
       expect(errors).toHaveLength(2);
+    });
+
+    it('should validate future section types (list, testimonial)', async () => {
+      const listSection = {
+        type: 'list',
+        title: 'Test List',
+        content: JSON.stringify({
+          items: ['Item 1', 'Item 2', 'Item 3'],
+          listType: 'unordered'
+        }),
+        pageSlug: 'test-page'
+      };
+
+      const testimonialSection = {
+        type: 'testimonial',
+        title: 'Test Testimonial',
+        content: JSON.stringify({
+          quote: 'This is a test testimonial',
+          author: 'Test Author',
+          role: 'Test Role',
+          company: 'Test Company'
+        }),
+        pageSlug: 'test-page'
+      };
+
+      // Validate structure for future section types
+      expect(listSection.type).toBe('list');
+      expect(JSON.parse(listSection.content).items).toHaveLength(3);
+
+      expect(testimonialSection.type).toBe('testimonial');
+      expect(JSON.parse(testimonialSection.content).quote).toBeTruthy();
+      expect(JSON.parse(testimonialSection.content).author).toBeTruthy();
     });
 
     it('should handle database connection errors', async () => {
@@ -511,38 +544,220 @@ describe('Dynamic Sections Integration Tests', () => {
     });
   });
 
-  describe('Section Import/Export', () => {
-    it('should export sections to JSON format', async () => {
-      const exportData = {
-        pageSlug: 'about',
-        sections: testSections.filter(section => section.pageSlug === 'about'),
-        exportedAt: new Date(),
-        version: '1.0'
+  describe('Future Section Types - CRUD Operations', () => {
+    it('should create list sections with proper validation', async () => {
+      const listSection = {
+        pageSlug: 'test-page',
+        type: 'list',
+        title: 'Test List Section',
+        content: JSON.stringify({
+          items: [
+            'First list item',
+            'Second list item',
+            'Third list item'
+          ],
+          listType: 'unordered',
+          styling: 'default'
+        }),
+        position: 'middle',
+        order: 1,
+        isActive: true
       };
 
-      expect(exportData.sections).toHaveLength(3);
-      expect(exportData.pageSlug).toBe('about');
-      expect(exportData.version).toBe('1.0');
+      // Validate list section structure
+      expect(listSection.type).toBe('list');
+      const listContent = JSON.parse(listSection.content);
+      expect(listContent.items).toHaveLength(3);
+      expect(listContent.listType).toBe('unordered');
+
+      // Mock creation response
+      const createdListSection = {
+        ...listSection,
+        id: 'list-section-1',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      expect(createdListSection.id).toBeTruthy();
+      expect(createdListSection.type).toBe('list');
     });
 
-    it('should validate imported section data', async () => {
+    it('should create testimonial sections with proper validation', async () => {
+      const testimonialSection = {
+        pageSlug: 'test-page',
+        type: 'testimonial',
+        title: 'Customer Testimonial',
+        content: JSON.stringify({
+          quote: 'TutorScotland helped my child improve their grades significantly. Highly recommended!',
+          author: 'Sarah Johnson',
+          role: 'Parent',
+          company: '',
+          rating: 5,
+          imageUrl: '/images/testimonials/sarah-j.jpg'
+        }),
+        position: 'bottom',
+        order: 2,
+        isActive: true
+      };
+
+      // Validate testimonial section structure
+      expect(testimonialSection.type).toBe('testimonial');
+      const testimonialContent = JSON.parse(testimonialSection.content);
+      expect(testimonialContent.quote).toBeTruthy();
+      expect(testimonialContent.author).toBeTruthy();
+      expect(testimonialContent.rating).toBe(5);
+
+      // Mock creation response
+      const createdTestimonialSection = {
+        ...testimonialSection,
+        id: 'testimonial-section-1',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      expect(createdTestimonialSection.id).toBeTruthy();
+      expect(createdTestimonialSection.type).toBe('testimonial');
+    });
+
+    it('should update list sections maintaining data integrity', async () => {
+      const originalListSection = {
+        id: 'list-section-1',
+        type: 'list',
+        title: 'Original List',
+        content: JSON.stringify({
+          items: ['Item 1', 'Item 2'],
+          listType: 'unordered'
+        })
+      };
+
+      const updatedListSection = {
+        ...originalListSection,
+        title: 'Updated List',
+        content: JSON.stringify({
+          items: ['Updated Item 1', 'Updated Item 2', 'New Item 3'],
+          listType: 'ordered'
+        }),
+        updatedAt: new Date()
+      };
+
+      const updatedContent = JSON.parse(updatedListSection.content);
+      expect(updatedContent.items).toHaveLength(3);
+      expect(updatedContent.listType).toBe('ordered');
+      expect(updatedListSection.title).toBe('Updated List');
+    });
+
+    it('should update testimonial sections maintaining data integrity', async () => {
+      const originalTestimonialSection = {
+        id: 'testimonial-section-1',
+        type: 'testimonial',
+        title: 'Original Testimonial',
+        content: JSON.stringify({
+          quote: 'Original quote',
+          author: 'Original Author',
+          rating: 4
+        })
+      };
+
+      const updatedTestimonialSection = {
+        ...originalTestimonialSection,
+        title: 'Updated Testimonial',
+        content: JSON.stringify({
+          quote: 'Updated testimonial quote with more detail',
+          author: 'Updated Author Name',
+          role: 'Updated Role',
+          rating: 5
+        }),
+        updatedAt: new Date()
+      };
+
+      const updatedContent = JSON.parse(updatedTestimonialSection.content);
+      expect(updatedContent.quote).toContain('Updated');
+      expect(updatedContent.rating).toBe(5);
+      expect(updatedContent.role).toBe('Updated Role');
+    });
+  });
+
+  describe('Section Import/Export', () => {
+    it('should export sections to JSON format including new types', async () => {
+      const exportData = {
+        pageSlug: 'about',
+        sections: [
+          ...testSections.filter(section => section.pageSlug === 'about'),
+          {
+            type: 'list',
+            title: 'Export Test List',
+            content: JSON.stringify({ items: ['Item 1', 'Item 2'] })
+          },
+          {
+            type: 'testimonial',
+            title: 'Export Test Testimonial',
+            content: JSON.stringify({ quote: 'Test quote', author: 'Test Author' })
+          }
+        ],
+        exportedAt: new Date(),
+        version: '1.1' // Updated version to include new section types
+      };
+
+      expect(exportData.sections).toHaveLength(5); // 3 original + 2 new types
+      expect(exportData.pageSlug).toBe('about');
+      expect(exportData.version).toBe('1.1');
+
+      // Validate new section types are included
+      const listSections = exportData.sections.filter(s => s.type === 'list');
+      const testimonialSections = exportData.sections.filter(s => s.type === 'testimonial');
+      expect(listSections).toHaveLength(1);
+      expect(testimonialSections).toHaveLength(1);
+    });
+
+    it('should validate imported section data including new types', async () => {
       const importData = {
         sections: [
           {
             type: 'text',
-            title: 'Imported Section',
+            title: 'Imported Text Section',
             content: 'Imported content',
             position: 'top',
             order: 1
+          },
+          {
+            type: 'list',
+            title: 'Imported List Section',
+            content: JSON.stringify({ items: ['Imported Item 1', 'Imported Item 2'] }),
+            position: 'middle',
+            order: 2
+          },
+          {
+            type: 'testimonial',
+            title: 'Imported Testimonial',
+            content: JSON.stringify({ quote: 'Imported quote', author: 'Imported Author' }),
+            position: 'bottom',
+            order: 3
           }
         ]
       };
 
-      const validatedSections = importData.sections.filter(section => 
+      const validatedSections = importData.sections.filter(section =>
         section.type && section.title && section.position
       );
 
-      expect(validatedSections).toHaveLength(1);
+      expect(validatedSections).toHaveLength(3);
+
+      // Validate each section type
+      const textSection = validatedSections.find(s => s.type === 'text');
+      const listSection = validatedSections.find(s => s.type === 'list');
+      const testimonialSection = validatedSections.find(s => s.type === 'testimonial');
+
+      expect(textSection).toBeTruthy();
+      expect(listSection).toBeTruthy();
+      expect(testimonialSection).toBeTruthy();
+
+      // Validate content structure for new types
+      const listContent = JSON.parse(listSection.content);
+      const testimonialContent = JSON.parse(testimonialSection.content);
+
+      expect(listContent.items).toHaveLength(2);
+      expect(testimonialContent.quote).toBeTruthy();
+      expect(testimonialContent.author).toBeTruthy();
     });
 
     it('should handle duplicate sections during import', async () => {
