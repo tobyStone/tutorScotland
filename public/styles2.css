@@ -2730,7 +2730,7 @@ header {
         width: 99% !important; /* Keep almost full width for team sections */
         margin-left: auto !important;
         margin-right: auto !important;
-        transform: translateX(-7%) !important; /* Reduced from -3% to shift team sections slightly right */
+        transform: translateX(1%) !important; /* Reduced from -3% to shift team sections slightly right */
     }
 
     .dynamic-section-container {
