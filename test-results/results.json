@@ -206,257 +206,1773 @@
   },
   "suites": [
     {
-      "title": "smoke\\navigation.test.js",
-      "file": "smoke/navigation.test.js",
+      "title": "smoke\\css-preservation.test.js",
+      "file": "smoke/css-preservation.test.js",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Navigation Tests",
-          "file": "smoke/navigation.test.js",
-          "line": 3,
+          "title": "CSS Preservation - Golden State Protection",
+          "file": "smoke/css-preservation.test.js",
+          "line": 10,
           "column": 6,
-          "specs": [
+          "specs": [],
+          "suites": [
             {
-              "title": "main navigation links work",
-              "ok": false,
-              "tags": [],
-              "tests": [
+              "title": "Team Member Sections - Dynamic Content",
+              "file": "smoke/css-preservation.test.js",
+              "line": 12,
+              "column": 8,
+              "specs": [
                 {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
+                  "title": "team member sections display correctly in portrait orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
                     {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 44062,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                      },
-                      "errors": [
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
                         {
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js",
-                            "column": 18,
-                            "line": 16
-                          },
-                          "message": "Error: page.goto: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"load\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 14 |\u001b[39m     \n \u001b[90m 15 |\u001b[39m     \u001b[36mfor\u001b[39m (\u001b[36mconst\u001b[39m link \u001b[36mof\u001b[39m navLinks) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 16 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 17 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m`text=${link.text}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 18 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[36mnew\u001b[39m \u001b[33mRegExp\u001b[39m(link\u001b[33m.\u001b[39mexpectedUrl))\u001b[33m;\u001b[39m\n \u001b[90m 19 |\u001b[39m     }\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js:16:18\u001b[22m"
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 35255,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:32:22.903Z",
+                          "annotations": [],
+                          "attachments": []
                         }
                       ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-20T09:48:25.062Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\\error-context.md"
-                        }
-                      ]
+                      "status": "expected"
                     }
                   ],
-                  "status": "unexpected"
+                  "id": "7328c84af0da8e6791a5-647bb9d947696f1ff6e2",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 13,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in landscape orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 1,
+                          "status": "passed",
+                          "duration": 34846,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:32:22.838Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-3cc16d18088ffa79bc6b",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 72,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in portrait orientation",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [
+                        {
+                          "workerIndex": 4,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 12,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:31.687Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-ac6edd37996d3295e158",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 13,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in landscape orientation",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [
+                        {
+                          "workerIndex": 5,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 6,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:31.699Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-03a00bbcf73adc35f3c2",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 72,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in portrait orientation",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [
+                        {
+                          "workerIndex": 10,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 6,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:37.888Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-d955b7b7eeb3be8ae7ba",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 13,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in landscape orientation",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [
+                        {
+                          "workerIndex": 11,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 7,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:38.006Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-d78106222fb123451fe9",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 72,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in portrait orientation",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [
+                        {
+                          "workerIndex": 16,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 30830,
+                          "error": {
+                            "message": "Error: A snapshot doesn't exist at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js-snapshots\\team-sections-portrait-Mobile-Chrome-win32.png, writing actual.",
+                            "stack": "Error: A snapshot doesn't exist at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js-snapshots\\team-sections-portrait-Mobile-Chrome-win32.png, writing actual.\n    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:66:7",
+                            "location": {
+                              "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                              "column": 7,
+                              "line": 66
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 64 |\u001b[39m       \n \u001b[90m 65 |\u001b[39m       \u001b[90m// Take screenshot for visual regression\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 66 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m'team-sections-portrait.png'\u001b[39m\u001b[33m,\u001b[39m {\n \u001b[90m    |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 67 |\u001b[39m         fullPage\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 68 |\u001b[39m         threshold\u001b[33m:\u001b[39m \u001b[35m0.2\u001b[39m\n \u001b[90m 69 |\u001b[39m       })\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                                "column": 7,
+                                "line": 66
+                              },
+                              "message": "Error: A snapshot doesn't exist at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js-snapshots\\team-sections-portrait-Mobile-Chrome-win32.png, writing actual.\n\n\u001b[0m \u001b[90m 64 |\u001b[39m       \n \u001b[90m 65 |\u001b[39m       \u001b[90m// Take screenshot for visual regression\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 66 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m'team-sections-portrait.png'\u001b[39m\u001b[33m,\u001b[39m {\n \u001b[90m    |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 67 |\u001b[39m         fullPage\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 68 |\u001b[39m         threshold\u001b[33m:\u001b[39m \u001b[35m0.2\u001b[39m\n \u001b[90m 69 |\u001b[39m       })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:66:7\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:44.780Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "team-sections-portrait-expected.png",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js-snapshots\\team-sections-portrait-Mobile-Chrome-win32.png"
+                            },
+                            {
+                              "name": "team-sections-portrait-actual.png",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\\team-sections-portrait-actual.png"
+                            },
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\\error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                            "column": 7,
+                            "line": 66
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-93ab5a765ea807978e15",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 13,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in landscape orientation",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [
+                        {
+                          "workerIndex": 17,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 31204,
+                          "error": {
+                            "message": "Error: A snapshot doesn't exist at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js-snapshots\\team-sections-landscape-Mobile-Chrome-win32.png, writing actual.",
+                            "stack": "Error: A snapshot doesn't exist at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js-snapshots\\team-sections-landscape-Mobile-Chrome-win32.png, writing actual.\n    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:98:7",
+                            "location": {
+                              "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                              "column": 7,
+                              "line": 98
+                            },
+                            "snippet": "\u001b[0m \u001b[90m  96 |\u001b[39m       }\n \u001b[90m  97 |\u001b[39m       \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  98 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m'team-sections-landscape.png'\u001b[39m\u001b[33m,\u001b[39m {\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  99 |\u001b[39m         fullPage\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 100 |\u001b[39m         threshold\u001b[33m:\u001b[39m \u001b[35m0.2\u001b[39m\n \u001b[90m 101 |\u001b[39m       })\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                                "column": 7,
+                                "line": 98
+                              },
+                              "message": "Error: A snapshot doesn't exist at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js-snapshots\\team-sections-landscape-Mobile-Chrome-win32.png, writing actual.\n\n\u001b[0m \u001b[90m  96 |\u001b[39m       }\n \u001b[90m  97 |\u001b[39m       \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  98 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m'team-sections-landscape.png'\u001b[39m\u001b[33m,\u001b[39m {\n \u001b[90m     |\u001b[39m       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  99 |\u001b[39m         fullPage\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 100 |\u001b[39m         threshold\u001b[33m:\u001b[39m \u001b[35m0.2\u001b[39m\n \u001b[90m 101 |\u001b[39m       })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:98:7\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:44.587Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "team-sections-landscape-expected.png",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js-snapshots\\team-sections-landscape-Mobile-Chrome-win32.png"
+                            },
+                            {
+                              "name": "team-sections-landscape-actual.png",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\\team-sections-landscape-actual.png"
+                            },
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\\error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                            "column": 7,
+                            "line": 98
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-0426fe41a58ecdbeb9bb",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 72,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in portrait orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-6d1a2c7e431616b1a327",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 13,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in landscape orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-20c7cde280044dbef1db",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 72,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in portrait orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-675d2c9df9f60a5b798f",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 13,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in landscape orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-74b18d210717516230e7",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 72,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in portrait orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-f7534c15c26add201f2f",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 13,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in landscape orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-0c3eceff8fb18155a2b0",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 72,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in portrait orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-5a8e5655155445cb5e7f",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 13,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in landscape orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-d330df39aa32e9fb2dd1",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 72,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in portrait orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-bd040d816379bfd3d5a1",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 13,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly in landscape orientation",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-00b810212ce674b76fec",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 72,
+                  "column": 9
                 }
-              ],
-              "id": "8d15280c8f5440545f48-f18cf89bd278612d5f41",
-              "file": "smoke/navigation.test.js",
-              "line": 4,
-              "column": 7
+              ]
             },
             {
-              "title": "smooth scrolling to sections works",
-              "ok": false,
-              "tags": [],
-              "tests": [
+              "title": "Overall Layout Preservation",
+              "file": "smoke/css-preservation.test.js",
+              "line": 105,
+              "column": 8,
+              "specs": [
                 {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
+                  "title": "homepage maintains correct styling across viewports",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
                     {
-                      "workerIndex": 1,
-                      "parallelIndex": 1,
-                      "status": "failed",
-                      "duration": 24655,
-                      "error": {
-                        "message": "Error: expect.toBeVisible: Unexpected token \"#\" while parsing css selector \"#\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for #\u001b[22m\n",
-                        "stack": "Error: expect.toBeVisible: Unexpected token \"#\" while parsing css selector \"#\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for #\u001b[22m\n\n    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js:40:35",
-                        "location": {
-                          "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js",
-                          "column": 35,
-                          "line": 40
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 38 |\u001b[39m       \u001b[90m// Check that target section is visible\u001b[39m\n \u001b[90m 39 |\u001b[39m       \u001b[36mconst\u001b[39m targetSection \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(href)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m       \u001b[36mawait\u001b[39m expect(targetSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m     }\n \u001b[90m 42 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js",
-                            "column": 35,
-                            "line": 40
-                          },
-                          "message": "Error: expect.toBeVisible: Unexpected token \"#\" while parsing css selector \"#\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for #\u001b[22m\n\n\n\u001b[0m \u001b[90m 38 |\u001b[39m       \u001b[90m// Check that target section is visible\u001b[39m\n \u001b[90m 39 |\u001b[39m       \u001b[36mconst\u001b[39m targetSection \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(href)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m       \u001b[36mawait\u001b[39m expect(targetSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m     }\n \u001b[90m 42 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js:40:35\u001b[22m"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-20T09:48:25.067Z",
+                      "timeout": 30000,
                       "annotations": [],
-                      "attachments": [
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
                         {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\\error-context.md"
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 20449,
+                          "error": {
+                            "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('footer') resolved to 2 elements:\n    1) <footer class=\"site-footer fade-in-section\">…</footer> aka getByRole('contentinfo').first()\n    2) <footer class=\"static-footer\">…</footer> aka getByRole('contentinfo').filter({ hasText: 'Extra Information The TAS Way' })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('footer')\u001b[22m\n",
+                            "stack": "Error: expect.toBeVisible: Error: strict mode violation: locator('footer') resolved to 2 elements:\n    1) <footer class=\"site-footer fade-in-section\">…</footer> aka getByRole('contentinfo').first()\n    2) <footer class=\"static-footer\">…</footer> aka getByRole('contentinfo').filter({ hasText: 'Extra Information The TAS Way' })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('footer')\u001b[22m\n\n    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:128:46",
+                            "location": {
+                              "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                              "column": 46,
+                              "line": 128
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 126 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'nav'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m 127 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'main'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 128 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'footer'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 129 |\u001b[39m         \n \u001b[90m 130 |\u001b[39m         \u001b[90m// Take screenshot for each viewport\u001b[39m\n \u001b[90m 131 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m`homepage-${viewport.name}.png`\u001b[39m\u001b[33m,\u001b[39m {\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                                "column": 46,
+                                "line": 128
+                              },
+                              "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('footer') resolved to 2 elements:\n    1) <footer class=\"site-footer fade-in-section\">…</footer> aka getByRole('contentinfo').first()\n    2) <footer class=\"static-footer\">…</footer> aka getByRole('contentinfo').filter({ hasText: 'Extra Information The TAS Way' })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('footer')\u001b[22m\n\n\n\u001b[0m \u001b[90m 126 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'nav'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m 127 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'main'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 128 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'footer'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 129 |\u001b[39m         \n \u001b[90m 130 |\u001b[39m         \u001b[90m// Take screenshot for each viewport\u001b[39m\n \u001b[90m 131 |\u001b[39m         \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m`homepage-${viewport.name}.png`\u001b[39m\u001b[33m,\u001b[39m {\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:128:46\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:32:58.813Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-58e5d-ct-styling-across-viewports-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-58e5d-ct-styling-across-viewports-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-58e5d-ct-styling-across-viewports-chromium\\error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                            "column": 46,
+                            "line": 128
+                          }
                         }
                       ],
-                      "errorLocation": {
-                        "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js",
-                        "column": 35,
-                        "line": 40
-                      }
+                      "status": "unexpected"
                     }
                   ],
-                  "status": "unexpected"
+                  "id": "7328c84af0da8e6791a5-b7d93ece112ab752f685",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 106,
+                  "column": 9
+                },
+                {
+                  "title": "dynamic sections maintain consistent styling",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 22758,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n  710 pixels (ratio 0.01 of all image pixels) are different.\n\n  Snapshot: dynamic-sections-styling.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(dynamic-sections-styling.png)\" with timeout 10000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - 710 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 710 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n  710 pixels (ratio 0.01 of all image pixels) are different.\n\n  Snapshot: dynamic-sections-styling.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(dynamic-sections-styling.png)\" with timeout 10000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - 710 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 710 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\n    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:186:26",
+                            "location": {
+                              "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                              "column": 26,
+                              "line": 186
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 184 |\u001b[39m       }\n \u001b[90m 185 |\u001b[39m       \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 186 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m'dynamic-sections-styling.png'\u001b[39m\u001b[33m,\u001b[39m {\n \u001b[90m     |\u001b[39m                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 187 |\u001b[39m         fullPage\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 188 |\u001b[39m         threshold\u001b[33m:\u001b[39m \u001b[35m0.2\u001b[39m\n \u001b[90m 189 |\u001b[39m       })\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                                "column": 26,
+                                "line": 186
+                              },
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n  710 pixels (ratio 0.01 of all image pixels) are different.\n\n  Snapshot: dynamic-sections-styling.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(dynamic-sections-styling.png)\" with timeout 10000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - 710 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 710 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\n\n\u001b[0m \u001b[90m 184 |\u001b[39m       }\n \u001b[90m 185 |\u001b[39m       \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 186 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m'dynamic-sections-styling.png'\u001b[39m\u001b[33m,\u001b[39m {\n \u001b[90m     |\u001b[39m                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 187 |\u001b[39m         fullPage\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m\n \u001b[90m 188 |\u001b[39m         threshold\u001b[33m:\u001b[39m \u001b[35m0.2\u001b[39m\n \u001b[90m 189 |\u001b[39m       })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:186:26\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:32:59.407Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "dynamic-sections-styling-expected.png",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js-snapshots\\dynamic-sections-styling-chromium-win32.png"
+                            },
+                            {
+                              "name": "dynamic-sections-styling-actual.png",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\\dynamic-sections-styling-actual.png"
+                            },
+                            {
+                              "name": "dynamic-sections-styling-diff.png",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\\dynamic-sections-styling-diff.png"
+                            },
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\\error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                            "column": 26,
+                            "line": 186
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-e56916547a6c1946f591",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 138,
+                  "column": 9
+                },
+                {
+                  "title": "homepage maintains correct styling across viewports",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [
+                        {
+                          "workerIndex": 7,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 4,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:33.675Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-4f61d2231b18326d9f83",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 106,
+                  "column": 9
+                },
+                {
+                  "title": "dynamic sections maintain consistent styling",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [
+                        {
+                          "workerIndex": 6,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 15,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:33.696Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-5014f9e5b63a3d7f3c4d",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 138,
+                  "column": 9
+                },
+                {
+                  "title": "homepage maintains correct styling across viewports",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [
+                        {
+                          "workerIndex": 12,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 5,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:39.871Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-bbe363948a54288a3082",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 106,
+                  "column": 9
+                },
+                {
+                  "title": "dynamic sections maintain consistent styling",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [
+                        {
+                          "workerIndex": 13,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 5,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:39.975Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-16dbacb3cb1872645aa0",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 138,
+                  "column": 9
+                },
+                {
+                  "title": "homepage maintains correct styling across viewports",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-77257f666ce97af43abf",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 106,
+                  "column": 9
+                },
+                {
+                  "title": "dynamic sections maintain consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-b1fc8e665da24ea91343",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 138,
+                  "column": 9
+                },
+                {
+                  "title": "homepage maintains correct styling across viewports",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-75bc745675e6eb631c3a",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 106,
+                  "column": 9
+                },
+                {
+                  "title": "dynamic sections maintain consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-7672847f60394a2d13c8",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 138,
+                  "column": 9
+                },
+                {
+                  "title": "homepage maintains correct styling across viewports",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-1593049acd98db9bfbf4",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 106,
+                  "column": 9
+                },
+                {
+                  "title": "dynamic sections maintain consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-fb70096444dbac40442c",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 138,
+                  "column": 9
+                },
+                {
+                  "title": "homepage maintains correct styling across viewports",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-64308df6164e270335dd",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 106,
+                  "column": 9
+                },
+                {
+                  "title": "dynamic sections maintain consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-a45780d8e0bc706007d1",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 138,
+                  "column": 9
+                },
+                {
+                  "title": "homepage maintains correct styling across viewports",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-8b68f6d9fca2845e6e75",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 106,
+                  "column": 9
+                },
+                {
+                  "title": "dynamic sections maintain consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-5e2ec85be8ec34ee613e",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 138,
+                  "column": 9
+                },
+                {
+                  "title": "homepage maintains correct styling across viewports",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-eaf356b5a409e8d90af8",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 106,
+                  "column": 9
+                },
+                {
+                  "title": "dynamic sections maintain consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-75c8ee13b21148d5b2fe",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 138,
+                  "column": 9
                 }
-              ],
-              "id": "8d15280c8f5440545f48-c378e299ad0fe5465ece",
-              "file": "smoke/navigation.test.js",
-              "line": 22,
-              "column": 7
+              ]
             },
             {
-              "title": "no broken links on main pages",
-              "ok": false,
-              "tags": [],
-              "tests": [
+              "title": "Critical UI Elements",
+              "file": "smoke/css-preservation.test.js",
+              "line": 193,
+              "column": 8,
+              "specs": [
                 {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
+                  "title": "navigation maintains consistent styling",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
                     {
-                      "workerIndex": 3,
-                      "parallelIndex": 1,
-                      "status": "timedOut",
-                      "duration": 36496,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                      },
-                      "errors": [
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
                         {
-                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
-                        },
-                        {
-                          "location": {
-                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js",
-                            "column": 18,
-                            "line": 53
+                          "workerIndex": 3,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 10862,
+                          "error": {
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"rgba(0, 0, 0, 0)\"\u001b[39m",
+                            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"rgba(0, 0, 0, 0)\"\u001b[39m\n    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:213:45",
+                            "location": {
+                              "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                              "column": 45,
+                              "line": 213
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 211 |\u001b[39m       \n \u001b[90m 212 |\u001b[39m       \u001b[90m// Navigation should have proper styling\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 213 |\u001b[39m       expect(navStyles\u001b[33m.\u001b[39mbackgroundColor)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[32m'rgba(0, 0, 0, 0)'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 214 |\u001b[39m       expect(parseInt(navStyles\u001b[33m.\u001b[39mzIndex))\u001b[33m.\u001b[39mtoBeGreaterThan(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 215 |\u001b[39m       \n \u001b[90m 216 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m'navigation-styling.png'\u001b[39m\u001b[33m,\u001b[39m {\u001b[0m"
                           },
-                          "message": "Error: page.goto: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/tutorDirectory.html\", waiting until \"load\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 51 |\u001b[39m     \n \u001b[90m 52 |\u001b[39m     \u001b[36mfor\u001b[39m (\u001b[36mconst\u001b[39m pageUrl \u001b[36mof\u001b[39m pagesToTest) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 53 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(pageUrl)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 54 |\u001b[39m       \n \u001b[90m 55 |\u001b[39m       \u001b[90m// Get all internal links\u001b[39m\n \u001b[90m 56 |\u001b[39m       \u001b[36mconst\u001b[39m links \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'a[href^=\"/\"], a[href^=\"./\"], a[href^=\"../\"]'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js:53:18\u001b[22m"
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                                "column": 45,
+                                "line": 213
+                              },
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"rgba(0, 0, 0, 0)\"\u001b[39m\n\n\u001b[0m \u001b[90m 211 |\u001b[39m       \n \u001b[90m 212 |\u001b[39m       \u001b[90m// Navigation should have proper styling\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 213 |\u001b[39m       expect(navStyles\u001b[33m.\u001b[39mbackgroundColor)\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBe(\u001b[32m'rgba(0, 0, 0, 0)'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 214 |\u001b[39m       expect(parseInt(navStyles\u001b[33m.\u001b[39mzIndex))\u001b[33m.\u001b[39mtoBeGreaterThan(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 215 |\u001b[39m       \n \u001b[90m 216 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveScreenshot(\u001b[32m'navigation-styling.png'\u001b[39m\u001b[33m,\u001b[39m {\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:213:45\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:01.248Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-67a71-aintains-consistent-styling-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-67a71-aintains-consistent-styling-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-67a71-aintains-consistent-styling-chromium\\error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                            "column": 45,
+                            "line": 213
+                          }
                         }
                       ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-20T09:49:37.373Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "screenshot",
-                          "contentType": "image/png",
-                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\\test-failed-1.png"
-                        },
-                        {
-                          "name": "video",
-                          "contentType": "video/webm",
-                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\\video.webm"
-                        },
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\\error-context.md"
-                        }
-                      ]
+                      "status": "unexpected"
                     }
                   ],
-                  "status": "unexpected"
-                }
-              ],
-              "id": "8d15280c8f5440545f48-fd4c8eec785026039f9d",
-              "file": "smoke/navigation.test.js",
-              "line": 44,
-              "column": 7
-            },
-            {
-              "title": "login page is accessible",
-              "ok": true,
-              "tags": [],
-              "tests": [
+                  "id": "7328c84af0da8e6791a5-daa30da09c3a3ed5228b",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 194,
+                  "column": 9
+                },
                 {
-                  "timeout": 30000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
+                  "title": "footer maintains consistent styling",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
                     {
-                      "workerIndex": 2,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 6873,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-07-20T09:49:37.141Z",
+                      "timeout": 30000,
                       "annotations": [],
-                      "attachments": []
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 2,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 13110,
+                          "error": {
+                            "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('footer, .site-footer') resolved to 2 elements:\n    1) <footer class=\"site-footer fade-in-section\">…</footer> aka getByRole('contentinfo').first()\n    2) <footer class=\"static-footer\">…</footer> aka getByRole('contentinfo').filter({ hasText: 'Extra Information The TAS Way' })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('footer, .site-footer')\u001b[22m\n",
+                            "stack": "Error: expect.toBeVisible: Error: strict mode violation: locator('footer, .site-footer') resolved to 2 elements:\n    1) <footer class=\"site-footer fade-in-section\">…</footer> aka getByRole('contentinfo').first()\n    2) <footer class=\"static-footer\">…</footer> aka getByRole('contentinfo').filter({ hasText: 'Extra Information The TAS Way' })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('footer, .site-footer')\u001b[22m\n\n    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:227:28",
+                            "location": {
+                              "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                              "column": 28,
+                              "line": 227
+                            },
+                            "snippet": "\u001b[0m \u001b[90m 225 |\u001b[39m       \n \u001b[90m 226 |\u001b[39m       \u001b[36mconst\u001b[39m footer \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'footer, .site-footer'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 227 |\u001b[39m       \u001b[36mawait\u001b[39m expect(footer)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 228 |\u001b[39m       \n \u001b[90m 229 |\u001b[39m       \u001b[90m// Check footer social icons\u001b[39m\n \u001b[90m 230 |\u001b[39m       \u001b[36mconst\u001b[39m socialIcons \u001b[33m=\u001b[39m footer\u001b[33m.\u001b[39mlocator(\u001b[32m'.footer-icons a, .social-icons a'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                          },
+                          "errors": [
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                                "column": 28,
+                                "line": 227
+                              },
+                              "message": "Error: expect.toBeVisible: Error: strict mode violation: locator('footer, .site-footer') resolved to 2 elements:\n    1) <footer class=\"site-footer fade-in-section\">…</footer> aka getByRole('contentinfo').first()\n    2) <footer class=\"static-footer\">…</footer> aka getByRole('contentinfo').filter({ hasText: 'Extra Information The TAS Way' })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('footer, .site-footer')\u001b[22m\n\n\n\u001b[0m \u001b[90m 225 |\u001b[39m       \n \u001b[90m 226 |\u001b[39m       \u001b[36mconst\u001b[39m footer \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'footer, .site-footer'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 227 |\u001b[39m       \u001b[36mawait\u001b[39m expect(footer)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 228 |\u001b[39m       \n \u001b[90m 229 |\u001b[39m       \u001b[90m// Check footer social icons\u001b[39m\n \u001b[90m 230 |\u001b[39m       \u001b[36mconst\u001b[39m socialIcons \u001b[33m=\u001b[39m footer\u001b[33m.\u001b[39mlocator(\u001b[32m'.footer-icons a, .social-icons a'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js:227:28\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:01.126Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-34092-aintains-consistent-styling-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-34092-aintains-consistent-styling-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-css-preservation-CSS-34092-aintains-consistent-styling-chromium\\error-context.md"
+                            }
+                          ],
+                          "errorLocation": {
+                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\css-preservation.test.js",
+                            "column": 28,
+                            "line": 227
+                          }
+                        }
+                      ],
+                      "status": "unexpected"
                     }
                   ],
-                  "status": "expected"
+                  "id": "7328c84af0da8e6791a5-872b3a05d2b1f9d69e3e",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 221,
+                  "column": 9
+                },
+                {
+                  "title": "navigation maintains consistent styling",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [
+                        {
+                          "workerIndex": 8,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 6,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:35.434Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-8d9d861e3ec2fc3c904c",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 194,
+                  "column": 9
+                },
+                {
+                  "title": "footer maintains consistent styling",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [
+                        {
+                          "workerIndex": 9,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 8,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\firefox-1489\\firefox\\firefox.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:35.453Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-7ff5ddd6cef778cb22f6",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 221,
+                  "column": 9
+                },
+                {
+                  "title": "navigation maintains consistent styling",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [
+                        {
+                          "workerIndex": 14,
+                          "parallelIndex": 0,
+                          "status": "failed",
+                          "duration": 6,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:41.843Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-a05a916cbcf7cfb8a44c",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 194,
+                  "column": 9
+                },
+                {
+                  "title": "footer maintains consistent styling",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [
+                        {
+                          "workerIndex": 15,
+                          "parallelIndex": 1,
+                          "status": "failed",
+                          "duration": 7,
+                          "error": {
+                            "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
+                            "stack": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                          },
+                          "errors": [
+                            {
+                              "message": "Error: browserType.launch: Executable doesn't exist at C:\\Users\\tobys\\AppData\\Local\\ms-playwright\\webkit-2191\\Playwright.exe\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-07-20T11:34:41.883Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-060c0bd2bf3a921fc35f",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 221,
+                  "column": 9
+                },
+                {
+                  "title": "navigation maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-dcb374a86760d350a2f5",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 194,
+                  "column": 9
+                },
+                {
+                  "title": "footer maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-117958c405513d0e9dca",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 221,
+                  "column": 9
+                },
+                {
+                  "title": "navigation maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-0d78626422e7d7cedb7b",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 194,
+                  "column": 9
+                },
+                {
+                  "title": "footer maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-2e945528f5c42f29d126",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 221,
+                  "column": 9
+                },
+                {
+                  "title": "navigation maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-faa91a72126ebd1c7937",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 194,
+                  "column": 9
+                },
+                {
+                  "title": "footer maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-4a043d646860fa327c13",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 221,
+                  "column": 9
+                },
+                {
+                  "title": "navigation maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-9820a3aef6204319156e",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 194,
+                  "column": 9
+                },
+                {
+                  "title": "footer maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-b722f77b51ff8c740b6e",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 221,
+                  "column": 9
+                },
+                {
+                  "title": "navigation maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-4e6989d167d8bf0ce47f",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 194,
+                  "column": 9
+                },
+                {
+                  "title": "footer maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-ccf53837e613025edddf",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 221,
+                  "column": 9
+                },
+                {
+                  "title": "navigation maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-f3ac4b5669715dcf72a8",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 194,
+                  "column": 9
+                },
+                {
+                  "title": "footer maintains consistent styling",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "7328c84af0da8e6791a5-a87551020ed1802c7fc8",
+                  "file": "smoke/css-preservation.test.js",
+                  "line": 221,
+                  "column": 9
                 }
-              ],
-              "id": "8d15280c8f5440545f48-d98cbbbe9ccc03552e5a",
-              "file": "smoke/navigation.test.js",
-              "line": 71,
-              "column": 7
+              ]
             }
           ]
         }
@@ -465,11 +1981,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-07-20T09:48:15.904Z",
-    "duration": 132105.724,
-    "expected": 1,
-    "skipped": 0,
-    "unexpected": 3,
+    "startTime": "2025-07-20T11:32:14.103Z",
+    "duration": 211782.44,
+    "expected": 2,
+    "skipped": 34,
+    "unexpected": 18,
     "flaky": 0
   }
 }

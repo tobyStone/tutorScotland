@@ -2715,10 +2715,10 @@ header {
     #dynamicSectionsTop,
     #dynamicSectionsMiddle,
     #dynamicSectionsBottom {
-        width: 92%;
+        width: 95%; /* Increased from 92% to widen sections slightly */
         margin-left: auto;
         margin-right: auto;
-        transform: translateX(-7%); /* Shift more to the left to align with static content */
+        transform: translateX(-4%); /* Reduced from -7% to -4% to give more right-side space */
     }
 
     .dynamic-section-container {

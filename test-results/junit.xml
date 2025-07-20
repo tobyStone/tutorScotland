@@ -1,128 +1,635 @@
-<testsuites id="" name="" tests="4" failures="3" skipped="0" errors="0" time="132.10572399999998">
-<testsuite name="smoke\navigation.test.js" timestamp="2025-07-20T09:48:23.265Z" hostname="chromium" tests="4" failures="3" skipped="0" time="112.086" errors="0">
-<testcase name="Navigation Tests › main navigation links work" classname="smoke\navigation.test.js" time="44.062">
-<failure message="navigation.test.js:4:7 main navigation links work" type="FAILURE">
-<![CDATA[  [chromium] › smoke\navigation.test.js:4:7 › Navigation Tests › main navigation links work ────────
-
-    Test timeout of 30000ms exceeded.
-
-    Error: page.goto: Test timeout of 30000ms exceeded.
-    Call log:
-      - navigating to "http://localhost:3000/", waiting until "load"
-
-
-      14 |     
-      15 |     for (const link of navLinks) {
-    > 16 |       await page.goto('/');
-         |                  ^
-      17 |       await page.click(`text=${link.text}`);
-      18 |       await expect(page).toHaveURL(new RegExp(link.expectedUrl));
-      19 |     }
-        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\navigation.test.js:16:18
-
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\test-failed-1.png
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\video.webm
-    ────────────────────────────────────────────────────────────────────────────────────────────────
-
-    Error Context: ..\test-results\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\test-failed-1.png]]
-
-[[ATTACHMENT|smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\video.webm]]
-
-[[ATTACHMENT|smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\error-context.md]]
-]]>
-</system-out>
+<testsuites id="" name="" tests="54" failures="18" skipped="34" errors="0" time="211.78244">
+<testsuite name="smoke\css-preservation.test.js" timestamp="2025-07-20T11:32:19.675Z" hostname="chromium" tests="6" failures="4" skipped="0" time="137.28" errors="0">
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation" classname="smoke\css-preservation.test.js" time="35.255">
 </testcase>
-<testcase name="Navigation Tests › smooth scrolling to sections works" classname="smoke\navigation.test.js" time="24.655">
-<failure message="navigation.test.js:22:7 smooth scrolling to sections works" type="FAILURE">
-<![CDATA[  [chromium] › smoke\navigation.test.js:22:7 › Navigation Tests › smooth scrolling to sections works 
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation" classname="smoke\css-preservation.test.js" time="34.846">
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports" classname="smoke\css-preservation.test.js" time="20.449">
+<failure message="css-preservation.test.js:106:9 homepage maintains correct styling across viewports" type="FAILURE">
+<![CDATA[  [chromium] › smoke\css-preservation.test.js:106:9 › CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports 
 
-    Error: expect.toBeVisible: Unexpected token "#" while parsing css selector "#". Did you mean to CSS.escape it?
+    Error: expect.toBeVisible: Error: strict mode violation: locator('footer') resolved to 2 elements:
+        1) <footer class="site-footer fade-in-section">…</footer> aka getByRole('contentinfo').first()
+        2) <footer class="static-footer">…</footer> aka getByRole('contentinfo').filter({ hasText: 'Extra Information The TAS Way' })
+
     Call log:
       - Expect "toBeVisible" with timeout 10000ms
-      - waiting for #
+      - waiting for locator('footer')
 
 
-      38 |       // Check that target section is visible
-      39 |       const targetSection = page.locator(href);
-    > 40 |       await expect(targetSection).toBeVisible();
-         |                                   ^
-      41 |     }
-      42 |   });
-      43 |
-        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\navigation.test.js:40:35
+      126 |         await expect(page.locator('nav')).toBeVisible();
+      127 |         await expect(page.locator('main')).toBeVisible();
+    > 128 |         await expect(page.locator('footer')).toBeVisible();
+          |                                              ^
+      129 |         
+      130 |         // Take screenshot for each viewport
+      131 |         await expect(page).toHaveScreenshot(`homepage-${viewport.name}.png`, {
+        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\css-preservation.test.js:128:46
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\test-failed-1.png
+    ..\test-results\smoke-css-preservation-CSS-58e5d-ct-styling-across-viewports-chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
     attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\video.webm
+    ..\test-results\smoke-css-preservation-CSS-58e5d-ct-styling-across-viewports-chromium\video.webm
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\test-results\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\error-context.md
+    Error Context: ..\test-results\smoke-css-preservation-CSS-58e5d-ct-styling-across-viewports-chromium\error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\test-failed-1.png]]
+[[ATTACHMENT|smoke-css-preservation-CSS-58e5d-ct-styling-across-viewports-chromium\test-failed-1.png]]
 
-[[ATTACHMENT|smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\video.webm]]
+[[ATTACHMENT|smoke-css-preservation-CSS-58e5d-ct-styling-across-viewports-chromium\video.webm]]
 
-[[ATTACHMENT|smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\error-context.md]]
+[[ATTACHMENT|smoke-css-preservation-CSS-58e5d-ct-styling-across-viewports-chromium\error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Navigation Tests › no broken links on main pages" classname="smoke\navigation.test.js" time="36.496">
-<failure message="navigation.test.js:44:7 no broken links on main pages" type="FAILURE">
-<![CDATA[  [chromium] › smoke\navigation.test.js:44:7 › Navigation Tests › no broken links on main pages ────
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling" classname="smoke\css-preservation.test.js" time="22.758">
+<failure message="css-preservation.test.js:138:9 dynamic sections maintain consistent styling" type="FAILURE">
+<![CDATA[  [chromium] › smoke\css-preservation.test.js:138:9 › CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling 
 
-    Test timeout of 30000ms exceeded.
+    Error: expect(page).toHaveScreenshot(expected)
 
-    Error: page.goto: Test timeout of 30000ms exceeded.
+      710 pixels (ratio 0.01 of all image pixels) are different.
+
+      Snapshot: dynamic-sections-styling.png
+
     Call log:
-      - navigating to "http://localhost:3000/tutorDirectory.html", waiting until "load"
+      - Expect "toHaveScreenshot(dynamic-sections-styling.png)" with timeout 10000ms
+        - verifying given screenshot expectation
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - 710 pixels (ratio 0.01 of all image pixels) are different.
+      - waiting 100ms before taking screenshot
+      - taking page screenshot
+        - disabled all CSS animations
+      - waiting for fonts to load...
+      - fonts loaded
+      - captured a stable screenshot
+      - 710 pixels (ratio 0.01 of all image pixels) are different.
 
 
-      51 |     
-      52 |     for (const pageUrl of pagesToTest) {
-    > 53 |       await page.goto(pageUrl);
-         |                  ^
-      54 |       
-      55 |       // Get all internal links
-      56 |       const links = page.locator('a[href^="/"], a[href^="./"], a[href^="../"]');
-        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\navigation.test.js:53:18
+      184 |       }
+      185 |       
+    > 186 |       await expect(page).toHaveScreenshot('dynamic-sections-styling.png', {
+          |                          ^
+      187 |         fullPage: true,
+      188 |         threshold: 0.2
+      189 |       });
+        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\css-preservation.test.js:186:26
 
-    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
-    ..\test-results\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\test-failed-1.png
+    attachment #1: dynamic-sections-styling (image/png) ────────────────────────────────────────────
+    Expected: smoke\css-preservation.test.js-snapshots\dynamic-sections-styling-chromium-win32.png
+    Received: ..\test-results\smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\dynamic-sections-styling-actual.png
+    Diff:     ..\test-results\smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\dynamic-sections-styling-diff.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
-    ..\test-results\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\video.webm
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\test-failed-1.png
     ────────────────────────────────────────────────────────────────────────────────────────────────
 
-    Error Context: ..\test-results\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\error-context.md
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\error-context.md
 ]]>
 </failure>
 <system-out>
 <![CDATA[
-[[ATTACHMENT|smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\test-failed-1.png]]
+[[ATTACHMENT|..\tests\smoke\css-preservation.test.js-snapshots\dynamic-sections-styling-chromium-win32.png]]
 
-[[ATTACHMENT|smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\video.webm]]
+[[ATTACHMENT|smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\dynamic-sections-styling-actual.png]]
 
-[[ATTACHMENT|smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\error-context.md]]
+[[ATTACHMENT|smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\dynamic-sections-styling-diff.png]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\video.webm]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-fc6aa-maintain-consistent-styling-chromium\error-context.md]]
 ]]>
 </system-out>
 </testcase>
-<testcase name="Navigation Tests › login page is accessible" classname="smoke\navigation.test.js" time="6.873">
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling" classname="smoke\css-preservation.test.js" time="10.862">
+<failure message="css-preservation.test.js:194:9 navigation maintains consistent styling" type="FAILURE">
+<![CDATA[  [chromium] › smoke\css-preservation.test.js:194:9 › CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling 
+
+    Error: expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "rgba(0, 0, 0, 0)"
+
+      211 |       
+      212 |       // Navigation should have proper styling
+    > 213 |       expect(navStyles.backgroundColor).not.toBe('rgba(0, 0, 0, 0)');
+          |                                             ^
+      214 |       expect(parseInt(navStyles.zIndex)).toBeGreaterThan(0);
+      215 |       
+      216 |       await expect(page).toHaveScreenshot('navigation-styling.png', {
+        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\css-preservation.test.js:213:45
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\smoke-css-preservation-CSS-67a71-aintains-consistent-styling-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\smoke-css-preservation-CSS-67a71-aintains-consistent-styling-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\smoke-css-preservation-CSS-67a71-aintains-consistent-styling-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|smoke-css-preservation-CSS-67a71-aintains-consistent-styling-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-67a71-aintains-consistent-styling-chromium\video.webm]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-67a71-aintains-consistent-styling-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling" classname="smoke\css-preservation.test.js" time="13.11">
+<failure message="css-preservation.test.js:221:9 footer maintains consistent styling" type="FAILURE">
+<![CDATA[  [chromium] › smoke\css-preservation.test.js:221:9 › CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling 
+
+    Error: expect.toBeVisible: Error: strict mode violation: locator('footer, .site-footer') resolved to 2 elements:
+        1) <footer class="site-footer fade-in-section">…</footer> aka getByRole('contentinfo').first()
+        2) <footer class="static-footer">…</footer> aka getByRole('contentinfo').filter({ hasText: 'Extra Information The TAS Way' })
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('footer, .site-footer')
+
+
+      225 |       
+      226 |       const footer = page.locator('footer, .site-footer');
+    > 227 |       await expect(footer).toBeVisible();
+          |                            ^
+      228 |       
+      229 |       // Check footer social icons
+      230 |       const socialIcons = footer.locator('.footer-icons a, .social-icons a');
+        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\css-preservation.test.js:227:28
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\smoke-css-preservation-CSS-34092-aintains-consistent-styling-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\smoke-css-preservation-CSS-34092-aintains-consistent-styling-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\smoke-css-preservation-CSS-34092-aintains-consistent-styling-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|smoke-css-preservation-CSS-34092-aintains-consistent-styling-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-34092-aintains-consistent-styling-chromium\video.webm]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-34092-aintains-consistent-styling-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="smoke\css-preservation.test.js" timestamp="2025-07-20T11:32:19.675Z" hostname="firefox" tests="6" failures="6" skipped="0" time="0.051" errors="0">
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation" classname="smoke\css-preservation.test.js" time="0.012">
+<failure message="css-preservation.test.js:13:9 team member sections display correctly in portrait orientation" type="FAILURE">
+<![CDATA[  [firefox] › smoke\css-preservation.test.js:13:9 › CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\firefox-1489\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation" classname="smoke\css-preservation.test.js" time="0.006">
+<failure message="css-preservation.test.js:72:9 team member sections display correctly in landscape orientation" type="FAILURE">
+<![CDATA[  [firefox] › smoke\css-preservation.test.js:72:9 › CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\firefox-1489\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports" classname="smoke\css-preservation.test.js" time="0.004">
+<failure message="css-preservation.test.js:106:9 homepage maintains correct styling across viewports" type="FAILURE">
+<![CDATA[  [firefox] › smoke\css-preservation.test.js:106:9 › CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\firefox-1489\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling" classname="smoke\css-preservation.test.js" time="0.015">
+<failure message="css-preservation.test.js:138:9 dynamic sections maintain consistent styling" type="FAILURE">
+<![CDATA[  [firefox] › smoke\css-preservation.test.js:138:9 › CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\firefox-1489\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling" classname="smoke\css-preservation.test.js" time="0.006">
+<failure message="css-preservation.test.js:194:9 navigation maintains consistent styling" type="FAILURE">
+<![CDATA[  [firefox] › smoke\css-preservation.test.js:194:9 › CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\firefox-1489\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling" classname="smoke\css-preservation.test.js" time="0.008">
+<failure message="css-preservation.test.js:221:9 footer maintains consistent styling" type="FAILURE">
+<![CDATA[  [firefox] › smoke\css-preservation.test.js:221:9 › CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\firefox-1489\firefox\firefox.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="smoke\css-preservation.test.js" timestamp="2025-07-20T11:32:19.675Z" hostname="webkit" tests="6" failures="6" skipped="0" time="0.036" errors="0">
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation" classname="smoke\css-preservation.test.js" time="0.006">
+<failure message="css-preservation.test.js:13:9 team member sections display correctly in portrait orientation" type="FAILURE">
+<![CDATA[  [webkit] › smoke\css-preservation.test.js:13:9 › CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\webkit-2191\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation" classname="smoke\css-preservation.test.js" time="0.007">
+<failure message="css-preservation.test.js:72:9 team member sections display correctly in landscape orientation" type="FAILURE">
+<![CDATA[  [webkit] › smoke\css-preservation.test.js:72:9 › CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\webkit-2191\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports" classname="smoke\css-preservation.test.js" time="0.005">
+<failure message="css-preservation.test.js:106:9 homepage maintains correct styling across viewports" type="FAILURE">
+<![CDATA[  [webkit] › smoke\css-preservation.test.js:106:9 › CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\webkit-2191\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling" classname="smoke\css-preservation.test.js" time="0.005">
+<failure message="css-preservation.test.js:138:9 dynamic sections maintain consistent styling" type="FAILURE">
+<![CDATA[  [webkit] › smoke\css-preservation.test.js:138:9 › CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\webkit-2191\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling" classname="smoke\css-preservation.test.js" time="0.006">
+<failure message="css-preservation.test.js:194:9 navigation maintains consistent styling" type="FAILURE">
+<![CDATA[  [webkit] › smoke\css-preservation.test.js:194:9 › CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\webkit-2191\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling" classname="smoke\css-preservation.test.js" time="0.007">
+<failure message="css-preservation.test.js:221:9 footer maintains consistent styling" type="FAILURE">
+<![CDATA[  [webkit] › smoke\css-preservation.test.js:221:9 › CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tobys\AppData\Local\ms-playwright\webkit-2191\Playwright.exe
+    ╔═════════════════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright Test or Playwright was just installed or updated. ║
+    ║ Please run the following command to download new browsers:              ║
+    ║                                                                         ║
+    ║     npx playwright install                                              ║
+    ║                                                                         ║
+    ║ <3 Playwright Team                                                      ║
+    ╚═════════════════════════════════════════════════════════════════════════╝
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="smoke\css-preservation.test.js" timestamp="2025-07-20T11:32:19.675Z" hostname="Mobile Chrome" tests="6" failures="2" skipped="4" time="62.034" errors="0">
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation" classname="smoke\css-preservation.test.js" time="30.83">
+<failure message="css-preservation.test.js:13:9 team member sections display correctly in portrait orientation" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › smoke\css-preservation.test.js:13:9 › CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation 
+
+    Error: A snapshot doesn't exist at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\css-preservation.test.js-snapshots\team-sections-portrait-Mobile-Chrome-win32.png, writing actual.
+
+      64 |       
+      65 |       // Take screenshot for visual regression
+    > 66 |       await expect(page).toHaveScreenshot('team-sections-portrait.png', {
+         |       ^
+      67 |         fullPage: true,
+      68 |         threshold: 0.2
+      69 |       });
+        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\css-preservation.test.js:66:7
+
+    attachment #1: team-sections-portrait (image/png) ──────────────────────────────────────────────
+    Expected: smoke\css-preservation.test.js-snapshots\team-sections-portrait-Mobile-Chrome-win32.png
+    Received: ..\test-results\smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\team-sections-portrait-actual.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\tests\smoke\css-preservation.test.js-snapshots\team-sections-portrait-Mobile-Chrome-win32.png]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\team-sections-portrait-actual.png]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-94780-tly-in-portrait-orientation-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation" classname="smoke\css-preservation.test.js" time="31.204">
+<failure message="css-preservation.test.js:72:9 team member sections display correctly in landscape orientation" type="FAILURE">
+<![CDATA[  [Mobile Chrome] › smoke\css-preservation.test.js:72:9 › CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation 
+
+    Error: A snapshot doesn't exist at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\css-preservation.test.js-snapshots\team-sections-landscape-Mobile-Chrome-win32.png, writing actual.
+
+       96 |       }
+       97 |       
+    >  98 |       await expect(page).toHaveScreenshot('team-sections-landscape.png', {
+          |       ^
+       99 |         fullPage: true,
+      100 |         threshold: 0.2
+      101 |       });
+        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\css-preservation.test.js:98:7
+
+    attachment #1: team-sections-landscape (image/png) ─────────────────────────────────────────────
+    Expected: smoke\css-preservation.test.js-snapshots\team-sections-landscape-Mobile-Chrome-win32.png
+    Received: ..\test-results\smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\team-sections-landscape-actual.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|..\tests\smoke\css-preservation.test.js-snapshots\team-sections-landscape-Mobile-Chrome-win32.png]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\team-sections-landscape-actual.png]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|smoke-css-preservation-CSS-856b3-ly-in-landscape-orientation-Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="smoke\css-preservation.test.js" timestamp="2025-07-20T11:32:19.675Z" hostname="Mobile Safari" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="smoke\css-preservation.test.js" timestamp="2025-07-20T11:32:19.675Z" hostname="Samsung Galaxy" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="smoke\css-preservation.test.js" timestamp="2025-07-20T11:32:19.675Z" hostname="iPhone Portrait" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="smoke\css-preservation.test.js" timestamp="2025-07-20T11:32:19.675Z" hostname="Samsung Portrait" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+<testsuite name="smoke\css-preservation.test.js" timestamp="2025-07-20T11:32:19.675Z" hostname="iPad" tests="6" failures="0" skipped="6" time="0" errors="0">
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in portrait orientation" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Team Member Sections - Dynamic Content › team member sections display correctly in landscape orientation" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › homepage maintains correct styling across viewports" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Overall Layout Preservation › dynamic sections maintain consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › navigation maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="CSS Preservation - Golden State Protection › Critical UI Elements › footer maintains consistent styling" classname="smoke\css-preservation.test.js" time="0">
+<skipped>
+</skipped>
 </testcase>
 </testsuite>
 </testsuites>
