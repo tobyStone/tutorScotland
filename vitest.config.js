@@ -12,7 +12,8 @@ export default defineConfig({
     // Separate test patterns for different types
     include: [
       'tests/unit/**/*.test.js',
-      'tests/integration/**/*.test.js'
+      'tests/integration/**/*.test.js',
+      'tests/smoke/**/*.test.js'
     ],
     exclude: [
       'node_modules/**',

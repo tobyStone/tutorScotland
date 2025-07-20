@@ -1,0 +1,128 @@
+<testsuites id="" name="" tests="4" failures="3" skipped="0" errors="0" time="132.10572399999998">
+<testsuite name="smoke\navigation.test.js" timestamp="2025-07-20T09:48:23.265Z" hostname="chromium" tests="4" failures="3" skipped="0" time="112.086" errors="0">
+<testcase name="Navigation Tests › main navigation links work" classname="smoke\navigation.test.js" time="44.062">
+<failure message="navigation.test.js:4:7 main navigation links work" type="FAILURE">
+<![CDATA[  [chromium] › smoke\navigation.test.js:4:7 › Navigation Tests › main navigation links work ────────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      14 |     
+      15 |     for (const link of navLinks) {
+    > 16 |       await page.goto('/');
+         |                  ^
+      17 |       await page.click(`text=${link.text}`);
+      18 |       await expect(page).toHaveURL(new RegExp(link.expectedUrl));
+      19 |     }
+        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\navigation.test.js:16:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\video.webm]]
+
+[[ATTACHMENT|smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Navigation Tests › smooth scrolling to sections works" classname="smoke\navigation.test.js" time="24.655">
+<failure message="navigation.test.js:22:7 smooth scrolling to sections works" type="FAILURE">
+<![CDATA[  [chromium] › smoke\navigation.test.js:22:7 › Navigation Tests › smooth scrolling to sections works 
+
+    Error: expect.toBeVisible: Unexpected token "#" while parsing css selector "#". Did you mean to CSS.escape it?
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for #
+
+
+      38 |       // Check that target section is visible
+      39 |       const targetSection = page.locator(href);
+    > 40 |       await expect(targetSection).toBeVisible();
+         |                                   ^
+      41 |     }
+      42 |   });
+      43 |
+        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\navigation.test.js:40:35
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\video.webm]]
+
+[[ATTACHMENT|smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Navigation Tests › no broken links on main pages" classname="smoke\navigation.test.js" time="36.496">
+<failure message="navigation.test.js:44:7 no broken links on main pages" type="FAILURE">
+<![CDATA[  [chromium] › smoke\navigation.test.js:44:7 › Navigation Tests › no broken links on main pages ────
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/tutorDirectory.html", waiting until "load"
+
+
+      51 |     
+      52 |     for (const pageUrl of pagesToTest) {
+    > 53 |       await page.goto(pageUrl);
+         |                  ^
+      54 |       
+      55 |       // Get all internal links
+      56 |       const links = page.locator('a[href^="/"], a[href^="./"], a[href^="../"]');
+        at C:\Users\tobys\source\repos\tutorScotland\tests\smoke\navigation.test.js:53:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\video.webm]]
+
+[[ATTACHMENT|smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Navigation Tests › login page is accessible" classname="smoke\navigation.test.js" time="6.873">
+</testcase>
+</testsuite>
+</testsuites>

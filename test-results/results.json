@@ -1,0 +1,475 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\playwright.config.js",
+    "rootDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results/junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Samsung Galaxy",
+        "name": "Samsung Galaxy",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "iPhone Portrait",
+        "name": "iPhone Portrait",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Samsung Portrait",
+        "name": "Samsung Portrait",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "iPad",
+        "name": "iPad",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.54.1",
+    "workers": 2,
+    "webServer": {
+      "command": "npm run start",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "smoke\\navigation.test.js",
+      "file": "smoke/navigation.test.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Navigation Tests",
+          "file": "smoke/navigation.test.js",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "main navigation links work",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 44062,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js",
+                            "column": 18,
+                            "line": 16
+                          },
+                          "message": "Error: page.goto: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"load\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 14 |\u001b[39m     \n \u001b[90m 15 |\u001b[39m     \u001b[36mfor\u001b[39m (\u001b[36mconst\u001b[39m link \u001b[36mof\u001b[39m navLinks) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 16 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 17 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mclick(\u001b[32m`text=${link.text}`\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 18 |\u001b[39m       \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(\u001b[36mnew\u001b[39m \u001b[33mRegExp\u001b[39m(link\u001b[33m.\u001b[39mexpectedUrl))\u001b[33m;\u001b[39m\n \u001b[90m 19 |\u001b[39m     }\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js:16:18\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-20T09:48:25.062Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigation-Tests-main-navigation-links-work-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "8d15280c8f5440545f48-f18cf89bd278612d5f41",
+              "file": "smoke/navigation.test.js",
+              "line": 4,
+              "column": 7
+            },
+            {
+              "title": "smooth scrolling to sections works",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 24655,
+                      "error": {
+                        "message": "Error: expect.toBeVisible: Unexpected token \"#\" while parsing css selector \"#\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for #\u001b[22m\n",
+                        "stack": "Error: expect.toBeVisible: Unexpected token \"#\" while parsing css selector \"#\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for #\u001b[22m\n\n    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js:40:35",
+                        "location": {
+                          "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js",
+                          "column": 35,
+                          "line": 40
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 38 |\u001b[39m       \u001b[90m// Check that target section is visible\u001b[39m\n \u001b[90m 39 |\u001b[39m       \u001b[36mconst\u001b[39m targetSection \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(href)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m       \u001b[36mawait\u001b[39m expect(targetSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m     }\n \u001b[90m 42 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js",
+                            "column": 35,
+                            "line": 40
+                          },
+                          "message": "Error: expect.toBeVisible: Unexpected token \"#\" while parsing css selector \"#\". Did you mean to CSS.escape it?\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for #\u001b[22m\n\n\n\u001b[0m \u001b[90m 38 |\u001b[39m       \u001b[90m// Check that target section is visible\u001b[39m\n \u001b[90m 39 |\u001b[39m       \u001b[36mconst\u001b[39m targetSection \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(href)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 40 |\u001b[39m       \u001b[36mawait\u001b[39m expect(targetSection)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 41 |\u001b[39m     }\n \u001b[90m 42 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 43 |\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js:40:35\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-20T09:48:25.067Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-55ddb-scrolling-to-sections-works-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js",
+                        "column": 35,
+                        "line": 40
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "8d15280c8f5440545f48-c378e299ad0fe5465ece",
+              "file": "smoke/navigation.test.js",
+              "line": 22,
+              "column": 7
+            },
+            {
+              "title": "no broken links on main pages",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 36496,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js",
+                            "column": 18,
+                            "line": 53
+                          },
+                          "message": "Error: page.goto: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/tutorDirectory.html\", waiting until \"load\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 51 |\u001b[39m     \n \u001b[90m 52 |\u001b[39m     \u001b[36mfor\u001b[39m (\u001b[36mconst\u001b[39m pageUrl \u001b[36mof\u001b[39m pagesToTest) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 53 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(pageUrl)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 54 |\u001b[39m       \n \u001b[90m 55 |\u001b[39m       \u001b[90m// Get all internal links\u001b[39m\n \u001b[90m 56 |\u001b[39m       \u001b[36mconst\u001b[39m links \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'a[href^=\"/\"], a[href^=\"./\"], a[href^=\"../\"]'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\smoke\\navigation.test.js:53:18\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-20T09:49:37.373Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\smoke-navigation-Navigatio-e6f63--broken-links-on-main-pages-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "8d15280c8f5440545f48-fd4c8eec785026039f9d",
+              "file": "smoke/navigation.test.js",
+              "line": 44,
+              "column": 7
+            },
+            {
+              "title": "login page is accessible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6873,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-20T09:49:37.141Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "8d15280c8f5440545f48-d98cbbbe9ccc03552e5a",
+              "file": "smoke/navigation.test.js",
+              "line": 71,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-07-20T09:48:15.904Z",
+    "duration": 132105.724,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

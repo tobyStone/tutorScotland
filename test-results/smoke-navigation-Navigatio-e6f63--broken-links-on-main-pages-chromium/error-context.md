@@ -1,0 +1,56 @@
+# Page snapshot
+
+```yaml
+- banner:
+  - heading "Tutors Alliance Scotland" [level=1]
+  - link "Home":
+    - /url: index.html
+  - link "Login":
+    - /url: login.html?role=admin
+- main:
+  - img "Large STA Shield"
+  - img "Banner Ribbon"
+  - heading "Find a Tutor" [level=1]
+  - paragraph: Use this search form to find tutors by subject and location. All tutors are fully qualified teachers, covered by statutory safeguarding guidelines.
+  - heading "Tutor Finder" [level=2]
+  - text: Subject
+  - combobox "Subject":
+    - option "Mathematics" [selected]
+    - option "English"
+  - text: Location
+  - combobox "Location":
+    - option "Online" [selected]
+    - option "In Person"
+  - button "Find Tutors"
+- contentinfo:
+  - link "Instagram":
+    - /url: "#"
+    - text: 
+  - link "Facebook":
+    - /url: "#"
+    - text: 
+- contentinfo:
+  - heading "Extra Information" [level=4]
+  - list:
+    - listitem:
+      - 'link "The TAS Way: Governance and Guidance"':
+        - /url: tutoring-standards.html
+    - listitem:
+      - link "FAQ's":
+        - /url: faq.html
+    - listitem:
+      - link "Privacy Policy":
+        - /url: privacy-policy.html
+    - listitem:
+      - link "Safeguarding Policy":
+        - /url: safeguarding-policy.html
+    - listitem:
+      - link "Terms and Conditions":
+        - /url: terms-and-conditions.html
+  - paragraph: ALL RIGHTS RESERVED © Tutors Alliance Scotland 2025
+  - paragraph:
+    - text: Website by
+    - link "Tutors Alliance Scotland":
+      - /url: "#"
+  - paragraph: www.tutorsalliancescotland.org.uk
+```
