@@ -2718,7 +2718,7 @@ header {
         width: 83% !important; /* Further reduced to move standard sections more left - !important to override conflicting rules */
         margin-left: auto !important;
         margin-right: auto !important;
-        transform: translateX(-9%) !important; /* Increased transform to shift further left */
+        transform: translateX(-7%) !important; /* Increased transform to shift further left */
     }
 
     /* Specific fix for team member sections only */
