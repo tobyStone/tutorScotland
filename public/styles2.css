@@ -2715,10 +2715,10 @@ header {
     #dynamicSectionsTop,
     #dynamicSectionsMiddle,
     #dynamicSectionsBottom {
-        width: 87%; /* Reduced from 92% to move standard sections left */
+        width: 83%; /* Further reduced to move standard sections more left */
         margin-left: auto;
         margin-right: auto;
-        transform: translateX(-7%); /* Keep same transform for standard sections */
+        transform: translateX(-9%); /* Increased transform to shift further left */
     }
 
     /* Specific fix for team member sections only */
@@ -2727,10 +2727,10 @@ header {
     #dynamicSectionsMiddle .strive-team-card,
     #dynamicSectionsBottom .strive-team-card,
     .dynamic-section-container:has(.team-grid) {
-        width: 99% !important; /* Much wider for team sections - almost full width */
+        width: 99% !important; /* Keep almost full width for team sections */
         margin-left: auto !important;
         margin-right: auto !important;
-        transform: translateX(-1%) !important; /* Minimal transform for near-perfect centering */
+        transform: translateX(-3%) !important; /* Slightly more left shift for better alignment */
     }
 
     .dynamic-section-container {
