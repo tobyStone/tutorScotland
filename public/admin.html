@@ -298,6 +298,8 @@
                             <select name="layout" id="sectionLayout">
                                 <option value="standard" selected="">Standard</option>
                                 <option value="team">Team Members Grid</option>
+                                <option value="list">List Section (Tutor Zone Style)</option>
+                                <option value="testimonial">Testimonial Section</option>
                             </select>
                         </label>
 
@@ -352,6 +354,55 @@
                             <button type="button" id="addMemberBtn">➕ Add Team Member</button>
                             <div id="teamMemberList"></div>
                             <input type="hidden" name="team" id="teamData">
+                        </div>
+
+                        <!-- List builder fields -->
+                        <div id="listBuilder" style="display:none; margin-top:15px;">
+                            <label>
+                                Description (optional):
+                                <textarea name="listDescription" id="listDescription" rows="2" placeholder="Brief description before the list..."></textarea>
+                            </label>
+                            <label>
+                                List Type:
+                                <select name="listType" id="listType">
+                                    <option value="unordered">Bullet Points (•)</option>
+                                    <option value="ordered">Numbered List (1, 2, 3...)</option>
+                                </select>
+                            </label>
+                            <button type="button" id="addListItemBtn">➕ Add List Item</button>
+                            <div id="listItemsList"></div>
+                            <input type="hidden" name="listItems" id="listItemsData">
+                        </div>
+
+                        <!-- Testimonial builder fields -->
+                        <div id="testimonialBuilder" style="display:none; margin-top:15px;">
+                            <label>
+                                Testimonial Quote:
+                                <textarea name="testimonialQuote" id="testimonialQuote" rows="3" placeholder="Enter the testimonial quote..." required></textarea>
+                            </label>
+                            <label>
+                                Author Name:
+                                <input type="text" name="testimonialAuthor" id="testimonialAuthor" placeholder="Customer name" required>
+                            </label>
+                            <label>
+                                Author Role (optional):
+                                <input type="text" name="testimonialRole" id="testimonialRole" placeholder="e.g., Parent, Student, Teacher">
+                            </label>
+                            <label>
+                                Company/Location (optional):
+                                <input type="text" name="testimonialCompany" id="testimonialCompany" placeholder="e.g., Edinburgh, Glasgow">
+                            </label>
+                            <label>
+                                Rating (optional):
+                                <select name="testimonialRating" id="testimonialRating">
+                                    <option value="">No rating</option>
+                                    <option value="5">⭐⭐⭐⭐⭐ (5 stars)</option>
+                                    <option value="4">⭐⭐⭐⭐ (4 stars)</option>
+                                    <option value="3">⭐⭐⭐ (3 stars)</option>
+                                    <option value="2">⭐⭐ (2 stars)</option>
+                                    <option value="1">⭐ (1 star)</option>
+                                </select>
+                            </label>
                         </div>
 
                         <label>
@@ -1064,7 +1115,13 @@
 
           currentSections.forEach((s, i) => {
             const pos = { top:'🔝 Top', middle:'⏺️ Middle', bottom:'🔽 Bottom' }[s.position||'bottom'];
-            const layout = s.layout === 'team' ? 'Team Grid' : 'Standard';
+            const layoutNames = {
+                'team': 'Team Grid',
+                'list': 'List Section',
+                'testimonial': 'Testimonial',
+                'standard': 'Standard'
+            };
+            const layout = layoutNames[s.layout] || 'Standard';
 
             // For team sections, check if any team members have images
             let hasImage = s.image ? true : false;
@@ -1115,17 +1172,42 @@
 
         // Show / hide blocks & (un)set required attrs whenever layout flips
         const standardOnlyFields = document.getElementById('standardOnlyFields');
+        const listBuilder = document.getElementById('listBuilder');
+        const testimonialBuilder = document.getElementById('testimonialBuilder');
+
         sectionLayout.addEventListener('change', () => {
-            const isTeam = sectionLayout.value === 'team';
+            const layoutValue = sectionLayout.value;
+            const isTeam = layoutValue === 'team';
+            const isList = layoutValue === 'list';
+            const isTestimonial = layoutValue === 'testimonial';
+            const isStandard = layoutValue === 'standard';
 
             /* visibility ---------------------------------------------------- */
-            standardOnlyFields.style.display = isTeam ? 'none' : 'block';
+            standardOnlyFields.style.display = isStandard ? 'block' : 'none';
             teamBuilder.style.display = isTeam ? 'block' : 'none';
+            listBuilder.style.display = isList ? 'block' : 'none';
+            testimonialBuilder.style.display = isTestimonial ? 'block' : 'none';
 
             /* required attributes ------------------------------------------- */
             const para = standardOnlyFields.querySelector('[name="text"]');
-            isTeam ? para.removeAttribute('required')
-                   : para.setAttribute('required', '');
+
+            // Standard text field required only for standard layout
+            if (isStandard) {
+                para.setAttribute('required', '');
+            } else {
+                para.removeAttribute('required');
+            }
+
+            // Testimonial fields required only for testimonial layout
+            const testimonialQuote = document.getElementById('testimonialQuote');
+            const testimonialAuthor = document.getElementById('testimonialAuthor');
+            if (isTestimonial) {
+                testimonialQuote.setAttribute('required', '');
+                testimonialAuthor.setAttribute('required', '');
+            } else {
+                testimonialQuote.removeAttribute('required');
+                testimonialAuthor.removeAttribute('required');
+            }
 
             // team-card fields
             teamMemberList
@@ -1133,11 +1215,23 @@
                 .forEach(el => isTeam ? el.setAttribute('required', '')
                                        : el.removeAttribute('required'));
 
-            // Cleanup when switching away from team
+            // Cleanup when switching away from specific layouts
             if (!isTeam) {
                 teamMemberList.innerHTML = '';
                 teamMembers = [];
                 teamData.value = '[]';
+            }
+            if (!isList) {
+                document.getElementById('listItemsList').innerHTML = '';
+                listItems = [];
+                document.getElementById('listItemsData').value = '[]';
+            }
+            if (!isTestimonial) {
+                document.getElementById('testimonialQuote').value = '';
+                document.getElementById('testimonialAuthor').value = '';
+                document.getElementById('testimonialRole').value = '';
+                document.getElementById('testimonialCompany').value = '';
+                document.getElementById('testimonialRating').value = '';
             }
         });
 
@@ -1287,6 +1381,56 @@
         // Wire up the add member button
         addMemberBtn.addEventListener('click', addTeamMember);
 
+        /* ── List Section Functionality ────────────────────────────────────── */
+        let listItems = [];
+        const addListItemBtn = document.getElementById('addListItemBtn');
+        const listItemsList = document.getElementById('listItemsList');
+        const listItemsData = document.getElementById('listItemsData');
+
+        function addListItem() {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'list-item-form';
+            itemDiv.style.cssText = 'border:1px solid #ddd;padding:10px;margin:5px 0;border-radius:5px;background:#f9f9f9;display:flex;align-items:center;gap:10px;';
+
+            itemDiv.innerHTML = `
+                <input type="text"
+                       class="list-item-text form-control"
+                       placeholder="Enter list item text..."
+                       style="flex:1;"
+                       required>
+                <button type="button" class="remove-list-item" style="background:#dc3545;color:white;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Remove</button>
+            `;
+
+            // Add remove functionality
+            itemDiv.querySelector('.remove-list-item').addEventListener('click', () => {
+                itemDiv.remove();
+                updateListData();
+            });
+
+            // Update data when text changes
+            itemDiv.querySelector('.list-item-text').addEventListener('input', updateListData);
+
+            listItemsList.appendChild(itemDiv);
+            updateListData();
+        }
+
+        function updateListData() {
+            listItems = [];
+
+            for (const form of listItemsList.querySelectorAll('.list-item-form')) {
+                const text = form.querySelector('.list-item-text').value.trim();
+                if (text) {
+                    listItems.push(text);
+                }
+            }
+
+            listItemsData.value = JSON.stringify(listItems);
+            console.log('List data updated', listItems);
+        }
+
+        // Wire up the add list item button
+        addListItemBtn.addEventListener('click', addListItem);
+
         /* ── ✅ NEW: Section ordering cleanup when moving between pages ────── */
         async function cleanupSectionOrdering(sectionId, fromPage, toPage) {
             console.log(`[MOVE-SECTION] Cleaning up ordering: ${sectionId} from ${fromPage} to ${toPage}`);
@@ -1409,7 +1553,7 @@
             // Add layout field
             fd.set('layout', sectionLayout.value || 'standard');
 
-            // Handle team layout
+            // Handle different layout types
             if (sectionLayout.value === 'team') {
                 updateTeamData(); // Ensure team data is current
 
@@ -1422,6 +1566,41 @@
 
                 // make absolutely sure a stray top-level file never travels
                 fd.delete('image');
+            } else if (sectionLayout.value === 'list') {
+                updateListData(); // Ensure list data is current
+
+                if (!listItemsData.value || listItemsData.value === '[]') {
+                    return alert('Please add at least one list item');
+                }
+
+                // Build list data structure
+                const listData = {
+                    items: JSON.parse(listItemsData.value),
+                    listType: document.getElementById('listType').value || 'unordered',
+                    description: document.getElementById('listDescription').value.trim()
+                };
+
+                fd.set('text', JSON.stringify(listData));
+                fd.delete('image'); // List sections don't use top-level images
+            } else if (sectionLayout.value === 'testimonial') {
+                const quote = document.getElementById('testimonialQuote').value.trim();
+                const author = document.getElementById('testimonialAuthor').value.trim();
+
+                if (!quote || !author) {
+                    return alert('Please provide both testimonial quote and author name');
+                }
+
+                // Build testimonial data structure
+                const testimonialData = {
+                    quote: quote,
+                    author: author,
+                    role: document.getElementById('testimonialRole').value.trim(),
+                    company: document.getElementById('testimonialCompany').value.trim(),
+                    rating: document.getElementById('testimonialRating').value ? parseInt(document.getElementById('testimonialRating').value) : null
+                };
+
+                fd.set('text', JSON.stringify(testimonialData));
+                fd.delete('image'); // Testimonial sections don't use top-level images
             }
 
             const editId = addSectionForm.dataset.editId;
@@ -1568,6 +1747,71 @@
                             teamMemberList.appendChild(card);
                         });
                         updateTeamData(); // Sync the populated data to the hidden input
+
+                    } else if (section.layout === 'list') {
+                        sectionFormHeading.textContent = 'Edit List Section';
+
+                        // Parse list data
+                        let listData;
+                        try {
+                            listData = JSON.parse(section.text);
+                        } catch (e) {
+                            listData = { items: [], listType: 'unordered', description: '' };
+                        }
+
+                        // Populate list fields
+                        document.getElementById('listDescription').value = listData.description || '';
+                        document.getElementById('listType').value = listData.listType || 'unordered';
+
+                        // Rebuild list items
+                        listItemsList.innerHTML = '';
+                        listItems = [];
+
+                        (listData.items || []).forEach(item => {
+                            const itemDiv = document.createElement('div');
+                            itemDiv.className = 'list-item-form';
+                            itemDiv.style.cssText = 'border:1px solid #ddd;padding:10px;margin:5px 0;border-radius:5px;background:#f9f9f9;display:flex;align-items:center;gap:10px;';
+
+                            itemDiv.innerHTML = `
+                                <input type="text"
+                                       class="list-item-text form-control"
+                                       value="${item}"
+                                       style="flex:1;"
+                                       required>
+                                <button type="button" class="remove-list-item" style="background:#dc3545;color:white;border:none;padding:5px 10px;border-radius:3px;cursor:pointer;">Remove</button>
+                            `;
+
+                            // Add remove functionality
+                            itemDiv.querySelector('.remove-list-item').addEventListener('click', () => {
+                                itemDiv.remove();
+                                updateListData();
+                            });
+
+                            // Update data when text changes
+                            itemDiv.querySelector('.list-item-text').addEventListener('input', updateListData);
+
+                            listItemsList.appendChild(itemDiv);
+                        });
+
+                        updateListData();
+
+                    } else if (section.layout === 'testimonial') {
+                        sectionFormHeading.textContent = 'Edit Testimonial Section';
+
+                        // Parse testimonial data
+                        let testimonialData;
+                        try {
+                            testimonialData = JSON.parse(section.text);
+                        } catch (e) {
+                            testimonialData = { quote: '', author: '', role: '', company: '', rating: null };
+                        }
+
+                        // Populate testimonial fields
+                        document.getElementById('testimonialQuote').value = testimonialData.quote || '';
+                        document.getElementById('testimonialAuthor').value = testimonialData.author || '';
+                        document.getElementById('testimonialRole').value = testimonialData.role || '';
+                        document.getElementById('testimonialCompany').value = testimonialData.company || '';
+                        document.getElementById('testimonialRating').value = testimonialData.rating || '';
 
                     } else { // It's a 'standard' layout
                         sectionFormHeading.textContent = 'Edit Dynamic Section'; // UI Nicety

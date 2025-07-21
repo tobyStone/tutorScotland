@@ -113,8 +113,9 @@ function loadDynamicSections() {
                 if (topSections.length > 0) {
                     topSections.forEach((s, index) => {
                         const sectionElement = createDynamicSectionElement(s, index);
-                        // Only wrap non-team sections in dyn-block
-                        if (s.layout === 'team') {
+                        // Only wrap standard text/image sections in dyn-block
+                        // Team, list, and testimonial sections have their own styling containers
+                        if (s.layout === 'team' || s.layout === 'list' || s.layout === 'testimonial') {
                             topContainer.appendChild(sectionElement);
                         } else {
                             const wrapper = document.createElement('div');
@@ -135,8 +136,9 @@ function loadDynamicSections() {
                 if (middleSections.length > 0) {
                     middleSections.forEach((s, index) => {
                         const sectionElement = createDynamicSectionElement(s, index);
-                        // Only wrap non-team sections in dyn-block
-                        if (s.layout === 'team') {
+                        // Only wrap standard text/image sections in dyn-block
+                        // Team, list, and testimonial sections have their own styling containers
+                        if (s.layout === 'team' || s.layout === 'list' || s.layout === 'testimonial') {
                             middleContainer.appendChild(sectionElement);
                         } else {
                             const wrapper = document.createElement('div');
@@ -157,8 +159,9 @@ function loadDynamicSections() {
                 if (bottomSections.length > 0) {
                     bottomSections.forEach((s, index) => {
                         const sectionElement = createDynamicSectionElement(s, index);
-                        // Only wrap non-team sections in dyn-block
-                        if (s.layout === 'team') {
+                        // Only wrap standard text/image sections in dyn-block
+                        // Team, list, and testimonial sections have their own styling containers
+                        if (s.layout === 'team' || s.layout === 'list' || s.layout === 'testimonial') {
                             bottomContainer.appendChild(sectionElement);
                         } else {
                             const wrapper = document.createElement('div');
@@ -431,6 +434,16 @@ function createDynamicSectionElement(section, index) {
         return teamWrapper;
     }
 
+    // Handle list layout (mirrors tutor-zone styling)
+    if (section.layout === 'list') {
+        return createListSectionElement(section, index, article);
+    }
+
+    // Handle testimonial layout (mirrors testimonials background section)
+    if (section.layout === 'testimonial') {
+        return createTestimonialSectionElement(section, index, article);
+    }
+
     // For non-team sections, use two-col-content class to match about section styling
     article.className = 'two-col-content';
     // Remove individual transition delay since wrapper handles the fade-in
@@ -510,6 +523,155 @@ function createDynamicSectionElement(section, index) {
     });
 
     return article;
+}
+
+/**
+ * Create a list section element that mirrors tutor-zone styling
+ */
+function createListSectionElement(section, index, article) {
+    // Parse list content
+    let listData;
+    try {
+        listData = typeof section.text === 'string' ? JSON.parse(section.text) : section.text;
+    } catch (e) {
+        console.error('Failed to parse list section data:', e);
+        listData = { items: [], listType: 'unordered' };
+    }
+
+    // Create the outer section wrapper to match tutor-zone-section
+    const listWrapper = document.createElement('section');
+    listWrapper.className = 'tutor-zone-section fade-in-section';
+    listWrapper.style.transitionDelay = `${index * 0.1}s`;
+    listWrapper.dataset.veSectionId = section._id || slugify(section.heading);
+
+    // Add anchor ID for navigation linking
+    if (section.navAnchor) {
+        listWrapper.id = section.navAnchor;
+    } else if (section.heading) {
+        listWrapper.id = slugify(section.heading);
+    }
+
+    // Create the gradient background container
+    const gradientBg = document.createElement('div');
+    gradientBg.className = 'zone-gradient-bg tutor-gradient-bg';
+
+    // Create the list row container
+    const listRow = document.createElement('div');
+    listRow.className = 'zone-list-row';
+
+    // Create the content box (mirrors tutor-box)
+    const listBox = document.createElement('div');
+    listBox.className = 'tutor-box';
+
+    // Add heading
+    if (section.heading) {
+        const heading = document.createElement('h2');
+        heading.textContent = section.heading;
+        heading.setAttribute('data-ve-block-id', section.headingBlockId || uuidv4());
+        listBox.appendChild(heading);
+    }
+
+    // Add description if present
+    if (section.description) {
+        const description = document.createElement('p');
+        description.textContent = section.description;
+        description.setAttribute('data-ve-block-id', section.descriptionBlockId || uuidv4());
+        listBox.appendChild(description);
+    }
+
+    // Create the list element
+    const listElement = document.createElement(listData.listType === 'ordered' ? 'ol' : 'ul');
+    listElement.className = 'tutor-list';
+    listElement.style.cssText = 'text-align:left; max-width: 500px; margin: 1rem auto;';
+
+    // Add list items
+    if (listData.items && listData.items.length > 0) {
+        listData.items.forEach((item, itemIndex) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = item;
+            listItem.setAttribute('data-ve-block-id', `li-${section._id}-${itemIndex}`);
+            listElement.appendChild(listItem);
+        });
+    }
+
+    listBox.appendChild(listElement);
+
+    // Add button if available
+    if (section.buttonLabel && section.buttonUrl) {
+        listBox.insertAdjacentHTML('beforeend', buttonHtml(section));
+    }
+
+    // Assemble the structure
+    listRow.appendChild(listBox);
+    gradientBg.appendChild(listRow);
+    listWrapper.appendChild(gradientBg);
+
+    return listWrapper;
+}
+
+/**
+ * Create a testimonial section element that mirrors testimonials background section
+ */
+function createTestimonialSectionElement(section, index, article) {
+    // Parse testimonial content
+    let testimonialData;
+    try {
+        testimonialData = typeof section.text === 'string' ? JSON.parse(section.text) : section.text;
+    } catch (e) {
+        console.error('Failed to parse testimonial section data:', e);
+        testimonialData = { quote: '', author: '', role: '' };
+    }
+
+    // Create the outer section wrapper to match testimonials-bg-section
+    const testimonialWrapper = document.createElement('section');
+    testimonialWrapper.className = 'testimonials-bg-section fade-in-section testimonials-laced';
+    testimonialWrapper.style.transitionDelay = `${index * 0.1}s`;
+    testimonialWrapper.dataset.veSectionId = section._id || slugify(section.heading);
+
+    // Add anchor ID for navigation linking
+    if (section.navAnchor) {
+        testimonialWrapper.id = section.navAnchor;
+    } else if (section.heading) {
+        testimonialWrapper.id = slugify(section.heading);
+    }
+
+    // Create the testimonial quote card
+    const quoteCard = document.createElement('div');
+    quoteCard.className = 'testimonial-quote-card';
+    quoteCard.style.cssText = 'top:20%;left:50%;transform:translateX(-50%);'; // Center the single quote
+
+    // Create the quote content
+    const quoteParagraph = document.createElement('p');
+    quoteParagraph.setAttribute('data-ve-block-id', section.quoteBlockId || uuidv4());
+
+    // Build quote text with author attribution
+    let quoteText = `"${testimonialData.quote}"`;
+    if (testimonialData.author) {
+        let attribution = `- ${testimonialData.author}`;
+        if (testimonialData.role) {
+            attribution += `, ${testimonialData.role}`;
+        }
+        if (testimonialData.company) {
+            attribution += `, ${testimonialData.company}`;
+        }
+        quoteText += `<br><span>${attribution}</span>`;
+    }
+
+    quoteParagraph.innerHTML = quoteText;
+    quoteCard.appendChild(quoteParagraph);
+
+    // Add rating if present
+    if (testimonialData.rating) {
+        const ratingDiv = document.createElement('div');
+        ratingDiv.className = 'testimonial-rating';
+        ratingDiv.innerHTML = '★'.repeat(testimonialData.rating) + '☆'.repeat(5 - testimonialData.rating);
+        ratingDiv.style.cssText = 'color: #FFD700; margin-top: 0.5rem; font-size: 1.2rem;';
+        quoteCard.appendChild(ratingDiv);
+    }
+
+    testimonialWrapper.appendChild(quoteCard);
+
+    return testimonialWrapper;
 }
 
 /**

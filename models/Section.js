@@ -52,7 +52,11 @@ const schema = new mongoose.Schema({
     navAnchor: { type: String, default: '' },        // URL-friendly anchor for linking
 
     // ★ NEW: Add fields for layout types
-    layout: { type: String, default: 'standard' },   // 'standard' | 'team'
+    layout: {
+        type: String,
+        default: 'standard',
+        enum: ['standard', 'team', 'list', 'testimonial']
+    },   // 'standard' | 'team' | 'list' | 'testimonial'
     team: {
         type: [teamMemberSchema],
         default: [],

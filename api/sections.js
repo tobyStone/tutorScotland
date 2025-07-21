@@ -275,12 +275,16 @@ module.exports = async (req, res) => {
                 const heading = getField('heading')?.toString().trim() || '';
                 const text = getField('text')?.toString().trim() || '';
 
-                // Keep your original validation, adjusted slightly for the new variables
+                // Keep your original validation, adjusted for different layout types
+                const layout = getField('layout') || 'standard';
                 if (!heading || !text) {
-                    if (getField('layout') !== 'team') { // Only require text for non-team layouts
+                    if (['team', 'list', 'testimonial'].includes(layout)) {
+                        // Special layouts have their own text content structure
+                        if (!heading) {
+                            return res.status(400).json({ message: 'Heading required' });
+                        }
+                    } else {
                         return res.status(400).json({ message: 'Heading and text required' });
-                    } else if (!heading) {
-                        return res.status(400).json({ message: 'Heading required' });
                     }
                 }
 
