@@ -284,7 +284,7 @@ module.exports = async (req, res) => {
                 const text = getField('text')?.toString().trim() || '';
 
                 // Keep your original validation, adjusted for different layout types
-                const layout = getField('layout') || 'standard';
+                let layout = getField('layout') || 'standard';
                 if (!heading || !text) {
                     if (['team', 'list', 'testimonial'].includes(layout)) {
                         // Special layouts have their own text content structure
@@ -372,11 +372,6 @@ module.exports = async (req, res) => {
                 if (collision) {
                     navAnchor += '-' + Date.now().toString(36);
                 }
-
-                // Get layout fields with validation
-                let layout = fields.layout ?
-                    (Array.isArray(fields.layout) ? fields.layout[0] : fields.layout).toString().toLowerCase()
-                    : 'standard';
 
                 // ✅ APPLICATION-LEVEL VALIDATION: Ensure layout is valid
                 const validLayouts = ['standard', 'team', 'list', 'testimonial'];
