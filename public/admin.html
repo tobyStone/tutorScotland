@@ -298,7 +298,7 @@
                             <select name="layout" id="sectionLayout">
                                 <option value="standard" selected="">Standard</option>
                                 <option value="team">Team Members Grid</option>
-                                <option value="list">List Section (Tutor Zone Style)</option>
+                                <option value="list">List Section</option>
                                 <option value="testimonial">Testimonial Section</option>
                             </select>
                         </label>
@@ -325,7 +325,12 @@
                             <!-- ★ Wrapper holds only the controls that belong to the Standard layout -->
                             <div id="standardOnlyFields">
                                 <label>Paragraph:<textarea name="text" rows="3" required=""></textarea></label>
-                                <label>Image:<input type="file" name="image" id="sectionImage" accept="image/*"></label>
+                            </div><!-- /standardOnlyFields -->
+                        </div>
+
+                        <!-- ★ SHARED: Image and button fields available for all layout types -->
+                        <div id="sharedFields">
+                            <label>Image:<input type="file" name="image" id="sectionImage" accept="image/*"></label>
                             <!-- To show current image and allow removal -->
                             <div id="currentImagePreview" style="margin-top: 10px; display: none;">
                                 <p style="margin-bottom: 5px;" data-ve-block-id="09d85e4c-83d0-4bb1-836e-f6fb414b5946">Current Image:</p>
@@ -340,13 +345,12 @@
                             <label>Button Label (Optional): <input name="buttonLabel" placeholder="e.g. Learn More"></label>
                             <label>Button URL (Optional): <input name="buttonUrl" type="url" placeholder="https://example.com"></label>
 
-                                <!-- ★ NEW: Checkbox to remove button, shown only during edit -->
-                                <label id="removeButtonRow" style="display:none; align-items:center; margin-top: 10px;">
-                                  <input type="checkbox" name="removeButton" value="true" style="width:auto; margin-right:8px;">
-                                  Remove Button
-                                </label>
-                            </div><!-- /standardOnlyFields -->
-                        </div>
+                            <!-- ★ NEW: Checkbox to remove button, shown only during edit -->
+                            <label id="removeButtonRow" style="display:none; align-items:center; margin-top: 10px;">
+                              <input type="checkbox" name="removeButton" value="true" style="width:auto; margin-right:8px;">
+                              Remove Button
+                            </label>
+                        </div><!-- /sharedFields -->
 
                         <!-- Team builder fields -->
                         <div id="teamBuilder" style="display:none; margin-top:15px;">
@@ -1581,7 +1585,7 @@
                 };
 
                 fd.set('text', JSON.stringify(listData));
-                fd.delete('image'); // List sections don't use top-level images
+                // List sections now support images
             } else if (sectionLayout.value === 'testimonial') {
                 const quote = document.getElementById('testimonialQuote').value.trim();
                 const author = document.getElementById('testimonialAuthor').value.trim();

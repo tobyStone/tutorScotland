@@ -559,9 +559,19 @@ function createListSectionElement(section, index, article) {
     const listRow = document.createElement('div');
     listRow.className = 'zone-list-row';
 
+    // If there's an image, use flex layout like the target design
+    if (section.image) {
+        listRow.style.cssText = 'display: flex; align-items: flex-start; gap: 2rem; max-width: 1080px; margin: 0 auto;';
+    }
+
     // Create the content box (mirrors tutor-box)
     const listBox = document.createElement('div');
     listBox.className = 'tutor-box';
+
+    // If there's an image, adjust content box styling
+    if (section.image) {
+        listBox.style.cssText = 'flex: 1; text-align: left;';
+    }
 
     // Add heading
     if (section.heading) {
@@ -572,9 +582,9 @@ function createListSectionElement(section, index, article) {
     }
 
     // Add description if present
-    if (section.description) {
+    if (listData.description) {
         const description = document.createElement('p');
-        description.textContent = section.description;
+        description.textContent = listData.description;
         description.setAttribute('data-ve-block-id', section.descriptionBlockId || uuidv4());
         listBox.appendChild(description);
     }
@@ -601,8 +611,25 @@ function createListSectionElement(section, index, article) {
         listBox.insertAdjacentHTML('beforeend', buttonHtml(section));
     }
 
-    // Assemble the structure
+    // Assemble the structure - add content box first
     listRow.appendChild(listBox);
+
+    // Add image if available (positioned to the right)
+    if (section.image) {
+        const imageContainer = document.createElement('div');
+        imageContainer.style.cssText = 'flex: 0 0 auto; max-width: 400px;';
+
+        const image = document.createElement('img');
+        image.src = section.image;
+        image.alt = section.heading || 'List section image';
+        image.loading = 'lazy';
+        image.style.cssText = 'width: 100%; height: auto; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1);';
+        image.setAttribute('data-ve-block-id', section.imageBlockId || uuidv4());
+
+        imageContainer.appendChild(image);
+        listRow.appendChild(imageContainer);
+    }
+
     gradientBg.appendChild(listRow);
     listWrapper.appendChild(gradientBg);
 
