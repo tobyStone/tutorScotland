@@ -439,7 +439,15 @@ module.exports = async (req, res) => {
                         isPublished: true
                     }).sort({ navCategory: 1, heading: 1 }).lean();
 
-                    return res.status(200).json(sections);
+                    // ✅ BACKWARD COMPATIBILITY: Normalize layout field
+                    const normalizedSections = sections.map(section => {
+                        if (!section.layout || section.layout === null) {
+                            section.layout = 'standard';
+                        }
+                        return section;
+                    });
+
+                    return res.status(200).json(normalizedSections);
                 } catch (e) {
                     console.error('SECTION_GET_NAV error', e);
                     return res.status(500).json({
@@ -472,7 +480,15 @@ module.exports = async (req, res) => {
                         isFullPage: true
                     }).sort({ createdAt: -1 }).lean();
 
-                    return res.status(200).json(pages);
+                    // ✅ BACKWARD COMPATIBILITY: Normalize layout field
+                    const normalizedPages = pages.map(page => {
+                        if (!page.layout || page.layout === null) {
+                            page.layout = 'standard';
+                        }
+                        return page;
+                    });
+
+                    return res.status(200).json(normalizedPages);
                 } catch (e) {
                     console.error('SECTION_GET_PAGES error', e);
                     return res.status(500).json({
@@ -493,7 +509,16 @@ module.exports = async (req, res) => {
                     isFullPage: { $ne: true }, // Exclude full pages from regular sections
                     isContentOverride: { $ne: true } // ✅ FIXED: Exclude content overrides from dynamic sections
                 }).sort({ position: 1, createdAt: 1 }).lean();
-                return res.status(200).json(list);
+
+                // ✅ BACKWARD COMPATIBILITY: Normalize layout field for existing records
+                const normalizedList = list.map(section => {
+                    if (!section.layout || section.layout === null) {
+                        section.layout = 'standard';
+                    }
+                    return section;
+                });
+
+                return res.status(200).json(normalizedList);
             } catch (e) {
                 console.error('SECTION_GET error', e);
                 return res.status(500).json({

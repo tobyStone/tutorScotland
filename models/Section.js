@@ -55,7 +55,14 @@ const schema = new mongoose.Schema({
     layout: {
         type: String,
         default: 'standard',
-        enum: ['standard', 'team', 'list', 'testimonial']
+        validate: {
+            validator: function(value) {
+                // Allow null/undefined for backward compatibility
+                if (!value) return true;
+                return ['standard', 'team', 'list', 'testimonial'].includes(value);
+            },
+            message: 'Layout must be one of: standard, team, list, testimonial'
+        }
     },   // 'standard' | 'team' | 'list' | 'testimonial'
     team: {
         type: [teamMemberSchema],

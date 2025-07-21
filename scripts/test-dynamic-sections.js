@@ -81,18 +81,49 @@ function runTestSuite(suiteName, testPattern) {
  */
 function runIntegrationTests() {
   console.log(`\n🔧 Running Integration Tests...`);
-  
+
   try {
     const result = execSync('npm run test:integration -- tests/integration/api/dynamic-sections.test.js', {
       encoding: 'utf8',
       stdio: 'pipe'
     });
-    
+
     console.log('✅ Integration tests completed');
     return { success: true, output: result };
-    
+
   } catch (error) {
     console.error('❌ Integration tests failed:', error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Run critical migration safety tests
+ */
+function runMigrationTests() {
+  console.log(`\n🛡️ Running Migration Safety Tests...`);
+
+  try {
+    // Test schema compatibility
+    const schemaResult = execSync('npm run test:integration -- tests/integration/models/section-schema.test.js', {
+      encoding: 'utf8',
+      stdio: 'pipe'
+    });
+
+    // Test migration safety
+    const migrationResult = execSync('npm run test:integration -- tests/migration/schema-migration.test.js', {
+      encoding: 'utf8',
+      stdio: 'pipe'
+    });
+
+    console.log('✅ Migration safety tests completed');
+    return {
+      success: true,
+      output: { schema: schemaResult, migration: migrationResult }
+    };
+
+  } catch (error) {
+    console.error('❌ Migration safety tests failed:', error.message);
     return { success: false, error: error.message };
   }
 }
@@ -134,6 +165,10 @@ function createBaseline() {
   // Run integration tests
   const integrationResults = runIntegrationTests();
   results.integrationTests = integrationResults;
+
+  // ✅ CRITICAL: Run migration safety tests
+  const migrationResults = runMigrationTests();
+  results.migrationTests = migrationResults;
   
   // Calculate overall stats
   const totalPassed = results.testSuites.reduce((sum, suite) => sum + suite.passed, 0);

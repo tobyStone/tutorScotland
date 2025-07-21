@@ -677,6 +677,89 @@ describe('Dynamic Sections Integration Tests', () => {
     });
   });
 
+  describe('Backward Compatibility & Migration Safety', () => {
+    it('should handle API requests with legacy data structures', async () => {
+      // Simulate legacy sections in database (no layout field)
+      const legacySections = [
+        {
+          page: 'test-page',
+          heading: 'Legacy Section 1',
+          text: 'Legacy content',
+          position: 'bottom',
+          order: 1
+        },
+        {
+          page: 'test-page',
+          heading: 'Legacy Section 2',
+          text: 'Legacy content 2',
+          layout: null, // Explicitly null
+          position: 'bottom',
+          order: 2
+        }
+      ];
+
+      // Insert directly to simulate existing database state
+      for (const section of legacySections) {
+        await testSectionModel.collection.insertOne({
+          ...section,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
+
+      // API should handle these without errors
+      const response = await request(app)
+        .get('/api/sections?page=test-page')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2);
+
+      // All sections should have normalized layout field
+      response.body.forEach(section => {
+        expect(section.layout).toBe('standard');
+      });
+    });
+
+    it('should not break existing functionality when new section types are added', async () => {
+      // Create sections of all types
+      const sections = [
+        { layout: 'standard', heading: 'Standard Section', text: 'Standard content' },
+        { layout: 'team', heading: 'Team Section', text: 'Team content', team: [{ name: 'John', bio: 'Developer' }] },
+        { layout: 'list', heading: 'List Section', text: JSON.stringify({ items: ['Item 1'], listType: 'unordered' }) },
+        { layout: 'testimonial', heading: 'Testimonial', text: JSON.stringify({ quote: 'Great!', author: 'Jane' }) }
+      ];
+
+      for (const section of sections) {
+        const response = await request(app)
+          .post('/api/sections')
+          .field('page', 'test-page')
+          .field('heading', section.heading)
+          .field('text', section.text)
+          .field('layout', section.layout);
+
+        if (section.team) {
+          response.field('team', JSON.stringify(section.team));
+        }
+
+        expect(response.status).toBe(201);
+      }
+
+      // Verify all sections can be retrieved
+      const getResponse = await request(app)
+        .get('/api/sections?page=test-page')
+        .expect(200);
+
+      expect(getResponse.body).toHaveLength(4);
+
+      // Verify each layout type is preserved
+      const layouts = getResponse.body.map(s => s.layout);
+      expect(layouts).toContain('standard');
+      expect(layouts).toContain('team');
+      expect(layouts).toContain('list');
+      expect(layouts).toContain('testimonial');
+    });
+  });
+
   describe('Section Import/Export', () => {
     it('should export sections to JSON format including new types', async () => {
       const exportData = {
