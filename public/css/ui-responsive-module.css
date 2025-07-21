@@ -23,6 +23,35 @@
     }
 }
 
+@media (max-width: 768px) {
+    /* List sections with images - stack vertically on tablets */
+    .zone-list-row {
+        flex-direction: column !important;
+        gap: 1.5rem !important;
+    }
+
+    .zone-list-row .tutor-box {
+        text-align: center !important;
+    }
+
+    .zone-list-row div[style*="max-width: 400px"] {
+        max-width: 100% !important;
+        align-self: center;
+    }
+
+    /* Dynamic testimonial sections - stack quotes vertically on tablets */
+    .testimonials-bg-section .testimonial-quote-card {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        transform: none !important;
+        margin: 1rem auto !important;
+        display: block !important;
+        max-width: 90% !important;
+    }
+}
+
 @media (max-width: 480px) {
     .contact-btn {
         padding: 8px 16px;

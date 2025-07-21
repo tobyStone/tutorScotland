@@ -380,33 +380,9 @@
 
                         <!-- Testimonial builder fields -->
                         <div id="testimonialBuilder" style="display:none; margin-top:15px;">
-                            <label>
-                                Testimonial Quote:
-                                <textarea name="testimonialQuote" id="testimonialQuote" rows="3" placeholder="Enter the testimonial quote..." required></textarea>
-                            </label>
-                            <label>
-                                Author Name:
-                                <input type="text" name="testimonialAuthor" id="testimonialAuthor" placeholder="Customer name" required>
-                            </label>
-                            <label>
-                                Author Role (optional):
-                                <input type="text" name="testimonialRole" id="testimonialRole" placeholder="e.g., Parent, Student, Teacher">
-                            </label>
-                            <label>
-                                Company/Location (optional):
-                                <input type="text" name="testimonialCompany" id="testimonialCompany" placeholder="e.g., Edinburgh, Glasgow">
-                            </label>
-                            <label>
-                                Rating (optional):
-                                <select name="testimonialRating" id="testimonialRating">
-                                    <option value="">No rating</option>
-                                    <option value="5">⭐⭐⭐⭐⭐ (5 stars)</option>
-                                    <option value="4">⭐⭐⭐⭐ (4 stars)</option>
-                                    <option value="3">⭐⭐⭐ (3 stars)</option>
-                                    <option value="2">⭐⭐ (2 stars)</option>
-                                    <option value="1">⭐ (1 star)</option>
-                                </select>
-                            </label>
+                            <button type="button" id="addTestimonialBtn">➕ Add Testimonial</button>
+                            <div id="testimonialList"></div>
+                            <input type="hidden" name="testimonials" id="testimonialsData">
                         </div>
 
                         <label>
@@ -1202,16 +1178,8 @@
                 para.removeAttribute('required');
             }
 
-            // Testimonial fields required only for testimonial layout
-            const testimonialQuote = document.getElementById('testimonialQuote');
-            const testimonialAuthor = document.getElementById('testimonialAuthor');
-            if (isTestimonial) {
-                testimonialQuote.setAttribute('required', '');
-                testimonialAuthor.setAttribute('required', '');
-            } else {
-                testimonialQuote.removeAttribute('required');
-                testimonialAuthor.removeAttribute('required');
-            }
+            // Testimonial validation is now handled in form submission
+            // No individual required fields since we use dynamic testimonial builder
 
             // team-card fields
             teamMemberList
@@ -1231,11 +1199,9 @@
                 document.getElementById('listItemsData').value = '[]';
             }
             if (!isTestimonial) {
-                document.getElementById('testimonialQuote').value = '';
-                document.getElementById('testimonialAuthor').value = '';
-                document.getElementById('testimonialRole').value = '';
-                document.getElementById('testimonialCompany').value = '';
-                document.getElementById('testimonialRating').value = '';
+                document.getElementById('testimonialList').innerHTML = '';
+                testimonials = [];
+                document.getElementById('testimonialsData').value = '[]';
             }
         });
 
@@ -1435,6 +1401,94 @@
         // Wire up the add list item button
         addListItemBtn.addEventListener('click', addListItem);
 
+        /* ── Testimonial Section Functionality ────────────────────────────────── */
+        let testimonials = [];
+        const addTestimonialBtn = document.getElementById('addTestimonialBtn');
+        const testimonialList = document.getElementById('testimonialList');
+        const testimonialsData = document.getElementById('testimonialsData');
+
+        function addTestimonial() {
+            const testimonialDiv = document.createElement('div');
+            testimonialDiv.style.cssText = 'border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; background: #f9f9f9;';
+
+            const testimonialIndex = testimonials.length;
+            testimonialDiv.innerHTML = `
+                <label>
+                    Quote:
+                    <textarea class="testimonial-quote" rows="3" placeholder="Enter testimonial quote..." style="width: 100%; margin-bottom: 10px;"></textarea>
+                </label>
+                <label>
+                    Author:
+                    <input type="text" class="testimonial-author" placeholder="Author name" style="width: 100%; margin-bottom: 10px;">
+                </label>
+                <label>
+                    Role (optional):
+                    <input type="text" class="testimonial-role" placeholder="e.g., Parent, Student" style="width: 100%; margin-bottom: 10px;">
+                </label>
+                <label>
+                    Company/Location (optional):
+                    <input type="text" class="testimonial-company" placeholder="e.g., Edinburgh, Glasgow" style="width: 100%; margin-bottom: 10px;">
+                </label>
+                <label>
+                    Rating (optional):
+                    <select class="testimonial-rating" style="width: 100%; margin-bottom: 10px;">
+                        <option value="">No rating</option>
+                        <option value="5">⭐⭐⭐⭐⭐ (5 stars)</option>
+                        <option value="4">⭐⭐⭐⭐ (4 stars)</option>
+                        <option value="3">⭐⭐⭐ (3 stars)</option>
+                        <option value="2">⭐⭐ (2 stars)</option>
+                        <option value="1">⭐ (1 star)</option>
+                    </select>
+                </label>
+                <button type="button" class="remove-testimonial" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">Remove</button>
+            `;
+
+            testimonialList.appendChild(testimonialDiv);
+
+            // Add event listeners
+            const inputs = testimonialDiv.querySelectorAll('textarea, input, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', updateTestimonialData);
+            });
+
+            testimonialDiv.querySelector('.remove-testimonial').addEventListener('click', () => {
+                testimonialDiv.remove();
+                updateTestimonialData();
+            });
+
+            // Initialize testimonial data
+            testimonials.push({
+                quote: '',
+                author: '',
+                role: '',
+                company: '',
+                rating: ''
+            });
+
+            updateTestimonialData();
+        }
+
+        function updateTestimonialData() {
+            testimonials = [];
+            testimonialList.querySelectorAll('div').forEach(div => {
+                const quote = div.querySelector('.testimonial-quote')?.value || '';
+                const author = div.querySelector('.testimonial-author')?.value || '';
+                const role = div.querySelector('.testimonial-role')?.value || '';
+                const company = div.querySelector('.testimonial-company')?.value || '';
+                const rating = div.querySelector('.testimonial-rating')?.value || '';
+
+                if (quote.trim() && author.trim()) {
+                    testimonials.push({ quote, author, role, company, rating });
+                }
+            });
+
+            testimonialsData.value = JSON.stringify(testimonials);
+            console.log('Testimonial data updated', testimonials);
+        }
+
+        // Wire up the add testimonial button
+        addTestimonialBtn.addEventListener('click', addTestimonial);
+
         /* ── ✅ NEW: Section ordering cleanup when moving between pages ────── */
         async function cleanupSectionOrdering(sectionId, fromPage, toPage) {
             console.log(`[MOVE-SECTION] Cleaning up ordering: ${sectionId} from ${fromPage} to ${toPage}`);
@@ -1587,24 +1641,15 @@
                 fd.set('text', JSON.stringify(listData));
                 // List sections now support images
             } else if (sectionLayout.value === 'testimonial') {
-                const quote = document.getElementById('testimonialQuote').value.trim();
-                const author = document.getElementById('testimonialAuthor').value.trim();
+                const testimonialsJson = document.getElementById('testimonialsData').value;
 
-                if (!quote || !author) {
-                    return alert('Please provide both testimonial quote and author name');
+                if (!testimonialsJson || testimonialsJson === '[]') {
+                    return alert('Please add at least one testimonial');
                 }
 
-                // Build testimonial data structure
-                const testimonialData = {
-                    quote: quote,
-                    author: author,
-                    role: document.getElementById('testimonialRole').value.trim(),
-                    company: document.getElementById('testimonialCompany').value.trim(),
-                    rating: document.getElementById('testimonialRating').value ? parseInt(document.getElementById('testimonialRating').value) : null
-                };
-
-                fd.set('text', JSON.stringify(testimonialData));
-                fd.delete('image'); // Testimonial sections don't use top-level images
+                // Use the testimonials array directly
+                fd.set('text', testimonialsJson);
+                // Testimonial sections now support background images
             }
 
             const editId = addSectionForm.dataset.editId;
@@ -1802,20 +1847,39 @@
                     } else if (section.layout === 'testimonial') {
                         sectionFormHeading.textContent = 'Edit Testimonial Section';
 
-                        // Parse testimonial data
+                        // Parse testimonial data - handle both old single format and new array format
                         let testimonialData;
                         try {
                             testimonialData = JSON.parse(section.text);
                         } catch (e) {
-                            testimonialData = { quote: '', author: '', role: '', company: '', rating: null };
+                            testimonialData = [];
                         }
 
-                        // Populate testimonial fields
-                        document.getElementById('testimonialQuote').value = testimonialData.quote || '';
-                        document.getElementById('testimonialAuthor').value = testimonialData.author || '';
-                        document.getElementById('testimonialRole').value = testimonialData.role || '';
-                        document.getElementById('testimonialCompany').value = testimonialData.company || '';
-                        document.getElementById('testimonialRating').value = testimonialData.rating || '';
+                        // Convert old single testimonial format to array format
+                        if (testimonialData.quote && !Array.isArray(testimonialData)) {
+                            testimonialData = [testimonialData];
+                        }
+
+                        // Clear existing testimonials and populate with data
+                        testimonialList.innerHTML = '';
+                        testimonials = [];
+
+                        if (Array.isArray(testimonialData) && testimonialData.length > 0) {
+                            testimonialData.forEach(testimonial => {
+                                addTestimonial();
+                                const lastDiv = testimonialList.lastElementChild;
+                                lastDiv.querySelector('.testimonial-quote').value = testimonial.quote || '';
+                                lastDiv.querySelector('.testimonial-author').value = testimonial.author || '';
+                                lastDiv.querySelector('.testimonial-role').value = testimonial.role || '';
+                                lastDiv.querySelector('.testimonial-company').value = testimonial.company || '';
+                                lastDiv.querySelector('.testimonial-rating').value = testimonial.rating || '';
+                            });
+                        } else {
+                            // Add one empty testimonial if none exist
+                            addTestimonial();
+                        }
+
+                        updateTestimonialData();
 
                     } else { // It's a 'standard' layout
                         sectionFormHeading.textContent = 'Edit Dynamic Section'; // UI Nicety
@@ -1828,13 +1892,24 @@
                             currentImagePreview.style.display = 'none';
                         }
                         document.querySelector('input[name="removeImage"]').checked = false;
-
-                        addSectionForm.querySelector('[name="buttonLabel"]').value = section.buttonLabel || '';
-                        addSectionForm.querySelector('[name="buttonUrl"]').value = section.buttonUrl || '';
-                        removeButtonRow.style.display = section.buttonLabel ? 'flex' : 'none';
                     }
 
                     // ---- Populate common fields for ALL layouts ----
+                    // Button fields (moved here so they work for all layout types)
+                    addSectionForm.querySelector('[name="buttonLabel"]').value = section.buttonLabel || '';
+                    addSectionForm.querySelector('[name="buttonUrl"]').value = section.buttonUrl || '';
+                    removeButtonRow.style.display = section.buttonLabel ? 'flex' : 'none';
+
+                    // Image handling for all layout types
+                    if (section.image && section.layout !== 'standard') {
+                        currentImagePreview.querySelector('img').src = section.image;
+                        currentImagePreview.style.display = 'block';
+                    } else if (section.layout !== 'standard') {
+                        currentImagePreview.style.display = 'none';
+                    }
+                    if (section.layout !== 'standard') {
+                        document.querySelector('input[name="removeImage"]').checked = false;
+                    }
                     addSectionForm.querySelector('[name="position"]').value = section.position || 'bottom';
                     showInNav.checked = !!section.showInNav;
                     sectionNavCategory.value = section.navCategory || 'about';

@@ -640,13 +640,23 @@ function createListSectionElement(section, index, article) {
  * Create a testimonial section element that mirrors testimonials background section
  */
 function createTestimonialSectionElement(section, index, article) {
-    // Parse testimonial content
+    // Parse testimonial content - handle both old single format and new array format
     let testimonialData;
     try {
         testimonialData = typeof section.text === 'string' ? JSON.parse(section.text) : section.text;
     } catch (e) {
         console.error('Failed to parse testimonial section data:', e);
-        testimonialData = { quote: '', author: '', role: '' };
+        testimonialData = [];
+    }
+
+    // Convert old single testimonial format to array format
+    if (testimonialData.quote && !Array.isArray(testimonialData)) {
+        testimonialData = [testimonialData];
+    }
+
+    // Ensure we have an array
+    if (!Array.isArray(testimonialData)) {
+        testimonialData = [];
     }
 
     // Create the outer section wrapper to match testimonials-bg-section
@@ -655,6 +665,14 @@ function createTestimonialSectionElement(section, index, article) {
     testimonialWrapper.style.transitionDelay = `${index * 0.1}s`;
     testimonialWrapper.dataset.veSectionId = section._id || slugify(section.heading);
 
+    // Apply background image if provided (with same styling as existing testimonials)
+    if (section.image) {
+        testimonialWrapper.style.backgroundImage = `linear-gradient(rgba(0, 27, 68, 0.7), rgba(0, 87, 183, 0.7)), url('${section.image}')`;
+        testimonialWrapper.style.backgroundSize = 'cover';
+        testimonialWrapper.style.backgroundPosition = 'center';
+        testimonialWrapper.style.backgroundRepeat = 'no-repeat';
+    }
+
     // Add anchor ID for navigation linking
     if (section.navAnchor) {
         testimonialWrapper.id = section.navAnchor;
@@ -662,41 +680,58 @@ function createTestimonialSectionElement(section, index, article) {
         testimonialWrapper.id = slugify(section.heading);
     }
 
-    // Create the testimonial quote card
-    const quoteCard = document.createElement('div');
-    quoteCard.className = 'testimonial-quote-card';
-    quoteCard.style.cssText = 'top:20%;left:50%;transform:translateX(-50%);'; // Center the single quote
+    // Create testimonial quote cards for each testimonial
+    if (testimonialData.length > 0) {
+        testimonialData.forEach((testimonial, testimonialIndex) => {
+            const quoteCard = document.createElement('div');
+            quoteCard.className = 'testimonial-quote-card';
 
-    // Create the quote content
-    const quoteParagraph = document.createElement('p');
-    quoteParagraph.setAttribute('data-ve-block-id', section.quoteBlockId || uuidv4());
+            // Position multiple quotes in a staggered layout
+            if (testimonialData.length === 1) {
+                quoteCard.style.cssText = 'top:20%;left:50%;transform:translateX(-50%);'; // Center single quote
+            } else {
+                // Stagger multiple quotes like the existing testimonials section
+                const positions = [
+                    'top:10%;left:20%;',
+                    'top:35%;right:20%;',
+                    'top:60%;left:15%;'
+                ];
+                const position = positions[testimonialIndex % positions.length];
+                quoteCard.style.cssText = position;
+            }
 
-    // Build quote text with author attribution
-    let quoteText = `"${testimonialData.quote}"`;
-    if (testimonialData.author) {
-        let attribution = `- ${testimonialData.author}`;
-        if (testimonialData.role) {
-            attribution += `, ${testimonialData.role}`;
-        }
-        if (testimonialData.company) {
-            attribution += `, ${testimonialData.company}`;
-        }
-        quoteText += `<br><span>${attribution}</span>`;
+            // Create the quote content
+            const quoteParagraph = document.createElement('p');
+            quoteParagraph.setAttribute('data-ve-block-id', `${section._id}-quote-${testimonialIndex}` || uuidv4());
+
+            // Build quote text with author attribution
+            let quoteText = `"${testimonial.quote}"`;
+            if (testimonial.author) {
+                let attribution = `- ${testimonial.author}`;
+                if (testimonial.role) {
+                    attribution += `, ${testimonial.role}`;
+                }
+                if (testimonial.company) {
+                    attribution += `, ${testimonial.company}`;
+                }
+                quoteText += `<br><span>${attribution}</span>`;
+            }
+
+            quoteParagraph.innerHTML = quoteText;
+            quoteCard.appendChild(quoteParagraph);
+
+            // Add rating if present
+            if (testimonial.rating) {
+                const ratingDiv = document.createElement('div');
+                ratingDiv.className = 'testimonial-rating';
+                ratingDiv.innerHTML = '★'.repeat(testimonial.rating) + '☆'.repeat(5 - testimonial.rating);
+                ratingDiv.style.cssText = 'color: #FFD700; margin-top: 0.5rem; font-size: 1.2rem;';
+                quoteCard.appendChild(ratingDiv);
+            }
+
+            testimonialWrapper.appendChild(quoteCard);
+        });
     }
-
-    quoteParagraph.innerHTML = quoteText;
-    quoteCard.appendChild(quoteParagraph);
-
-    // Add rating if present
-    if (testimonialData.rating) {
-        const ratingDiv = document.createElement('div');
-        ratingDiv.className = 'testimonial-rating';
-        ratingDiv.innerHTML = '★'.repeat(testimonialData.rating) + '☆'.repeat(5 - testimonialData.rating);
-        ratingDiv.style.cssText = 'color: #FFD700; margin-top: 0.5rem; font-size: 1.2rem;';
-        quoteCard.appendChild(ratingDiv);
-    }
-
-    testimonialWrapper.appendChild(quoteCard);
 
     return testimonialWrapper;
 }

@@ -418,6 +418,12 @@ body[data-page="parents"] #imageBanner {
     z-index: 9998 !important;
 }
 
+/* Fix stacking context issue: mission-row containing shield/banner needs higher z-index than later sections */
+body[data-page="parents"] .mission-row.fade-in-section {
+    z-index: 100 !important; /* Higher than other fade-in sections to keep shield/banner visible */
+    position: relative !important; /* Ensure z-index takes effect */
+}
+
 /* Partnerships page - positioned to avoid content overlap */
 body[data-page="partnerships"] #imageShield {
     left: 70% !important;
