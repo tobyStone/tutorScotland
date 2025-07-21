@@ -168,8 +168,16 @@ module.exports = async (req, res) => {
                                             updateData.navAnchor = newAnchor;
                     }
 
-                    // Add layout update logic
-                    if (fields.layout) updateData.layout = getField('layout').toLowerCase();
+                    // Add layout update logic with validation
+                    if (fields.layout) {
+                        let newLayout = getField('layout').toLowerCase();
+                        const validLayouts = ['standard', 'team', 'list', 'testimonial'];
+                        if (validLayouts.includes(newLayout)) {
+                            updateData.layout = newLayout;
+                        } else {
+                            console.warn(`Invalid layout "${newLayout}" provided in update, keeping existing layout`);
+                        }
+                    }
                     if (fields.team) {
                         try {
                             const parsedTeam = JSON.parse(getField('team'));
@@ -365,10 +373,17 @@ module.exports = async (req, res) => {
                     navAnchor += '-' + Date.now().toString(36);
                 }
 
-                // Get layout fields
-                const layout = fields.layout ?
+                // Get layout fields with validation
+                let layout = fields.layout ?
                     (Array.isArray(fields.layout) ? fields.layout[0] : fields.layout).toString().toLowerCase()
                     : 'standard';
+
+                // ✅ APPLICATION-LEVEL VALIDATION: Ensure layout is valid
+                const validLayouts = ['standard', 'team', 'list', 'testimonial'];
+                if (!validLayouts.includes(layout)) {
+                    console.warn(`Invalid layout "${layout}" provided, defaulting to "standard"`);
+                    layout = 'standard';
+                }
 
                 let team = [];
                 if (layout === 'team' && fields.team) {

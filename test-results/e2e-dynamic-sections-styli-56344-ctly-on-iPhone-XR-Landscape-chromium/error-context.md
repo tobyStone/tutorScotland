@@ -7,6 +7,8 @@
     - /url: /
   - link "Login":
     - /url: login.html?role=admin
+- navigation "Primary":
+  - button "☰ Toggle navigation"
 - text: Loading
 - main:
   - heading "About Tutors Alliance Scotland" [level=1]

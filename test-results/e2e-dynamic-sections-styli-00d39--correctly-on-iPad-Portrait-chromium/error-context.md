@@ -7,10 +7,9 @@
     - /url: /
   - link "Login":
     - /url: login.html?role=admin
-- navigation "Primary":
-  - button "☰ Toggle navigation"
-- text: Loading
 - main:
+  - img "Large STA Shield"
+  - img "Banner Ribbon"
   - heading "About Tutors Alliance Scotland" [level=1]
   - heading "💬 About Us" [level=2]
   - paragraph: Created by educators. Powered by purpose. Focused on every child.

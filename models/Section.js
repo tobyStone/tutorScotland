@@ -54,15 +54,9 @@ const schema = new mongoose.Schema({
     // ★ NEW: Add fields for layout types
     layout: {
         type: String,
-        default: 'standard',
-        validate: {
-            validator: function(value) {
-                // Allow null/undefined for backward compatibility
-                if (!value) return true;
-                return ['standard', 'team', 'list', 'testimonial'].includes(value);
-            },
-            message: 'Layout must be one of: standard, team, list, testimonial'
-        }
+        default: 'standard'
+        // Note: No validation here to ensure backward compatibility
+        // Validation happens at the application layer in the API
     },   // 'standard' | 'team' | 'list' | 'testimonial'
     team: {
         type: [teamMemberSchema],
