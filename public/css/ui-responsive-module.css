@@ -52,6 +52,28 @@
     }
 }
 
+/* Portrait orientation on restricted viewports - testimonials need special handling */
+@media (orientation: portrait) and (max-width: 768px) {
+    .testimonials-bg-section .testimonial-quote-card {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        transform: none !important;
+        margin: 1.5rem auto !important;
+        display: block !important;
+        max-width: 85% !important;
+        width: 85% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Ensure testimonial section has proper spacing */
+    .testimonials-bg-section {
+        padding: 2rem 1rem !important;
+        min-height: auto !important;
+    }
+}
+
 @media (max-width: 480px) {
     .contact-btn {
         padding: 8px 16px;

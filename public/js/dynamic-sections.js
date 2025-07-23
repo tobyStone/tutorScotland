@@ -592,13 +592,14 @@ function createListSectionElement(section, index, article) {
     // Create the list element
     const listElement = document.createElement(listData.listType === 'ordered' ? 'ol' : 'ul');
     listElement.className = 'tutor-list';
-    listElement.style.cssText = 'text-align:left; max-width: 500px; margin: 1rem auto;';
+    listElement.style.cssText = 'text-align:left; max-width: 500px; margin: 1rem auto; padding-left: 1.5rem; list-style-type: ' + (listData.listType === 'ordered' ? 'decimal' : 'disc') + ';';
 
     // Add list items
     if (listData.items && listData.items.length > 0) {
         listData.items.forEach((item, itemIndex) => {
             const listItem = document.createElement('li');
             listItem.textContent = item;
+            listItem.style.cssText = 'margin-bottom: 0.5rem; display: list-item; list-style-position: outside;';
             listItem.setAttribute('data-ve-block-id', `li-${section._id}-${itemIndex}`);
             listElement.appendChild(listItem);
         });

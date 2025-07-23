@@ -120,6 +120,13 @@ module.exports = async (req, res) => {
                         delete fields.team;
                         console.log('Stripped irrelevant fields for rolling-banner update');
                     }
+
+                    // 💡 Safety net: Strip image uploads for testimonial sections (they use default background)
+                    if (currentDoc.layout === 'testimonial') {
+                        delete fields.imagePath;
+                        delete fields.image;
+                        console.log('Stripped image fields for testimonial section update');
+                    }
                     
                     const updateData = { updatedAt: new Date() };
 
@@ -296,27 +303,31 @@ module.exports = async (req, res) => {
                     }
                 }
 
-                // Optional image
+                // Optional image (skip for testimonial sections - they use default background)
                 let image = '';
 
-                // Check if imagePath is provided in fields (from client-side upload)
-                if (fields.imagePath && fields.imagePath !== 'undefined' && fields.imagePath !== '') {
-                    image = Array.isArray(fields.imagePath) ? fields.imagePath[0] : fields.imagePath;
-                    console.log('Using imagePath from fields:', image);
-                } else {
-                    // Otherwise try to upload file directly
-                    let file = files.image || files.file;
-                    if (Array.isArray(file)) file = file[0];
-
-                    if (file && file.size && file.size > 0) {
-                        if (file.size > MAX_UPLOAD) {
-                            return res.status(400).json({ message: 'Image larger than 4.5 MB' });
-                        }
-                        console.log('Uploading file directly:', file.originalFilename, file.size);
-                        image = await uploadToBlob(file);
+                if (layout !== 'testimonial') {
+                    // Check if imagePath is provided in fields (from client-side upload)
+                    if (fields.imagePath && fields.imagePath !== 'undefined' && fields.imagePath !== '') {
+                        image = Array.isArray(fields.imagePath) ? fields.imagePath[0] : fields.imagePath;
+                        console.log('Using imagePath from fields:', image);
                     } else {
-                        console.log('No valid file found for upload');
+                        // Otherwise try to upload file directly
+                        let file = files.image || files.file;
+                        if (Array.isArray(file)) file = file[0];
+
+                        if (file && file.size && file.size > 0) {
+                            if (file.size > MAX_UPLOAD) {
+                                return res.status(400).json({ message: 'Image larger than 4.5 MB' });
+                            }
+                            console.log('Uploading file directly:', file.originalFilename, file.size);
+                            image = await uploadToBlob(file);
+                        } else {
+                            console.log('No valid file found for upload');
+                        }
                     }
+                } else {
+                    console.log('Skipping image upload for testimonial section - using default background');
                 }
 
                 // Handle slug for full pages

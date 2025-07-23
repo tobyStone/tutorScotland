@@ -1168,6 +1168,17 @@
             listBuilder.style.display = isList ? 'block' : 'none';
             testimonialBuilder.style.display = isTestimonial ? 'block' : 'none';
 
+            // Hide image upload for testimonial sections (they use default background)
+            const imageLabel = document.querySelector('#sharedFields label:has(input[name="image"])');
+            const imagePreview = document.getElementById('currentImagePreview');
+            if (isTestimonial) {
+                if (imageLabel) imageLabel.style.display = 'none';
+                if (imagePreview) imagePreview.style.display = 'none';
+            } else {
+                if (imageLabel) imageLabel.style.display = 'block';
+                // imagePreview visibility is handled by existing logic
+            }
+
             /* required attributes ------------------------------------------- */
             const para = standardOnlyFields.querySelector('[name="text"]');
 
