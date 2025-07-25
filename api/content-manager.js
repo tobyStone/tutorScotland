@@ -142,6 +142,7 @@ async function handleCreateOverride(req, res) {
             href,  // For links
             isButton, // For link styling
             buttons, // For text element buttons
+            isHTML, // For HTML formatted text content
             originalContent,
             overrideType = 'replace',
         } = req.body;
@@ -185,6 +186,7 @@ async function handleCreateOverride(req, res) {
                 text,
                 image: image || href, // Use href for links, image for images
                 isButton,
+                isHTML, // For HTML formatted text content
                 buttonLabel, // Add button fields
                 buttonUrl,
                 targetSelector, // Still allow selector migration if needed
@@ -223,6 +225,7 @@ async function handleCreateOverride(req, res) {
             doc.text = text ?? doc.text;
             doc.image = (image || href) ?? doc.image;
             doc.isButton = isButton ?? doc.isButton;
+            doc.isHTML = isHTML ?? doc.isHTML;
             doc.buttonLabel = buttonLabel ?? doc.buttonLabel;
             doc.buttonUrl = buttonUrl ?? doc.buttonUrl;
             // Do NOT touch originalContent
@@ -240,6 +243,7 @@ async function handleCreateOverride(req, res) {
             text,
             image: image || href,
             isButton,
+            isHTML, // For HTML formatted text content
             buttonLabel, // Add button fields
             buttonUrl,
             originalContent, // Saved only on creation

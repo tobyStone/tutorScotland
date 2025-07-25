@@ -86,6 +86,7 @@ const schema = new mongoose.Schema({
         default: 'replace'
     },                                             // How to apply the override
     isButton: { type: Boolean, default: false },   // Whether link should be styled as button
+    isHTML: { type: Boolean, default: false },     // Whether text content contains HTML formatting
     originalContent: mongoose.Schema.Types.Mixed,   // Backup of original content
     isActive: { type: Boolean, default: true }     // Whether the override is currently active
 }, {

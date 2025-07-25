@@ -441,8 +441,19 @@ export class UIManager {
                     modal.querySelector('#content-text').value = content;
                     this.loadExistingTextButtons(el);
                 } else {
+                    // Use the editable text (which has newlines instead of <br> tags)
                     modal.querySelector('#content-text').value = content.text || '';
                     this.loadTextButtonsFromData(content.buttons || []);
+
+                    // Store HTML formatting info for later use
+                    if (content.isHTML) {
+                        modal.dataset.isHtmlContent = 'true';
+                        modal.dataset.originalHtml = content.originalHTML || '';
+                        console.log(`[VE-HTML] Editing HTML content. Original: "${content.originalHTML}", Editable: "${content.text}"`);
+                    } else {
+                        modal.dataset.isHtmlContent = 'false';
+                        delete modal.dataset.originalHtml;
+                    }
                 }
                 break;
             case 'html':
@@ -495,10 +506,15 @@ export class UIManager {
         switch(type){
             case 'text':
                 const buttons = this.getTextButtons();
-                console.log(`[VE-DBG] getFormData() - text type, buttons:`, buttons);
+                const textValue = this.dom.modal.querySelector('#content-text').value;
+                const isHtmlContent = this.dom.modal.dataset.isHtmlContent === 'true';
+
+                console.log(`[VE-DBG] getFormData() - text type, buttons:`, buttons, `isHTML: ${isHtmlContent}`);
+
                 return {
-                    text: this.dom.modal.querySelector('#content-text').value,
-                    buttons: buttons
+                    text: textValue,
+                    buttons: buttons,
+                    isHTML: isHtmlContent
                 };
             case 'html':
                 return { text: ensureBlockIds(this.dom.modal.querySelector('#content-html').value) };

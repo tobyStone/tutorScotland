@@ -279,7 +279,19 @@ export class OverrideEngine {
         element.dataset.veManaged = 'true';
         switch (override.contentType) {
             case 'text':
-                element.textContent = override.text;
+                // Check if this is HTML content that should preserve formatting
+                if (override.isHTML || this.containsHTMLFormatting(override.text)) {
+                    // Convert editable text back to HTML and apply as innerHTML
+                    const htmlContent = override.isHTML ?
+                        this.editableTextToHTML(override.text) :
+                        override.text;
+                    element.innerHTML = htmlContent;
+                    console.log(`[VE-HTML] Applied HTML content: "${htmlContent}"`);
+                } else {
+                    // Plain text content
+                    element.textContent = override.text;
+                }
+
                 // Apply buttons - check both override.buttons and override.buttons array
                 const buttons = override.buttons || [];
                 console.log(`[VE-DBG] Applying text buttons:`, buttons);
@@ -360,6 +372,59 @@ export class OverrideEngine {
         return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
         );
+    }
+
+    /**
+     * Detect if content contains HTML formatting that should be preserved
+     * @param {string|Element} content - Content to check
+     * @returns {boolean} - True if content contains HTML formatting
+     */
+    containsHTMLFormatting(content) {
+        if (typeof content === 'string') {
+            // Check for common HTML tags that indicate formatting
+            return /<br\s*\/?>/i.test(content) ||
+                /<p\s*[^>]*>/i.test(content) ||
+                /<div\s*[^>]*>/i.test(content) ||
+                /<span\s*[^>]*>/i.test(content) ||
+                /<strong\s*[^>]*>/i.test(content) ||
+                /<em\s*[^>]*>/i.test(content) ||
+                /<b\s*[^>]*>/i.test(content) ||
+                /<i\s*[^>]*>/i.test(content);
+        } else if (content instanceof Element) {
+            // Check if element contains child elements (not just text)
+            return content.children.length > 0 ||
+                content.innerHTML !== content.textContent;
+        }
+        return false;
+    }
+
+    /**
+     * Convert HTML content to plain text for editing (br tags to newlines)
+     * @param {string} htmlContent - HTML content
+     * @returns {string} - Plain text with newlines
+     */
+    htmlToEditableText(htmlContent) {
+        return htmlContent
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<\/p>/gi, '\n')
+            .replace(/<p[^>]*>/gi, '')
+            .replace(/<[^>]*>/g, '') // Remove any other HTML tags
+            .replace(/\n\s+/g, '\n') // Remove extra whitespace after newlines
+            .replace(/\s+\n/g, '\n') // Remove extra whitespace before newlines
+            .replace(/\n{3,}/g, '\n\n') // Collapse multiple newlines to max 2
+            .trim();
+    }
+
+    /**
+     * Convert plain text back to HTML (newlines to br tags)
+     * @param {string} plainText - Plain text with newlines
+     * @returns {string} - HTML content with br tags
+     */
+    editableTextToHTML(plainText) {
+        return plainText
+            .trim()
+            .split('\n')
+            .join('<br>');
     }
 
     getElementType(element) {
@@ -493,7 +558,18 @@ export class OverrideEngine {
     restoreElementContent(el, type, original) {
         if (!original) return;
         switch (type) {
-            case 'text': el.textContent = original; break;
+            case 'text':
+                // Handle both old string format and new object format
+                if (typeof original === 'string') {
+                    el.textContent = original;
+                } else if (original.isHTML && original.originalHTML) {
+                    // Restore original HTML formatting
+                    el.innerHTML = original.originalHTML;
+                    console.log(`[VE-HTML] Restored original HTML: "${original.originalHTML}"`);
+                } else {
+                    el.textContent = original.text || original;
+                }
+                break;
             case 'html': el.innerHTML = original; break;
             case 'image': if (el.tagName === 'IMG') { el.src = original.src; el.alt = original.alt; } break;
             case 'link': if (el.tagName === 'A') { el.href = original.href; el.textContent = original.text; } break;
@@ -505,10 +581,26 @@ export class OverrideEngine {
         clone.querySelectorAll('.edit-overlay, .edit-controls, .ve-drag-handle').forEach(n => n.remove());
         switch (type) {
             case 'text':
-                // For text elements, also capture any existing text buttons
-                const textContent = clone.textContent.trim();
+                // For text elements, check if HTML formatting should be preserved
+                const hasHTMLFormatting = this.containsHTMLFormatting(clone);
                 const existingButtons = this.getExistingTextButtons(el);
-                return { text: textContent, buttons: existingButtons };
+
+                if (hasHTMLFormatting) {
+                    // Preserve HTML formatting, but convert to editable text for the editor
+                    const htmlContent = clone.innerHTML.trim();
+                    const editableText = this.htmlToEditableText(htmlContent);
+                    console.log(`[VE-HTML] Detected HTML formatting in text element. Original HTML: "${htmlContent}", Editable: "${editableText}"`);
+                    return {
+                        text: editableText,
+                        buttons: existingButtons,
+                        isHTML: true,
+                        originalHTML: htmlContent
+                    };
+                } else {
+                    // Plain text content
+                    const textContent = clone.textContent.trim();
+                    return { text: textContent, buttons: existingButtons };
+                }
             case 'html': return clone.innerHTML.trim();
             case 'image': return { src: el.src, alt: el.alt };
             case 'link': return { href: el.dataset.originalHref || el.href, text: clone.textContent.trim() };
