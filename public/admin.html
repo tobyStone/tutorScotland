@@ -1020,8 +1020,8 @@
           // Reset image field visibility (show for new sections since default is 'standard')
           const sharedFields = document.getElementById('sharedFields');
           if (sharedFields) {
-              const imageField = sharedFields.querySelector('label:has(input[name="image"])');
-              if (imageField) {
+              const imageField = sharedFields.querySelector('label');
+              if (imageField && imageField.querySelector('input[name="image"]')) {
                   imageField.style.display = 'block';
               }
           }
@@ -1180,9 +1180,9 @@
             // Hide shared image field for team sections since images are handled per team member
             const sharedFields = document.getElementById('sharedFields');
             if (sharedFields) {
-                const imageField = sharedFields.querySelector('label:has(input[name="image"])');
+                const imageField = sharedFields.querySelector('label');
                 const imagePreview = document.getElementById('currentImagePreview');
-                if (imageField) {
+                if (imageField && imageField.querySelector('input[name="image"]')) {
                     imageField.style.display = isTeam ? 'none' : 'block';
                 }
                 if (imagePreview) {
@@ -1191,13 +1191,13 @@
             }
 
             // Hide image upload for testimonial sections (they use default background)
-            const imageLabel = document.querySelector('#sharedFields label:has(input[name="image"])');
+            const imageLabel = document.querySelector('#sharedFields label');
             const imagePreview = document.getElementById('currentImagePreview');
             if (isTestimonial) {
-                if (imageLabel) imageLabel.style.display = 'none';
+                if (imageLabel && imageLabel.querySelector('input[name="image"]')) imageLabel.style.display = 'none';
                 if (imagePreview) imagePreview.style.display = 'none';
             } else {
-                if (imageLabel) imageLabel.style.display = 'block';
+                if (imageLabel && imageLabel.querySelector('input[name="image"]') && !isTeam) imageLabel.style.display = 'block';
                 // imagePreview visibility is handled by existing logic
             }
 
@@ -1833,9 +1833,9 @@
                         // Hide shared image field for team sections since images are handled per team member
                         const sharedFields = document.getElementById('sharedFields');
                         if (sharedFields) {
-                            const imageField = sharedFields.querySelector('label:has(input[name="image"])');
+                            const imageField = sharedFields.querySelector('label');
                             const imagePreview = document.getElementById('currentImagePreview');
-                            if (imageField) {
+                            if (imageField && imageField.querySelector('input[name="image"]')) {
                                 imageField.style.display = 'none';
                             }
                             if (imagePreview) {
@@ -1893,8 +1893,8 @@
                         // Show shared image field for list sections
                         const sharedFieldsList = document.getElementById('sharedFields');
                         if (sharedFieldsList) {
-                            const imageField = sharedFieldsList.querySelector('label:has(input[name="image"])');
-                            if (imageField) {
+                            const imageField = sharedFieldsList.querySelector('label');
+                            if (imageField && imageField.querySelector('input[name="image"]')) {
                                 imageField.style.display = 'block';
                             }
                         }
@@ -1939,8 +1939,8 @@
                         // Show shared image field for testimonial sections
                         const sharedFieldsTestimonial = document.getElementById('sharedFields');
                         if (sharedFieldsTestimonial) {
-                            const imageField = sharedFieldsTestimonial.querySelector('label:has(input[name="image"])');
-                            if (imageField) {
+                            const imageField = sharedFieldsTestimonial.querySelector('label');
+                            if (imageField && imageField.querySelector('input[name="image"]')) {
                                 imageField.style.display = 'block';
                             }
                         }
@@ -1960,8 +1960,8 @@
                         // Show shared image field for non-team sections
                         const sharedFields = document.getElementById('sharedFields');
                         if (sharedFields) {
-                            const imageField = sharedFields.querySelector('label:has(input[name="image"])');
-                            if (imageField) {
+                            const imageField = sharedFields.querySelector('label');
+                            if (imageField && imageField.querySelector('input[name="image"]')) {
                                 imageField.style.display = 'block';
                             }
                         }
