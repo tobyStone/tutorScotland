@@ -1017,6 +1017,15 @@
           showInNav.checked = false;
           navCatRow.style.display = 'none';
 
+          // Reset image field visibility (show for new sections since default is 'standard')
+          const sharedFields = document.getElementById('sharedFields');
+          if (sharedFields) {
+              const imageField = sharedFields.querySelector('label:has(input[name="image"])');
+              if (imageField) {
+                  imageField.style.display = 'block';
+              }
+          }
+
           toggleFields();                    // (function already defined earlier)
           // ensure layout-specific visibility is reapplied
           sectionLayout.dispatchEvent(new Event('change'));
@@ -1167,6 +1176,19 @@
             teamBuilder.style.display = isTeam ? 'block' : 'none';
             listBuilder.style.display = isList ? 'block' : 'none';
             testimonialBuilder.style.display = isTestimonial ? 'block' : 'none';
+
+            // Hide shared image field for team sections since images are handled per team member
+            const sharedFields = document.getElementById('sharedFields');
+            if (sharedFields) {
+                const imageField = sharedFields.querySelector('label:has(input[name="image"])');
+                const imagePreview = document.getElementById('currentImagePreview');
+                if (imageField) {
+                    imageField.style.display = isTeam ? 'none' : 'block';
+                }
+                if (imagePreview) {
+                    imagePreview.style.display = isTeam ? 'none' : imagePreview.style.display;
+                }
+            }
 
             // Hide image upload for testimonial sections (they use default background)
             const imageLabel = document.querySelector('#sharedFields label:has(input[name="image"])');
@@ -1808,6 +1830,19 @@
                         });
                         updateTeamData(); // Sync the populated data to the hidden input
 
+                        // Hide shared image field for team sections since images are handled per team member
+                        const sharedFields = document.getElementById('sharedFields');
+                        if (sharedFields) {
+                            const imageField = sharedFields.querySelector('label:has(input[name="image"])');
+                            const imagePreview = document.getElementById('currentImagePreview');
+                            if (imageField) {
+                                imageField.style.display = 'none';
+                            }
+                            if (imagePreview) {
+                                imagePreview.style.display = 'none';
+                            }
+                        }
+
                     } else if (section.layout === 'list') {
                         sectionFormHeading.textContent = 'Edit List Section';
 
@@ -1855,6 +1890,15 @@
 
                         updateListData();
 
+                        // Show shared image field for list sections
+                        const sharedFieldsList = document.getElementById('sharedFields');
+                        if (sharedFieldsList) {
+                            const imageField = sharedFieldsList.querySelector('label:has(input[name="image"])');
+                            if (imageField) {
+                                imageField.style.display = 'block';
+                            }
+                        }
+
                     } else if (section.layout === 'testimonial') {
                         sectionFormHeading.textContent = 'Edit Testimonial Section';
 
@@ -1892,6 +1936,15 @@
 
                         updateTestimonialData();
 
+                        // Show shared image field for testimonial sections
+                        const sharedFieldsTestimonial = document.getElementById('sharedFields');
+                        if (sharedFieldsTestimonial) {
+                            const imageField = sharedFieldsTestimonial.querySelector('label:has(input[name="image"])');
+                            if (imageField) {
+                                imageField.style.display = 'block';
+                            }
+                        }
+
                     } else { // It's a 'standard' layout
                         sectionFormHeading.textContent = 'Edit Dynamic Section'; // UI Nicety
                         addSectionForm.querySelector('[name="text"]').value = section.text;
@@ -1903,6 +1956,15 @@
                             currentImagePreview.style.display = 'none';
                         }
                         document.querySelector('input[name="removeImage"]').checked = false;
+
+                        // Show shared image field for non-team sections
+                        const sharedFields = document.getElementById('sharedFields');
+                        if (sharedFields) {
+                            const imageField = sharedFields.querySelector('label:has(input[name="image"])');
+                            if (imageField) {
+                                imageField.style.display = 'block';
+                            }
+                        }
                     }
 
                     // ---- Populate common fields for ALL layouts ----
