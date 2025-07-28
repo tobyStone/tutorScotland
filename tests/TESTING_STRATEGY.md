@@ -30,7 +30,7 @@ The dynamic content system has several interconnected parts that must work toget
 1. **Static HTML Pages** with dynamic sections
 2. **Composed Pages** built from multiple sections
 3. **Admin Interface** for managing both of these
-4. **API Endpoints** that serve different content types
+4. **API Endpoints** that serve several different content types
 
 ### Critical Test Scenarios
 
