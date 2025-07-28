@@ -2836,7 +2836,7 @@ header {
       width:100%;           /* logical width = visual width        */
       position:relative;
       left:auto;
-      margin:0;
+      margin: 0 auto;       /* Center horizontally, reset vertical margins */
 
       /* keep horizontal safety-net               */
       overflow-x:hidden;
@@ -2863,5 +2863,10 @@ header {
         max-width: 320px; /* keeps the desktop look           */
         margin: 0 auto 20px; /* nice centred column              */
     }
+
+  /* 🎯 Center static testimonials in restricted viewports */
+  main > .testimonials-bg-section {
+      margin: 0 auto !important;
+  }
 }
 
