@@ -70,11 +70,13 @@
     .testimonials-laced .testimonial-quote-card:nth-child(3) {
         position: relative !important;
         top: auto !important;
-        left: auto !important;
-        right: auto !important;
+        left: auto !important; /* Override styles2.css 900px rule */
+        right: auto !important; /* Override styles2.css 900px rule */
         bottom: auto !important;
         transform: translateX(0) !important; /* Override the translateX(77%) from tablet rules */
         margin: 1.5rem auto !important;
+        margin-left: auto !important; /* Ensure centering - override 900px rule */
+        margin-right: auto !important; /* Ensure centering - override 900px rule */
         display: block !important;
         max-width: 85% !important;
         width: 85% !important;
