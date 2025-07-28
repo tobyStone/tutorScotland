@@ -58,6 +58,8 @@
     .testimonials-laced {
         min-height: auto !important; /* Override the 550px min-height */
         padding: 2rem 1rem !important;
+        margin: 0 auto !important;
+        text-align: center !important; /* This will center the absolutely positioned children */
     }
 
     .testimonials-bg-section .testimonial-quote-card,
@@ -83,11 +85,8 @@
         padding: 2rem 1rem !important;
         min-height: auto !important;
         height: auto !important;
-        /* Allow section to expand based on content */
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: flex-start !important;
-        align-items: center !important;
+        /* Keep original display behavior - don't use flex for absolutely positioned children */
+        display: block !important;
         /* Ensure proper centering in restricted viewports */
         width: 100% !important;
         position: relative !important;
@@ -110,12 +109,19 @@
         overflow-x: hidden !important;
         overflow-y: visible !important;
         min-height: auto !important;
+        /* Ensure section is visible and properly sized */
+        display: block !important;
+        height: auto !important;
     }
 
     /* Ensure STRIVE overlay card is properly positioned */
     .strive-overlay-card {
         max-width: 92vw !important;
         margin: 0 auto !important;
+        position: relative !important; /* Ensure it's not absolutely positioned */
+        top: auto !important;
+        right: auto !important;
+        transform: none !important; /* Override any transforms */
     }
 }
 
@@ -194,5 +200,38 @@
 @media (orientation: landscape) {
     .cta-banner {
         transform: translateX(-7px) !important;
+    }
+}
+
+/* Landscape-specific fixes for restricted viewports */
+@media (orientation: landscape) and (max-width: 1200px) {
+    /* Prevent STRIVE section cropping in landscape restricted viewports */
+    .strive-bg-section {
+        width: 100% !important;
+        position: relative !important;
+        left: auto !important;
+        right: auto !important;
+        margin: 0 auto !important;
+        transform: none !important; /* Override the translateX(10px) that causes cropping */
+        overflow-x: hidden !important;
+        overflow-y: visible !important;
+        min-height: 400px !important; /* Ensure minimum height for landscape */
+        height: auto !important;
+    }
+
+    /* Ensure STRIVE overlay card fits in landscape */
+    .strive-overlay-card {
+        max-width: 85vw !important; /* Slightly smaller for landscape */
+        margin: 0 auto !important;
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        transform: none !important;
+        padding: 1.5rem 1rem !important; /* Reduce padding for landscape */
+    }
+
+    /* Override any CTA banner transforms that might affect layout */
+    .cta-banner {
+        transform: none !important; /* Remove the translateX(-7px) if it's causing issues */
     }
 }
