@@ -1785,6 +1785,17 @@ header {
     justify-content: flex-start;
 }
 
+/* Base positioning rules for testimonial cards - DESKTOP VIEW */
+.testimonials-laced {
+    position: relative; /* Establishes the positioning container for the absolute children */
+    min-height: 550px;  /* Ensures the container has height so cards don't overflow */
+}
+
+.testimonials-laced .testimonial-quote-card {
+    position: absolute; /* THIS IS THE CRUCIAL MISSING PIECE */
+    max-width: 350px;   /* A good default max-width for the cards */
+}
+
 /* Desktop positioning for testimonial cards */
 .testimonials-laced .card-1 {
     top: 10%;
