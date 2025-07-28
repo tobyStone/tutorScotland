@@ -2860,10 +2860,12 @@ header {
 
   /* 1️⃣  Keep the background full-width but cancel the old trickery */
   .strive-bg-section, .testimonials-bg-section{
-      width:100%;           /* logical width = visual width        */
-      position:relative;
-      left:auto;
-      margin: 0 auto;       /* Center horizontally, reset vertical margins */
+      width:100% !important;           /* logical width = visual width - FORCE OVERRIDE */
+      position:relative !important;
+      left:auto !important;            /* FORCE OVERRIDE of left: 50% */
+      right:auto !important;           /* FORCE OVERRIDE of right: 50% */
+      margin-left: auto !important;    /* FORCE OVERRIDE of margin-left: -50vw */
+      margin-right: auto !important;   /* FORCE OVERRIDE of margin-right: -50vw */
 
       /* keep horizontal safety-net               */
       overflow-x:hidden;
