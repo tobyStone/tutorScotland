@@ -106,6 +106,7 @@
         background-size: cover !important;
         background-position: center !important;
         background-repeat: no-repeat !important;
+        box-sizing: border-box !important; /* THE CRUCIAL MISSING PIECE - prevents oversizing */
     }
 
     /* Fix STRIVE section positioning in restricted portrait viewports */
