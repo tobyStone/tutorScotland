@@ -67,7 +67,10 @@
     .testimonials-bg-section .testimonial-quote-card,
     .testimonials-laced .testimonial-quote-card:nth-child(1),
     .testimonials-laced .testimonial-quote-card:nth-child(2),
-    .testimonials-laced .testimonial-quote-card:nth-child(3) {
+    .testimonials-laced .testimonial-quote-card:nth-child(3),
+    .testimonials-laced .card-1,
+    .testimonials-laced .card-2,
+    .testimonials-laced .card-3 {
         position: relative !important;
         top: auto !important;
         left: auto !important; /* Override styles2.css 900px rule */

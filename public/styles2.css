@@ -1784,6 +1784,22 @@ header {
     align-items: flex-start;
     justify-content: flex-start;
 }
+
+/* Desktop positioning for testimonial cards */
+.testimonials-laced .card-1 {
+    top: 10%;
+    left: 12%;
+}
+
+.testimonials-laced .card-2 {
+    top: 40%;
+    right: 10%;
+}
+
+.testimonials-laced .card-3 {
+    bottom: 12%;
+    left: 30%;
+}
 .testimonial-quote-card span {
     color: #0057B7;
     font-size: 0.98rem;
