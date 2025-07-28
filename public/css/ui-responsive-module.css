@@ -94,6 +94,9 @@
         position: relative !important;
         left: auto !important;
         margin: 0 auto !important;
+        /* ADD THESE LINES FOR BETTER CENTERING: */
+        text-align: center !important;
+        transform: translateX(0) !important; /* Override any inherited transforms */
         /* Ensure background covers the expanded area */
         background-size: cover !important;
         background-position: center !important;
