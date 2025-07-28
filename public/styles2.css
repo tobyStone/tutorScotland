@@ -2263,6 +2263,8 @@ header {
         .testimonial-quote-card {
             max-width: 85%;
             width: 85%;
+            left: 0 !important;
+            right: 0 !important;
             margin-left: auto;
             margin-right: auto;
         }
@@ -2274,6 +2276,7 @@ header {
 
         .testimonials-laced .testimonial-quote-card:nth-child(2) {
             top: 37% !important;
+            right: 0 !important;
         }
 
         .testimonials-laced .testimonial-quote-card:nth-child(3) {
