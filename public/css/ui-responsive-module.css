@@ -89,6 +89,7 @@
 
     /* Ensure testimonial section expands to fit stacked content and is centered */
     .testimonials-bg-section {
+        max-width: 1080px !important; /* THE KEY - match other sections' container pattern */
         padding: 2rem 1rem !important;
         min-height: auto !important;
         height: auto !important;
