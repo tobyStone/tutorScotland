@@ -8,7 +8,7 @@ const connectToDatabase = require('./connectToDatabase');
 let User;
 async function getUserModel() {
     if (!User) {
-        const userModule = await import('../models/user.js');
+        const userModule = await import('../models/User.js');
         User = userModule.default;
     }
     return User;
