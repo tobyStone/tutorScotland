@@ -62,8 +62,7 @@ export async function seedTestData() {
     try {
         User = mongoose.model('User');
     } catch {
-        const userModule = await import('../../models/user.js');
-        User = userModule.default;
+        User = require('../../models/user.js');
     }
     const bcrypt = require('bcryptjs');
     

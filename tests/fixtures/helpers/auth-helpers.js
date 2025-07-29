@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import User from '../../../models/user.js';
+const User = require('../../../models/user.js');
 
 /**
  * Create a test user with hashed password

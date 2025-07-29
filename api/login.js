@@ -4,14 +4,20 @@ const jwt = require('jsonwebtoken');
 const { serialize, parse } = require('cookie');  // <-- important for setting cookies manually
 const connectToDatabase = require('./connectToDatabase');
 
-// Import User model using dynamic import for ES6 compatibility
+// Import User model - use try/catch approach similar to tutors.js
 let User;
-async function getUserModel() {
-    if (!User) {
-        const userModule = await import('../models/User.js');
-        User = userModule.default;
+try {
+    // Try to get the existing model first
+    User = require('mongoose').model('User');
+} catch {
+    // If it doesn't exist, import it from the models directory
+    try {
+        User = require('../models/user.js');
+    } catch (error) {
+        console.error('Error importing User model:', error);
+        // This will cause the login to fail, which is appropriate
+        User = null;
     }
-    return User;
 }
 
 module.exports = async (req, res) => {
@@ -28,10 +34,15 @@ module.exports = async (req, res) => {
     const { email, password } = req.body;
     try {
         await connectToDatabase();
-        const UserModel = await getUserModel();
+
+        // Check if User model is available
+        if (!User) {
+            console.error('User model is not available');
+            return res.status(500).json({ message: 'Server error: User model not available' });
+        }
 
         // Search for the user by email (case-insensitive)
-        const user = await UserModel.findOne({ email: new RegExp('^' + email + '$', 'i') });
+        const user = await User.findOne({ email: new RegExp('^' + email + '$', 'i') });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
