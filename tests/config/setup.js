@@ -19,7 +19,7 @@ beforeEach(async () => {
 // Global test utilities
 global.testUtils = {
   createTestUser: async (role = 'admin') => {
-    const User = require('../../models/user.js');
+    const { default: User } = await import('../../models/user.js');
     const bcrypt = require('bcryptjs');
     
     return await User.create({

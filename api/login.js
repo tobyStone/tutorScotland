@@ -2,8 +2,17 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { serialize, parse } = require('cookie');  // <-- important for setting cookies manually
-const User = require('../models/User');
 const connectToDatabase = require('./connectToDatabase');
+
+// Import User model using dynamic import for ES6 compatibility
+let User;
+async function getUserModel() {
+    if (!User) {
+        const userModule = await import('../models/user.js');
+        User = userModule.default;
+    }
+    return User;
+}
 
 module.exports = async (req, res) => {
     // Handle auth check requests
@@ -19,9 +28,10 @@ module.exports = async (req, res) => {
     const { email, password } = req.body;
     try {
         await connectToDatabase();
+        const UserModel = await getUserModel();
 
         // Search for the user by email (case-insensitive)
-        const user = await User.findOne({ email: new RegExp('^' + email + '$', 'i') });
+        const user = await UserModel.findOne({ email: new RegExp('^' + email + '$', 'i') });
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }

@@ -58,7 +58,13 @@ export async function clearTestDB() {
 
 // Helper function to create test data
 export async function seedTestData() {
-    const User = mongoose.model('User') || require('../../models/user.js');
+    let User;
+    try {
+        User = mongoose.model('User');
+    } catch {
+        const userModule = await import('../../models/user.js');
+        User = userModule.default;
+    }
     const bcrypt = require('bcryptjs');
     
     // Create test admin user
