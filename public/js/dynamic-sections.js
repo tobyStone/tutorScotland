@@ -114,8 +114,9 @@ function loadDynamicSections() {
                     topSections.forEach((s, index) => {
                         const sectionElement = createDynamicSectionElement(s, index);
                         // Only wrap standard text/image sections in dyn-block
-                        // Team, list, and testimonial sections have their own styling containers
-                        if (s.layout === 'team' || s.layout === 'list' || s.layout === 'testimonial') {
+                        // Team and list sections have their own styling containers
+                        // Testimonial sections now use standard dyn-block wrapper for consistency
+                        if (s.layout === 'team' || s.layout === 'list') {
                             topContainer.appendChild(sectionElement);
                         } else {
                             const wrapper = document.createElement('div');
@@ -137,8 +138,9 @@ function loadDynamicSections() {
                     middleSections.forEach((s, index) => {
                         const sectionElement = createDynamicSectionElement(s, index);
                         // Only wrap standard text/image sections in dyn-block
-                        // Team, list, and testimonial sections have their own styling containers
-                        if (s.layout === 'team' || s.layout === 'list' || s.layout === 'testimonial') {
+                        // Team and list sections have their own styling containers
+                        // Testimonial sections now use standard dyn-block wrapper for consistency
+                        if (s.layout === 'team' || s.layout === 'list') {
                             middleContainer.appendChild(sectionElement);
                         } else {
                             const wrapper = document.createElement('div');
@@ -160,8 +162,9 @@ function loadDynamicSections() {
                     bottomSections.forEach((s, index) => {
                         const sectionElement = createDynamicSectionElement(s, index);
                         // Only wrap standard text/image sections in dyn-block
-                        // Team, list, and testimonial sections have their own styling containers
-                        if (s.layout === 'team' || s.layout === 'list' || s.layout === 'testimonial') {
+                        // Team and list sections have their own styling containers
+                        // Testimonial sections now use standard dyn-block wrapper for consistency
+                        if (s.layout === 'team' || s.layout === 'list') {
                             bottomContainer.appendChild(sectionElement);
                         } else {
                             const wrapper = document.createElement('div');
@@ -638,7 +641,7 @@ function createListSectionElement(section, index, article) {
 }
 
 /**
- * Create a testimonial section element that mirrors testimonials background section
+ * Create a testimonial section element using standard dynamic section pattern
  */
 function createTestimonialSectionElement(section, index, article) {
     // Parse testimonial content - handle both old single format and new array format
@@ -660,46 +663,55 @@ function createTestimonialSectionElement(section, index, article) {
         testimonialData = [];
     }
 
-    // Create the outer section wrapper to match testimonials-bg-section
-    const testimonialWrapper = document.createElement('section');
-    testimonialWrapper.className = 'testimonials-bg-section fade-in-section testimonials-laced';
-    testimonialWrapper.style.transitionDelay = `${index * 0.1}s`;
-    testimonialWrapper.dataset.veSectionId = section._id || slugify(section.heading);
-
-    // Apply background image if provided (with same styling as existing testimonials)
-    if (section.image) {
-        testimonialWrapper.style.backgroundImage = `linear-gradient(rgba(0, 27, 68, 0.7), rgba(0, 87, 183, 0.7)), url('${section.image}')`;
-        testimonialWrapper.style.backgroundSize = 'cover';
-        testimonialWrapper.style.backgroundPosition = 'center';
-        testimonialWrapper.style.backgroundRepeat = 'no-repeat';
-    }
+    // Create standard article element (like other dynamic sections)
+    const testimonialArticle = document.createElement('article');
+    testimonialArticle.className = 'fade-in-section';
+    testimonialArticle.style.transitionDelay = `${index * 0.1}s`;
+    testimonialArticle.dataset.veSectionId = section._id || slugify(section.heading);
 
     // Add anchor ID for navigation linking
     if (section.navAnchor) {
-        testimonialWrapper.id = section.navAnchor;
+        testimonialArticle.id = section.navAnchor;
     } else if (section.heading) {
-        testimonialWrapper.id = slugify(section.heading);
+        testimonialArticle.id = slugify(section.heading);
     }
 
-    // Create testimonial quote cards for each testimonial
+    // Add heading if provided
+    if (section.heading) {
+        const heading = document.createElement('h2');
+        heading.textContent = section.heading;
+        heading.dataset.veBlockId = `${section._id}-heading` || uuidv4();
+        testimonialArticle.appendChild(heading);
+    }
+
+    // Add image if provided
+    if (section.image) {
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'dyn-image-container';
+        imageContainer.style.cssText = 'text-align: center; margin: 1.5rem 0;';
+
+        const img = document.createElement('img');
+        img.src = section.image;
+        img.alt = section.heading || 'Testimonial image';
+        img.style.cssText = 'max-width: 100%; height: auto; border-radius: 0.5rem;';
+        img.dataset.veBlockId = `${section._id}-image` || uuidv4();
+
+        imageContainer.appendChild(img);
+        testimonialArticle.appendChild(imageContainer);
+    }
+
+    // Create testimonials container
+    const testimonialsContainer = document.createElement('div');
+    testimonialsContainer.className = 'testimonials-container';
+    testimonialsContainer.style.cssText = 'display: flex; flex-direction: column; gap: 1.5rem; margin-top: 1.5rem;';
+
+    // Create testimonial cards (stacked vertically, no absolute positioning)
     if (testimonialData.length > 0) {
         testimonialData.forEach((testimonial, testimonialIndex) => {
             const quoteCard = document.createElement('div');
             quoteCard.className = 'testimonial-quote-card';
-
-            // Position multiple quotes in a staggered layout
-            if (testimonialData.length === 1) {
-                quoteCard.style.cssText = 'top:20%;left:50%;transform:translateX(-50%);'; // Center single quote
-            } else {
-                // Stagger multiple quotes like the existing testimonials section
-                const positions = [
-                    'top:10%;left:20%;',
-                    'top:35%;right:20%;',
-                    'top:60%;left:15%;'
-                ];
-                const position = positions[testimonialIndex % positions.length];
-                quoteCard.style.cssText = position;
-            }
+            // Remove all inline positioning - let it flow naturally
+            quoteCard.style.cssText = 'position: relative; margin: 0 auto; max-width: 100%;';
 
             // Create the quote content
             const quoteParagraph = document.createElement('p');
@@ -730,11 +742,18 @@ function createTestimonialSectionElement(section, index, article) {
                 quoteCard.appendChild(ratingDiv);
             }
 
-            testimonialWrapper.appendChild(quoteCard);
+            testimonialsContainer.appendChild(quoteCard);
         });
     }
 
-    return testimonialWrapper;
+    testimonialArticle.appendChild(testimonialsContainer);
+
+    // Add button if available
+    if (section.buttonLabel && section.buttonUrl) {
+        testimonialArticle.insertAdjacentHTML('beforeend', buttonHtml(section));
+    }
+
+    return testimonialArticle;
 }
 
 /**

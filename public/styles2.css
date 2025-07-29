@@ -1635,19 +1635,26 @@ header {
     overflow: hidden;
 }
 
-/* Ensure testimonial sections in dynamic containers can extend full-width */
-.dynamic-section-container .testimonials-bg-section,
-#dynamicSections .testimonials-bg-section,
-#dynamicSectionsTop .testimonials-bg-section,
-#dynamicSectionsMiddle .testimonials-bg-section,
-#dynamicSectionsBottom .testimonials-bg-section {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    max-width: none !important; /* Override container max-width constraint */
+/* Dynamic testimonials now use standard dyn-block pattern - no special full-width rules needed */
+
+/* Styling for dynamic testimonials within dyn-block containers */
+.dyn-block .testimonials-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.dyn-block .testimonial-quote-card {
+    position: relative !important; /* Override any absolute positioning */
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    width: auto !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
 }
 
 .strive-bg-section {
@@ -2310,18 +2317,7 @@ header {
             top: 57% !important;
         }
 
-        /* Ensure dynamic testimonials maintain full-width on smaller screens */
-        .dynamic-section-container .testimonials-bg-section,
-        #dynamicSections .testimonials-bg-section,
-        #dynamicSectionsTop .testimonials-bg-section,
-        #dynamicSectionsMiddle .testimonials-bg-section,
-        #dynamicSectionsBottom .testimonials-bg-section {
-            width: 100vw;
-            margin-left: -50vw;
-            margin-right: -50vw;
-            left: 50%;
-            right: 50%;
-        }
+        /* Dynamic testimonials now use standard dyn-block pattern - no special responsive rules needed */
 
         /* Portrait-specific adjustments */
         @media (orientation: portrait) {
