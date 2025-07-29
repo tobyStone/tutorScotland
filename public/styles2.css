@@ -1664,6 +1664,13 @@ header {
     right: auto !important;
     bottom: auto !important;
     transform: none !important;
+    /* Apply same styling as static testimonials */
+    background: rgba(255,255,255,0.93) !important;
+    box-shadow: 0 2px 12px rgba(200,162,200,0.13) !important;
+    border-radius: 1.5rem 1.5rem 3.5rem 1.5rem !important;
+    padding: 1.2rem 1.1rem !important;
+    color: #222 !important;
+    font-size: 1.08rem !important;
 }
 
 .strive-bg-section {
