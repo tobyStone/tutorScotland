@@ -686,9 +686,8 @@ function createTestimonialSectionElement(section, index, article) {
     console.log('Final testimonial data array:', testimonialData, 'Length:', testimonialData.length);
 
     // Create standard article element (like other dynamic sections)
+    // Note: Don't add fade-in-section class since testimonials are wrapped in dyn-block
     const testimonialArticle = document.createElement('article');
-    testimonialArticle.className = 'fade-in-section';
-    testimonialArticle.style.transitionDelay = `${index * 0.1}s`;
     testimonialArticle.dataset.veSectionId = section._id || slugify(section.heading);
 
     // Add anchor ID for navigation linking
