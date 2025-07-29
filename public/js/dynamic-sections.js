@@ -644,24 +644,37 @@ function createListSectionElement(section, index, article) {
  * Create a testimonial section element using standard dynamic section pattern
  */
 function createTestimonialSectionElement(section, index, article) {
+    // Add debugging to see what we're working with
+    console.log('Creating testimonial section with data:', {
+        sectionId: section._id,
+        heading: section.heading,
+        text: section.text,
+        textType: typeof section.text
+    });
+
     // Parse testimonial content - handle both old single format and new array format
     let testimonialData;
     try {
         testimonialData = typeof section.text === 'string' ? JSON.parse(section.text) : section.text;
+        console.log('Parsed testimonial data:', testimonialData);
     } catch (e) {
-        console.error('Failed to parse testimonial section data:', e);
+        console.error('Failed to parse testimonial section data:', e, 'Raw text:', section.text);
         testimonialData = [];
     }
 
     // Convert old single testimonial format to array format
-    if (testimonialData.quote && !Array.isArray(testimonialData)) {
+    if (testimonialData && testimonialData.quote && !Array.isArray(testimonialData)) {
+        console.log('Converting single testimonial to array format');
         testimonialData = [testimonialData];
     }
 
     // Ensure we have an array
     if (!Array.isArray(testimonialData)) {
+        console.log('No valid testimonial data found, creating empty array');
         testimonialData = [];
     }
+
+    console.log('Final testimonial data array:', testimonialData);
 
     // Create standard article element (like other dynamic sections)
     const testimonialArticle = document.createElement('article');
@@ -708,6 +721,12 @@ function createTestimonialSectionElement(section, index, article) {
     // Create testimonial cards (stacked vertically, no absolute positioning)
     if (testimonialData.length > 0) {
         testimonialData.forEach((testimonial, testimonialIndex) => {
+            // Skip empty testimonials
+            if (!testimonial || !testimonial.quote) {
+                console.log('Skipping empty testimonial at index:', testimonialIndex);
+                return;
+            }
+
             const quoteCard = document.createElement('div');
             quoteCard.className = 'testimonial-quote-card';
             // Remove all inline positioning - let it flow naturally
@@ -744,6 +763,12 @@ function createTestimonialSectionElement(section, index, article) {
 
             testimonialsContainer.appendChild(quoteCard);
         });
+    } else {
+        // Add a placeholder if no testimonials found
+        const placeholder = document.createElement('p');
+        placeholder.textContent = 'No testimonials available.';
+        placeholder.style.cssText = 'text-align: center; color: #666; font-style: italic;';
+        testimonialsContainer.appendChild(placeholder);
     }
 
     testimonialArticle.appendChild(testimonialsContainer);
