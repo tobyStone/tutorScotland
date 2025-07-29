@@ -12,7 +12,7 @@ try {
 } catch {
     // If it doesn't exist, import it from the models directory
     try {
-        User = require('../models/user.js');
+        User = require('../models/User.js');
     } catch (error) {
         console.error('Error importing User model:', error);
         // This will cause the login to fail, which is appropriate
