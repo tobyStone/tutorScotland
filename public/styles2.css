@@ -1638,6 +1638,15 @@ header {
 /* Dynamic testimonials now use standard dyn-block pattern - no special full-width rules needed */
 
 /* Styling for dynamic testimonials within dyn-block containers */
+/* Apply testimonials background to dynamic testimonial sections */
+.dyn-block:has(.testimonials-container) {
+    background: linear-gradient(rgba(255,255,255,0.65), rgba(255,255,255,0.55)), url('/images/parentAndChild.png') center/cover no-repeat;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .dyn-block .testimonials-container {
     display: flex;
     flex-direction: column;
