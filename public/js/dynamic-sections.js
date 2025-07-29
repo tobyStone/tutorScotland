@@ -657,20 +657,24 @@ function createTestimonialSectionElement(section, index, article) {
     try {
         testimonialData = typeof section.text === 'string' ? JSON.parse(section.text) : section.text;
         console.log('Parsed testimonial data:', testimonialData);
+
+        // Handle the case where data is already an array (new format from admin form)
+        if (Array.isArray(testimonialData)) {
+            console.log('Data is already an array, using as-is');
+            // testimonialData is already correct
+        }
+        // Handle old single testimonial format
+        else if (testimonialData && testimonialData.quote && typeof testimonialData === 'object') {
+            console.log('Converting single testimonial object to array format');
+            testimonialData = [testimonialData];
+        }
+        // Handle invalid data
+        else {
+            console.log('Invalid testimonial data format, creating empty array');
+            testimonialData = [];
+        }
     } catch (e) {
         console.error('Failed to parse testimonial section data:', e, 'Raw text:', section.text);
-        testimonialData = [];
-    }
-
-    // Convert old single testimonial format to array format
-    if (testimonialData && testimonialData.quote && !Array.isArray(testimonialData)) {
-        console.log('Converting single testimonial to array format');
-        testimonialData = [testimonialData];
-    }
-
-    // Ensure we have an array
-    if (!Array.isArray(testimonialData)) {
-        console.log('No valid testimonial data found, creating empty array');
         testimonialData = [];
     }
 
