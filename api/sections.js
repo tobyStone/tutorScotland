@@ -303,6 +303,30 @@ module.exports = async (req, res) => {
                     }
                 }
 
+                // ✅ NEW: Validate testimonial JSON format
+                if (layout === 'testimonial' && text) {
+                    try {
+                        const testimonialData = JSON.parse(text);
+                        if (!Array.isArray(testimonialData)) {
+                            return res.status(400).json({ message: 'Testimonial data must be an array' });
+                        }
+                        // Validate each testimonial has required fields
+                        for (let i = 0; i < testimonialData.length; i++) {
+                            const testimonial = testimonialData[i];
+                            if (!testimonial.quote || typeof testimonial.quote !== 'string') {
+                                return res.status(400).json({ message: `Testimonial ${i + 1} missing required quote field` });
+                            }
+                            if (!testimonial.author || typeof testimonial.author !== 'string') {
+                                return res.status(400).json({ message: `Testimonial ${i + 1} missing required author field` });
+                            }
+                        }
+                        console.log('✅ Testimonial JSON validation passed:', testimonialData.length, 'testimonials');
+                    } catch (e) {
+                        console.error('❌ Invalid testimonial JSON:', e.message, 'Raw text:', text);
+                        return res.status(400).json({ message: 'Invalid testimonial JSON format: ' + e.message });
+                    }
+                }
+
                 // Optional image (skip for testimonial sections - they use default background)
                 let image = '';
 

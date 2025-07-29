@@ -1680,6 +1680,28 @@
                     return alert('Please add at least one testimonial');
                 }
 
+                // ✅ NEW: Validate testimonial JSON before submitting
+                try {
+                    const testimonialData = JSON.parse(testimonialsJson);
+                    if (!Array.isArray(testimonialData)) {
+                        return alert('Invalid testimonial data format - must be an array');
+                    }
+                    // Validate each testimonial has required fields
+                    for (let i = 0; i < testimonialData.length; i++) {
+                        const testimonial = testimonialData[i];
+                        if (!testimonial.quote || typeof testimonial.quote !== 'string') {
+                            return alert(`Testimonial ${i + 1} is missing a quote`);
+                        }
+                        if (!testimonial.author || typeof testimonial.author !== 'string') {
+                            return alert(`Testimonial ${i + 1} is missing an author`);
+                        }
+                    }
+                    console.log('✅ Client-side testimonial validation passed:', testimonialData.length, 'testimonials');
+                } catch (e) {
+                    console.error('❌ Invalid testimonial JSON on client:', e.message);
+                    return alert('Invalid testimonial data format: ' + e.message);
+                }
+
                 // Use the testimonials array directly
                 fd.set('text', testimonialsJson);
                 // Testimonial sections now support background images
