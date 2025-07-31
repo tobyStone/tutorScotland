@@ -44,7 +44,7 @@ The dynamic content system has several interconnected parts that must work toget
 **Key Assertions**:
 - New composed pages appear in admin dropdown
 - Sections can be created targeting new pages
-- Static page sections continue to work
+- Static page sections to continue to work
 
 #### 2. API Endpoint Compatibility
 **Problem**: Changes to one API endpoint can break other parts of the system.
