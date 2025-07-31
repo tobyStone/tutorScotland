@@ -355,7 +355,7 @@ module.exports = async (req, res) => {
                 }
 
                 // Handle slug for full pages
-                let slug = '';
+                let slug; // ✅ Use undefined for standard sections to work with sparse index
                 if (isFullPage) {
                     slug = fields.slug ?
                         (Array.isArray(fields.slug) ? fields.slug[0] : fields.slug).toString().toLowerCase().trim().replace(/\s+/g, '-')
@@ -374,6 +374,7 @@ module.exports = async (req, res) => {
                     // For full pages, set the page field to the slug
                     page = slug;
                 }
+                // For standard sections, slug remains undefined (not included in document)
 
                 // Check if page should be published
                 const isPublished = fields.isPublished ?
@@ -439,11 +440,19 @@ module.exports = async (req, res) => {
                     headingBlockId, contentBlockId, imageBlockId, buttonBlockId
                 });
 
-                const doc = await Section.create({
-                    page, heading, text, image, isFullPage, slug, isPublished, position, buttonLabel, buttonUrl,
+                // Build document data, only including slug if it has a value
+                const docData = {
+                    page, heading, text, image, isFullPage, isPublished, position, buttonLabel, buttonUrl,
                     navCategory, showInNav, navAnchor, layout, team,
                     headingBlockId, contentBlockId, imageBlockId, buttonBlockId
-                });
+                };
+
+                // Only include slug field if it has a value (for full pages)
+                if (slug !== undefined) {
+                    docData.slug = slug;
+                }
+
+                const doc = await Section.create(docData);
                 console.log('Section created:', doc);
                 return res.status(201).json(doc);
             } catch (e) {
