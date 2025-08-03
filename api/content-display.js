@@ -1,11 +1,81 @@
-// api/blog.js
+/**
+ * /api/content-display - Combined API endpoint for blog and page content
+ * Handles both blog operations (from blog.js) and page operations (from page.js)
+ * Routes are determined by URL patterns and query parameters
+ */
 const connectToDatabase = require('./connectToDatabase');
 const Blog = require('../models/Blog');
+const Section = require('../models/Section');
 
 module.exports = async (req, res) => {
     try {
         await connectToDatabase();
 
+        // Determine operation type based on URL and query parameters
+        const { url, query, method } = req;
+        
+        // PAGE OPERATIONS - Handle /api/page requests
+        if (url.includes('/api/page') || query.slug) {
+            return handlePageOperation(req, res);
+        }
+        
+        // BLOG OPERATIONS - Handle /blog requests (default)
+        return handleBlogOperation(req, res);
+        
+    } catch (error) {
+        console.error('Content Display API error:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+};
+
+/**
+ * Handle page operations (from original page.js)
+ */
+async function handlePageOperation(req, res) {
+    try {
+        // GET - Fetch a page by slug
+        if (req.method === 'GET') {
+            const slug = req.query.slug;
+
+            if (!slug) {
+                return res.status(400).json({ message: 'Slug parameter is required' });
+            }
+
+            try {
+                const page = await Section.findOne({
+                    isFullPage: true,
+                    slug: slug,
+                    isPublished: true
+                }).lean();
+
+                if (!page) {
+                    return res.status(404).json({ message: 'Page not found' });
+                }
+
+                return res.status(200).json(page);
+            } catch (e) {
+                console.error('PAGE_GET error', e);
+                return res.status(500).json({
+                    message: 'Error retrieving page',
+                    error: e.message
+                });
+            }
+        }
+
+        // Fallback
+        res.setHeader('Allow', ['GET']);
+        return res.status(405).end('Method Not Allowed');
+    } catch (error) {
+        console.error('Page operation error:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+}
+
+/**
+ * Handle blog operations (from original blog.js)
+ */
+async function handleBlogOperation(req, res) {
+    try {
         // Grab ?category= from the query string (e.g. /blog?category=secondary)
         const { category } = req.query;
 
@@ -49,7 +119,24 @@ module.exports = async (req, res) => {
         const heroImage = heroImages[Math.floor(Math.random() * heroImages.length)];
 
         // Generate HTML for the blog grid with hero section
-        const postsHtml = `
+        const postsHtml = generateBlogHTML(postPairs, posts, category, heroImage);
+
+        // Create the full HTML page with the filter form
+        const html = generateFullBlogPage(postsHtml, category, heroImage);
+
+        res.setHeader('Content-Type', 'text/html');
+        return res.status(200).send(html);
+    } catch (err) {
+        console.error('Error in blog route:', err);
+        return res.status(500).send('<p>Server Error</p>');
+    }
+}
+
+/**
+ * Generate blog posts HTML content
+ */
+function generateBlogHTML(postPairs, posts, category, heroImage) {
+    return `
         <!-- Hero Banner -->
         <section class="blog-hero-banner fade-in-section">
             <div class="blog-hero-overlay">
@@ -156,9 +243,13 @@ module.exports = async (req, res) => {
             `;
         }).join('\n\n        <!-- Add padding between sections -->\n        <div style="margin: 2rem 0;"></div>\n\n')}
         `;
+}
 
-        // Create the full HTML page with the filter form
-        const html = `
+/**
+ * Generate the full HTML page for blog display
+ */
+function generateFullBlogPage(postsHtml, category, heroImage) {
+    return `
       <!DOCTYPE html>
       <html lang="en">
       <head>
@@ -550,18 +641,6 @@ module.exports = async (req, res) => {
               background: linear-gradient(135deg, #0057B7, #003A7A);
             }
 
-            .category-general {
-              background: linear-gradient(135deg, #9C27B0, #673AB7);
-            }
-
-            .category-parent {
-              background: linear-gradient(135deg, #0057B7, #00A3E0);
-            }
-
-            .category-tutor {
-              background: linear-gradient(135deg, #4CAF50, #8BC34A);
-            }
-
             /* Responsive adjustments */
             @media (max-width: 768px) {
               .blog-hero-banner {
@@ -824,72 +903,38 @@ module.exports = async (req, res) => {
                 document.title = 'Tutors Alliance Scotland Blog';
               }
             });
-          </script>
 
-          <!-- Fade-in animation script -->
-          <script>
-              // Fade-in animation for sections
-              const fadeEls = document.querySelectorAll('.fade-in-section');
+            // Fade-in animation for sections
+            const fadeEls = document.querySelectorAll('.fade-in-section');
 
-              // Set initial styles
-              fadeEls.forEach(el => {
-                  el.style.opacity = '0';
-                  el.style.transform = 'translateY(20px)';
-              });
+            // Set initial styles
+            fadeEls.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+            });
 
-              // Create the Intersection Observer
-              const observer = new IntersectionObserver((entries, obs) => {
-                  entries.forEach(entry => {
-                      if (entry.isIntersecting) {
-                          // Fade it in
-                          entry.target.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
-                          entry.target.style.opacity = '1';
-                          entry.target.style.transform = 'translateY(0)';
+            // Create the Intersection Observer
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Fade it in
+                        entry.target.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
 
-                          // Once triggered, stop observing so it doesn't re-animate if user scrolls away
-                          obs.unobserve(entry.target);
-                      }
-                  });
-              }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
+                        // Once triggered, stop observing so it doesn't re-animate if user scrolls away
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
 
-              // Observe each fadeEl
-              fadeEls.forEach(el => observer.observe(el));
-
-              // Single Intersection Observer for all fade-in elements
-              const fadeObserver = new IntersectionObserver((entries) => {
-                  entries.forEach(entry => {
-                      if (entry.isIntersecting) {
-                          entry.target.classList.add('is-visible');
-                          fadeObserver.unobserve(entry.target);
-                      }
-                  });
-              }, {
-                  root: null,
-                  rootMargin: '0px',
-                  threshold: 0.1
-              });
-
-              // Function to observe all fade-in elements
-              function observeFadeElements() {
-                  // Observe all sections with fade-in-section class
-                  document.querySelectorAll('.fade-in-section').forEach(section => {
-                      fadeObserver.observe(section);
-                  });
-              }
-
-              // Initial observation when DOM is loaded
-              document.addEventListener('DOMContentLoaded', () => {
-                  observeFadeElements();
-              });
+            // Observe each fadeEl
+            fadeEls.forEach(el => observer.observe(el));
           </script>
       </body>
       </html>
     `;
+}
 
-        res.setHeader('Content-Type', 'text/html');
-        return res.status(200).send(html);
-    } catch (err) {
-        console.error('Error in blog route:', err);
-        return res.status(500).send('<p>Server Error</p>');
-    }
-};
+// Tell Vercel we need the Node runtime
+module.exports.config = { runtime: 'nodejs18.x' };

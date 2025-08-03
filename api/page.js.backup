@@ -1,13 +1,14 @@
-/**
- * /api/page - API endpoint for custom pages
- * Handles fetching page content by slug
- */
+// BACKUP of original page.js - Combined into content-display.js
+// This file is kept as backup for rollback purposes
+// Original functionality moved to content-display.js
+
+// api/page.js
+const connectToDatabase = require('./connectToDatabase');
 const Section = require('../models/Section');
-const connectDB = require('./connectToDatabase');
 
 module.exports = async (req, res) => {
     try {
-        await connectDB();
+        await connectToDatabase();
 
         // GET - Fetch a page by slug
         if (req.method === 'GET') {

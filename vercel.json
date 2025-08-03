@@ -53,10 +53,7 @@
       "source": "/api/addTutor",
       "destination": "/api/addTutor.js"
     },
-    {
-      "source": "/api/tutorzone",
-      "destination": "/api/tutorzone.js"
-    },
+
     {
       "source": "/blog-writer",
       "destination": "/api/blog-writer.js"
@@ -67,16 +64,13 @@
     },
     {
       "source": "/blog",
-      "destination": "/api/blog.js"
+      "destination": "/api/content-display.js"
     },
     {
       "source": "/blog/:id",
-      "destination": "/api/blog.js"
+      "destination": "/api/content-display.js"
     },
-    {
-      "source": "/api/admin",
-      "destination": "/api/admin.js"
-    },
+
     {
       "source": "/api/upload-image",
       "destination": "/api/upload-image.js"
@@ -91,7 +85,7 @@
     },
     {
       "source": "/api/page",
-      "destination": "/api/page.js"
+      "destination": "/api/content-display.js"
     },
     {
       "source": "/protected",
