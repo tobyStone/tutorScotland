@@ -80,6 +80,10 @@
       "destination": "/api/sections.js"
     },
     {
+      "source": "/api/video-sections",
+      "destination": "/api/video-sections.js"
+    },
+    {
       "source": "/api/content-manager",
       "destination": "/api/content-manager.js"
     },

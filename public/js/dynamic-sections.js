@@ -115,7 +115,7 @@ function loadDynamicSections() {
                         const sectionElement = createDynamicSectionElement(s, index);
                         // Only wrap standard text/image sections in dyn-block
                         // Team and list sections have their own styling containers
-                        // Testimonial sections now use standard dyn-block wrapper for consistency
+                        // Testimonial and video sections now use standard dyn-block wrapper for consistency
                         if (s.layout === 'team' || s.layout === 'list') {
                             topContainer.appendChild(sectionElement);
                         } else {
@@ -139,7 +139,7 @@ function loadDynamicSections() {
                         const sectionElement = createDynamicSectionElement(s, index);
                         // Only wrap standard text/image sections in dyn-block
                         // Team and list sections have their own styling containers
-                        // Testimonial sections now use standard dyn-block wrapper for consistency
+                        // Testimonial and video sections now use standard dyn-block wrapper for consistency
                         if (s.layout === 'team' || s.layout === 'list') {
                             middleContainer.appendChild(sectionElement);
                         } else {
@@ -163,7 +163,7 @@ function loadDynamicSections() {
                         const sectionElement = createDynamicSectionElement(s, index);
                         // Only wrap standard text/image sections in dyn-block
                         // Team and list sections have their own styling containers
-                        // Testimonial sections now use standard dyn-block wrapper for consistency
+                        // Testimonial and video sections now use standard dyn-block wrapper for consistency
                         if (s.layout === 'team' || s.layout === 'list') {
                             bottomContainer.appendChild(sectionElement);
                         } else {
@@ -445,6 +445,11 @@ function createDynamicSectionElement(section, index) {
     // Handle testimonial layout (mirrors testimonials background section)
     if (section.layout === 'testimonial') {
         return createTestimonialSectionElement(section, index, article);
+    }
+
+    // Handle video layout
+    if (section.layout === 'video') {
+        return createVideoSectionElement(section, index, article);
     }
 
     // For non-team sections, use two-col-content class to match about section styling
@@ -797,6 +802,117 @@ function createTestimonialSectionElement(section, index, article) {
     }
 
     return testimonialArticle;
+}
+
+/**
+ * Create a video section element that replaces standard content with video player
+ */
+function createVideoSectionElement(section, index, article) {
+    console.log('Creating video section with data:', {
+        sectionId: section._id,
+        heading: section.heading,
+        videoUrl: section.videoUrl,
+        hasButton: !!(section.buttonLabel && section.buttonUrl)
+    });
+
+    // Create standard article element (like other dynamic sections)
+    const videoArticle = document.createElement('article');
+    videoArticle.className = 'two-col-content video-section';
+    videoArticle.dataset.veSectionId = section._id || slugify(section.heading);
+
+    // Add anchor ID for navigation linking
+    if (section.navAnchor) {
+        videoArticle.id = section.navAnchor;
+    } else if (section.heading) {
+        videoArticle.id = slugify(section.heading);
+    }
+
+    // Create single column structure (video sections don't need two columns)
+    const contentColumn = document.createElement('div');
+    contentColumn.className = 'video-content-column';
+    contentColumn.style.cssText = 'width: 100%; max-width: 800px; margin: 0 auto;';
+
+    // Add heading (use stable block ID from database)
+    const headingBlockId = section.headingBlockId || uuidv4();
+    const existingManagedHeading = document.querySelector(`[data-ve-block-id="${headingBlockId}"][data-ve-managed="true"]`);
+    if (!existingManagedHeading) {
+        const heading = document.createElement('h2');
+        heading.textContent = section.heading;
+        heading.setAttribute('data-ve-block-id', headingBlockId);
+        heading.style.cssText = 'text-align: center; margin-bottom: 1.5rem;';
+        contentColumn.appendChild(heading);
+    } else {
+        console.log(`[VE Integration] Preserving editor-managed heading for block ID: ${headingBlockId}`);
+        contentColumn.appendChild(existingManagedHeading);
+    }
+
+    // Add video player container (use stable block ID from database)
+    const videoBlockId = section.videoBlockId || uuidv4();
+    const existingManagedVideo = document.querySelector(`[data-ve-block-id="${videoBlockId}"][data-ve-managed="true"]`);
+    if (!existingManagedVideo && section.videoUrl) {
+        const videoContainer = document.createElement('div');
+        videoContainer.className = 'video-player-container';
+        videoContainer.setAttribute('data-ve-block-id', videoBlockId);
+        videoContainer.style.cssText = 'position: relative; width: 100%; max-width: 100%; margin: 1.5rem 0; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);';
+
+        // Create video element
+        const video = document.createElement('video');
+        video.src = section.videoUrl;
+        video.controls = true;
+        video.preload = 'metadata';
+        video.style.cssText = 'width: 100%; height: auto; display: block;';
+        video.setAttribute('data-video-url', section.videoUrl);
+
+        // Add error handling for video loading
+        video.addEventListener('error', function() {
+            console.error('Video failed to load:', section.videoUrl);
+            const errorMsg = document.createElement('div');
+            errorMsg.textContent = 'Video could not be loaded. Please check the URL.';
+            errorMsg.style.cssText = 'padding: 2rem; text-align: center; background: #f8f8f8; color: #666; border-radius: 0.5rem;';
+            videoContainer.replaceChild(errorMsg, video);
+        });
+
+        videoContainer.appendChild(video);
+        contentColumn.appendChild(videoContainer);
+    } else if (existingManagedVideo) {
+        console.log(`[VE Integration] Preserving editor-managed video for block ID: ${videoBlockId}`);
+        contentColumn.appendChild(existingManagedVideo);
+    } else {
+        // No video URL provided - show placeholder
+        const placeholder = document.createElement('div');
+        placeholder.className = 'video-placeholder';
+        placeholder.setAttribute('data-ve-block-id', videoBlockId);
+        placeholder.style.cssText = 'padding: 3rem; text-align: center; background: #f8f8f8; color: #666; border-radius: 0.5rem; margin: 1.5rem 0;';
+        placeholder.textContent = 'No video URL provided';
+        contentColumn.appendChild(placeholder);
+    }
+
+    // Add button if available (use stable block ID from database)
+    if (section.buttonLabel && section.buttonUrl) {
+        const buttonBlockId = section.buttonBlockId || uuidv4();
+        const existingManagedButton = document.querySelector(`[data-ve-button-id="${buttonBlockId}"][data-ve-managed="true"]`);
+        if (!existingManagedButton) {
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'button-group';
+            buttonContainer.style.cssText = 'margin-top: 1.5rem; text-align: center;';
+            buttonContainer.innerHTML = `<a class="button aurora" href="${section.buttonUrl}" data-ve-button-id="${buttonBlockId}">${section.buttonLabel}</a>`;
+            contentColumn.appendChild(buttonContainer);
+        } else {
+            console.log(`[VE Integration] Preserving editor-managed button for block ID: ${buttonBlockId}`);
+            contentColumn.appendChild(existingManagedButton);
+        }
+    }
+
+    // Append content column to article
+    videoArticle.appendChild(contentColumn);
+
+    console.log('Created video section element:', {
+        hasHeading: !!section.heading,
+        hasVideo: !!section.videoUrl,
+        hasButton: !!(section.buttonLabel && section.buttonUrl)
+    });
+
+    return videoArticle;
 }
 
 /**

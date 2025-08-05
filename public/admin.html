@@ -300,6 +300,7 @@
                                 <option value="team">Team Members Grid</option>
                                 <option value="list">List Section</option>
                                 <option value="testimonial">Testimonial Section</option>
+                                <option value="video">Video Section</option>
                             </select>
                         </label>
 
@@ -383,6 +384,36 @@
                             <button type="button" id="addTestimonialBtn">➕ Add Testimonial</button>
                             <div id="testimonialList"></div>
                             <input type="hidden" name="testimonials" id="testimonialsData">
+                        </div>
+
+                        <!-- Video builder fields -->
+                        <div id="videoBuilder" style="display:none; margin-top:15px;">
+                            <div style="margin-bottom: 1rem;">
+                                <label>
+                                    Upload Video File:
+                                    <input type="file" id="videoFileInput" accept="video/mp4,video/webm,video/ogg" />
+                                    <small style="color: #666; display: block; margin-top: 4px;">
+                                        Upload MP4, WebM, or OGG video files (max 50MB)
+                                    </small>
+                                </label>
+                                <button type="button" id="uploadVideoBtn" style="margin-top: 8px; display: none;">Upload Video</button>
+                                <div id="videoUploadProgress" style="display: none; margin-top: 8px;">
+                                    <div style="background: #f0f0f0; border-radius: 4px; overflow: hidden;">
+                                        <div id="videoProgressBar" style="height: 20px; background: #4CAF50; width: 0%; transition: width 0.3s;"></div>
+                                    </div>
+                                    <small id="videoProgressText">Uploading...</small>
+                                </div>
+                            </div>
+
+                            <div style="text-align: center; margin: 1rem 0; color: #666;">— OR —</div>
+
+                            <label>
+                                Video URL (Google Cloud Storage):
+                                <input type="url" name="videoUrl" id="videoUrl" placeholder="https://storage.googleapis.com/your-bucket/video.mp4" required>
+                                <small style="display:block; margin-top:4px; color:#666; font-style:italic;">
+                                    Enter a Google Cloud Storage URL ending in .mp4, .webm, or .ogg
+                                </small>
+                            </label>
                         </div>
 
                         <label>
@@ -1163,12 +1194,14 @@
         const standardOnlyFields = document.getElementById('standardOnlyFields');
         const listBuilder = document.getElementById('listBuilder');
         const testimonialBuilder = document.getElementById('testimonialBuilder');
+        const videoBuilder = document.getElementById('videoBuilder');
 
         sectionLayout.addEventListener('change', () => {
             const layoutValue = sectionLayout.value;
             const isTeam = layoutValue === 'team';
             const isList = layoutValue === 'list';
             const isTestimonial = layoutValue === 'testimonial';
+            const isVideo = layoutValue === 'video';
             const isStandard = layoutValue === 'standard';
 
             /* visibility ---------------------------------------------------- */
@@ -1176,6 +1209,7 @@
             teamBuilder.style.display = isTeam ? 'block' : 'none';
             listBuilder.style.display = isList ? 'block' : 'none';
             testimonialBuilder.style.display = isTestimonial ? 'block' : 'none';
+            videoBuilder.style.display = isVideo ? 'block' : 'none';
 
             // Hide shared image field for team sections since images are handled per team member
             const sharedFields = document.getElementById('sharedFields');
@@ -1190,10 +1224,10 @@
                 }
             }
 
-            // Hide image upload for testimonial sections (they use default background)
+            // Hide image upload for testimonial and video sections
             const imageLabel = document.querySelector('#sharedFields label');
             const imagePreview = document.getElementById('currentImagePreview');
-            if (isTestimonial) {
+            if (isTestimonial || isVideo) {
                 if (imageLabel && imageLabel.querySelector('input[name="image"]')) imageLabel.style.display = 'none';
                 if (imagePreview) imagePreview.style.display = 'none';
             } else {
@@ -1203,12 +1237,20 @@
 
             /* required attributes ------------------------------------------- */
             const para = standardOnlyFields.querySelector('[name="text"]');
+            const videoUrl = videoBuilder.querySelector('[name="videoUrl"]');
 
             // Standard text field required only for standard layout
             if (isStandard) {
                 para.setAttribute('required', '');
             } else {
                 para.removeAttribute('required');
+            }
+
+            // Video URL field required only for video layout
+            if (isVideo && videoUrl) {
+                videoUrl.setAttribute('required', '');
+            } else if (videoUrl) {
+                videoUrl.removeAttribute('required');
             }
 
             // Testimonial validation is now handled in form submission
@@ -1705,6 +1747,25 @@
                 // Use the testimonials array directly
                 fd.set('text', testimonialsJson);
                 // Testimonial sections now support background images
+            } else if (sectionLayout.value === 'video') {
+                const videoUrl = fd.get('videoUrl')?.trim();
+
+                if (!videoUrl) {
+                    return alert('Please provide a video URL');
+                }
+
+                // Validate Google Cloud Storage URL format
+                const googleCloudPattern = /^https:\/\/storage\.googleapis\.com\/[^\/]+\/.*\.(mp4|webm|ogg)$/i;
+                if (!googleCloudPattern.test(videoUrl)) {
+                    return alert('Video URL must be a Google Cloud Storage URL ending in .mp4, .webm, or .ogg');
+                }
+
+                // Set video URL and placeholder text
+                fd.set('videoUrl', videoUrl);
+                fd.set('text', 'Video section'); // Placeholder text
+
+                // Video sections don't use the main image field
+                fd.delete('image');
             }
 
             const editId = addSectionForm.dataset.editId;
@@ -1967,6 +2028,19 @@
                             }
                         }
 
+                    } else if (section.layout === 'video') {
+                        sectionFormHeading.textContent = 'Edit Video Section';
+
+                        // Populate video URL field
+                        const videoUrlField = addSectionForm.querySelector('[name="videoUrl"]');
+                        if (videoUrlField) {
+                            videoUrlField.value = section.videoUrl || '';
+                        }
+
+                        // Video sections don't use the main image field, so hide image preview
+                        currentImagePreview.style.display = 'none';
+                        document.querySelector('input[name="removeImage"]').checked = false;
+
                     } else { // It's a 'standard' layout
                         sectionFormHeading.textContent = 'Edit Dynamic Section'; // UI Nicety
                         addSectionForm.querySelector('[name="text"]').value = section.text;
@@ -2163,6 +2237,97 @@
 
         /* cancel */
         cancelPageEditBtn.addEventListener('click', resetPageForm);
+
+        /* ── Video Upload Functionality ──────────────────────────────────── */
+        const videoFileInput = document.getElementById('videoFileInput');
+        const uploadVideoBtn = document.getElementById('uploadVideoBtn');
+        const videoUploadProgress = document.getElementById('videoUploadProgress');
+        const videoProgressBar = document.getElementById('videoProgressBar');
+        const videoProgressText = document.getElementById('videoProgressText');
+        const videoUrlInput = document.getElementById('videoUrl');
+
+        // Show upload button when file is selected
+        videoFileInput.addEventListener('change', () => {
+            if (videoFileInput.files.length > 0) {
+                uploadVideoBtn.style.display = 'block';
+            } else {
+                uploadVideoBtn.style.display = 'none';
+            }
+        });
+
+        // Handle video upload
+        uploadVideoBtn.addEventListener('click', async () => {
+            const file = videoFileInput.files[0];
+            if (!file) return;
+
+            // Validate file type
+            const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please select a valid video file (MP4, WebM, or OGG)');
+                return;
+            }
+
+            // Validate file size (50MB)
+            const maxSize = 50 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert('Video file is too large. Maximum size is 50MB.');
+                return;
+            }
+
+            // Show progress
+            videoUploadProgress.style.display = 'block';
+            uploadVideoBtn.disabled = true;
+            videoProgressBar.style.width = '0%';
+            videoProgressText.textContent = 'Uploading...';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('folder', 'video-content');
+
+                // Upload with progress tracking
+                const xhr = new XMLHttpRequest();
+
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        videoProgressBar.style.width = percentComplete + '%';
+                        videoProgressText.textContent = `Uploading... ${Math.round(percentComplete)}%`;
+                    }
+                });
+
+                xhr.addEventListener('load', () => {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        videoUrlInput.value = response.url;
+                        videoProgressText.textContent = 'Upload complete!';
+
+                        // Hide progress after 2 seconds
+                        setTimeout(() => {
+                            videoUploadProgress.style.display = 'none';
+                            uploadVideoBtn.disabled = false;
+                            uploadVideoBtn.style.display = 'none';
+                            videoFileInput.value = '';
+                        }, 2000);
+                    } else {
+                        throw new Error(`Upload failed: ${xhr.status}`);
+                    }
+                });
+
+                xhr.addEventListener('error', () => {
+                    throw new Error('Upload failed due to network error');
+                });
+
+                xhr.open('POST', '/api/upload-image');
+                xhr.send(formData);
+
+            } catch (error) {
+                console.error('Video upload error:', error);
+                alert('Video upload failed: ' + error.message);
+                videoUploadProgress.style.display = 'none';
+                uploadVideoBtn.disabled = false;
+            }
+        });
 
         /* initial */
         await loadPages();

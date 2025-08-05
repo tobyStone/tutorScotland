@@ -57,7 +57,23 @@ const schema = new mongoose.Schema({
         default: 'standard'
         // Note: No validation here to ensure backward compatibility
         // Validation happens at the application layer in the API
-    },   // 'standard' | 'team' | 'list' | 'testimonial'
+    },   // 'standard' | 'team' | 'list' | 'testimonial' | 'video'
+
+    // ★ NEW: Add field for video URL (Google Cloud Storage)
+    videoUrl: {
+        type: String,
+        required: false,
+        validate: {
+            validator: function(v) {
+                // Only validate if videoUrl is provided and layout is video
+                if (!v || this.layout !== 'video') return true;
+                // Validate Google Cloud Storage video URL format
+                const googleCloudPattern = /^https:\/\/storage\.googleapis\.com\/[^\/]+\/.*\.(mp4|webm|ogg)$/i;
+                return googleCloudPattern.test(v);
+            },
+            message: 'Video URL must be a valid Google Cloud Storage video URL (mp4, webm, or ogg)'
+        }
+    },
     team: {
         type: [teamMemberSchema],
         default: [],

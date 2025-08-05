@@ -14,13 +14,19 @@ sharp.concurrency(2);
 const fsPromises = require('fs/promises');
 // ────────────────────────────────────────────────
 
-const MAX_UPLOAD = 4 * 1024 * 1024;  // 4MB
+const MAX_UPLOAD = 4 * 1024 * 1024;  // 4MB for images
+const MAX_VIDEO_UPLOAD = 50 * 1024 * 1024;  // 50MB for videos
 const MAX_DIMENSIONS = 2000;  // Max width/height in pixels
-const ALLOWED_MIME = [
+const ALLOWED_IMAGE_MIME = [
     'image/jpeg',
     'image/png',
     'image/webp',
     'image/gif'
+];
+const ALLOWED_VIDEO_MIME = [
+    'video/mp4',
+    'video/webm',
+    'video/ogg'
 ];
 // NEW: Add a mapping for sharp format verification
 const ALLOWED_SHARP_FORMATS = ['jpeg', 'png', 'webp', 'gif'];
@@ -109,20 +115,27 @@ module.exports = async (req, res) => {
             mime = lookup(uploadedFile.originalFilename) || '';
         }
 
-        if (!ALLOWED_MIME.includes(mime.toLowerCase())) {
+        // Check if it's an image or video
+        const isImage = ALLOWED_IMAGE_MIME.includes(mime.toLowerCase());
+        const isVideo = ALLOWED_VIDEO_MIME.includes(mime.toLowerCase());
+
+        if (!isImage && !isVideo) {
             return res.status(415).json({
-                message: 'Unsupported image type. Please use JPG, PNG, WebP, or GIF.'
+                message: 'Unsupported file type. Please use JPG, PNG, WebP, GIF for images or MP4, WebM, OGG for videos.'
+            });
+        }
+
+        // Check file size limits
+        const maxSize = isVideo ? MAX_VIDEO_UPLOAD : MAX_UPLOAD;
+        if (uploadedFile.size > maxSize) {
+            const maxSizeMB = Math.round(maxSize / (1024 * 1024));
+            return res.status(413).json({
+                message: `File too large. Maximum size is ${maxSizeMB}MB for ${isVideo ? 'videos' : 'images'}.`
             });
         }
         uploadedFile.mimetype = mime; // Normalise for later put
 
-        // This check is now redundant because of the `uploadedFile.truncated` check,
-        // but we'll leave it as a failsafe.
-        if (uploadedFile.size > MAX_UPLOAD) {
-            return res.status(413).json({
-                message: `File too large. Maximum size is ${MAX_UPLOAD / 1024 / 1024}MB`
-            });
-        }
+        // This check is now handled above with separate limits for images and videos
 
         // ─── NEW: Sanitized Filename Generation ────────────────────────────
         const originalName = uploadedFile.originalFilename || 'image';
@@ -159,7 +172,53 @@ module.exports = async (req, res) => {
             });
         }
 
-        // ✅ IMPROVED: More robust Sharp initialization with strict error handling
+        // Handle videos differently - skip Sharp processing
+        if (isVideo) {
+            console.log(`📹 Processing video upload: ${filename}`);
+
+            // For videos, we upload directly without processing
+            const putOpts = { access: 'public', contentType: uploadedFile.mimetype, overwrite: true };
+            const videoKey = `${folder}/${filename}`;
+
+            try {
+                console.log('📤 Uploading video to blob storage...');
+                const uploadResult = await put(videoKey, buffer, putOpts);
+
+                // Verify the upload
+                const verifyResponse = await fetch(uploadResult.url, { method: 'HEAD' });
+                if (!verifyResponse.ok) {
+                    throw new Error(`Video upload verification failed: ${verifyResponse.status}`);
+                }
+
+                console.log('✅ Video uploaded successfully:', uploadResult.url);
+
+                // Clean up temp file
+                fs.unlink(uploadedFile.filepath, (err) => {
+                    if (err) console.error('Error deleting temp file:', err);
+                });
+
+                return res.status(200).json({
+                    message: 'Video uploaded successfully',
+                    url: uploadResult.url,
+                    filename: filename,
+                    size: uploadedFile.size,
+                    type: 'video'
+                });
+
+            } catch (error) {
+                console.error('Video upload error:', error);
+                // Clean up temp file
+                fs.unlink(uploadedFile.filepath, (err) => {
+                    if (err) console.error('Error deleting temp file:', err);
+                });
+                return res.status(500).json({
+                    message: 'Video upload failed',
+                    error: error.message
+                });
+            }
+        }
+
+        // ✅ IMPROVED: More robust Sharp initialization with strict error handling (for images only)
         const img = sharp(buffer, {
             failOnError: true,  // Changed to true to catch corruption early
             sequentialRead: true,  // Ensure complete buffer read
@@ -167,7 +226,7 @@ module.exports = async (req, res) => {
         });
 
         /* -------------------------------------------------------------
-            2️⃣  Metadata check
+            2️⃣  Metadata check (images only)
         ------------------------------------------------------------- */
         let metadata;
         try {
