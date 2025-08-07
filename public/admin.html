@@ -1873,9 +1873,9 @@
                     return alert('Video URL must be a static video (/videos/...), Vercel Blob URL, or Google Cloud Storage URL ending in .mp4, .webm, or .ogg');
                 }
 
-                // Set video URL - no placeholder text needed for video sections
+                // Set video URL and empty text content for video sections
                 fd.set('videoUrl', videoUrl);
-                // Video sections don't need text content - the video is the content
+                fd.set('text', ''); // Video sections don't need text content - the video is the content
 
                 // Video sections don't use the main image field
                 fd.delete('image');
@@ -2474,6 +2474,14 @@
                 // Update the URL input
                 videoUrlInput.value = video.url;
 
+                // Auto-populate heading if it's empty
+                const headingInput = addSectionForm.querySelector('[name="heading"]');
+                if (headingInput && !headingInput.value.trim()) {
+                    // Use video filename without extension as default heading
+                    const videoName = video.name.replace(/\.[^/.]+$/, ""); // Remove file extension
+                    headingInput.value = videoName;
+                }
+
                 // Hide the browser after selection
                 videoBrowser.style.display = 'none';
                 browseVideosBtn.textContent = 'Browse Available Videos';
@@ -2550,6 +2558,14 @@
                         const response = JSON.parse(xhr.responseText);
                         videoUrlInput.value = response.url;
                         videoProgressText.textContent = 'Upload complete!';
+
+                        // Auto-populate heading if it's empty
+                        const headingInput = addSectionForm.querySelector('[name="heading"]');
+                        if (headingInput && !headingInput.value.trim()) {
+                            // Use uploaded filename without extension as default heading
+                            const fileName = videoFileInput.files[0].name.replace(/\.[^/.]+$/, "");
+                            headingInput.value = fileName;
+                        }
 
                         // Refresh video browser if it's open
                         if (videoBrowser.style.display !== 'none') {
