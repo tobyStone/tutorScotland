@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
-const User = require('../../../models/user.js');
+const User = require('../../../models/User.js');
 import bcrypt from 'bcryptjs';
 
 describe('User Model', () => {

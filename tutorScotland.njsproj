@@ -216,7 +216,9 @@
     <Folder Include="public\js\" />
     <Folder Include="public\js\editor\" />
     <Folder Include="public\js\editor\features\" />
+    <Folder Include="public\videos\" />
     <Folder Include="public\partials\" />
+    <Folder Include="tests\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
