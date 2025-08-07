@@ -1545,16 +1545,30 @@ body[data-page="tutorszone"] #imageBanner {
     color: #7CA7D9;
 }
 
-/* Video section specific styling to match about section */
+/* Video section specific styling with newsletter-inspired design */
 
+/* Apply newsletter-style gradient background to video sections */
+.video-section {
+    background: linear-gradient(135deg, #0057B7 0%, #001B44 100%) !important;
+    border-radius: 1.7rem !important;
+    padding: 1.5rem !important; /* Reduced from default two-col-content padding */
+    box-shadow: 0 4px 20px rgba(0,87,183,0.15) !important;
+}
+
+/* Inner content area with light blue background like newsletter box */
 .video-section .video-content-column {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
+    background: #B8D4FF; /* Same light blue as newsletter-box */
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 18px rgba(0,87,183,0.05);
 }
 
+/* Reduced margins around video for more compact appearance */
 .video-section .video-player-container {
-    margin: 1rem 0 1.5rem 0; /* Space for button below */
+    margin: 0.5rem 0 1rem 0; /* Reduced top/bottom margins */
 }
 
 .video-section video {
@@ -1564,13 +1578,18 @@ body[data-page="tutorszone"] #imageBanner {
     border-radius: 0.5rem;
 }
 
-/* Ensure video sections have proper spacing like about sections */
+/* Video section headings match newsletter styling */
 .video-section h2 {
-    margin-bottom: 1rem;
+    color: #0057B7 !important; /* Same blue as newsletter headings */
+    margin-bottom: 0.5rem; /* Reduced margin for compactness */
+    font-size: 1.8em;
+    text-align: center;
 }
 
+/* Button styling to stand out on light blue background */
 .video-section .button.aurora {
     margin-top: 1rem;
+    display: inline-block;
 }
 
 /* Dynamic page content styling */
@@ -2168,6 +2187,20 @@ header {
     .newsletter-gradient-bg {
         padding: 1.2rem 0.5rem;
     }
+
+    /* Video section responsive adjustments */
+    .video-section {
+        padding: 1rem !important; /* Further reduced padding on mobile */
+    }
+
+    .video-section .video-content-column {
+        padding: 1rem; /* Reduced inner padding on mobile */
+    }
+
+    .video-section h2 {
+        font-size: 1.5em; /* Smaller heading on mobile */
+    }
+
     .big-pupil-img {
         width: 90px;
         left: 50%;
