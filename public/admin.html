@@ -1248,6 +1248,7 @@
                 'team': 'Team Grid',
                 'list': 'List Section',
                 'testimonial': 'Testimonial',
+                'video': 'Video',
                 'standard': 'Standard'
             };
             const layout = layoutNames[s.layout] || 'Standard';
@@ -1872,9 +1873,9 @@
                     return alert('Video URL must be a static video (/videos/...), Vercel Blob URL, or Google Cloud Storage URL ending in .mp4, .webm, or .ogg');
                 }
 
-                // Set video URL and placeholder text
+                // Set video URL - no placeholder text needed for video sections
                 fd.set('videoUrl', videoUrl);
-                fd.set('text', 'Video section'); // Placeholder text
+                // Video sections don't need text content - the video is the content
 
                 // Video sections don't use the main image field
                 fd.delete('image');

@@ -449,7 +449,7 @@ function createDynamicSectionElement(section, index) {
 
     // Handle video layout
     if (section.layout === 'video') {
-        return createVideoSectionElement(section, index, article);
+        return createVideoSectionElement(section, index);
     }
 
     // For non-team sections, use two-col-content class to match about section styling
@@ -807,7 +807,7 @@ function createTestimonialSectionElement(section, index, article) {
 /**
  * Create a video section element that replaces standard content with video player
  */
-function createVideoSectionElement(section, index, article) {
+function createVideoSectionElement(section, index) {
     console.log('Creating video section with data:', {
         sectionId: section._id,
         heading: section.heading,
@@ -839,7 +839,7 @@ function createVideoSectionElement(section, index, article) {
         const heading = document.createElement('h2');
         heading.textContent = section.heading;
         heading.setAttribute('data-ve-block-id', headingBlockId);
-        heading.style.cssText = 'text-align: center; margin-bottom: 1.5rem;';
+        heading.style.cssText = 'text-align: left; margin-bottom: 1.5rem;';
         contentColumn.appendChild(heading);
     } else {
         console.log(`[VE Integration] Preserving editor-managed heading for block ID: ${headingBlockId}`);
