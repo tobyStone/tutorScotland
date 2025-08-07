@@ -3,8 +3,35 @@
  * Handles CRUD operations for video sections that integrate with Google Cloud Storage
  * Uses the existing Section model with layout: 'video' and videoUrl field
  */
+const { formidable } = require('formidable');
 const connectToDatabase = require('./connectToDatabase');
 const Section = require('../models/Section');
+
+// Convert formidable's callback to a promise
+const parseForm = (req) => {
+    return new Promise((resolve, reject) => {
+        const form = formidable({
+            keepExtensions: true,
+            multiples: false,
+            maxFileSize: 50 * 1024 * 1024 // 50MB limit
+        });
+
+        form.parse(req, (err, fields, files) => {
+            if (err) {
+                console.error('Form parsing error:', err);
+                return reject(err);
+            }
+
+            // Convert arrays to single values (formidable returns arrays)
+            const cleanFields = {};
+            for (const [key, value] of Object.entries(fields)) {
+                cleanFields[key] = Array.isArray(value) ? value[0] : value;
+            }
+
+            resolve({ fields: cleanFields, files });
+        });
+    });
+};
 
 module.exports = async (req, res) => {
     try {
@@ -148,7 +175,9 @@ async function handleGetVideoSections(req, res) {
  */
 async function handleCreateVideoSection(req, res) {
     try {
-        const { page, heading, videoUrl, position, order, buttonLabel, buttonUrl } = req.body;
+        // Parse form data
+        const { fields } = await parseForm(req);
+        const { page, heading, videoUrl, position, order, buttonLabel, buttonUrl, editId } = fields;
 
         // Validate required fields
         if (!page || !heading || !videoUrl) {
@@ -164,7 +193,34 @@ async function handleCreateVideoSection(req, res) {
             });
         }
 
-        // Create the video section
+        // Handle update if editId is provided
+        if (editId) {
+            const updateData = {
+                page,
+                heading,
+                videoUrl,
+                layout: 'video',
+                position: position || 'bottom',
+                order: order || 0,
+                buttonLabel: buttonLabel || '',
+                buttonUrl: buttonUrl || ''
+            };
+
+            const updatedSection = await Section.findByIdAndUpdate(editId, updateData, { new: true });
+
+            if (!updatedSection) {
+                return res.status(404).json({ message: 'Video section not found' });
+            }
+
+            console.log('Updated video section:', updatedSection._id);
+
+            return res.status(200).json({
+                message: 'Video section updated successfully',
+                section: updatedSection
+            });
+        }
+
+        // Create new video section
         const videoSection = new Section({
             page,
             heading,
@@ -181,9 +237,9 @@ async function handleCreateVideoSection(req, res) {
         });
 
         const savedSection = await videoSection.save();
-        
+
         console.log('Created video section:', savedSection._id);
-        
+
         return res.status(201).json({
             message: 'Video section created successfully',
             section: savedSection
