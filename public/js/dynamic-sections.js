@@ -76,11 +76,23 @@ function loadDynamicSections() {
 
     console.log(`Loading dynamic sections for page: ${page}`);
 
-    fetch(`/api/sections?page=${slug}`)
-        .then(r => r.json())
-        .then(list => {
-            // ✅ IMPROVED: Add debugging to verify we're only getting actual sections
-            console.log(`[DynSec] Fetched ${list?.length || 0} sections for page "${slug}":`, list);
+    // Fetch both regular sections and video sections
+    Promise.all([
+        fetch(`/api/sections?page=${slug}`).then(r => r.json()).catch(() => []),
+        fetch(`/api/video-sections?page=${slug}`).then(r => r.json()).catch(() => [])
+    ])
+        .then(([regularSections, videoSections]) => {
+            // Combine both types of sections and sort by position and creation order
+            const list = [...regularSections, ...videoSections].sort((a, b) => {
+                const posOrder = { top: 0, middle: 1, bottom: 2 };
+                const aPos = posOrder[a.position || 'bottom'];
+                const bPos = posOrder[b.position || 'bottom'];
+                if (aPos !== bPos) return aPos - bPos;
+                return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+            });
+
+            // ✅ IMPROVED: Add debugging to verify we're getting all sections
+            console.log(`[DynSec] Fetched ${regularSections?.length || 0} regular sections and ${videoSections?.length || 0} video sections for page "${slug}":`, list);
 
             if (list && list.length > 0) {
                 // Create containers if they don't exist
