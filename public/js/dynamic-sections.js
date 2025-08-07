@@ -815,7 +815,7 @@ function createVideoSectionElement(section, index) {
         hasButton: !!(section.buttonLabel && section.buttonUrl)
     });
 
-    // Create standard article element (like other dynamic sections)
+    // Create standard article element matching about section styling
     const videoArticle = document.createElement('article');
     videoArticle.className = 'two-col-content video-section';
     videoArticle.dataset.veSectionId = section._id || slugify(section.heading);
@@ -827,10 +827,10 @@ function createVideoSectionElement(section, index) {
         videoArticle.id = slugify(section.heading);
     }
 
-    // Create single column structure (video sections don't need two columns)
+    // Create single column structure (video sections use full width like about section)
     const contentColumn = document.createElement('div');
     contentColumn.className = 'video-content-column';
-    contentColumn.style.cssText = 'width: 100%; max-width: 800px; margin: 0 auto;';
+    // Remove custom styling to let CSS handle it naturally
 
     // Add heading (use stable block ID from database)
     const headingBlockId = section.headingBlockId || uuidv4();
@@ -839,7 +839,7 @@ function createVideoSectionElement(section, index) {
         const heading = document.createElement('h2');
         heading.textContent = section.heading;
         heading.setAttribute('data-ve-block-id', headingBlockId);
-        heading.style.cssText = 'text-align: left; margin-bottom: 1.5rem;';
+        // Remove custom styling to match about section h2 styling
         contentColumn.appendChild(heading);
     } else {
         console.log(`[VE Integration] Preserving editor-managed heading for block ID: ${headingBlockId}`);
@@ -853,7 +853,8 @@ function createVideoSectionElement(section, index) {
         const videoContainer = document.createElement('div');
         videoContainer.className = 'video-player-container';
         videoContainer.setAttribute('data-ve-block-id', videoBlockId);
-        videoContainer.style.cssText = 'position: relative; width: 100%; max-width: 100%; margin: 1.5rem 0; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);';
+        // Reduced margins and more compact styling to match about section
+        videoContainer.style.cssText = 'position: relative; width: 100%; max-width: 100%; margin: 1rem 0; border-radius: 0.5rem; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);';
 
         // Create video element
         const video = document.createElement('video');
@@ -914,11 +915,14 @@ function createVideoSectionElement(section, index) {
         const buttonBlockId = section.buttonBlockId || uuidv4();
         const existingManagedButton = document.querySelector(`[data-ve-button-id="${buttonBlockId}"][data-ve-managed="true"]`);
         if (!existingManagedButton) {
-            const buttonContainer = document.createElement('div');
-            buttonContainer.className = 'button-group';
-            buttonContainer.style.cssText = 'margin-top: 1.5rem; text-align: center;';
-            buttonContainer.innerHTML = `<a class="button aurora" href="${section.buttonUrl}" data-ve-button-id="${buttonBlockId}">${section.buttonLabel}</a>`;
-            contentColumn.appendChild(buttonContainer);
+            // Create button directly (no container) to match about section styling
+            const button = document.createElement('a');
+            button.className = 'button aurora';
+            button.href = section.buttonUrl;
+            button.textContent = section.buttonLabel;
+            button.setAttribute('data-ve-button-id', buttonBlockId);
+            button.style.cssText = 'margin-top: 1rem; display: inline-block;';
+            contentColumn.appendChild(button);
         } else {
             console.log(`[VE Integration] Preserving editor-managed button for block ID: ${buttonBlockId}`);
             contentColumn.appendChild(existingManagedButton);

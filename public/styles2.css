@@ -1545,6 +1545,34 @@ body[data-page="tutorszone"] #imageBanner {
     color: #7CA7D9;
 }
 
+/* Video section specific styling to match about section */
+
+.video-section .video-content-column {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.video-section .video-player-container {
+    margin: 1rem 0 1.5rem 0; /* Space for button below */
+}
+
+.video-section video {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0.5rem;
+}
+
+/* Ensure video sections have proper spacing like about sections */
+.video-section h2 {
+    margin-bottom: 1rem;
+}
+
+.video-section .button.aurora {
+    margin-top: 1rem;
+}
+
 /* Dynamic page content styling */
 .page-content {
     line-height: 1.6;

@@ -335,11 +335,11 @@ async function handleUpdateVideoSection(req, res) {
 
 /**
  * DELETE - Remove video section
- * Body: { id }
+ * Query: ?id=sectionId
  */
 async function handleDeleteVideoSection(req, res) {
     try {
-        const { id } = req.body;
+        const { id } = req.query;
 
         if (!id) {
             return res.status(400).json({ message: 'Section ID is required' });

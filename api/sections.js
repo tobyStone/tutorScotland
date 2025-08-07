@@ -561,7 +561,8 @@ module.exports = async (req, res) => {
                 const list = await Section.find({
                     page,
                     isFullPage: { $ne: true }, // Exclude full pages from regular sections
-                    isContentOverride: { $ne: true } // ✅ FIXED: Exclude content overrides from dynamic sections
+                    isContentOverride: { $ne: true }, // ✅ FIXED: Exclude content overrides from dynamic sections
+                    layout: { $ne: 'video' } // Exclude video sections (handled by video-sections API)
                 }).sort({ position: 1, createdAt: 1 }).lean();
 
                 // ✅ BACKWARD COMPATIBILITY: Normalize layout field for existing records
