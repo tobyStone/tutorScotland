@@ -210,6 +210,77 @@
             white-space: normal;
             overflow: visible;
         }
+
+        /* ================================================================== */
+        /*                    VIDEO BROWSER STYLES                           */
+        /* ================================================================== */
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .video-item {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 0.5rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .video-item:hover {
+            border-color: #0057B7;
+            box-shadow: 0 2px 8px rgba(0, 87, 183, 0.2);
+        }
+
+        .video-item.selected {
+            border-color: #4CAF50;
+            background-color: #f0f8f0;
+            box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        .video-item video {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+
+        .video-item-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            word-break: break-word;
+        }
+
+        .video-item-info {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .video-type-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+
+        .video-type-static {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .video-type-blob {
+            background-color: #e8f5e8;
+            color: #388e3c;
+        }
     </style>
 </head>
 
@@ -388,7 +459,41 @@
 
                         <!-- Video builder fields -->
                         <div id="videoBuilder" style="display:none; margin-top:15px;">
-                            <div style="margin-bottom: 1rem;">
+                            <!-- Video Browser Section -->
+                            <div id="videoBrowserSection" style="margin-bottom: 1.5rem;">
+                                <h4 style="margin-bottom: 0.5rem;">📹 Select Existing Video</h4>
+                                <button type="button" id="browseVideosBtn" style="margin-bottom: 1rem;">Browse Available Videos</button>
+
+                                <div id="videoBrowser" style="display: none; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; background: #f9f9f9;">
+                                    <div id="videoLoadingMsg" style="text-align: center; padding: 1rem; color: #666;">
+                                        Loading videos...
+                                    </div>
+
+                                    <div id="videoCategories" style="display: none;">
+                                        <!-- Static Videos -->
+                                        <div id="staticVideosSection">
+                                            <h5 style="margin: 0 0 0.5rem 0; color: #0057B7;">📁 Static Videos (Deployed)</h5>
+                                            <div id="staticVideosList" class="video-grid"></div>
+                                        </div>
+
+                                        <!-- Blob Videos -->
+                                        <div id="blobVideosSection" style="margin-top: 1rem;">
+                                            <h5 style="margin: 0 0 0.5rem 0; color: #4CAF50;">☁️ Uploaded Videos (Blob Storage)</h5>
+                                            <div id="blobVideosList" class="video-grid"></div>
+                                        </div>
+
+                                        <div id="noVideosMsg" style="display: none; text-align: center; padding: 1rem; color: #666; font-style: italic;">
+                                            No videos found. Upload a video or add static videos to the /public/videos directory.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="text-align: center; margin: 1rem 0; color: #666;">— OR —</div>
+
+                            <!-- Video Upload Section -->
+                            <div id="videoUploadSection" style="margin-bottom: 1.5rem;">
+                                <h4 style="margin-bottom: 0.5rem;">📤 Upload New Video</h4>
                                 <label>
                                     Upload Video File:
                                     <input type="file" id="videoFileInput" accept="video/mp4,video/webm,video/ogg" />
@@ -407,13 +512,17 @@
 
                             <div style="text-align: center; margin: 1rem 0; color: #666;">— OR —</div>
 
-                            <label>
-                                Video URL (Google Cloud Storage):
-                                <input type="url" name="videoUrl" id="videoUrl" placeholder="https://storage.googleapis.com/your-bucket/video.mp4" required>
-                                <small style="display:block; margin-top:4px; color:#666; font-style:italic;">
-                                    Enter a Google Cloud Storage URL ending in .mp4, .webm, or .ogg
-                                </small>
-                            </label>
+                            <!-- Manual URL Entry -->
+                            <div id="videoUrlSection">
+                                <h4 style="margin-bottom: 0.5rem;">🔗 Enter Video URL</h4>
+                                <label>
+                                    Video URL:
+                                    <input type="url" name="videoUrl" id="videoUrl" placeholder="/videos/your-video.mp4 or https://..." required>
+                                    <small style="display:block; margin-top:4px; color:#666; font-style:italic;">
+                                        Static video (/videos/...), Vercel Blob URL, or Google Cloud Storage URL
+                                    </small>
+                                </label>
+                            </div>
                         </div>
 
                         <label>
@@ -1754,10 +1863,13 @@
                     return alert('Please provide a video URL');
                 }
 
-                // Validate Google Cloud Storage URL format
+                // Validate video URL format (static, Vercel Blob, or Google Cloud Storage)
+                const staticPattern = /^\/videos\/[^\/]+\.(mp4|webm|ogg)$/i;
+                const blobPattern = /^https:\/\/[^\/]+\.public\.blob\.vercel-storage\.com\/.*\.(mp4|webm|ogg)$/i;
                 const googleCloudPattern = /^https:\/\/storage\.googleapis\.com\/[^\/]+\/.*\.(mp4|webm|ogg)$/i;
-                if (!googleCloudPattern.test(videoUrl)) {
-                    return alert('Video URL must be a Google Cloud Storage URL ending in .mp4, .webm, or .ogg');
+
+                if (!staticPattern.test(videoUrl) && !blobPattern.test(videoUrl) && !googleCloudPattern.test(videoUrl)) {
+                    return alert('Video URL must be a static video (/videos/...), Vercel Blob URL, or Google Cloud Storage URL ending in .mp4, .webm, or .ogg');
                 }
 
                 // Set video URL and placeholder text
@@ -2238,13 +2350,149 @@
         /* cancel */
         cancelPageEditBtn.addEventListener('click', resetPageForm);
 
-        /* ── Video Upload Functionality ──────────────────────────────────── */
+        /* ── Video Browser & Upload Functionality ────────────────────────── */
         const videoFileInput = document.getElementById('videoFileInput');
         const uploadVideoBtn = document.getElementById('uploadVideoBtn');
         const videoUploadProgress = document.getElementById('videoUploadProgress');
         const videoProgressBar = document.getElementById('videoProgressBar');
         const videoProgressText = document.getElementById('videoProgressText');
         const videoUrlInput = document.getElementById('videoUrl');
+        const browseVideosBtn = document.getElementById('browseVideosBtn');
+        const videoBrowser = document.getElementById('videoBrowser');
+        const videoLoadingMsg = document.getElementById('videoLoadingMsg');
+        const videoCategories = document.getElementById('videoCategories');
+        const staticVideosList = document.getElementById('staticVideosList');
+        const blobVideosList = document.getElementById('blobVideosList');
+        const noVideosMsg = document.getElementById('noVideosMsg');
+
+        let availableVideos = { staticVideos: [], blobVideos: [] };
+        let selectedVideoUrl = null;
+
+        // Video Browser Functionality
+        browseVideosBtn.addEventListener('click', async () => {
+            if (videoBrowser.style.display === 'none') {
+                await loadAvailableVideos();
+                videoBrowser.style.display = 'block';
+                browseVideosBtn.textContent = 'Hide Video Browser';
+            } else {
+                videoBrowser.style.display = 'none';
+                browseVideosBtn.textContent = 'Browse Available Videos';
+            }
+        });
+
+        async function loadAvailableVideos() {
+            try {
+                videoLoadingMsg.style.display = 'block';
+                videoCategories.style.display = 'none';
+                noVideosMsg.style.display = 'none';
+
+                const response = await fetch('/api/video-sections?operation=list-videos');
+                if (!response.ok) {
+                    throw new Error(`Failed to load videos: ${response.status}`);
+                }
+
+                availableVideos = await response.json();
+                displayAvailableVideos();
+
+            } catch (error) {
+                console.error('Error loading videos:', error);
+                videoLoadingMsg.innerHTML = `<span style="color: red;">Error loading videos: ${error.message}</span>`;
+            }
+        }
+
+        function displayAvailableVideos() {
+            videoLoadingMsg.style.display = 'none';
+
+            const totalVideos = availableVideos.staticVideos.length + availableVideos.blobVideos.length;
+
+            if (totalVideos === 0) {
+                noVideosMsg.style.display = 'block';
+                return;
+            }
+
+            videoCategories.style.display = 'block';
+
+            // Display static videos
+            if (availableVideos.staticVideos.length > 0) {
+                document.getElementById('staticVideosSection').style.display = 'block';
+                staticVideosList.innerHTML = '';
+                availableVideos.staticVideos.forEach(video => {
+                    const videoItem = createVideoItem(video);
+                    staticVideosList.appendChild(videoItem);
+                });
+            } else {
+                document.getElementById('staticVideosSection').style.display = 'none';
+            }
+
+            // Display blob videos
+            if (availableVideos.blobVideos.length > 0) {
+                document.getElementById('blobVideosSection').style.display = 'block';
+                blobVideosList.innerHTML = '';
+                availableVideos.blobVideos.forEach(video => {
+                    const videoItem = createVideoItem(video);
+                    blobVideosList.appendChild(videoItem);
+                });
+            } else {
+                document.getElementById('blobVideosSection').style.display = 'none';
+            }
+        }
+
+        function createVideoItem(video) {
+            const item = document.createElement('div');
+            item.className = 'video-item';
+            item.dataset.videoUrl = video.url;
+
+            // Format file size
+            const sizeText = video.size ? formatFileSize(video.size) : '';
+            const dateText = video.lastModified ? new Date(video.lastModified).toLocaleDateString() : '';
+
+            item.innerHTML = `
+                <video preload="metadata" muted>
+                    <source src="${video.url}" type="video/${getVideoType(video.name)}">
+                    <div style="height: 120px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666;">
+                        📹 Video Preview
+                    </div>
+                </video>
+                <div class="video-item-name">${video.name}</div>
+                <div class="video-item-info">
+                    ${sizeText}${sizeText && dateText ? ' • ' : ''}${dateText}
+                </div>
+                <span class="video-type-badge video-type-${video.type}">
+                    ${video.type === 'static' ? '📁 Static' : '☁️ Blob'}
+                </span>
+            `;
+
+            item.addEventListener('click', () => {
+                // Remove selection from other items
+                document.querySelectorAll('.video-item').forEach(i => i.classList.remove('selected'));
+
+                // Select this item
+                item.classList.add('selected');
+                selectedVideoUrl = video.url;
+
+                // Update the URL input
+                videoUrlInput.value = video.url;
+
+                // Hide the browser after selection
+                videoBrowser.style.display = 'none';
+                browseVideosBtn.textContent = 'Browse Available Videos';
+            });
+
+            return item;
+        }
+
+        function getVideoType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            return ext === 'webm' ? 'webm' : ext === 'ogg' ? 'ogg' : 'mp4';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
 
         // Show upload button when file is selected
         videoFileInput.addEventListener('change', () => {
@@ -2301,6 +2549,11 @@
                         const response = JSON.parse(xhr.responseText);
                         videoUrlInput.value = response.url;
                         videoProgressText.textContent = 'Upload complete!';
+
+                        // Refresh video browser if it's open
+                        if (videoBrowser.style.display !== 'none') {
+                            loadAvailableVideos();
+                        }
 
                         // Hide progress after 2 seconds
                         setTimeout(() => {

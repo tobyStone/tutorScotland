@@ -1,0 +1,8 @@
+# This file ensures the videos directory is tracked by Git
+# Add your video files here:
+# - welcome.mp4
+# - tutorial.webm  
+# - demo.ogg
+
+# Videos in this directory will be served at:
+# https://yoursite.com/videos/filename.ext

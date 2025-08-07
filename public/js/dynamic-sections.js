@@ -863,13 +863,35 @@ function createVideoSectionElement(section, index, article) {
         video.style.cssText = 'width: 100%; height: auto; display: block;';
         video.setAttribute('data-video-url', section.videoUrl);
 
+        // Add multiple source formats for better compatibility
+        const videoExtension = section.videoUrl.split('.').pop().toLowerCase();
+        if (videoExtension === 'mp4') {
+            video.innerHTML = `<source src="${section.videoUrl}" type="video/mp4">`;
+        } else if (videoExtension === 'webm') {
+            video.innerHTML = `<source src="${section.videoUrl}" type="video/webm">`;
+        } else if (videoExtension === 'ogg') {
+            video.innerHTML = `<source src="${section.videoUrl}" type="video/ogg">`;
+        }
+
+        // Add fallback message
+        video.innerHTML += '<p>Your browser does not support the video tag.</p>';
+
         // Add error handling for video loading
         video.addEventListener('error', function() {
             console.error('Video failed to load:', section.videoUrl);
             const errorMsg = document.createElement('div');
-            errorMsg.textContent = 'Video could not be loaded. Please check the URL.';
+            errorMsg.textContent = 'Video could not be loaded. Please check the URL or try a different format.';
             errorMsg.style.cssText = 'padding: 2rem; text-align: center; background: #f8f8f8; color: #666; border-radius: 0.5rem;';
             videoContainer.replaceChild(errorMsg, video);
+        });
+
+        // Add loading state
+        video.addEventListener('loadstart', function() {
+            console.log('Video loading started:', section.videoUrl);
+        });
+
+        video.addEventListener('canplay', function() {
+            console.log('Video can start playing:', section.videoUrl);
         });
 
         videoContainer.appendChild(video);

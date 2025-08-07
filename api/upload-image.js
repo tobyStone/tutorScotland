@@ -177,17 +177,31 @@ module.exports = async (req, res) => {
             console.log(`📹 Processing video upload: ${filename}`);
 
             // For videos, we upload directly without processing
-            const putOpts = { access: 'public', contentType: uploadedFile.mimetype, overwrite: true };
-            const videoKey = `${folder}/${filename}`;
+            const putOpts = {
+                access: 'public',
+                contentType: uploadedFile.mimetype,
+                overwrite: true,
+                // Add metadata for better organization
+                addRandomSuffix: false // We already have timestamp in filename
+            };
+
+            // Ensure video-content folder for organization
+            const videoFolder = folder === 'content-images' ? 'video-content' : folder;
+            const videoKey = `${videoFolder}/${filename}`;
 
             try {
-                console.log('📤 Uploading video to blob storage...');
+                console.log(`📤 Uploading video to blob storage: ${videoKey}`);
                 const uploadResult = await put(videoKey, buffer, putOpts);
 
                 // Verify the upload
                 const verifyResponse = await fetch(uploadResult.url, { method: 'HEAD' });
                 if (!verifyResponse.ok) {
                     throw new Error(`Video upload verification failed: ${verifyResponse.status}`);
+                }
+
+                const uploadedSize = parseInt(verifyResponse.headers.get('content-length') || '0');
+                if (uploadedSize !== buffer.length) {
+                    throw new Error(`Video size mismatch: uploaded ${uploadedSize} vs expected ${buffer.length}`);
                 }
 
                 console.log('✅ Video uploaded successfully:', uploadResult.url);
@@ -202,7 +216,8 @@ module.exports = async (req, res) => {
                     url: uploadResult.url,
                     filename: filename,
                     size: uploadedFile.size,
-                    type: 'video'
+                    type: 'video',
+                    folder: videoFolder
                 });
 
             } catch (error) {

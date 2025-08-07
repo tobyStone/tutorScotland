@@ -67,11 +67,22 @@ const schema = new mongoose.Schema({
             validator: function(v) {
                 // Only validate if videoUrl is provided and layout is video
                 if (!v || this.layout !== 'video') return true;
-                // Validate Google Cloud Storage video URL format
+
+                // Check if it's a static video URL
+                const staticPattern = /^\/videos\/[^\/]+\.(mp4|webm|ogg)$/i;
+                if (staticPattern.test(v)) return true;
+
+                // Check if it's a Vercel Blob URL
+                const blobPattern = /^https:\/\/[^\/]+\.public\.blob\.vercel-storage\.com\/.*\.(mp4|webm|ogg)$/i;
+                if (blobPattern.test(v)) return true;
+
+                // Check if it's a Google Cloud Storage URL (for backward compatibility)
                 const googleCloudPattern = /^https:\/\/storage\.googleapis\.com\/[^\/]+\/.*\.(mp4|webm|ogg)$/i;
-                return googleCloudPattern.test(v);
+                if (googleCloudPattern.test(v)) return true;
+
+                return false;
             },
-            message: 'Video URL must be a valid Google Cloud Storage video URL (mp4, webm, or ogg)'
+            message: 'Video URL must be a static video (/videos/...), Vercel Blob URL, or Google Cloud Storage video URL (mp4, webm, or ogg)'
         }
     },
     team: {

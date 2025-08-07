@@ -12,8 +12,13 @@ module.exports = async (req, res) => {
 
         const { method } = req;
         
+        const { operation } = req.query;
+
         switch (method) {
             case 'GET':
+                if (operation === 'list-videos') {
+                    return handleListVideos(req, res);
+                }
                 return handleGetVideoSections(req, res);
             case 'POST':
                 return handleCreateVideoSection(req, res);
@@ -30,6 +35,83 @@ module.exports = async (req, res) => {
         return res.status(500).json({ message: 'Server error' });
     }
 };
+
+/**
+ * GET - List all available videos (static + blob)
+ * Query params: ?operation=list-videos
+ */
+async function handleListVideos(req, res) {
+    try {
+        const fs = require('fs').promises;
+        const path = require('path');
+        const { list } = require('@vercel/blob');
+
+        console.log('Listing all available videos...');
+
+        // Get static videos from public/videos directory
+        let staticVideos = [];
+        try {
+            const videosDir = path.join(process.cwd(), 'public', 'videos');
+            const files = await fs.readdir(videosDir);
+
+            staticVideos = files
+                .filter(file => {
+                    const ext = path.extname(file).toLowerCase();
+                    return ['.mp4', '.webm', '.ogg'].includes(ext);
+                })
+                .map(file => ({
+                    name: file,
+                    url: `/videos/${file}`,
+                    type: 'static',
+                    size: null, // We could get file size if needed
+                    lastModified: null
+                }));
+        } catch (error) {
+            console.warn('Could not read static videos directory:', error.message);
+            // Directory might not exist yet, that's okay
+        }
+
+        // Get blob videos from Vercel Blob storage
+        let blobVideos = [];
+        try {
+            const { blobs } = await list({
+                prefix: 'video-content/',
+                limit: 100
+            });
+
+            blobVideos = blobs
+                .filter(blob => {
+                    const ext = blob.pathname.split('.').pop().toLowerCase();
+                    return ['mp4', 'webm', 'ogg'].includes(ext);
+                })
+                .map(blob => ({
+                    name: blob.pathname.split('/').pop(),
+                    url: blob.url,
+                    type: 'blob',
+                    size: blob.size,
+                    lastModified: blob.uploadedAt
+                }));
+        } catch (error) {
+            console.warn('Could not list blob videos:', error.message);
+            // Blob storage might not be configured or empty
+        }
+
+        const totalVideos = staticVideos.length + blobVideos.length;
+        console.log(`Found ${totalVideos} videos: ${staticVideos.length} static, ${blobVideos.length} blob`);
+
+        return res.status(200).json({
+            staticVideos,
+            blobVideos,
+            totalCount: totalVideos
+        });
+    } catch (error) {
+        console.error('List videos error:', error);
+        return res.status(500).json({
+            message: 'Error listing videos',
+            error: error.message
+        });
+    }
+}
 
 /**
  * GET - Fetch video sections
@@ -76,9 +158,9 @@ async function handleCreateVideoSection(req, res) {
         }
 
         // Validate video URL format
-        if (!isValidGoogleCloudVideoUrl(videoUrl)) {
-            return res.status(400).json({ 
-                message: 'Invalid video URL. Must be a Google Cloud Storage URL ending in .mp4, .webm, or .ogg' 
+        if (!isValidVideoUrl(videoUrl)) {
+            return res.status(400).json({
+                message: 'Invalid video URL. Must be a static video (/videos/...), Vercel Blob URL, or Google Cloud Storage URL ending in .mp4, .webm, or .ogg'
             });
         }
 
@@ -146,9 +228,9 @@ async function handleUpdateVideoSection(req, res) {
         }
 
         // Validate video URL if provided
-        if (videoUrl && !isValidGoogleCloudVideoUrl(videoUrl)) {
-            return res.status(400).json({ 
-                message: 'Invalid video URL. Must be a Google Cloud Storage URL ending in .mp4, .webm, or .ogg' 
+        if (videoUrl && !isValidVideoUrl(videoUrl)) {
+            return res.status(400).json({
+                message: 'Invalid video URL. Must be a static video (/videos/...), Vercel Blob URL, or Google Cloud Storage URL ending in .mp4, .webm, or .ogg'
             });
         }
 
@@ -237,13 +319,24 @@ async function handleDeleteVideoSection(req, res) {
 }
 
 /**
- * Validate Google Cloud Storage video URL
+ * Validate video URL (static, Vercel Blob, or Google Cloud Storage)
  */
-function isValidGoogleCloudVideoUrl(url) {
+function isValidVideoUrl(url) {
     if (!url || typeof url !== 'string') return false;
-    
+
+    // Check if it's a static video URL
+    const staticPattern = /^\/videos\/[^\/]+\.(mp4|webm|ogg)$/i;
+    if (staticPattern.test(url)) return true;
+
+    // Check if it's a Vercel Blob URL
+    const blobPattern = /^https:\/\/[^\/]+\.public\.blob\.vercel-storage\.com\/.*\.(mp4|webm|ogg)$/i;
+    if (blobPattern.test(url)) return true;
+
+    // Check if it's a Google Cloud Storage URL (for backward compatibility)
     const googleCloudPattern = /^https:\/\/storage\.googleapis\.com\/[^\/]+\/.*\.(mp4|webm|ogg)$/i;
-    return googleCloudPattern.test(url);
+    if (googleCloudPattern.test(url)) return true;
+
+    return false;
 }
 
 /**
