@@ -70,7 +70,7 @@ module.exports = async (req, res) => {
     try {
         const form = formidable({
             keepExtensions: true,
-            maxFileSize: MAX_UPLOAD
+            maxFileSize: MAX_VIDEO_UPLOAD  // Use the larger video limit to allow both images and videos
         });
 
         const [fields, files] = await new Promise((resolve, reject) => {
