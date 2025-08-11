@@ -4,6 +4,42 @@ const { formidable } = require('formidable');
 const fs = require('fs');
 const { lookup } = require('mime-types');
 
+// Google Cloud Storage for large video uploads (using tech team's recommended approach)
+let storage;
+try {
+    const { Storage } = require('@google-cloud/storage');
+
+    // Primary method: Use tech team's recommended environment variables
+    if (process.env.GCP_PROJECT_ID && process.env.GCS_SA_KEY) {
+        const credentials = JSON.parse(process.env.GCS_SA_KEY);
+        storage = new Storage({
+            projectId: process.env.GCP_PROJECT_ID,
+            credentials: credentials
+        });
+        console.log('✅ Google Cloud Storage configured with service account');
+    }
+    // Fallback: Original method for backward compatibility
+    else if (process.env.GOOGLE_CLOUD_CREDENTIALS) {
+        const credentials = JSON.parse(process.env.GOOGLE_CLOUD_CREDENTIALS);
+        storage = new Storage({
+            projectId: credentials.project_id,
+            credentials: credentials
+        });
+        console.log('✅ Google Cloud Storage configured with legacy credentials');
+    }
+    // Development fallback
+    else if (process.env.GOOGLE_CLOUD_PROJECT_ID) {
+        storage = new Storage({
+            projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+            keyFilename: process.env.GOOGLE_CLOUD_KEY_FILE || './google-cloud-key.json'
+        });
+        console.log('✅ Google Cloud Storage configured with key file');
+    }
+} catch (error) {
+    console.log('⚠️ Google Cloud Storage not configured - large video uploads will be disabled');
+    console.log('Error details:', error.message);
+}
+
 // ────────────────────────────────────────────────
 // Sharp tweaks – turn the cache off and keep
 // concurrency low in a server-less environment
@@ -15,8 +51,12 @@ const fsPromises = require('fs/promises');
 // ────────────────────────────────────────────────
 
 const MAX_UPLOAD = 4 * 1024 * 1024;  // 4MB for images
-const MAX_VIDEO_UPLOAD = 50 * 1024 * 1024;  // 50MB for videos
+const MAX_VIDEO_UPLOAD = 4.5 * 1024 * 1024;  // 4.5MB for videos (Vercel serverless function limit)
+const MAX_LARGE_VIDEO_UPLOAD = 1024 * 1024 * 1024; // 1GB for direct Google Cloud uploads
 const MAX_DIMENSIONS = 2000;  // Max width/height in pixels
+
+// Google Cloud Storage bucket (use tech team's recommended approach)
+const GOOGLE_CLOUD_BUCKET = process.env.GCS_BUCKET_NAME || process.env.GOOGLE_CLOUD_BUCKET || 'tutor-scotland-videos';
 const ALLOWED_IMAGE_MIME = [
     'image/jpeg',
     'image/png',
@@ -53,6 +93,131 @@ module.exports = async (req, res) => {
         res.setHeader('Allow', ['POST']);
         return res.status(405).end('Method Not Allowed');
     }
+
+    // Check if this is a request for a signed URL (for large video uploads)
+    const contentType = req.headers['content-type'];
+    if (contentType && contentType.includes('application/json')) {
+        return handleSignedUrlRequest(req, res);
+    }
+
+    // Otherwise, handle regular file upload
+    return handleFileUpload(req, res);
+};
+
+// Handle signed URL generation for large video uploads (enhanced with tech team's security model)
+async function handleSignedUrlRequest(req, res) {
+    try {
+        if (!storage) {
+            return res.status(500).json({
+                error: 'Google Cloud Storage not configured. Please contact administrator.',
+                details: 'Service account credentials not found'
+            });
+        }
+
+        const { filename, contentType, fileSize } = req.body;
+
+        // Enhanced input validation
+        if (!filename || !contentType || !fileSize) {
+            return res.status(400).json({
+                error: 'Missing required fields: filename, contentType, fileSize'
+            });
+        }
+
+        // Validate filename (security check)
+        if (typeof filename !== 'string' || filename.length > 255) {
+            return res.status(400).json({
+                error: 'Invalid filename. Must be a string under 255 characters.'
+            });
+        }
+
+        // Validate file size (both minimum and maximum)
+        if (typeof fileSize !== 'number' || fileSize <= 0) {
+            return res.status(400).json({
+                error: 'Invalid file size. Must be a positive number.'
+            });
+        }
+
+        if (fileSize > MAX_LARGE_VIDEO_UPLOAD) {
+            return res.status(413).json({
+                error: `File too large. Maximum size is ${MAX_LARGE_VIDEO_UPLOAD / (1024 * 1024 * 1024)}GB`
+            });
+        }
+
+        // Enhanced content type validation (following tech team's security approach)
+        if (!contentType.startsWith('video/')) {
+            return res.status(400).json({
+                error: 'Only video files are allowed.'
+            });
+        }
+
+        const allowedVideoTypes = ['video/mp4', 'video/webm', 'video/ogg'];
+        if (!allowedVideoTypes.includes(contentType)) {
+            return res.status(400).json({
+                error: 'Invalid video type. Only MP4, WebM, and OGG videos are allowed.'
+            });
+        }
+
+        // Generate secure, unique filename (enhanced approach)
+        const timestamp = Date.now();
+        const randomSuffix = Math.random().toString(36).substring(2, 8); // 6 random chars
+
+        // Clean and sanitize filename
+        const cleanFilename = filename.toLowerCase()
+            .replace(/\.\w+$/, '') // remove original extension
+            .replace(/\s+/g, '-')
+            .replace(/[^a-z0-9-]/g, '') // only allow alphanumeric and hyphens
+            .replace(/-+/g, '-') // collapse multiple hyphens
+            .replace(/^-|-$/g, '') // remove leading/trailing hyphens
+            .substring(0, 50); // limit length
+
+        const extension = contentType.split('/')[1] || 'mp4';
+        const uniqueFilename = `video-content/${timestamp}-${randomSuffix}-${cleanFilename}.${extension}`;
+
+        console.log(`🔐 Generating signed URL for: ${uniqueFilename}`);
+
+        // Get bucket reference
+        const bucket = storage.bucket(GOOGLE_CLOUD_BUCKET);
+        const file = bucket.file(uniqueFilename);
+
+        // Generate signed URL with enhanced security options (following tech team's approach)
+        const options = {
+            version: 'v4',
+            action: 'write',
+            expires: Date.now() + 15 * 60 * 1000, // 15 minutes (secure expiration)
+            contentType: contentType,
+            extensionHeaders: {
+                'x-goog-content-length-range': `0,${MAX_LARGE_VIDEO_UPLOAD}` // Enforce size limit at GCS level
+            }
+        };
+
+        const [signedUrl] = await file.getSignedUrl(options);
+        console.log(`✅ Signed URL generated successfully (expires in 15 minutes)`);
+
+        // Generate the public URL for later access
+        const publicUrl = `https://storage.googleapis.com/${GOOGLE_CLOUD_BUCKET}/${uniqueFilename}`;
+
+        // Return the signed URL and file information (enhanced response)
+        res.status(200).json({
+            uploadUrl: signedUrl,
+            filename: uniqueFilename,
+            publicUrl: publicUrl,
+            bucket: GOOGLE_CLOUD_BUCKET,
+            expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
+            maxSize: MAX_LARGE_VIDEO_UPLOAD,
+            contentType: contentType
+        });
+
+    } catch (error) {
+        console.error('Error generating upload URL:', error);
+        res.status(500).json({
+            error: 'Failed to generate upload URL',
+            details: error.message
+        });
+    }
+}
+
+// Handle regular file upload (images and small videos)
+async function handleFileUpload(req, res) {
 
     // ✅ UPLOAD GUARD: Prevent too many concurrent uploads
     if (activeUploads.size >= MAX_CONCURRENT_UPLOADS) {

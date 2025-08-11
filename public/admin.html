@@ -482,6 +482,12 @@
                                             <div id="blobVideosList" class="video-grid"></div>
                                         </div>
 
+                                        <!-- Google Cloud Videos -->
+                                        <div id="googleCloudVideosSection" style="margin-top: 1rem;">
+                                            <h5 style="margin: 0 0 0.5rem 0; color: #FF6B35;">🌩️ Large Videos (Google Cloud)</h5>
+                                            <div id="googleCloudVideosList" class="video-grid"></div>
+                                        </div>
+
                                         <div id="noVideosMsg" style="display: none; text-align: center; padding: 1rem; color: #666; font-style: italic;">
                                             No videos found. Upload a video or add static videos to the /public/videos directory.
                                         </div>
@@ -732,6 +738,7 @@
     <script type="module">
         import { uploadImage } from '/js/upload-helper.js';
         import { PAGES } from '/js/pages.js';
+        import { uploadLargeVideo, shouldUseDirectUpload, formatFileSize, validateVideoFile } from '/js/google-cloud-upload.js';
 
         /* ── page‑guard: only admins allowed ───────────────────────── */
         const auth = await fetch('/api/protected?role=admin');
@@ -2399,9 +2406,10 @@
         const videoCategories = document.getElementById('videoCategories');
         const staticVideosList = document.getElementById('staticVideosList');
         const blobVideosList = document.getElementById('blobVideosList');
+        const googleCloudVideosList = document.getElementById('googleCloudVideosList');
         const noVideosMsg = document.getElementById('noVideosMsg');
 
-        let availableVideos = { staticVideos: [], blobVideos: [] };
+        let availableVideos = { staticVideos: [], blobVideos: [], googleCloudVideos: [] };
         let selectedVideoUrl = null;
 
         // Video Browser Functionality
@@ -2439,7 +2447,14 @@
         function displayAvailableVideos() {
             videoLoadingMsg.style.display = 'none';
 
-            const totalVideos = availableVideos.staticVideos.length + availableVideos.blobVideos.length;
+            // Ensure we have all video arrays
+            availableVideos.staticVideos = availableVideos.staticVideos || [];
+            availableVideos.blobVideos = availableVideos.blobVideos || [];
+            availableVideos.googleCloudVideos = availableVideos.googleCloudVideos || [];
+
+            const totalVideos = availableVideos.staticVideos.length +
+                               availableVideos.blobVideos.length +
+                               availableVideos.googleCloudVideos.length;
 
             if (totalVideos === 0) {
                 noVideosMsg.style.display = 'block';
@@ -2470,6 +2485,18 @@
                 });
             } else {
                 document.getElementById('blobVideosSection').style.display = 'none';
+            }
+
+            // Display Google Cloud videos
+            if (availableVideos.googleCloudVideos.length > 0) {
+                document.getElementById('googleCloudVideosSection').style.display = 'block';
+                googleCloudVideosList.innerHTML = '';
+                availableVideos.googleCloudVideos.forEach(video => {
+                    const videoItem = createVideoItem(video);
+                    googleCloudVideosList.appendChild(videoItem);
+                });
+            } else {
+                document.getElementById('googleCloudVideosSection').style.display = 'none';
             }
         }
 
@@ -2552,25 +2579,39 @@
             const file = videoFileInput.files[0];
             if (!file) return;
 
-            // Validate file type
-            const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg'];
-            if (!allowedTypes.includes(file.type)) {
-                alert('Please select a valid video file (MP4, WebM, or OGG)');
+            // Validate video file
+            const validation = validateVideoFile(file);
+            if (!validation.isValid) {
+                alert(validation.error);
                 return;
             }
 
-            // Validate file size (50MB)
-            const maxSize = 50 * 1024 * 1024;
-            if (file.size > maxSize) {
-                alert('Video file is too large. Maximum size is 50MB.');
+            console.log(`📹 Video upload: ${file.name} (${formatFileSize(file.size)})`);
+
+            // Determine upload method based on file size
+            const useDirectUpload = shouldUseDirectUpload(file);
+            const VERCEL_LIMIT = 4.5 * 1024 * 1024; // 4.5MB
+
+            if (useDirectUpload) {
+                console.log('🚀 Using direct Google Cloud upload for large video');
+                await handleLargeVideoUpload(file);
+            } else if (file.size <= VERCEL_LIMIT) {
+                console.log('📤 Using Vercel serverless function for small video');
+                await handleSmallVideoUpload(file);
+            } else {
+                alert(`Video file is too large for Vercel upload (${formatFileSize(file.size)} > ${formatFileSize(VERCEL_LIMIT)}) but Google Cloud upload is not configured. Please use a smaller file.`);
                 return;
             }
 
+        });
+
+        // Handle small video upload via Vercel serverless function
+        async function handleSmallVideoUpload(file) {
             // Show progress
             videoUploadProgress.style.display = 'block';
             uploadVideoBtn.disabled = true;
             videoProgressBar.style.width = '0%';
-            videoProgressText.textContent = 'Uploading...';
+            videoProgressText.textContent = 'Uploading via Vercel...';
 
             try {
                 const formData = new FormData();
@@ -2591,29 +2632,7 @@
                 xhr.addEventListener('load', () => {
                     if (xhr.status === 200) {
                         const response = JSON.parse(xhr.responseText);
-                        videoUrlInput.value = response.url;
-                        videoProgressText.textContent = 'Upload complete!';
-
-                        // Auto-populate heading if it's empty
-                        const headingInput = addSectionForm.querySelector('[name="heading"]');
-                        if (headingInput && !headingInput.value.trim()) {
-                            // Use uploaded filename without extension as default heading
-                            const fileName = videoFileInput.files[0].name.replace(/\.[^/.]+$/, "");
-                            headingInput.value = fileName;
-                        }
-
-                        // Refresh video browser if it's open
-                        if (videoBrowser.style.display !== 'none') {
-                            loadAvailableVideos();
-                        }
-
-                        // Hide progress after 2 seconds
-                        setTimeout(() => {
-                            videoUploadProgress.style.display = 'none';
-                            uploadVideoBtn.disabled = false;
-                            uploadVideoBtn.style.display = 'none';
-                            videoFileInput.value = '';
-                        }, 2000);
+                        handleUploadSuccess(response.url, file.name);
                     } else {
                         throw new Error(`Upload failed: ${xhr.status}`);
                     }
@@ -2627,12 +2646,74 @@
                 xhr.send(formData);
 
             } catch (error) {
-                console.error('Video upload error:', error);
-                alert('Video upload failed: ' + error.message);
+                handleUploadError(error);
+            }
+        }
+
+        // Handle large video upload via direct Google Cloud upload
+        async function handleLargeVideoUpload(file) {
+            // Show progress
+            videoUploadProgress.style.display = 'block';
+            uploadVideoBtn.disabled = true;
+            videoProgressBar.style.width = '0%';
+            videoProgressText.textContent = 'Uploading to Google Cloud...';
+
+            try {
+                await uploadLargeVideo(
+                    file,
+                    // Progress callback
+                    (percent) => {
+                        videoProgressBar.style.width = percent + '%';
+                        videoProgressText.textContent = `Uploading... ${percent}%`;
+                    },
+                    // Success callback
+                    (url, filename) => {
+                        handleUploadSuccess(url, filename);
+                    },
+                    // Error callback
+                    (error) => {
+                        handleUploadError(error);
+                    }
+                );
+            } catch (error) {
+                handleUploadError(error);
+            }
+        }
+
+        // Handle successful upload (common for both paths)
+        function handleUploadSuccess(url, filename) {
+            videoUrlInput.value = url;
+            videoProgressText.textContent = 'Upload complete!';
+
+            // Auto-populate heading if it's empty
+            const headingInput = addSectionForm.querySelector('[name="heading"]');
+            if (headingInput && !headingInput.value.trim()) {
+                // Use uploaded filename without extension as default heading
+                const fileName = filename.replace(/\.[^/.]+$/, "");
+                headingInput.value = fileName;
+            }
+
+            // Refresh video browser if it's open
+            if (videoBrowser.style.display !== 'none') {
+                loadAvailableVideos();
+            }
+
+            // Hide progress after 2 seconds
+            setTimeout(() => {
                 videoUploadProgress.style.display = 'none';
                 uploadVideoBtn.disabled = false;
-            }
-        });
+                uploadVideoBtn.style.display = 'none';
+                videoFileInput.value = '';
+            }, 2000);
+        }
+
+        // Handle upload error (common for both paths)
+        function handleUploadError(error) {
+            console.error('Video upload error:', error);
+            alert('Video upload failed: ' + error.message);
+            videoUploadProgress.style.display = 'none';
+            uploadVideoBtn.disabled = false;
+        }
 
         /* initial */
         await loadPages();

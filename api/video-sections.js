@@ -123,12 +123,69 @@ async function handleListVideos(req, res) {
             // Blob storage might not be configured or empty
         }
 
-        const totalVideos = staticVideos.length + blobVideos.length;
-        console.log(`Found ${totalVideos} videos: ${staticVideos.length} static, ${blobVideos.length} blob`);
+        // Get Google Cloud videos (using tech team's recommended configuration)
+        let googleCloudVideos = [];
+        try {
+            // Initialize Google Cloud Storage with consistent configuration
+            let storage;
+            const { Storage } = require('@google-cloud/storage');
+
+            // Primary method: Use tech team's recommended environment variables
+            if (process.env.GCP_PROJECT_ID && process.env.GCS_SA_KEY) {
+                const credentials = JSON.parse(process.env.GCS_SA_KEY);
+                storage = new Storage({
+                    projectId: process.env.GCP_PROJECT_ID,
+                    credentials: credentials
+                });
+            }
+            // Fallback methods for backward compatibility
+            else if (process.env.GOOGLE_CLOUD_CREDENTIALS) {
+                const credentials = JSON.parse(process.env.GOOGLE_CLOUD_CREDENTIALS);
+                storage = new Storage({
+                    projectId: credentials.project_id,
+                    credentials: credentials
+                });
+            } else if (process.env.GOOGLE_CLOUD_PROJECT_ID) {
+                storage = new Storage({
+                    projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+                    keyFilename: process.env.GOOGLE_CLOUD_KEY_FILE || './google-cloud-key.json'
+                });
+            }
+
+            if (storage) {
+                const bucketName = process.env.GCS_BUCKET_NAME || process.env.GOOGLE_CLOUD_BUCKET || 'tutor-scotland-videos';
+                const bucket = storage.bucket(bucketName);
+
+                const [files] = await bucket.getFiles({
+                    prefix: 'video-content/',
+                    maxResults: 100
+                });
+
+                googleCloudVideos = files
+                    .filter(file => {
+                        const ext = file.name.split('.').pop().toLowerCase();
+                        return ['mp4', 'webm', 'ogg'].includes(ext);
+                    })
+                    .map(file => ({
+                        name: file.name.split('/').pop(),
+                        url: `https://storage.googleapis.com/${bucketName}/${file.name}`,
+                        type: 'google-cloud',
+                        size: file.metadata.size ? parseInt(file.metadata.size) : null,
+                        lastModified: file.metadata.timeCreated
+                    }));
+            }
+        } catch (error) {
+            console.warn('Could not list Google Cloud videos:', error.message);
+            // Google Cloud might not be configured
+        }
+
+        const totalVideos = staticVideos.length + blobVideos.length + googleCloudVideos.length;
+        console.log(`Found ${totalVideos} videos: ${staticVideos.length} static, ${blobVideos.length} blob, ${googleCloudVideos.length} google-cloud`);
 
         return res.status(200).json({
             staticVideos,
             blobVideos,
+            googleCloudVideos,
             totalCount: totalVideos
         });
     } catch (error) {

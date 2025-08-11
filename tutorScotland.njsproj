@@ -39,9 +39,6 @@
       <SubType>Code</SubType>
     </Content>
     <Content Include="api\blog-writer.js" />
-    <Content Include="api\blog.js">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="api\connection.js" />
     <Content Include="api\connectToDatabase.js">
       <SubType>Code</SubType>
@@ -50,7 +47,6 @@
     <Content Include="api\login.js">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="api\page.js" />
     <Content Include="api\protected.js">
       <SubType>Code</SubType>
     </Content>
@@ -163,9 +159,6 @@
     </Content>
     <Content Include="public\partnerships.html" />
     <Content Include="public\responsive-helper.js" />
-    <Content Include="public\style.css">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="api\tutors.js">
       <SubType>Code</SubType>
     </Content>
@@ -199,6 +192,34 @@
     <Content Include="seedUsers.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="tests\config\mocks.js" />
+    <Content Include="tests\config\setup.js" />
+    <Content Include="tests\config\test-db.js" />
+    <Content Include="tests\e2e\dynamic-sections-cross-browser.spec.js" />
+    <Content Include="tests\e2e\dynamic-sections-styling.spec.js" />
+    <Content Include="tests\e2e\dynamic-sections-visual-regression.spec.js" />
+    <Content Include="tests\e2e\hardware-specific.spec.js" />
+    <Content Include="tests\fixtures\data\tutors.json" />
+    <Content Include="tests\fixtures\data\users.json" />
+    <Content Include="tests\fixtures\helpers\auth-helpers.js" />
+    <Content Include="tests\integration\api\blog-system.test.js" />
+    <Content Include="tests\integration\api\dynamic-sections.test.js" />
+    <Content Include="tests\integration\api\image-upload.test.js" />
+    <Content Include="tests\integration\api\login.test.js" />
+    <Content Include="tests\integration\api\tutor-search.test.js" />
+    <Content Include="tests\integration\models\section-schema.test.js" />
+    <Content Include="tests\migration\schema-migration.test.js" />
+    <Content Include="tests\setup\test-db.js" />
+    <Content Include="tests\smoke\css-preservation.test.js" />
+    <Content Include="tests\smoke\css-preservation.test.js-snapshots\dynamic-sections-styling-chromium-win32.png" />
+    <Content Include="tests\smoke\css-preservation.test.js-snapshots\team-sections-landscape-chromium-win32.png" />
+    <Content Include="tests\smoke\css-preservation.test.js-snapshots\team-sections-landscape-Mobile-Chrome-win32.png" />
+    <Content Include="tests\smoke\css-preservation.test.js-snapshots\team-sections-portrait-chromium-win32.png" />
+    <Content Include="tests\smoke\css-preservation.test.js-snapshots\team-sections-portrait-Mobile-Chrome-win32.png" />
+    <Content Include="tests\smoke\health-check.test.js" />
+    <Content Include="tests\smoke\navigation.test.js" />
+    <Content Include="tests\smoke\visual-regression.test.js" />
+    <Content Include="tests\unit\models\User.test.js" />
     <Content Include="updateDatabase.js">
       <SubType>Code</SubType>
     </Content>
@@ -219,6 +240,20 @@
     <Folder Include="public\videos\" />
     <Folder Include="public\partials\" />
     <Folder Include="tests\" />
+    <Folder Include="tests\config\" />
+    <Folder Include="tests\e2e\" />
+    <Folder Include="tests\fixtures\" />
+    <Folder Include="tests\fixtures\data\" />
+    <Folder Include="tests\fixtures\helpers\" />
+    <Folder Include="tests\integration\" />
+    <Folder Include="tests\integration\api\" />
+    <Folder Include="tests\integration\models\" />
+    <Folder Include="tests\migration\" />
+    <Folder Include="tests\setup\" />
+    <Folder Include="tests\smoke\" />
+    <Folder Include="tests\smoke\css-preservation.test.js-snapshots\" />
+    <Folder Include="tests\unit\" />
+    <Folder Include="tests\unit\models\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
