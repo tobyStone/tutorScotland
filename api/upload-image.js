@@ -216,7 +216,7 @@ async function handleSignedUrlRequest(req, res) {
     }
 }
 
-// Handle regular file upload (images and small videos)
+// Handle regular file upload (images, small videos, and large video fallback)
 async function handleFileUpload(req, res) {
 
     // ✅ UPLOAD GUARD: Prevent too many concurrent uploads
@@ -290,12 +290,23 @@ async function handleFileUpload(req, res) {
             });
         }
 
-        // Check file size limits
-        const maxSize = isVideo ? MAX_VIDEO_UPLOAD : MAX_UPLOAD;
+        // Check for Google Cloud fallback flag
+        const forceGoogleCloud = fields.forceGoogleCloud === 'true';
+
+        // Check file size limits (allow larger files for Google Cloud fallback)
+        let maxSize;
+        if (forceGoogleCloud && isVideo) {
+            maxSize = MAX_LARGE_VIDEO_UPLOAD; // 1GB for Google Cloud fallback
+            console.log('🔄 Using Google Cloud fallback for large video upload');
+        } else {
+            maxSize = isVideo ? MAX_VIDEO_UPLOAD : MAX_UPLOAD;
+        }
+
         if (uploadedFile.size > maxSize) {
             const maxSizeMB = Math.round(maxSize / (1024 * 1024));
+            const storageType = forceGoogleCloud ? 'Google Cloud Storage' : (isVideo ? 'videos' : 'images');
             return res.status(413).json({
-                message: `File too large. Maximum size is ${maxSizeMB}MB for ${isVideo ? 'videos' : 'images'}.`
+                message: `File too large. Maximum size is ${maxSizeMB}MB for ${storageType}.`
             });
         }
         uploadedFile.mimetype = mime; // Normalise for later put
@@ -341,7 +352,60 @@ async function handleFileUpload(req, res) {
         if (isVideo) {
             console.log(`📹 Processing video upload: ${filename}`);
 
-            // For videos, we upload directly without processing
+            // Check if we should use Google Cloud Storage (fallback mode)
+            if (forceGoogleCloud && storage) {
+                console.log(`🌩️ Using Google Cloud Storage fallback for large video`);
+
+                try {
+                    // Generate unique filename for Google Cloud
+                    const timestamp = Date.now();
+                    const randomSuffix = Math.random().toString(36).substring(2, 8);
+                    const cleanName = filename.replace(/\.\w+$/, '').substring(0, 50);
+                    const extension = uploadedFile.mimetype.split('/')[1] || 'mp4';
+                    const gcFilename = `video-content/${timestamp}-${randomSuffix}-${cleanName}.${extension}`;
+
+                    // Upload to Google Cloud Storage
+                    const bucket = storage.bucket(GOOGLE_CLOUD_BUCKET);
+                    const file = bucket.file(gcFilename);
+
+                    console.log(`📤 Uploading large video to Google Cloud: ${gcFilename}`);
+
+                    await file.save(buffer, {
+                        metadata: {
+                            contentType: uploadedFile.mimetype,
+                        },
+                        public: true, // Make file publicly accessible
+                    });
+
+                    const publicUrl = `https://storage.googleapis.com/${GOOGLE_CLOUD_BUCKET}/${gcFilename}`;
+
+                    // Verify the upload
+                    const verifyResponse = await fetch(publicUrl, { method: 'HEAD' });
+                    if (!verifyResponse.ok) {
+                        throw new Error(`Google Cloud upload verification failed: ${verifyResponse.status}`);
+                    }
+
+                    console.log(`✅ Large video uploaded successfully to Google Cloud Storage`);
+
+                    return res.status(200).json({
+                        message: 'Large video uploaded successfully to Google Cloud Storage',
+                        url: publicUrl,
+                        filename: gcFilename,
+                        size: uploadedFile.size,
+                        type: uploadedFile.mimetype,
+                        storage: 'google-cloud'
+                    });
+
+                } catch (gcError) {
+                    console.error('Google Cloud upload failed:', gcError);
+                    return res.status(500).json({
+                        message: 'Google Cloud upload failed',
+                        error: gcError.message
+                    });
+                }
+            }
+
+            // Default: Upload to Vercel Blob Storage
             const putOpts = {
                 access: 'public',
                 contentType: uploadedFile.mimetype,
@@ -355,7 +419,7 @@ async function handleFileUpload(req, res) {
             const videoKey = `${videoFolder}/${filename}`;
 
             try {
-                console.log(`📤 Uploading video to blob storage: ${videoKey}`);
+                console.log(`📤 Uploading video to Vercel Blob storage: ${videoKey}`);
                 const uploadResult = await put(videoKey, buffer, putOpts);
 
                 // Verify the upload

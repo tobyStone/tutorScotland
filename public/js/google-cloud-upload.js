@@ -36,13 +36,23 @@ export async function uploadLargeVideo(file, onProgress, onComplete, onError) {
 
         const { uploadUrl, publicUrl, filename } = await response.json();
 
-        // Step 2: Upload directly to Google Cloud Storage (enhanced with tech team's approach)
+        // Step 2: Upload directly to Google Cloud Storage (with CORS fallback)
         console.log('📤 Starting direct upload to Google Cloud Storage...');
-        const uploadResponse = await uploadWithProgress(uploadUrl, file, onProgress);
 
-        if (!uploadResponse.ok) {
-            const errorText = await uploadResponse.text().catch(() => 'Unknown error');
-            throw new Error(`Upload failed with status: ${uploadResponse.status}. ${errorText}`);
+        try {
+            const uploadResponse = await uploadWithProgress(uploadUrl, file, onProgress);
+
+            if (!uploadResponse.ok) {
+                const errorText = await uploadResponse.text().catch(() => 'Unknown error');
+                throw new Error(`Upload failed with status: ${uploadResponse.status}. ${errorText}`);
+            }
+        } catch (error) {
+            // If direct upload fails due to CORS, try server-side upload
+            if (error.message.includes('CORS') || error.message.includes('network error')) {
+                console.log('🔄 Direct upload failed due to CORS, trying server-side upload...');
+                return await uploadViaServer(file, onProgress, onComplete, onError);
+            }
+            throw error;
         }
 
         console.log('✅ Large video uploaded successfully to Google Cloud Storage');
@@ -76,6 +86,60 @@ export async function uploadLargeVideo(file, onProgress, onComplete, onError) {
             onError(error);
         }
         throw error;
+    }
+}
+
+/**
+ * Fallback: Upload large video via server (when CORS blocks direct upload)
+ * @param {File} file - Video file to upload
+ * @param {Function} onProgress - Progress callback (percent)
+ * @param {Function} onComplete - Completion callback (url, filename)
+ * @param {Function} onError - Error callback (error)
+ */
+async function uploadViaServer(file, onProgress, onComplete, onError) {
+    try {
+        console.log('🔄 Attempting server-side upload for large video...');
+
+        // Create form data for server upload
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('folder', 'video-content');
+        formData.append('forceGoogleCloud', 'true'); // Flag to force Google Cloud upload
+
+        // Upload with progress tracking
+        const xhr = new XMLHttpRequest();
+
+        xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable && onProgress) {
+                const percentComplete = Math.round((e.loaded / e.total) * 100);
+                onProgress(percentComplete);
+            }
+        });
+
+        xhr.addEventListener('load', () => {
+            if (xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+                console.log('✅ Server-side upload successful:', response.url);
+                if (onComplete) {
+                    onComplete(response.url, file.name);
+                }
+            } else {
+                const error = new Error(`Server upload failed: ${xhr.status}`);
+                if (onError) onError(error);
+            }
+        });
+
+        xhr.addEventListener('error', () => {
+            const error = new Error('Server upload failed due to network error');
+            if (onError) onError(error);
+        });
+
+        xhr.open('POST', '/api/upload-image');
+        xhr.send(formData);
+
+    } catch (error) {
+        console.error('Server-side upload error:', error);
+        if (onError) onError(error);
     }
 }
 
