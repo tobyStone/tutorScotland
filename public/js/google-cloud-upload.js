@@ -17,6 +17,9 @@ export async function uploadLargeVideo(file, onProgress, onComplete, onError) {
         });
 
         // Step 1: Get signed upload URL from our consolidated API
+        // Normalize content type to ensure consistency
+        const normalizedContentType = file.type || 'video/mp4';
+
         const response = await fetch('/api/upload-image', {
             method: 'POST',
             headers: {
@@ -24,7 +27,7 @@ export async function uploadLargeVideo(file, onProgress, onComplete, onError) {
             },
             body: JSON.stringify({
                 filename: file.name,
-                contentType: file.type,
+                contentType: normalizedContentType,
                 fileSize: file.size
             })
         });
@@ -34,13 +37,14 @@ export async function uploadLargeVideo(file, onProgress, onComplete, onError) {
             throw new Error(errorData.error || 'Failed to get upload URL');
         }
 
-        const { uploadUrl, publicUrl, filename } = await response.json();
+        const { uploadUrl, publicUrl, filename, contentType } = await response.json();
 
         // Step 2: Upload directly to Google Cloud Storage (with CORS fallback)
         console.log('📤 Starting direct upload to Google Cloud Storage...');
 
         try {
-            const uploadResponse = await uploadWithProgress(uploadUrl, file, onProgress);
+            // Use the content type returned from the server to ensure consistency
+            const uploadResponse = await uploadWithProgress(uploadUrl, file, onProgress, contentType || normalizedContentType);
 
             if (!uploadResponse.ok) {
                 const errorText = await uploadResponse.text().catch(() => 'Unknown error');
@@ -148,8 +152,9 @@ async function uploadViaServer(file, onProgress, onComplete, onError) {
  * @param {string} uploadUrl - Signed upload URL
  * @param {File} file - File to upload
  * @param {Function} onProgress - Progress callback
+ * @param {string} contentType - Content type to use (optional)
  */
-function uploadWithProgress(uploadUrl, file, onProgress) {
+function uploadWithProgress(uploadUrl, file, onProgress, contentType) {
     return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
@@ -164,9 +169,13 @@ function uploadWithProgress(uploadUrl, file, onProgress) {
         // Handle completion
         xhr.addEventListener('load', () => {
             if (xhr.status >= 200 && xhr.status < 300) {
+                console.log(`✅ Upload successful with status: ${xhr.status}`);
                 resolve(xhr);
             } else {
-                reject(new Error(`Upload failed with status: ${xhr.status}`));
+                console.error(`❌ Upload failed with status: ${xhr.status}`);
+                console.error(`Response text: ${xhr.responseText}`);
+                console.error(`Response headers: ${xhr.getAllResponseHeaders()}`);
+                reject(new Error(`Upload failed with status: ${xhr.status}. Response: ${xhr.responseText}`));
             }
         });
 
@@ -181,7 +190,21 @@ function uploadWithProgress(uploadUrl, file, onProgress) {
 
         // Configure and send request
         xhr.open('PUT', uploadUrl);
-        xhr.setRequestHeader('Content-Type', file.type);
+
+        // Google Cloud Storage signed URLs are strict about headers
+        // Only set Content-Type if it's included in the signed headers
+        const url = new URL(uploadUrl);
+        const signedHeaders = url.searchParams.get('X-Goog-SignedHeaders');
+
+        if (signedHeaders && signedHeaders.includes('content-type')) {
+            // Use the provided content type or fall back to file type
+            const typeToUse = contentType || file.type;
+            xhr.setRequestHeader('Content-Type', typeToUse);
+            console.log(`📋 Setting Content-Type header: ${typeToUse}`);
+        }
+
+        console.log(`🚀 Sending ${file.size} bytes to Google Cloud Storage...`);
+        console.log(`📋 Upload URL: ${uploadUrl.substring(0, 100)}...`);
         xhr.send(file);
     });
 }
