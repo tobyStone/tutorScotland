@@ -184,10 +184,9 @@ async function handleSignedUrlRequest(req, res) {
             version: 'v4',
             action: 'write',
             expires: Date.now() + 15 * 60 * 1000, // 15 minutes (secure expiration)
-            contentType: contentType,
-            extensionHeaders: {
-                'x-goog-content-length-range': `0,${MAX_LARGE_VIDEO_UPLOAD}` // Enforce size limit at GCS level
-            }
+            contentType: contentType
+            // Note: Removed extensionHeaders as they cause MalformedSecurityHeader errors
+            // Size validation will be handled server-side instead
         };
 
         const [signedUrl] = await file.getSignedUrl(options);
