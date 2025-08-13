@@ -46,10 +46,15 @@ export async function uploadLargeVideo(file, onProgress, onComplete, onError) {
             // Use the content type returned from the server to ensure consistency
             const uploadResponse = await uploadWithProgress(uploadUrl, file, onProgress, contentType || normalizedContentType);
 
-            if (!uploadResponse.ok) {
-                const errorText = await uploadResponse.text().catch(() => 'Unknown error');
+            // uploadResponse is an XMLHttpRequest object, not a Fetch Response
+            if (uploadResponse.status < 200 || uploadResponse.status >= 300) {
+                const errorText = uploadResponse.responseText || 'Unknown error';
                 throw new Error(`Upload failed with status: ${uploadResponse.status}. ${errorText}`);
             }
+
+            // Success! Direct upload to Google Cloud worked
+            console.log('🎉 Direct upload to Google Cloud Storage successful!');
+            onComplete(publicUrl, filename);
         } catch (error) {
             // If direct upload fails due to CORS, try server-side upload
             if (error.message.includes('CORS') || error.message.includes('network error')) {
