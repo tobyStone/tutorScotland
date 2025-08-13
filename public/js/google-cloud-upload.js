@@ -53,7 +53,8 @@ export async function uploadLargeVideo(file, onProgress, onComplete, onError) {
         } catch (error) {
             // If direct upload fails due to CORS, try server-side upload
             if (error.message.includes('CORS') || error.message.includes('network error')) {
-                console.log('🔄 Direct upload failed due to CORS, trying server-side upload...');
+                console.log('🔄 Direct upload failed due to CORS, automatically switching to server-side upload...');
+                console.log('📡 This will upload through your Vercel server to Google Cloud Storage');
                 return await uploadViaServer(file, onProgress, onComplete, onError);
             }
             throw error;

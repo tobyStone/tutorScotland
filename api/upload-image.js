@@ -235,7 +235,7 @@ async function handleFileUpload(req, res) {
     try {
         const form = formidable({
             keepExtensions: true,
-            maxFileSize: MAX_VIDEO_UPLOAD  // Use the larger video limit to allow both images and videos
+            maxFileSize: MAX_LARGE_VIDEO_UPLOAD  // Use the largest limit to support Google Cloud fallback
         });
 
         const [fields, files] = await new Promise((resolve, reject) => {

@@ -30,6 +30,7 @@ No 'Access-Control-Allow-Origin' header is present on the requested resource.
   {
     "origin": [
       "https://tutor-scotland.vercel.app",
+      "https://tutor-scotland-jevewooxy-toby-stones-projects.vercel.app",
       "http://localhost:3000"
     ],
     "method": [
@@ -61,6 +62,7 @@ cat > cors.json << EOF
   {
     "origin": [
       "https://tutor-scotland.vercel.app",
+      "https://tutor-scotland-jevewooxy-toby-stones-projects.vercel.app",
       "http://localhost:3000"
     ],
     "method": [
