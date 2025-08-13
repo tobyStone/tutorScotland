@@ -1,6 +1,14 @@
 const connectToDatabase = require('./connectToDatabase');
 const mongoose = require('mongoose');
 
+function escapeRegExp(str = '') {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function toKey(str = '') {
+  return String(str).toLowerCase().trim().replace(/\s+/g, ' ').replace(/\band\b/g, '&');
+}
+
 /**
  * Builds a safe and descriptive contact link object from a contact string.
  * @param {string} contact - The contact string from the database.
@@ -58,7 +66,7 @@ try {
             badges: [String],
             imagePath: String,
             description: String,
-            postcodes: [String],
+            regions: [String],
             contact: String
         });
         Tutor = mongoose.model('Tutor', tutorSchema);
@@ -84,11 +92,11 @@ module.exports = async (req, res) => {
             return res.status(200).json(tutors);
         }
 
-        const { subject, mode = '', postcode } = req.query;
+        const { subject, mode = '', region } = req.query;
         const modeLc = mode.toLowerCase().trim();
         let query = {};
 
-        console.log("Received query parameters:", { subject, mode, postcode });
+        console.log("Received query parameters:", { subject, mode, region });
 
         const subjectSynonyms = {
             mathematics: 'math',
@@ -105,12 +113,14 @@ module.exports = async (req, res) => {
 
 
         if (modeLc === "online") {
-            query.postcodes = { $regex: /^online$/i };
-        } else if (modeLc === "in-person" && postcode) {
-            // Make postcode search more flexible
-            query.postcodes = {
-                $regex: new RegExp(postcode, 'i')
-            };
+            query.regions = { $regex: /^online$/i };
+        } else if (modeLc === "in-person") {
+            const regionInputRaw = (region || '').trim();
+            if (regionInputRaw) {
+                // Accept either '&' or 'and', any case
+                const normalized = toKey(regionInputRaw).replace(/\band\b/g, '&');
+                query.regions = { $regex: new RegExp(`^${escapeRegExp(normalized)}$`, 'i') };
+            }
         }
 
         console.log("MongoDB Query:", JSON.stringify(query, null, 2));
@@ -144,7 +154,7 @@ module.exports = async (req, res) => {
                         `).join('')}
                     </ul>
                     <p class="available-in custom-style">
-                        <strong>Available in:</strong> ${tutor.postcodes.join(', ')}
+                        <strong>Available in:</strong> ${(tutor.regions || []).join(', ')}
                     </p>
                     ${(() => {
                         if (!tutor.contact) return ''; // Exit if no contact info

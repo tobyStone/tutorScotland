@@ -4,6 +4,48 @@ const jwt = require('jsonwebtoken');
 const Tutor = require('../models/Tutor');
 const cookieParser = require('cookie-parser');
 
+// Canonical region labels used across the app
+const CANONICAL_REGIONS = [
+  'Aberdeen & Aberdeenshire', 'Dundee & Angus', 'Fife', 'Perth & Kinross',
+  'Edinburgh & Lothians', 'Glasgow & West', 'Stirling & Falkirk', 'Lanarkshire',
+  'Ayrshire', 'Dumfries & Galloway', 'Scottish Borders', 'Highlands', 'Moray',
+  'Argyll & Bute', 'Orkney', 'Shetland', 'Western Isles', 'Caithness & Sutherland', 'Online'
+];
+
+function toKey(str = '') {
+  return String(str).toLowerCase().trim().replace(/\s+/g, ' ').replace(/\band\b/g, '&');
+}
+
+const REGION_SYNONYMS = (() => {
+  const map = new Map();
+  for (const label of CANONICAL_REGIONS) {
+    const keyAmp = toKey(label);
+    const keyAnd = toKey(label.replace(/&/g, 'and'));
+    map.set(keyAmp, label);
+    map.set(keyAnd, label);
+  }
+  // Extra common variants
+  map.set(toKey('on line'), 'Online');
+  map.set(toKey('on-line'), 'Online');
+  return map;
+})();
+
+function canonicalizeRegion(input) {
+  const key = toKey(input);
+  return REGION_SYNONYMS.get(key) || null;
+}
+
+function canonicalizeRegionArray(arr) {
+  const out = [];
+  const seen = new Set();
+  for (const v of Array.isArray(arr) ? arr : [arr]) {
+    if (!v) continue;
+    const canon = canonicalizeRegion(v);
+    if (canon && !seen.has(canon)) { seen.add(canon); out.push(canon); }
+  }
+  return out;
+}
+
 // Helper function to extract and verify token
 function verifyToken(req) {
     try {
@@ -136,7 +178,7 @@ module.exports = async (req, res) => {
                 badges,
                 contact,
                 description,
-                postcodes,
+                regions,
                 imagePath,
                 removeImage,
                 editId
@@ -158,7 +200,7 @@ module.exports = async (req, res) => {
                 badges: Array.isArray(badges) ? badges : [badges],
                 contact,
                 description,
-                postcodes: Array.isArray(postcodes) ? postcodes : [postcodes],
+                regions: canonicalizeRegionArray(regions),
                 updatedAt: new Date()
             };
 
@@ -212,7 +254,7 @@ module.exports = async (req, res) => {
                 badges,
                 contact,
                 description,
-                postcodes,
+                regions,
                 imagePath,
                 removeImage
             } = req.body;
@@ -233,7 +275,7 @@ module.exports = async (req, res) => {
                 badges: Array.isArray(badges) ? badges : [badges],
                 contact,
                 description,
-                postcodes: Array.isArray(postcodes) ? postcodes : [postcodes],
+                regions: canonicalizeRegionArray(regions),
                 updatedAt: new Date()
             };
 
@@ -279,7 +321,7 @@ module.exports = async (req, res) => {
             badges,
             contact,
             description,
-            postcodes,
+            regions,
             imagePath = ''
         } = req.body;
 
@@ -299,7 +341,7 @@ module.exports = async (req, res) => {
             badges: Array.isArray(badges) ? badges : [badges],
             contact,
             description,
-            postcodes: Array.isArray(postcodes) ? postcodes : [postcodes],
+            regions: canonicalizeRegionArray(regions),
             imagePath
         });
 
@@ -310,7 +352,7 @@ module.exports = async (req, res) => {
             badges: Array.isArray(badges) ? badges : [badges],
             contact,
             description,
-            postcodes: Array.isArray(postcodes) ? postcodes : [postcodes],
+            regions: canonicalizeRegionArray(regions),
             imagePath
         });
 

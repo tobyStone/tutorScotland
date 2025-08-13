@@ -1,0 +1,53 @@
+[
+  {
+    "name": "John Smith",
+    "subjects": ["Mathematics", "Physics"],
+    "costRange": "__P____P__",
+    "badges": ["Qualified Teacher", "DBS Checked"],
+    "description": "Experienced mathematics and physics tutor with 10 years of teaching experience.",
+    "regions": ["Edinburgh & Lothians"],
+    "contact": "john.smith@tutorscotland.test",
+    "imagePath": "https://example.com/tutors/john-smith.jpg"
+  },
+  {
+    "name": "Sarah Johnson",
+    "subjects": ["English", "Literature"],
+    "costRange": "__P__",
+    "badges": ["University Graduate"],
+    "description": "English literature specialist with a passion for creative writing.",
+    "regions": ["Glasgow & West", "Online"],
+    "contact": "sarah.johnson@tutorscotland.test",
+    "imagePath": "https://example.com/tutors/sarah-johnson.jpg"
+  },
+  {
+    "name": "Michael Brown",
+    "subjects": ["Chemistry", "Biology"],
+    "costRange": "__P____P____P__",
+    "badges": ["PhD", "Research Experience"],
+    "description": "PhD in Chemistry with extensive research background and tutoring experience.",
+    "regions": ["Aberdeen & Aberdeenshire"],
+    "contact": "michael.brown@tutorscotland.test",
+    "imagePath": "https://example.com/tutors/michael-brown.jpg"
+  },
+  {
+    "name": "Emma Wilson",
+    "subjects": ["French", "Spanish"],
+    "costRange": "__P____P__",
+    "badges": ["Native Speaker", "TEFL Certified"],
+    "description": "Native French speaker offering language tutoring for all levels.",
+    "regions": ["Online"],
+    "contact": "emma.wilson@tutorscotland.test",
+    "imagePath": "https://example.com/tutors/emma-wilson.jpg"
+  },
+  {
+    "name": "David Taylor",
+    "subjects": ["History", "Geography"],
+    "costRange": "__P__",
+    "badges": ["Qualified Teacher"],
+    "description": "History and geography teacher with 15 years of classroom experience.",
+    "regions": ["Dundee & Angus"],
+    "contact": "david.taylor@tutorscotland.test",
+    "imagePath": "https://example.com/tutors/david-taylor.jpg"
+  }
+]
+

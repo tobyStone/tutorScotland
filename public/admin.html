@@ -667,8 +667,28 @@
                     <label>Description:<textarea name="description"></textarea></label>
 
                     <label>
-                        Postcodes (comma‑separated):
-                        <input type="text" name="postcodes">
+                        Regions (hold Ctrl/Cmd to select multiple):
+                        <select name="regions" id="regionsSelect" multiple>
+                            <option value="Online">Online</option>
+                            <option value="Aberdeen & Aberdeenshire">Aberdeen & Aberdeenshire</option>
+                            <option value="Dundee & Angus">Dundee & Angus</option>
+                            <option value="Fife">Fife</option>
+                            <option value="Perth & Kinross">Perth & Kinross</option>
+                            <option value="Edinburgh & Lothians">Edinburgh & Lothians</option>
+                            <option value="Glasgow & West">Glasgow & West</option>
+                            <option value="Stirling & Falkirk">Stirling & Falkirk</option>
+                            <option value="Lanarkshire">Lanarkshire</option>
+                            <option value="Ayrshire">Ayrshire</option>
+                            <option value="Dumfries & Galloway">Dumfries & Galloway</option>
+                            <option value="Scottish Borders">Scottish Borders</option>
+                            <option value="Highlands">Highlands</option>
+                            <option value="Moray">Moray</option>
+                            <option value="Argyll & Bute">Argyll & Bute</option>
+                            <option value="Orkney">Orkney</option>
+                            <option value="Shetland">Shetland</option>
+                            <option value="Western Isles">Western Isles</option>
+                            <option value="Caithness & Sutherland">Caithness & Sutherland</option>
+                        </select>
                     </label>
 
                     <!-- Current Image Preview -->
@@ -850,7 +870,13 @@
             tutorForm.badges.value = (tutor.badges || []).join(', ');
             tutorForm.contact.value = tutor.contact || '';
             tutorForm.description.value = tutor.description || '';
-            tutorForm.postcodes.value = (tutor.postcodes || []).join(', ');
+            const regionsSel = document.getElementById('regionsSelect');
+            const regions = (tutor.regions || []);
+            if (regionsSel) {
+                Array.from(regionsSel.options).forEach(opt => {
+                    opt.selected = regions.includes(opt.value);
+                });
+            }
 
             // Show current image if exists
             if (tutor.imagePath) {
@@ -908,6 +934,9 @@
             let costRange = fd.get('costRange').trim();
             costRange = costRange.replace(/£/g, '__P__');
 
+            const regionsSel = document.getElementById('regionsSelect');
+            const selectedRegions = regionsSel ? Array.from(regionsSel.selectedOptions).map(o => o.value) : [];
+
             const payload = {
                 name: fd.get('name').trim(),
                 subjects: csv(fd.get('subjects')),
@@ -915,7 +944,7 @@
                 badges: csv(fd.get('badges')),
                 contact: fd.get('contact').trim(),
                 description: fd.get('description').trim(),
-                postcodes: csv(fd.get('postcodes')),
+                regions: selectedRegions,
                 imagePath: uploadedImagePath || '',
                 removeImage: removeImageCheckbox ? removeImageCheckbox.checked : false
             };

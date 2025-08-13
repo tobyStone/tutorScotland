@@ -8,7 +8,7 @@ const tutorSchema = new mongoose.Schema({
     badges: [String],
     imagePath: String,
     description: String,
-    postcodes: [String], // e.g., "Online" or Highland postcodes
+    regions: [String], // e.g., "Highlands", "Edinburgh & Lothians", "Online"
     contact: String       // NEW: a simple field for email/website address
 });
 

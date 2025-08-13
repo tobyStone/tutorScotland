@@ -101,9 +101,28 @@
                             </select>
                         </div>
 
-                        <div id="postcodeContainer" style="display: none; width: 100%; text-align: center;">
-                            <label for="postcode" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333; text-align: center;">Postcode</label>
-                            <input type="text" name="postcode" id="postcode" placeholder="Enter your postcode" style="width: 80%; max-width: 300px; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
+                        <div id="regionContainer" style="display: none; width: 100%; text-align: center;">
+                            <label for="region" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333; text-align: center;">Region</label>
+                            <select name="region" id="region" style="width: 80%; max-width: 300px; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
+                                <option value="Aberdeen & Aberdeenshire">Aberdeen & Aberdeenshire</option>
+                                <option value="Dundee & Angus">Dundee & Angus</option>
+                                <option value="Fife">Fife</option>
+                                <option value="Perth & Kinross">Perth & Kinross</option>
+                                <option value="Edinburgh & Lothians">Edinburgh & Lothians</option>
+                                <option value="Glasgow & West">Glasgow & West</option>
+                                <option value="Stirling & Falkirk">Stirling & Falkirk</option>
+                                <option value="Lanarkshire">Lanarkshire</option>
+                                <option value="Ayrshire">Ayrshire</option>
+                                <option value="Dumfries & Galloway">Dumfries & Galloway</option>
+                                <option value="Scottish Borders">Scottish Borders</option>
+                                <option value="Highlands">Highlands</option>
+                                <option value="Moray">Moray</option>
+                                <option value="Argyll & Bute">Argyll & Bute</option>
+                                <option value="Orkney">Orkney</option>
+                                <option value="Shetland">Shetland</option>
+                                <option value="Western Isles">Western Isles</option>
+                                <option value="Caithness & Sutherland">Caithness & Sutherland</option>
+                            </select>
                         </div>
 
                         <button type="submit" class="button aurora" style="width: 80%; max-width: 300px; background-color: #0057B7; color: white; padding: 1rem; border: none; border-radius: 0.5rem; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 0.5rem;">Find Tutors</button>
@@ -149,11 +168,11 @@
 
 
             document.getElementById('mode').addEventListener('change', function () {
-                const postcodeContainer = document.getElementById('postcodeContainer');
+                const regionContainer = document.getElementById('regionContainer');
                 if (this.value === 'in-person') {
-                    postcodeContainer.style.display = 'block';
+                    regionContainer.style.display = 'block';
                 } else {
-                    postcodeContainer.style.display = 'none';
+                    regionContainer.style.display = 'none';
                 }
             });
 
@@ -162,15 +181,11 @@
 
                 const subject = document.getElementById('subject').value;
                 const mode = document.getElementById('mode').value;
-                let postcode = document.getElementById('postcode').value;
-
-                if (postcode) {
-                    postcode = postcode.toUpperCase();
-                }
+                const region = document.getElementById('region') ? document.getElementById('region').value : '';
 
                 let queryParams = `?subject=${encodeURIComponent(subject)}&mode=${encodeURIComponent(mode)}`;
-                if (mode === "in-person" && postcode.trim() !== "") {
-                    queryParams += `&postcode=${encodeURIComponent(postcode)}`;
+                if (mode === "in-person" && region.trim() !== "") {
+                    queryParams += `&region=${encodeURIComponent(region)}`;
                 }
 
                 window.location.href = `/tutors/search${queryParams}`;
