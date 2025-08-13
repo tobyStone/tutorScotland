@@ -451,7 +451,7 @@ function createDynamicSectionElement(section, index) {
 
     // Handle list layout (mirrors tutor-zone styling)
     if (section.layout === 'list') {
-        return createListSectionElement(section, article);
+        return createListSectionElement(section, index, article);
     }
 
     // Handle testimonial layout (mirrors testimonials background section)
@@ -548,7 +548,7 @@ function createDynamicSectionElement(section, index) {
 /**
  * Create a list section element that mirrors tutor-zone styling
  */
-function createListSectionElement(section, article) {
+function createListSectionElement(section, index, article) {
     // Parse list content
     let listData;
     try {
