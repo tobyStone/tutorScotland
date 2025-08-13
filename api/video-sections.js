@@ -156,12 +156,23 @@ async function handleListVideos(req, res) {
                 const bucketName = process.env.GCS_BUCKET_NAME || process.env.GOOGLE_CLOUD_BUCKET || 'tutor-scotland-videos';
                 const bucket = storage.bucket(bucketName);
 
-                const [files] = await bucket.getFiles({
-                    prefix: 'video-content/',
-                    maxResults: 100
-                });
+                // Try multiple prefixes to find videos in different folder structures
+                const prefixes = ['video-content/', 'maths_incoding/video-content/'];
+                let allFiles = [];
 
-                googleCloudVideos = files
+                for (const prefix of prefixes) {
+                    try {
+                        const [files] = await bucket.getFiles({
+                            prefix: prefix,
+                            maxResults: 100
+                        });
+                        allFiles = allFiles.concat(files);
+                    } catch (error) {
+                        console.warn(`Could not list files with prefix ${prefix}:`, error.message);
+                    }
+                }
+
+                googleCloudVideos = allFiles
                     .filter(file => {
                         const ext = file.name.split('.').pop().toLowerCase();
                         return ['mp4', 'webm', 'ogg'].includes(ext);
@@ -176,6 +187,13 @@ async function handleListVideos(req, res) {
             }
         } catch (error) {
             console.warn('Could not list Google Cloud videos:', error.message);
+            console.warn('Google Cloud config check:', {
+                hasGcpProjectId: !!process.env.GCP_PROJECT_ID,
+                hasGcsSaKey: !!process.env.GCS_SA_KEY,
+                hasLegacyCredentials: !!process.env.GOOGLE_CLOUD_CREDENTIALS,
+                hasLegacyProjectId: !!process.env.GOOGLE_CLOUD_PROJECT_ID,
+                bucketName: process.env.GCS_BUCKET_NAME || process.env.GOOGLE_CLOUD_BUCKET || 'tutor-scotland-videos'
+            });
             // Google Cloud might not be configured
         }
 
