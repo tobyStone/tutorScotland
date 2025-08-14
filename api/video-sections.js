@@ -82,7 +82,7 @@ async function handleDebugGCSSimple(req, res) {
             credentials: credentials
         });
 
-        const bucketName = process.env.GCS_BUCKET_NAME || 'tutor-scotland-videos';
+        const bucketName = process.env.GCS_BUCKET_NAME || 'maths_incoding';
         const bucket = storage.bucket(bucketName);
 
         // List all files (no prefix)
@@ -199,11 +199,11 @@ async function handleListVideos(req, res) {
             }
 
             if (storage) {
-                const bucketName = process.env.GCS_BUCKET_NAME || process.env.GOOGLE_CLOUD_BUCKET || 'tutor-scotland-videos';
+                const bucketName = process.env.GCS_BUCKET_NAME || process.env.GOOGLE_CLOUD_BUCKET || 'maths_incoding';
                 const bucket = storage.bucket(bucketName);
 
                 // Try multiple prefixes to find videos in different folder structures
-                const prefixes = ['video-content/', 'maths_incoding/video-content/'];
+                const prefixes = ['video-content/'];
                 let allFiles = [];
 
                 for (const prefix of prefixes) {
