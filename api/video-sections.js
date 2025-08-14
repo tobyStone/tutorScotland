@@ -77,8 +77,9 @@ async function handleDebugGCSSimple(req, res) {
 
         // Use the same configuration as the main function
         const credentials = JSON.parse(process.env.GCS_SA_KEY);
+        const projectId = process.env.GCP_PROJECT_ID.replace(/['"]/g, ''); // Remove any quotes
         const storage = new Storage({
-            projectId: process.env.GCP_PROJECT_ID,
+            projectId: projectId,
             credentials: credentials
         });
 
@@ -103,8 +104,8 @@ async function handleDebugGCSSimple(req, res) {
     } catch (error) {
         return res.status(500).json({
             error: error.message,
-            bucketName: process.env.GCS_BUCKET_NAME || 'tutor-scotland-videos',
-            projectId: process.env.GCP_PROJECT_ID
+            bucketName: process.env.GCS_BUCKET_NAME || 'maths_incoding',
+            projectId: projectId
         });
     }
 }
@@ -179,8 +180,9 @@ async function handleListVideos(req, res) {
             // Primary method: Use tech team's recommended environment variables
             if (process.env.GCP_PROJECT_ID && process.env.GCS_SA_KEY) {
                 const credentials = JSON.parse(process.env.GCS_SA_KEY);
+                const projectId = process.env.GCP_PROJECT_ID.replace(/['"]/g, ''); // Remove any quotes
                 storage = new Storage({
-                    projectId: process.env.GCP_PROJECT_ID,
+                    projectId: projectId,
                     credentials: credentials
                 });
             }
