@@ -486,6 +486,12 @@
                                         <div id="googleCloudVideosSection" style="margin-top: 1rem;">
                                             <h5 style="margin: 0 0 0.5rem 0; color: #FF6B35;">🌩️ Large Videos (Google Cloud)</h5>
                                             <div id="googleCloudVideosList" class="video-grid"></div>
+                                            <div id="googleCloudNotice" style="display: none; padding: 1rem; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 0.5rem; margin-top: 0.5rem;">
+                                                <p style="margin: 0; color: #856404; font-size: 0.9rem;">
+                                                    <strong>📋 Note:</strong> Google Cloud videos cannot be listed due to permissions.
+                                                    Large videos (>4.5MB) are automatically uploaded to Google Cloud and can be used by entering their URLs directly.
+                                                </p>
+                                            </div>
                                         </div>
 
                                         <div id="noVideosMsg" style="display: none; text-align: center; padding: 1rem; color: #666; font-style: italic;">
@@ -504,7 +510,8 @@
                                     Upload Video File:
                                     <input type="file" id="videoFileInput" accept="video/mp4,video/webm,video/ogg" />
                                     <small style="color: #666; display: block; margin-top: 4px;">
-                                        Upload MP4, WebM, or OGG video files. Large files automatically upload to Google Cloud.
+                                        Upload MP4, WebM, or OGG video files. Large files (>4.5MB) automatically upload to Google Cloud.
+                                        <br><strong>💡 Tip:</strong> Check your Google Cloud Storage console to avoid duplicate uploads of large files.
                                     </small>
                                 </label>
                                 <button type="button" id="uploadVideoBtn" style="margin-top: 8px; display: none;">Upload Video</button>
@@ -2519,13 +2526,17 @@
             // Display Google Cloud videos
             if (availableVideos.googleCloudVideos.length > 0) {
                 document.getElementById('googleCloudVideosSection').style.display = 'block';
+                document.getElementById('googleCloudNotice').style.display = 'none';
                 googleCloudVideosList.innerHTML = '';
                 availableVideos.googleCloudVideos.forEach(video => {
                     const videoItem = createVideoItem(video);
                     googleCloudVideosList.appendChild(videoItem);
                 });
             } else {
-                document.getElementById('googleCloudVideosSection').style.display = 'none';
+                // Show the section with notice when no Google Cloud videos are found
+                document.getElementById('googleCloudVideosSection').style.display = 'block';
+                document.getElementById('googleCloudNotice').style.display = 'block';
+                googleCloudVideosList.innerHTML = '';
             }
         }
 

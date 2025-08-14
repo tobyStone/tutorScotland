@@ -46,9 +46,7 @@ module.exports = async (req, res) => {
                 if (operation === 'list-videos') {
                     return handleListVideos(req, res);
                 }
-                if (operation === 'debug-gcs') {
-                    return handleDebugGCS(req, res);
-                }
+
                 return handleGetVideoSections(req, res);
             case 'POST':
                 return handleCreateVideoSection(req, res);
@@ -66,75 +64,6 @@ module.exports = async (req, res) => {
     }
 };
 
-/**
- * DEBUG - Test Google Cloud Storage connection
- * Query params: ?operation=debug-gcs
- */
-async function handleDebugGCS(req, res) {
-    try {
-        const { Storage } = require('@google-cloud/storage');
-
-        let storage;
-        let configUsed = 'none';
-
-        // Test configuration methods
-        if (process.env.GCP_PROJECT_ID && process.env.GCS_SA_KEY) {
-            try {
-                const credentials = JSON.parse(process.env.GCS_SA_KEY);
-                storage = new Storage({
-                    projectId: process.env.GCP_PROJECT_ID,
-                    credentials: credentials
-                });
-                configUsed = 'GCP_PROJECT_ID + GCS_SA_KEY';
-            } catch (error) {
-                return res.status(500).json({
-                    error: 'Failed to parse GCS_SA_KEY',
-                    message: error.message
-                });
-            }
-        }
-
-        if (!storage) {
-            return res.status(500).json({
-                error: 'No valid Google Cloud configuration found',
-                envVars: {
-                    hasGcpProjectId: !!process.env.GCP_PROJECT_ID,
-                    hasGcsSaKey: !!process.env.GCS_SA_KEY,
-                    hasGcsBucketName: !!process.env.GCS_BUCKET_NAME
-                }
-            });
-        }
-
-        const bucketName = process.env.GCS_BUCKET_NAME || 'tutor-scotland-videos';
-        const bucket = storage.bucket(bucketName);
-
-        // Skip bucket existence check (requires storage.buckets.get permission)
-        // Try to list files directly
-        const [allFiles] = await bucket.getFiles({ maxResults: 50 });
-
-        const fileList = allFiles.map(file => ({
-            name: file.name,
-            size: file.metadata.size,
-            contentType: file.metadata.contentType,
-            timeCreated: file.metadata.timeCreated
-        }));
-
-        return res.status(200).json({
-            success: true,
-            configUsed,
-            bucketName,
-            totalFiles: allFiles.length,
-            files: fileList
-        });
-
-    } catch (error) {
-        return res.status(500).json({
-            error: 'Debug GCS failed',
-            message: error.message,
-            stack: error.stack
-        });
-    }
-}
 
 /**
  * GET - List all available videos (static + blob)
