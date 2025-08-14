@@ -108,17 +108,8 @@ async function handleDebugGCS(req, res) {
         const bucketName = process.env.GCS_BUCKET_NAME || 'tutor-scotland-videos';
         const bucket = storage.bucket(bucketName);
 
-        // Test bucket access
-        const [exists] = await bucket.exists();
-        if (!exists) {
-            return res.status(404).json({
-                error: 'Bucket does not exist',
-                bucketName,
-                configUsed
-            });
-        }
-
-        // List all files in bucket (no prefix filter)
+        // Skip bucket existence check (requires storage.buckets.get permission)
+        // Try to list files directly
         const [allFiles] = await bucket.getFiles({ maxResults: 50 });
 
         const fileList = allFiles.map(file => ({
@@ -132,7 +123,6 @@ async function handleDebugGCS(req, res) {
             success: true,
             configUsed,
             bucketName,
-            bucketExists: exists,
             totalFiles: allFiles.length,
             files: fileList
         });
