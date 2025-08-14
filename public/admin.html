@@ -281,6 +281,11 @@
             background-color: #e8f5e8;
             color: #388e3c;
         }
+
+        .video-type-googleCloud {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
     </style>
 </head>
 
@@ -486,12 +491,6 @@
                                         <div id="googleCloudVideosSection" style="margin-top: 1rem;">
                                             <h5 style="margin: 0 0 0.5rem 0; color: #FF6B35;">🌩️ Large Videos (Google Cloud)</h5>
                                             <div id="googleCloudVideosList" class="video-grid"></div>
-                                            <div id="googleCloudNotice" style="display: none; padding: 1rem; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 0.5rem; margin-top: 0.5rem;">
-                                                <p style="margin: 0; color: #856404; font-size: 0.9rem;">
-                                                    <strong>📋 Note:</strong> Google Cloud videos cannot be listed due to permissions.
-                                                    Large videos (>4.5MB) are automatically uploaded to Google Cloud and can be used by entering their URLs directly.
-                                                </p>
-                                            </div>
                                         </div>
 
                                         <div id="noVideosMsg" style="display: none; text-align: center; padding: 1rem; color: #666; font-style: italic;">
@@ -2526,16 +2525,14 @@
             // Display Google Cloud videos
             if (availableVideos.googleCloudVideos.length > 0) {
                 document.getElementById('googleCloudVideosSection').style.display = 'block';
-                document.getElementById('googleCloudNotice').style.display = 'none';
                 googleCloudVideosList.innerHTML = '';
                 availableVideos.googleCloudVideos.forEach(video => {
                     const videoItem = createVideoItem(video);
                     googleCloudVideosList.appendChild(videoItem);
                 });
             } else {
-                // Show the section with notice when no Google Cloud videos are found
-                document.getElementById('googleCloudVideosSection').style.display = 'block';
-                document.getElementById('googleCloudNotice').style.display = 'block';
+                // Hide the Google Cloud section when no videos are found
+                document.getElementById('googleCloudVideosSection').style.display = 'none';
                 googleCloudVideosList.innerHTML = '';
             }
         }
@@ -2561,7 +2558,7 @@
                     ${sizeText}${sizeText && dateText ? ' • ' : ''}${dateText}
                 </div>
                 <span class="video-type-badge video-type-${video.type}">
-                    ${video.type === 'static' ? '📁 Static' : '☁️ Blob'}
+                    ${video.type === 'static' ? '📁 Static' : video.type === 'googleCloud' ? '🌩️ Google Cloud' : '☁️ Blob'}
                 </span>
             `;
 
