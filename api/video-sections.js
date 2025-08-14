@@ -174,6 +174,8 @@ async function handleListVideos(req, res) {
                     }
                 }
 
+                console.log(`Found ${allFiles.length} total files in Google Cloud Storage`);
+
                 googleCloudVideos = allFiles
                     .filter(file => {
                         const ext = file.name.split('.').pop().toLowerCase();
@@ -186,6 +188,8 @@ async function handleListVideos(req, res) {
                         size: file.metadata.size ? parseInt(file.metadata.size) : null,
                         lastModified: file.metadata.timeCreated
                     }));
+
+                console.log(`Filtered to ${googleCloudVideos.length} video files`);
             }
         } catch (error) {
             console.warn('Could not list Google Cloud videos:', error.message);
@@ -196,6 +200,7 @@ async function handleListVideos(req, res) {
                 hasLegacyProjectId: !!process.env.GOOGLE_CLOUD_PROJECT_ID,
                 bucketName: process.env.GCS_BUCKET_NAME || process.env.GOOGLE_CLOUD_BUCKET || 'tutor-scotland-videos'
             });
+            console.warn('Full error details:', error);
             // Google Cloud might not be configured
         }
 
