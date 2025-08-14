@@ -46,9 +46,7 @@ module.exports = async (req, res) => {
                 if (operation === 'list-videos') {
                     return handleListVideos(req, res);
                 }
-                if (operation === 'debug-gcs-simple') {
-                    return handleDebugGCSSimple(req, res);
-                }
+
 
                 return handleGetVideoSections(req, res);
             case 'POST':
@@ -68,47 +66,7 @@ module.exports = async (req, res) => {
 };
 
 
-/**
- * DEBUG - Simple Google Cloud Storage test
- */
-async function handleDebugGCSSimple(req, res) {
-    try {
-        const { Storage } = require('@google-cloud/storage');
 
-        // Use the same configuration as the main function
-        const credentials = JSON.parse(process.env.GCS_SA_KEY);
-        const projectId = process.env.GCP_PROJECT_ID.replace(/['"]/g, ''); // Remove any quotes
-        const storage = new Storage({
-            projectId: projectId,
-            credentials: credentials
-        });
-
-        const bucketName = process.env.GCS_BUCKET_NAME || 'maths_incoding';
-        const bucket = storage.bucket(bucketName);
-
-        // List all files (no prefix)
-        const [allFiles] = await bucket.getFiles({ maxResults: 20 });
-
-        return res.status(200).json({
-            success: true,
-            bucketName,
-            projectId: process.env.GCP_PROJECT_ID,
-            totalFiles: allFiles.length,
-            files: allFiles.map(file => ({
-                name: file.name,
-                size: file.metadata.size,
-                contentType: file.metadata.contentType
-            }))
-        });
-
-    } catch (error) {
-        return res.status(500).json({
-            error: error.message,
-            bucketName: process.env.GCS_BUCKET_NAME || 'maths_incoding',
-            projectId: projectId
-        });
-    }
-}
 
 /**
  * GET - List all available videos (static + blob)
@@ -220,8 +178,6 @@ async function handleListVideos(req, res) {
                     }
                 }
 
-                console.log(`Found ${allFiles.length} total files in Google Cloud Storage`);
-
                 googleCloudVideos = allFiles
                     .filter(file => {
                         const ext = file.name.split('.').pop().toLowerCase();
@@ -234,20 +190,10 @@ async function handleListVideos(req, res) {
                         size: file.metadata.size ? parseInt(file.metadata.size) : null,
                         lastModified: file.metadata.timeCreated
                     }));
-
-                console.log(`Filtered to ${googleCloudVideos.length} video files`);
             }
         } catch (error) {
             console.warn('Could not list Google Cloud videos:', error.message);
-            console.warn('Google Cloud config check:', {
-                hasGcpProjectId: !!process.env.GCP_PROJECT_ID,
-                hasGcsSaKey: !!process.env.GCS_SA_KEY,
-                hasLegacyCredentials: !!process.env.GOOGLE_CLOUD_CREDENTIALS,
-                hasLegacyProjectId: !!process.env.GOOGLE_CLOUD_PROJECT_ID,
-                bucketName: process.env.GCS_BUCKET_NAME || process.env.GOOGLE_CLOUD_BUCKET || 'tutor-scotland-videos'
-            });
-            console.warn('Full error details:', error);
-            // Google Cloud might not be configured
+            // Google Cloud might not be configured or permissions issue
         }
 
         const totalVideos = staticVideos.length + blobVideos.length + googleCloudVideos.length;
