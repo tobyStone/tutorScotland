@@ -1144,7 +1144,10 @@
         const movePageSelect = document.getElementById('movePageSelect');
 
         /* ── populate page dropdowns ────────────────────────────────────────── */
-        const pageOptionsHTML = PAGES.map(p => `<option value="${p}">${p}</option>`).join('');
+        const pageOptionsHTML = PAGES.map(p => {
+            const displayName = p === 'index' ? 'landing page' : p;
+            return `<option value="${p}">${displayName}</option>`;
+        }).join('');
         pageSel.innerHTML      = pageOptionsHTML;
         movePageSelect.innerHTML = pageOptionsHTML;           // [MOVE-SECTION]
 
