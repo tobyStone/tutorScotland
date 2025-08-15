@@ -2536,18 +2536,38 @@
                 document.getElementById('blobVideosSection').style.display = 'none';
             }
 
-            // Display Google Cloud videos
+            // Display Google Cloud videos or show permissions message
+            const googleCloudSection = document.getElementById('googleCloudVideosSection');
             if (availableVideos.googleCloudVideos.length > 0) {
-                document.getElementById('googleCloudVideosSection').style.display = 'block';
+                googleCloudSection.style.display = 'block';
                 googleCloudVideosList.innerHTML = '';
                 availableVideos.googleCloudVideos.forEach(video => {
                     const videoItem = createVideoItem(video);
                     googleCloudVideosList.appendChild(videoItem);
                 });
             } else {
-                // Hide the Google Cloud section when no videos are found
-                document.getElementById('googleCloudVideosSection').style.display = 'none';
-                googleCloudVideosList.innerHTML = '';
+                // Show a helpful message about Google Cloud permissions instead of hiding
+                googleCloudVideosList.innerHTML = `
+                    <div style="
+                        padding: 1rem;
+                        background: #fff3cd;
+                        border: 1px solid #ffeaa7;
+                        border-radius: 8px;
+                        color: #856404;
+                        text-align: center;
+                        margin: 0.5rem 0;
+                    ">
+                        <h5 style="margin: 0 0 0.5rem 0; color: #856404;">🔐 Google Cloud Videos Not Listed</h5>
+                        <p style="margin: 0; font-size: 0.9em;">
+                            Videos uploaded to Google Cloud cannot be listed due to service account permissions.<br>
+                            <strong>Solution:</strong> Add "Storage Object Viewer" role to your service account in Google Cloud Console.
+                        </p>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.8em; opacity: 0.8;">
+                            You can still upload large videos - they'll be stored in Google Cloud and work on your website.
+                        </p>
+                    </div>
+                `;
+                googleCloudSection.style.display = 'block';
             }
         }
 

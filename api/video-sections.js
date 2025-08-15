@@ -131,6 +131,8 @@ async function handleListVideos(req, res) {
         // Get Google Cloud videos (using tech team's recommended configuration)
         let googleCloudVideos = [];
         try {
+            console.log('🌩️ Attempting to list Google Cloud videos...');
+
             // Initialize Google Cloud Storage with consistent configuration
             let storage;
             const { Storage } = require('@google-cloud/storage');
@@ -139,6 +141,9 @@ async function handleListVideos(req, res) {
             if (process.env.GCP_PROJECT_ID && process.env.GCS_SA_KEY) {
                 const credentials = JSON.parse(process.env.GCS_SA_KEY);
                 const projectId = process.env.GCP_PROJECT_ID.replace(/['"]/g, ''); // Remove any quotes
+                console.log(`🔑 Using GCP Project ID: ${projectId}`);
+                console.log(`🔑 Service Account Email: ${credentials.client_email}`);
+
                 storage = new Storage({
                     projectId: projectId,
                     credentials: credentials
@@ -146,6 +151,7 @@ async function handleListVideos(req, res) {
             }
             // Fallback methods for backward compatibility
             else if (process.env.GOOGLE_CLOUD_CREDENTIALS) {
+                console.log('🔄 Using fallback GOOGLE_CLOUD_CREDENTIALS');
                 const credentials = JSON.parse(process.env.GOOGLE_CLOUD_CREDENTIALS);
                 storage = new Storage({
                     projectId: credentials.project_id,
@@ -160,6 +166,7 @@ async function handleListVideos(req, res) {
 
             if (storage) {
                 const bucketName = process.env.GCS_BUCKET_NAME || process.env.GOOGLE_CLOUD_BUCKET || 'maths_incoding';
+                console.log(`🪣 Using bucket: ${bucketName}`);
                 const bucket = storage.bucket(bucketName);
 
                 // Try multiple prefixes to find videos in different folder structures
@@ -168,20 +175,27 @@ async function handleListVideos(req, res) {
 
                 for (const prefix of prefixes) {
                     try {
+                        console.log(`📂 Listing files with prefix: ${prefix}`);
                         const [files] = await bucket.getFiles({
                             prefix: prefix,
                             maxResults: 100
                         });
+                        console.log(`📁 Found ${files.length} files with prefix ${prefix}`);
                         allFiles = allFiles.concat(files);
                     } catch (error) {
-                        console.warn(`Could not list files with prefix ${prefix}:`, error.message);
+                        console.error(`❌ Could not list files with prefix ${prefix}:`, error.message);
+                        console.error(`❌ Error details:`, error);
                     }
                 }
+
+                console.log(`📊 Total files found: ${allFiles.length}`);
 
                 googleCloudVideos = allFiles
                     .filter(file => {
                         const ext = file.name.split('.').pop().toLowerCase();
-                        return ['mp4', 'webm', 'ogg'].includes(ext);
+                        const isVideo = ['mp4', 'webm', 'ogg'].includes(ext);
+                        console.log(`🎬 File: ${file.name}, Extension: ${ext}, Is Video: ${isVideo}`);
+                        return isVideo;
                     })
                     .map(file => ({
                         name: file.name.split('/').pop(),
@@ -190,9 +204,24 @@ async function handleListVideos(req, res) {
                         size: file.metadata.size ? parseInt(file.metadata.size) : null,
                         lastModified: file.metadata.timeCreated
                     }));
+
+                console.log(`🎥 Google Cloud videos found: ${googleCloudVideos.length}`);
+                if (googleCloudVideos.length > 0) {
+                    googleCloudVideos.forEach(video => {
+                        console.log(`  - ${video.name} (${video.size} bytes)`);
+                    });
+                } else {
+                    console.log('📝 No Google Cloud videos found - this may be due to:');
+                    console.log('   1. No videos uploaded yet');
+                    console.log('   2. Service account lacks "Storage Object Viewer" role');
+                    console.log('   3. Videos stored in different folder structure');
+                }
+            } else {
+                console.log('❌ No Google Cloud Storage instance available');
             }
         } catch (error) {
-            console.warn('Could not list Google Cloud videos:', error.message);
+            console.error('❌ Error listing Google Cloud videos:', error.message);
+            console.error('❌ Full error details:', error);
             // Google Cloud might not be configured or permissions issue
         }
 
