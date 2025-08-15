@@ -286,6 +286,20 @@
             background-color: #fff3e0;
             color: #f57c00;
         }
+
+        .google-cloud-placeholder {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .google-cloud-placeholder:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
+
+        .video-item:hover .google-cloud-placeholder {
+            background: linear-gradient(135deg, #ff7849, #ff9500) !important;
+        }
     </style>
 </head>
 
@@ -2546,19 +2560,46 @@
             const sizeText = video.size ? formatFileSize(video.size) : '';
             const dateText = video.lastModified ? new Date(video.lastModified).toLocaleDateString() : '';
 
-            item.innerHTML = `
-                <video preload="metadata" muted>
-                    <source src="${video.url}" type="video/${getVideoType(video.name)}">
-                    <div style="height: 120px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666;">
-                        📹 Video Preview
+            // Handle different video types for thumbnail generation
+            let videoPreviewHTML;
+            if (video.type === 'google-cloud') {
+                // For Google Cloud videos, try to load thumbnail but provide fallback
+                const placeholderId = `placeholder-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                videoPreviewHTML = `
+                    <div class="video-thumbnail-container" style="position: relative; height: 120px;">
+                        <video preload="metadata" muted crossorigin="anonymous" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
+                               onloadedmetadata="this.style.display='block'; this.nextElementSibling.style.display='none';"
+                               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <source src="${video.url}" type="video/${getVideoType(video.name)}">
+                        </video>
+                        <div id="${placeholderId}" class="video-placeholder google-cloud-placeholder"
+                             style="position: absolute; top: 0; left: 0; width: 100%; height: 120px; background: linear-gradient(135deg, #ff6b35, #f7931e); display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; border-radius: 8px;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌩️</div>
+                            <div style="font-size: 0.9rem; font-weight: 500;">Google Cloud Video</div>
+                            <div style="font-size: 0.7rem; opacity: 0.9; margin-top: 0.25rem; text-align: center; padding: 0 0.5rem;">${video.name.length > 20 ? video.name.substring(0, 20) + '...' : video.name}</div>
+                        </div>
                     </div>
-                </video>
+                `;
+            } else {
+                // For static and blob videos, use standard video element for thumbnails
+                videoPreviewHTML = `
+                    <video preload="metadata" muted crossorigin="anonymous" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;">
+                        <source src="${video.url}" type="video/${getVideoType(video.name)}">
+                        <div style="height: 120px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #666; border-radius: 8px;">
+                            📹 Video Preview
+                        </div>
+                    </video>
+                `;
+            }
+
+            item.innerHTML = `
+                ${videoPreviewHTML}
                 <div class="video-item-name">${video.name}</div>
                 <div class="video-item-info">
                     ${sizeText}${sizeText && dateText ? ' • ' : ''}${dateText}
                 </div>
-                <span class="video-type-badge video-type-${video.type}">
-                    ${video.type === 'static' ? '📁 Static' : video.type === 'googleCloud' ? '🌩️ Google Cloud' : '☁️ Blob'}
+                <span class="video-type-badge video-type-${video.type === 'google-cloud' ? 'googleCloud' : video.type}">
+                    ${video.type === 'static' ? '📁 Static' : video.type === 'google-cloud' ? '🌩️ Google Cloud' : '☁️ Blob'}
                 </span>
             `;
 
