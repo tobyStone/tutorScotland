@@ -553,7 +553,7 @@
 
                         <label>
                             Position on Page:
-                            <select name="position">
+                            <select name="position" id="positionSelect">
                                 <option value="top">Top of Page</option>
                                 <option value="middle">Middle of Page</option>
                                 <option value="bottom" selected="">Bottom of Page</option>
@@ -1331,7 +1331,23 @@
           sectionTbody.innerHTML = '';
 
           currentSections.forEach((s, i) => {
-            const pos = { top:'🔝 Top', middle:'⏺️ Middle', bottom:'🔽 Bottom' }[s.position||'bottom'];
+            // Enhanced position display with granular options for index page
+            const positionMap = {
+                'top': '🔝 Top',
+                'afterHero': '🎯 After Hero',
+                'afterAbout': '📖 After About',
+                'afterParents': '👨‍👩‍👧‍👦 After Parents',
+                'middle': '⏺️ Middle',
+                'afterTutors': '👩‍🏫 After Tutors',
+                'afterPupils': '🎒 After Pupils',
+                'afterStrive': '🤝 After STRIVE',
+                'afterCTA': '🎯 After CTA',
+                'afterConfidence': '✅ After Confidence',
+                'afterTestimonials': '💬 After Testimonials',
+                'afterNewsletter': '📩 After Newsletter',
+                'bottom': '🔽 Bottom'
+            };
+            const pos = positionMap[s.position] || '🔽 Bottom';
             const layoutNames = {
                 'team': 'Team Grid',
                 'list': 'List Section',
@@ -1359,11 +1375,44 @@
           toggleFields();
         }
 
+        /* ── helper: update position options based on selected page ──────────── */
+        function updatePositionOptions() {
+            const positionSelect = document.getElementById('positionSelect');
+            const selectedPage = pageSel.value;
+
+            if (selectedPage === 'index') {
+                // Granular options for index.html
+                positionSelect.innerHTML = `
+                    <option value="top">🔝 Top of Page</option>
+                    <option value="afterHero">🎯 After Hero Banner</option>
+                    <option value="afterAbout">📖 After About Section</option>
+                    <option value="afterParents">👨‍👩‍👧‍👦 After Parent Zone</option>
+                    <option value="middle">⏺️ Middle of Page</option>
+                    <option value="afterTutors">👩‍🏫 After Tutor Zone</option>
+                    <option value="afterPupils">🎒 After Pupil Zone</option>
+                    <option value="afterStrive">🤝 After STRIVE Values</option>
+                    <option value="afterCTA">🎯 After CTA Buttons</option>
+                    <option value="afterConfidence">✅ After Confidence Block</option>
+                    <option value="afterTestimonials">💬 After Testimonials</option>
+                    <option value="afterNewsletter">📩 After Newsletter</option>
+                    <option value="bottom" selected>🔽 Bottom of Page</option>
+                `;
+            } else {
+                // Standard options for other pages
+                positionSelect.innerHTML = `
+                    <option value="top">🔝 Top of Page</option>
+                    <option value="middle">⏺️ Middle of Page</option>
+                    <option value="bottom" selected>🔽 Bottom of Page</option>
+                `;
+            }
+        }
+
         /* ── dropdown change ───────────────────────────────────────────────── */
         pageSel.addEventListener('change', () => {
           loadSections();
           resetSectionForm();                // preserves the just-chosen slug
           updatePageLink(pageSel.value);
+          updatePositionOptions();           // Update position options based on selected page
         });
 
         /* ── cancel button ─────────────────────────────────────────────────── */
@@ -1792,6 +1841,7 @@
         }
 
         /* ── initial boot ──────────────────────────────────────────────────── */
+        updatePositionOptions();              // Set initial position options
         await loadSections();
         pageSel.dispatchEvent(new Event('change'));   // sets initial link
 

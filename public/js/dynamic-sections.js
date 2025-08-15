@@ -84,9 +84,24 @@ function loadDynamicSections() {
         .then(([regularSections, videoSections]) => {
             // Combine both types of sections and sort by position and creation order
             const list = [...regularSections, ...videoSections].sort((a, b) => {
-                const posOrder = { top: 0, middle: 1, bottom: 2 };
-                const aPos = posOrder[a.position || 'bottom'];
-                const bPos = posOrder[b.position || 'bottom'];
+                // Enhanced position ordering with granular options for index page
+                const posOrder = {
+                    top: 0,
+                    afterHero: 1,
+                    afterAbout: 2,
+                    afterParents: 3,
+                    middle: 4,
+                    afterTutors: 5,
+                    afterPupils: 6,
+                    afterStrive: 7,
+                    afterCTA: 8,
+                    afterConfidence: 9,
+                    afterTestimonials: 10,
+                    afterNewsletter: 11,
+                    bottom: 12
+                };
+                const aPos = posOrder[a.position] !== undefined ? posOrder[a.position] : posOrder.bottom;
+                const bPos = posOrder[b.position] !== undefined ? posOrder[b.position] : posOrder.bottom;
                 if (aPos !== bPos) return aPos - bPos;
                 return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
             });
@@ -98,101 +113,86 @@ function loadDynamicSections() {
                 // Create containers if they don't exist
                 createPositionContainer('all');
 
-                // Get containers for different positions
-                const topContainer = document.getElementById('dynamicSectionsTop');
-                const middleContainer = document.getElementById('dynamicSectionsMiddle');
-                const bottomContainer = document.getElementById('dynamicSections');
+                // Get all containers for different positions
+                const containers = {
+                    top: document.getElementById('dynamicSectionsTop'),
+                    afterHero: document.getElementById('dynamicSectionsAfterHero'),
+                    afterAbout: document.getElementById('dynamicSectionsAfterAbout'),
+                    afterParents: document.getElementById('dynamicSectionsAfterParents'),
+                    middle: document.getElementById('dynamicSectionsMiddle'),
+                    afterTutors: document.getElementById('dynamicSectionsAfterTutors'),
+                    afterPupils: document.getElementById('dynamicSectionsAfterPupils'),
+                    afterStrive: document.getElementById('dynamicSectionsAfterStrive'),
+                    afterCTA: document.getElementById('dynamicSectionsAfterCTA'),
+                    afterConfidence: document.getElementById('dynamicSectionsAfterConfidence'),
+                    afterTestimonials: document.getElementById('dynamicSectionsAfterTestimonials'),
+                    afterNewsletter: document.getElementById('dynamicSectionsAfterNewsletter'),
+                    bottom: document.getElementById('dynamicSections')
+                };
 
-                // Verify all containers exist
-                if (!topContainer || !middleContainer || !bottomContainer) {
-                    console.error('One or more dynamic section containers not found');
-                    return;
-                }
-
-                // Clear existing content
-                topContainer.innerHTML = '';
-                middleContainer.innerHTML = '';
-                bottomContainer.innerHTML = '';
+                // Clear existing content from all containers
+                Object.values(containers).forEach(container => {
+                    if (container) container.innerHTML = '';
+                });
 
                 // Group sections by position
-                const topSections = list.filter(s => s.position === 'top');
-                const middleSections = list.filter(s => s.position === 'middle');
-                const bottomSections = list.filter(s => s.position === 'bottom' || !s.position);
+                const sectionsByPosition = {};
+                list.forEach(section => {
+                    const position = section.position || 'bottom';
+                    if (!sectionsByPosition[position]) {
+                        sectionsByPosition[position] = [];
+                    }
+                    sectionsByPosition[position].push(section);
+                });
 
-                console.log(`Found ${topSections.length} top sections, ${middleSections.length} middle sections, ${bottomSections.length} bottom sections`);
+                console.log(`Sections grouped by position:`, sectionsByPosition);
 
-                // Add sections to their respective containers
-                if (topSections.length > 0) {
-                    topSections.forEach((s, index) => {
-                        const sectionElement = createDynamicSectionElement(s, index);
-                        // Only wrap standard text/image sections in dyn-block
-                        // Team and list sections have their own styling containers
-                        // Testimonial and video sections now use standard dyn-block wrapper for consistency
-                        if (s.layout === 'team' || s.layout === 'list') {
-                            topContainer.appendChild(sectionElement);
-                        } else {
-                            const wrapper = document.createElement('div');
-                            wrapper.className = 'dyn-block fade-in-on-scroll';
-                            wrapper.appendChild(sectionElement);
-                            topContainer.appendChild(wrapper);
+                // Render sections to their respective containers
+                Object.entries(sectionsByPosition).forEach(([position, sections]) => {
+                    const container = containers[position];
+                    if (!container) {
+                        console.warn(`Container not found for position: ${position}`);
+                        return;
+                    }
+
+                    if (sections.length > 0) {
+                        sections.forEach((s, index) => {
+                            const sectionElement = createDynamicSectionElement(s, index);
+                            // Only wrap standard text/image sections in dyn-block
+                            // Team and list sections have their own styling containers
+                            // Testimonial and video sections now use standard dyn-block wrapper for consistency
+                            if (s.layout === 'team' || s.layout === 'list') {
+                                container.appendChild(sectionElement);
+                            } else {
+                                const wrapper = document.createElement('div');
+                                wrapper.className = 'dyn-block fade-in-on-scroll';
+                                wrapper.appendChild(sectionElement);
+                                container.appendChild(wrapper);
+                            }
+                        });
+                        container.style.display = 'block';
+
+                        // Show separator if it exists
+                        const separatorClass = position === 'top' ? '.dynamic-sections-separator-top' :
+                                             position === 'middle' ? '.dynamic-sections-separator-middle' :
+                                             position === 'bottom' ? '.dynamic-sections-separator' : null;
+                        if (separatorClass) {
+                            const separator = document.querySelector(separatorClass);
+                            if (separator) separator.style.display = 'block';
                         }
-                    });
-                    topContainer.style.display = 'block';
-                    const topSeparator = document.querySelector('.dynamic-sections-separator-top');
-                    if (topSeparator) topSeparator.style.display = 'block';
-                } else {
-                    topContainer.style.display = 'none';
-                    const topSeparator = document.querySelector('.dynamic-sections-separator-top');
-                    if (topSeparator) topSeparator.style.display = 'none';
-                }
+                    } else {
+                        container.style.display = 'none';
 
-                if (middleSections.length > 0) {
-                    middleSections.forEach((s, index) => {
-                        const sectionElement = createDynamicSectionElement(s, index);
-                        // Only wrap standard text/image sections in dyn-block
-                        // Team and list sections have their own styling containers
-                        // Testimonial and video sections now use standard dyn-block wrapper for consistency
-                        if (s.layout === 'team' || s.layout === 'list') {
-                            middleContainer.appendChild(sectionElement);
-                        } else {
-                            const wrapper = document.createElement('div');
-                            wrapper.className = 'dyn-block fade-in-on-scroll';
-                            wrapper.appendChild(sectionElement);
-                            middleContainer.appendChild(wrapper);
+                        // Hide separator if it exists
+                        const separatorClass = position === 'top' ? '.dynamic-sections-separator-top' :
+                                             position === 'middle' ? '.dynamic-sections-separator-middle' :
+                                             position === 'bottom' ? '.dynamic-sections-separator' : null;
+                        if (separatorClass) {
+                            const separator = document.querySelector(separatorClass);
+                            if (separator) separator.style.display = 'none';
                         }
-                    });
-                    middleContainer.style.display = 'block';
-                    const middleSeparator = document.querySelector('.dynamic-sections-separator-middle');
-                    if (middleSeparator) middleSeparator.style.display = 'block';
-                } else {
-                    middleContainer.style.display = 'none';
-                    const middleSeparator = document.querySelector('.dynamic-sections-separator-middle');
-                    if (middleSeparator) middleSeparator.style.display = 'none';
-                }
-
-                if (bottomSections.length > 0) {
-                    bottomSections.forEach((s, index) => {
-                        const sectionElement = createDynamicSectionElement(s, index);
-                        // Only wrap standard text/image sections in dyn-block
-                        // Team and list sections have their own styling containers
-                        // Testimonial and video sections now use standard dyn-block wrapper for consistency
-                        if (s.layout === 'team' || s.layout === 'list') {
-                            bottomContainer.appendChild(sectionElement);
-                        } else {
-                            const wrapper = document.createElement('div');
-                            wrapper.className = 'dyn-block fade-in-on-scroll';
-                            wrapper.appendChild(sectionElement);
-                            bottomContainer.appendChild(wrapper);
-                        }
-                    });
-                    bottomContainer.style.display = 'block';
-                    const bottomSeparator = document.querySelector('.dynamic-sections-separator');
-                    if (bottomSeparator) bottomSeparator.style.display = 'block';
-                } else {
-                    bottomContainer.style.display = 'none';
-                    const bottomSeparator = document.querySelector('.dynamic-sections-separator');
-                    if (bottomSeparator) bottomSeparator.style.display = 'none';
-                }
+                    }
+                });
 
                 // Add a class to the body to indicate dynamic sections are present
                 document.body.classList.add('has-dynamic-sections');
@@ -957,23 +957,35 @@ function createVideoSectionElement(section, index) {
  * Hide all dynamic section containers and separators
  */
 function hideAllContainers() {
-    const containers = [
-        document.getElementById('dynamicSectionsTop'),
-        document.getElementById('dynamicSectionsMiddle'),
-        document.getElementById('dynamicSections')
+    const containerIds = [
+        'dynamicSectionsTop',
+        'dynamicSectionsAfterHero',
+        'dynamicSectionsAfterAbout',
+        'dynamicSectionsAfterParents',
+        'dynamicSectionsMiddle',
+        'dynamicSectionsAfterTutors',
+        'dynamicSectionsAfterPupils',
+        'dynamicSectionsAfterStrive',
+        'dynamicSectionsAfterCTA',
+        'dynamicSectionsAfterConfidence',
+        'dynamicSectionsAfterTestimonials',
+        'dynamicSectionsAfterNewsletter',
+        'dynamicSections'
     ];
 
-    const separators = [
-        document.querySelector('.dynamic-sections-separator-top'),
-        document.querySelector('.dynamic-sections-separator-middle'),
-        document.querySelector('.dynamic-sections-separator')
+    const separatorClasses = [
+        '.dynamic-sections-separator-top',
+        '.dynamic-sections-separator-middle',
+        '.dynamic-sections-separator'
     ];
 
-    containers.forEach(container => {
+    containerIds.forEach(id => {
+        const container = document.getElementById(id);
         if (container) container.style.display = 'none';
     });
 
-    separators.forEach(separator => {
+    separatorClasses.forEach(className => {
+        const separator = document.querySelector(className);
         if (separator) separator.style.display = 'none';
     });
 }
