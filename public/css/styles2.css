@@ -11,6 +11,7 @@
  *
  * LOAD ORDER: 1st (lowest specificity) - provides base styles
  * PURPOSE: Core layout, components, and responsive base patterns
+ * LOCATION: Moved to /css/styles2.css for better organization
  */
 
 /* Import UI responsive module (contact buttons, hero/CTA banners) */

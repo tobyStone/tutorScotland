@@ -1,8 +1,0 @@
-[
-  {
-    "origin": [ "https://tutor-scotland.vercel.app", "http://localhost:3000" ],
-    "method": [ "GET", "HEAD", "PUT", "POST", "DELETE" ],
-    "responseHeader": [ "Content-Type", "x-goog-content-length-range" ],
-    "maxAgeSeconds": 3600
-  }
-]

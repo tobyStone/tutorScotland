@@ -22,8 +22,8 @@
     /* -------------------------------------------------- */
     /** Stylesheets that **must** be present on every page */
     const REQUIRED_STYLES = [
-        "/styles2.css",        // main design?system bundle
-        "/header-banner.css"   // header / nav specifics
+        "/css/styles2.css",        // main design?system bundle
+        "/css/header-banner.css"   // header / nav specifics
     ];
 
     /** Pixels per second for the rolling banner */
