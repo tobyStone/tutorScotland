@@ -1,0 +1,11 @@
+/* responsive-module.css - Redirect to correct file */
+/* This file exists to handle any cached references to the old filename */
+/* The actual responsive styles are in ui-responsive-module.css */
+
+@import url('ui-responsive-module.css');
+
+/* 
+ * This file was created to resolve 404 errors for /css/responsive-module.css
+ * The actual responsive styles are located in ui-responsive-module.css
+ * This import ensures any cached references still work correctly
+ */
