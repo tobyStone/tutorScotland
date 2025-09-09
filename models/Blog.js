@@ -25,7 +25,7 @@ const blogSchema = new mongoose.Schema({
         default: null
     },
     tags: {
-        type: [String], // Array of tags for categorization
+        type: [String], // Array of tags for categorization here
         default: []
     },
     featured: {
