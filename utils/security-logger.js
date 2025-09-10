@@ -1,0 +1,268 @@
+/**
+ * @fileoverview Security event logging utility for Tutors Alliance Scotland
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Centralized security logging system for:
+ * - Failed login attempts and rate limiting
+ * - Unauthorized access attempts
+ * - File upload security events
+ * - Admin action auditing
+ * - Suspicious activity detection
+ *
+ * @security Implements secure logging with data sanitization
+ * @performance Lightweight logging with optional file persistence
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Security event types for categorization
+ * @enum {string}
+ */
+const SecurityEventType = {
+    LOGIN_FAILED: 'LOGIN_FAILED',
+    LOGIN_SUCCESS: 'LOGIN_SUCCESS',
+    LOGIN_RATE_LIMITED: 'LOGIN_RATE_LIMITED',
+    UNAUTHORIZED_ACCESS: 'UNAUTHORIZED_ACCESS',
+    UNAUTHORIZED_UPLOAD: 'UNAUTHORIZED_UPLOAD',
+    UNAUTHORIZED_CONTENT: 'UNAUTHORIZED_CONTENT',
+    ADMIN_ACTION: 'ADMIN_ACTION',
+    SUSPICIOUS_ACTIVITY: 'SUSPICIOUS_ACTIVITY',
+    FILE_UPLOAD: 'FILE_UPLOAD',
+    CONTENT_MODIFICATION: 'CONTENT_MODIFICATION'
+};
+
+/**
+ * Security event severity levels
+ * @enum {string}
+ */
+const SecuritySeverity = {
+    LOW: 'LOW',
+    MEDIUM: 'MEDIUM',
+    HIGH: 'HIGH',
+    CRITICAL: 'CRITICAL'
+};
+
+/**
+ * Sanitize log data to prevent log injection attacks
+ * @param {any} data - Data to sanitize
+ * @returns {any} Sanitized data
+ */
+function sanitizeLogData(data) {
+    if (typeof data === 'string') {
+        // Remove control characters and limit length
+        return data.replace(/[\x00-\x1f\x7f-\x9f]/g, '').substring(0, 1000);
+    }
+    
+    if (typeof data === 'object' && data !== null) {
+        const sanitized = {};
+        for (const [key, value] of Object.entries(data)) {
+            // Sanitize keys and values
+            const cleanKey = key.replace(/[\x00-\x1f\x7f-\x9f]/g, '').substring(0, 100);
+            sanitized[cleanKey] = sanitizeLogData(value);
+        }
+        return sanitized;
+    }
+    
+    return data;
+}
+
+/**
+ * Extract client information from request
+ * @param {Object} req - Express request object
+ * @returns {Object} Client information
+ */
+function extractClientInfo(req) {
+    return {
+        ip: req.ip || req.connection?.remoteAddress || req.headers['x-forwarded-for'] || 'unknown',
+        userAgent: req.headers['user-agent'] || 'unknown',
+        referer: req.headers.referer || 'unknown',
+        method: req.method || 'unknown',
+        url: req.url || 'unknown',
+        timestamp: new Date().toISOString()
+    };
+}
+
+/**
+ * Log a security event
+ * @param {string} eventType - Type of security event (use SecurityEventType enum)
+ * @param {string} severity - Severity level (use SecuritySeverity enum)
+ * @param {string} message - Human-readable message
+ * @param {Object} details - Additional event details
+ * @param {Object} req - Express request object (optional)
+ */
+function logSecurityEvent(eventType, severity, message, details = {}, req = null) {
+    const logEntry = {
+        timestamp: new Date().toISOString(),
+        eventType: sanitizeLogData(eventType),
+        severity: sanitizeLogData(severity),
+        message: sanitizeLogData(message),
+        details: sanitizeLogData(details),
+        client: req ? extractClientInfo(req) : null,
+        environment: process.env.NODE_ENV || 'development'
+    };
+
+    // Console logging with color coding
+    const severityColors = {
+        [SecuritySeverity.LOW]: '\x1b[32m',      // Green
+        [SecuritySeverity.MEDIUM]: '\x1b[33m',   // Yellow
+        [SecuritySeverity.HIGH]: '\x1b[31m',     // Red
+        [SecuritySeverity.CRITICAL]: '\x1b[35m'  // Magenta
+    };
+    
+    const color = severityColors[severity] || '\x1b[0m';
+    const reset = '\x1b[0m';
+    
+    console.log(`${color}🔒 SECURITY [${severity}] ${eventType}: ${message}${reset}`);
+    console.log(`   Details:`, JSON.stringify(logEntry.details, null, 2));
+
+    if (req && logEntry.client) {
+        console.log(`   Client: ${logEntry.client.ip} - ${logEntry.client.userAgent}`);
+    }
+
+    // File logging (optional - only in production or when LOG_SECURITY_TO_FILE is set)
+    if (process.env.NODE_ENV === 'production' || process.env.LOG_SECURITY_TO_FILE === 'true') {
+        try {
+            const logDir = path.join(process.cwd(), 'logs');
+            const logFile = path.join(logDir, 'security.log');
+            
+            // Ensure logs directory exists
+            if (!fs.existsSync(logDir)) {
+                fs.mkdirSync(logDir, { recursive: true });
+            }
+            
+            // Append to log file
+            const logLine = JSON.stringify(logEntry) + '\n';
+            fs.appendFileSync(logFile, logLine);
+            
+        } catch (error) {
+            console.error('Failed to write security log to file:', error.message);
+        }
+    }
+
+    // Critical events should trigger immediate alerts (in production)
+    if (severity === SecuritySeverity.CRITICAL && process.env.NODE_ENV === 'production') {
+        // TODO: Implement email/Slack alerts for critical security events
+        console.error('🚨 CRITICAL SECURITY EVENT - IMMEDIATE ATTENTION REQUIRED');
+        console.error('Event:', JSON.stringify(logEntry, null, 2));
+    }
+}
+
+/**
+ * Convenience methods for common security events
+ */
+const SecurityLogger = {
+    /**
+     * Log failed login attempt
+     */
+    loginFailed: (email, req, attempts = 1) => {
+        logSecurityEvent(
+            SecurityEventType.LOGIN_FAILED,
+            attempts >= 3 ? SecuritySeverity.HIGH : SecuritySeverity.MEDIUM,
+            `Failed login attempt for email: ${email}`,
+            { email, attempts },
+            req
+        );
+    },
+
+    /**
+     * Log successful login
+     */
+    loginSuccess: (email, role, req) => {
+        logSecurityEvent(
+            SecurityEventType.LOGIN_SUCCESS,
+            SecuritySeverity.LOW,
+            `Successful login for ${role}: ${email}`,
+            { email, role },
+            req
+        );
+    },
+
+    /**
+     * Log rate limited login attempt
+     */
+    loginRateLimited: (email, req, attempts) => {
+        logSecurityEvent(
+            SecurityEventType.LOGIN_RATE_LIMITED,
+            SecuritySeverity.HIGH,
+            `Rate limited login attempt for email: ${email}`,
+            { email, attempts, rateLimitWindow: '15 minutes' },
+            req
+        );
+    },
+
+    /**
+     * Log unauthorized access attempt
+     */
+    unauthorizedAccess: (endpoint, req, userInfo = null) => {
+        logSecurityEvent(
+            SecurityEventType.UNAUTHORIZED_ACCESS,
+            SecuritySeverity.HIGH,
+            `Unauthorized access attempt to ${endpoint}`,
+            { endpoint, userInfo },
+            req
+        );
+    },
+
+    /**
+     * Log unauthorized file upload attempt
+     */
+    unauthorizedUpload: (filename, req, userInfo = null) => {
+        logSecurityEvent(
+            SecurityEventType.UNAUTHORIZED_UPLOAD,
+            SecuritySeverity.CRITICAL,
+            `Unauthorized file upload attempt: ${filename}`,
+            { filename, userInfo },
+            req
+        );
+    },
+
+    /**
+     * Log successful file upload
+     */
+    fileUpload: (filename, fileSize, userInfo, req) => {
+        logSecurityEvent(
+            SecurityEventType.FILE_UPLOAD,
+            SecuritySeverity.LOW,
+            `File uploaded: ${filename}`,
+            { filename, fileSize, userInfo },
+            req
+        );
+    },
+
+    /**
+     * Log admin action
+     */
+    adminAction: (action, userInfo, req, details = {}) => {
+        logSecurityEvent(
+            SecurityEventType.ADMIN_ACTION,
+            SecuritySeverity.MEDIUM,
+            `Admin action: ${action}`,
+            { action, userInfo, ...details },
+            req
+        );
+    },
+
+    /**
+     * Log content modification
+     */
+    contentModification: (contentType, userInfo, req, details = {}) => {
+        logSecurityEvent(
+            SecurityEventType.CONTENT_MODIFICATION,
+            SecuritySeverity.MEDIUM,
+            `Content modified: ${contentType}`,
+            { contentType, userInfo, ...details },
+            req
+        );
+    }
+};
+
+module.exports = {
+    logSecurityEvent,
+    SecurityLogger,
+    SecurityEventType,
+    SecuritySeverity
+};

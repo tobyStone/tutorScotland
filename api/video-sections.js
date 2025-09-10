@@ -49,7 +49,31 @@ module.exports = async (req, res) => {
         await connectToDatabase();
 
         const { method } = req;
-        
+
+        // 🔒 SECURITY FIX: Add authentication for write operations
+        if (['POST', 'PUT', 'DELETE'].includes(method)) {
+            const { verify } = require('./protected');
+            const [ok, payload] = verify(req, res);
+            if (!ok) {
+                console.warn('🚨 SECURITY: Unauthorized video sections management attempt from IP:', req.ip || req.connection.remoteAddress);
+                return res.status(401).json({
+                    message: 'Authentication required for video sections management',
+                    error: 'UNAUTHORIZED_VIDEO_ACCESS'
+                });
+            }
+
+            // Require admin role for video sections management
+            if (payload.role !== 'admin') {
+                console.warn(`🚨 SECURITY: User role '${payload.role}' attempted video sections management. User ID: ${payload.id}`);
+                return res.status(403).json({
+                    message: 'Admin access required for video sections management',
+                    error: 'INSUFFICIENT_PERMISSIONS'
+                });
+            }
+
+            console.log(`✅ Authenticated video sections management by admin ${payload.id}`);
+        }
+
         const { operation } = req.query;
 
         switch (method) {

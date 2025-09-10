@@ -123,6 +123,30 @@ module.exports = async (req, res) => {
     try {
         await connectDB();
 
+        // 🔒 SECURITY FIX: Add authentication for write operations
+        if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
+            const { verify } = require('./protected');
+            const [ok, payload] = verify(req, res);
+            if (!ok) {
+                console.warn('🚨 SECURITY: Unauthorized sections management attempt from IP:', req.ip || req.connection.remoteAddress);
+                return res.status(401).json({
+                    message: 'Authentication required for sections management',
+                    error: 'UNAUTHORIZED_SECTIONS_ACCESS'
+                });
+            }
+
+            // Require admin role for sections management
+            if (payload.role !== 'admin') {
+                console.warn(`🚨 SECURITY: User role '${payload.role}' attempted sections management. User ID: ${payload.id}`);
+                return res.status(403).json({
+                    message: 'Admin access required for sections management',
+                    error: 'INSUFFICIENT_PERMISSIONS'
+                });
+            }
+
+            console.log(`✅ Authenticated sections management by admin ${payload.id}`);
+        }
+
         // CREATE
         if (req.method === 'POST') {
             console.log('POST request received for sections API');

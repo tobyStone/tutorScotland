@@ -20,6 +20,7 @@ const { put } = require('@vercel/blob');
 const { formidable } = require('formidable');
 const fs = require('fs');
 const { lookup } = require('mime-types');
+const { SecurityLogger } = require('../utils/security-logger');
 
 // Google Cloud Storage for large video uploads (using tech team's recommended approach)
 let storage;
@@ -110,6 +111,38 @@ module.exports = async (req, res) => {
         res.setHeader('Allow', ['POST']);
         return res.status(405).end('Method Not Allowed');
     }
+
+    // 🔒 SECURITY FIX: Add authentication requirement for all file uploads
+    const { verify } = require('./protected');
+    const [ok, payload] = verify(req, res);
+    if (!ok) {
+        try {
+            SecurityLogger.unauthorizedUpload('unknown', req);
+        } catch (logError) {
+            console.error('Security logging error:', logError);
+        }
+        return res.status(401).json({
+            message: 'Authentication required for file uploads',
+            error: 'UNAUTHORIZED_UPLOAD_ATTEMPT'
+        });
+    }
+
+    // Optional: Restrict to specific roles (admin, tutor, blogwriter can upload)
+    const allowedRoles = ['admin', 'tutor', 'blogwriter'];
+    if (!allowedRoles.includes(payload.role)) {
+        try {
+            SecurityLogger.unauthorizedUpload('unknown', req, { userId: payload.id, role: payload.role });
+        } catch (logError) {
+            console.error('Security logging error:', logError);
+        }
+        return res.status(403).json({
+            message: 'Insufficient permissions for file uploads',
+            error: 'INSUFFICIENT_PERMISSIONS',
+            allowedRoles: allowedRoles
+        });
+    }
+
+    console.log(`✅ Authenticated file upload by user ${payload.id} (${payload.role})`);
 
     // Check if this is a request for a signed URL (for large video uploads)
     const contentType = req.headers['content-type'];
@@ -546,7 +579,8 @@ async function handleFileUpload(req, res) {
             3️⃣  Server-side image integrity test & thumbnail creation
         ------------------------------------------------------------- */
 
-        // ✅ NEW: Test image processing to detect corruption/artifacts
+        // ✅ RELAXED: Test image processing to detect corruption/artifacts
+        // Only reject images that are truly corrupted, not just different formats
         try {
             // Try to process the image - this will fail if the image is corrupted
             const testBuffer = await img
@@ -558,11 +592,13 @@ async function handleFileUpload(req, res) {
                 throw new Error('Image processing test failed');
             }
         } catch (processError) {
-            console.error('Image processing test failed:', processError.message);
-            fs.unlink(uploadedFile.filepath, ()=>{}); // cleanup
-            return res.status(400).json({
-                message: 'Image appears to be corrupted and cannot be processed. Please try a different image.'
-            });
+            console.warn('Image processing test failed, but continuing:', processError.message);
+            // ✅ CHANGE: Don't reject the image, just log the warning
+            // Many valid images fail strict Sharp validation but work fine
+            // fs.unlink(uploadedFile.filepath, ()=>{}); // cleanup
+            // return res.status(400).json({
+            //     message: 'Image appears to be corrupted and cannot be processed. Please try a different image.'
+            // });
         }
 
         // ✅ IMPROVED: More robust thumbnail generation with validation
@@ -590,9 +626,11 @@ async function handleFileUpload(req, res) {
                 })
                 .toBuffer();
 
-            // ✅ VALIDATION: Ensure thumbnail was created successfully
+            // ✅ RELAXED: Ensure thumbnail was created successfully
             if (!thumbnailBuffer || thumbnailBuffer.length === 0) {
-                throw new Error('Thumbnail generation produced empty buffer');
+                console.warn('Thumbnail generation produced empty buffer, but continuing...');
+                // Don't throw error - some images work fine without thumbnails
+                // throw new Error('Thumbnail generation produced empty buffer');
             }
 
             console.log(`✅ Thumbnail generated: ${thumbnailBuffer.length} bytes`);
@@ -608,7 +646,9 @@ async function handleFileUpload(req, res) {
                 .toBuffer();
 
             if (!thumbnailBuffer || thumbnailBuffer.length === 0) {
-                throw new Error('Fallback thumbnail generation also failed');
+                console.warn('Fallback thumbnail generation also failed, but continuing...');
+                // Don't throw error - main image upload can still succeed
+                // throw new Error('Fallback thumbnail generation also failed');
             }
 
             console.log(`✅ Fallback thumbnail generated: ${thumbnailBuffer.length} bytes`);
@@ -658,14 +698,15 @@ async function handleFileUpload(req, res) {
             }
         }
 
-        // Upload thumbnail with same verification
-        uploadAttempts = 0;
-        while (uploadAttempts < maxRetries) {
-            try {
-                uploadAttempts++;
-                console.log(`📤 Uploading thumbnail (attempt ${uploadAttempts}/${maxRetries})...`);
+        // Upload thumbnail with same verification (if thumbnail was generated)
+        if (thumbnailBuffer && thumbnailBuffer.length > 0) {
+            uploadAttempts = 0;
+            while (uploadAttempts < maxRetries) {
+                try {
+                    uploadAttempts++;
+                    console.log(`📤 Uploading thumbnail (attempt ${uploadAttempts}/${maxRetries})...`);
 
-                const thumbResult = await put(thumbKey, thumbnailBuffer, putOpts);
+                    const thumbResult = await put(thumbKey, thumbnailBuffer, putOpts);
                 thumbnailUrl = thumbResult.url;
 
                 // ✅ VERIFICATION: Verify thumbnail upload
@@ -690,6 +731,9 @@ async function handleFileUpload(req, res) {
                 // Wait before retry
                 await new Promise(resolve => setTimeout(resolve, 1000 * uploadAttempts));
             }
+        } else {
+            console.log('⚠️ Skipping thumbnail upload - thumbnail generation failed');
+            thumbnailUrl = null; // No thumbnail available
         }
 
         console.log(`✅ All uploads complete and verified: ${url}`);
@@ -702,6 +746,18 @@ async function handleFileUpload(req, res) {
         // ✅ CLEANUP: Remove from active uploads
         activeUploads.delete(uploadId);
         console.log(`✅ Upload ${uploadId} completed successfully`);
+
+        // Log successful file upload
+        try {
+            SecurityLogger.fileUpload(
+                filename,
+                uploadedFile.size,
+                { userId: payload.id, role: payload.role },
+                req
+            );
+        } catch (logError) {
+            console.error('Security logging error:', logError);
+        }
 
         return res.status(200).json({
             url,

@@ -18,6 +18,7 @@ const connectDB = require('./connectToDatabase');
 const Section = require('../models/Section');
 const Order = require('../models/Order');
 const { list } = require('@vercel/blob');
+const { SecurityLogger } = require('../utils/security-logger');
 
 const ITEMS_PER_PAGE = 20;
 
@@ -70,6 +71,34 @@ module.exports = async (req, res) => {
             query,
             bodyKeys: body ? Object.keys(body) : 'no body'
         });
+
+        // 🔒 SECURITY FIX: Add authentication for write operations
+        const writeOperations = ['set-order', 'remove-from-order', 'override', 'backup'];
+        const isWriteOperation = ['POST', 'PUT', 'DELETE'].includes(method) || writeOperations.includes(operation);
+
+        if (isWriteOperation) {
+            const { verify } = require('./protected');
+            const [ok, payload] = verify(req, res);
+            if (!ok) {
+                SecurityLogger.unauthorizedAccess('content-manager', req);
+                return res.status(401).json({
+                    message: 'Authentication required for content management',
+                    error: 'UNAUTHORIZED_CONTENT_ACCESS'
+                });
+            }
+
+            // Require admin role for content management
+            if (payload.role !== 'admin') {
+                SecurityLogger.unauthorizedAccess('content-manager', req, { userId: payload.id, role: payload.role });
+                return res.status(403).json({
+                    message: 'Admin access required for content management',
+                    error: 'INSUFFICIENT_PERMISSIONS'
+                });
+            }
+
+            // Log successful admin content management access
+            SecurityLogger.adminAction(`content-manager-${operation}`, { userId: payload.id, role: payload.role }, req);
+        }
 
         /* ---------- NEW: section order endpoints ---------- */
         if (method === 'GET'  && operation === 'get-order') return getOrder(req, res);

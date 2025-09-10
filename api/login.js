@@ -19,6 +19,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { serialize, parse } = require('cookie');  // <-- important for setting cookies manually
 const connectToDatabase = require('./connectToDatabase');
+const { SecurityLogger } = require('../utils/security-logger');
 
 // Import User model - use try/catch approach similar to tutors.js
 let User;
@@ -35,6 +36,79 @@ try {
         User = null;
     }
 }
+
+// 🔒 SECURITY: Simple in-memory rate limiting for login attempts
+// In production, consider using Redis or database-backed rate limiting
+const loginAttempts = new Map();
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+const MAX_ATTEMPTS = 5;
+
+/**
+ * Check and update rate limiting for login attempts
+ * @param {string} clientIP - Client IP address
+ * @param {string} email - Email being attempted
+ * @returns {boolean} - True if request is allowed, false if rate limited
+ */
+function checkRateLimit(clientIP, email) {
+    const key = `${clientIP}:${email}`;
+    const now = Date.now();
+    const attempts = loginAttempts.get(key) || { count: 0, firstAttempt: now, lastAttempt: 0 };
+
+    // Reset if window has expired
+    if (now - attempts.firstAttempt > RATE_LIMIT_WINDOW) {
+        attempts.count = 0;
+        attempts.firstAttempt = now;
+    }
+
+    // Check if rate limited
+    if (attempts.count >= MAX_ATTEMPTS) {
+        const timeRemaining = RATE_LIMIT_WINDOW - (now - attempts.firstAttempt);
+        if (timeRemaining > 0) {
+            console.warn(`🚨 RATE LIMIT: ${email} from ${clientIP} - ${attempts.count} attempts, ${Math.ceil(timeRemaining / 60000)} minutes remaining`);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Record a failed login attempt
+ * @param {string} clientIP - Client IP address
+ * @param {string} email - Email that failed
+ */
+function recordFailedAttempt(clientIP, email) {
+    const key = `${clientIP}:${email}`;
+    const now = Date.now();
+    const attempts = loginAttempts.get(key) || { count: 0, firstAttempt: now, lastAttempt: 0 };
+
+    attempts.count++;
+    attempts.lastAttempt = now;
+    loginAttempts.set(key, attempts);
+
+    console.warn(`🚨 FAILED LOGIN: ${email} from ${clientIP} - Attempt ${attempts.count}/${MAX_ATTEMPTS}`);
+}
+
+/**
+ * Clear successful login attempts
+ * @param {string} clientIP - Client IP address
+ * @param {string} email - Email that succeeded
+ */
+function clearAttempts(clientIP, email) {
+    const key = `${clientIP}:${email}`;
+    loginAttempts.delete(key);
+    console.log(`✅ LOGIN SUCCESS: Cleared rate limit for ${email} from ${clientIP}`);
+}
+
+// Clean up old entries every 30 minutes
+setInterval(() => {
+    const now = Date.now();
+    for (const [key, attempts] of loginAttempts.entries()) {
+        if (now - attempts.firstAttempt > RATE_LIMIT_WINDOW * 2) {
+            loginAttempts.delete(key);
+        }
+    }
+}, 30 * 60 * 1000);
 
 /**
  * Main authentication API handler
@@ -66,6 +140,19 @@ module.exports = async (req, res) => {
     }
 
     const { email, password } = req.body;
+
+    // 🔒 SECURITY: Rate limiting check
+    const clientIP = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] || 'unknown';
+
+    if (!checkRateLimit(clientIP, email)) {
+        SecurityLogger.loginRateLimited(email, req, MAX_ATTEMPTS);
+        return res.status(429).json({
+            message: 'Too many failed login attempts. Please try again in 15 minutes.',
+            error: 'RATE_LIMITED',
+            retryAfter: 15 * 60 // seconds
+        });
+    }
+
     try {
         await connectToDatabase();
 
@@ -78,14 +165,23 @@ module.exports = async (req, res) => {
         // Search for the user by email (case-insensitive)
         const user = await User.findOne({ email: new RegExp('^' + email + '$', 'i') });
         if (!user) {
+            recordFailedAttempt(clientIP, email);
+            SecurityLogger.loginFailed(email, req, 1);
             return res.status(404).json({ message: 'User not found' });
         }
 
         // Compare passwords using bcrypt
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
+            recordFailedAttempt(clientIP, email);
+            const attempts = loginAttempts.get(`${clientIP}:${email}`)?.count || 1;
+            SecurityLogger.loginFailed(email, req, attempts);
             return res.status(400).json({ message: 'Invalid credentials' });
         }
+
+        // Clear rate limiting on successful login
+        clearAttempts(clientIP, email);
+        SecurityLogger.loginSuccess(email, user.role, req);
 
         // Ensure JWT_SECRET is set
         if (!process.env.JWT_SECRET) {
