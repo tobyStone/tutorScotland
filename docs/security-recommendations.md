@@ -8,22 +8,31 @@ This document outlines critical security recommendations for the Tutors Alliance
 ### **1. Authentication & Authorization**
 
 #### **Current Issues**
-- JWT tokens stored in localStorage (vulnerable to XSS)
+- ✅ ~~JWT tokens stored in localStorage~~ **FIXED: Already using HTTP-only cookies**
 - No CSRF protection on admin forms
-- Session management lacks proper expiration
+- Session management lacks proper expiration (currently 3 hours - reasonable)
 - Admin role validation inconsistent across endpoints
 
 #### **Recommendations**
 ```javascript
-// Implement HTTP-only cookies for JWT storage
-app.use(cookieParser());
-app.use(session({
-    secret: process.env.SESSION_SECRET,
+// ✅ ALREADY IMPLEMENTED: HTTP-only cookies for JWT storage
+// Current implementation in api/login.js:
+const serializedCookie = serialize('token', token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-}));
+    maxAge: 3 * 60 * 60, // 3 hours in seconds
+    path: '/'
+});
+res.setHeader('Set-Cookie', serializedCookie);
+
+// ENHANCEMENT: Add SameSite protection
+const serializedCookie = serialize('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict', // ADD THIS for CSRF protection
+    maxAge: 3 * 60 * 60,
+    path: '/'
+});
 
 // Add CSRF protection
 const csrf = require('csurf');
@@ -195,10 +204,10 @@ const sanitizeLog = (data) => {
    - Sanitize all user-generated content
 
 ### **Phase 2: Enhanced Security (Week 2-3)**
-1. **Migrate JWT to HTTP-only cookies** (if not already implemented)
-   - Update login.js to set HTTP-only cookies
-   - Modify client-side auth checks
-   - Implement automatic token refresh
+1. **✅ ~~Migrate JWT to HTTP-only cookies~~** **ALREADY IMPLEMENTED**
+   - ✅ HTTP-only cookies already implemented in login.js
+   - ✅ Client-side auth checks already use cookies
+   - **ENHANCEMENT**: Add SameSite=strict to cookies for CSRF protection
 
 2. **Add CSRF protection**
    - Install and configure csurf middleware
