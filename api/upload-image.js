@@ -731,6 +731,7 @@ async function handleFileUpload(req, res) {
                 // Wait before retry
                 await new Promise(resolve => setTimeout(resolve, 1000 * uploadAttempts));
             }
+            }
         } else {
             console.log('⚠️ Skipping thumbnail upload - thumbnail generation failed');
             thumbnailUrl = null; // No thumbnail available
