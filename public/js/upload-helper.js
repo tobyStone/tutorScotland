@@ -1,4 +1,28 @@
+/**
+ * @fileoverview Client-side image upload helper for Tutors Alliance Scotland
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Client-side image upload utilities supporting:
+ * - Image file validation and size checking
+ * - Folder-based organization
+ * - Progress tracking and error handling
+ * - Integration with Vercel Blob storage
+ *
+ * @security Implements client-side validation before server upload
+ * @performance Optimizes file handling and upload process
+ */
+
 // /public/js/upload-helper.js (client side)
+
+/**
+ * Upload an image file to the server
+ * @param {File} file - The image file to upload
+ * @param {string} folder - Target folder for organization (default: 'content-images')
+ * @returns {Promise<Object>} Upload result with URL and metadata
+ * @throws {Error} When file is too large or invalid format
+ */
 export async function uploadImage(file, folder = 'content-images') {
     console.log('uploadImage called with:', { fileName: file.name, size: file.size, folder });
 

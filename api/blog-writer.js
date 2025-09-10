@@ -1,3 +1,17 @@
+/**
+ * @fileoverview Blog management API for Tutors Alliance Scotland content creation
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Comprehensive blog management system supporting CRUD operations,
+ * SEO optimization, content migration, and admin authentication. Handles blog
+ * creation, editing, deletion, and metadata management with automatic slug generation.
+ *
+ * @security Requires admin authentication for all write operations
+ * @performance Implements automatic reading time calculation and SEO metadata generation
+ */
+
 // api/blog-writer.js
 const connectToDatabase = require('./connectToDatabase');
 const Blog = require('../models/Blog');
@@ -51,6 +65,30 @@ function verifyToken(req) {
     }
 }
 
+/**
+ * Main API handler for blog management operations
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} JSON response with operation result
+ *
+ * @description Handles comprehensive blog management including:
+ * - GET: Retrieve blogs with filtering, pagination, and search
+ * - POST: Create new blog posts with SEO optimization
+ * - PUT: Update existing blog posts with validation
+ * - DELETE: Remove blog posts with admin authentication
+ *
+ * @example
+ * // GET /api/blog-writer?operation=list&page=1&limit=10
+ * // POST /api/blog-writer with blog data
+ * // PUT /api/blog-writer with id and updated data
+ * // DELETE /api/blog-writer?id=blogId
+ *
+ * @security Admin authentication required for write operations
+ * @performance Implements pagination and efficient database queries
+ * @throws {Error} 401 - Invalid or missing authentication token
+ * @throws {Error} 400 - Invalid input data or validation errors
+ * @throws {Error} 500 - Database connection or server errors
+ */
 module.exports = async (req, res) => {
     console.log('Blog writer API called with method:', req.method);
     console.log('Request headers:', req.headers);

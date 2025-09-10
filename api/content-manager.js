@@ -1,3 +1,19 @@
+/**
+ * @fileoverview Content management API for visual editor and admin operations
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Comprehensive content management system supporting:
+ * - Content overrides for visual editing
+ * - Image management with thumbnail support
+ * - Section debugging and analysis
+ * - Admin authentication and authorization
+ *
+ * @security All operations require proper authentication and validation
+ * @performance Implements pagination and efficient blob storage queries
+ */
+
 const connectDB = require('./connectToDatabase');
 const Section = require('../models/Section');
 const Order = require('../models/Order');
@@ -16,6 +32,28 @@ const ITEMS_PER_PAGE = 20;
  * This protects against race conditions when multiple editors save the same element.
  */
 
+/**
+ * Main API handler for content management operations
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} JSON response with operation result
+ *
+ * @description Handles multiple content management operations:
+ * - get-overrides: Retrieve content overrides for a page
+ * - save-override: Create or update content overrides
+ * - delete-override: Remove content overrides
+ * - list-images: Paginated image listing with thumbnails
+ * - debug-sections: Development debugging for sections
+ *
+ * @example
+ * // GET /api/content-manager?operation=get-overrides&page=index
+ * // POST /api/content-manager with operation and data
+ *
+ * @security Authentication required for write operations
+ * @performance Implements pagination and efficient database queries
+ * @throws {Error} 400 - Invalid operation or missing parameters
+ * @throws {Error} 500 - Database connection or server errors
+ */
 module.exports = async (req, res) => {
     try {
         await connectDB();

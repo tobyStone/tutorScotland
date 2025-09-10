@@ -1,3 +1,17 @@
+/**
+ * @fileoverview Section model for dynamic content and visual editor overrides
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Comprehensive model supporting:
+ * - Dynamic sections for content management
+ * - Visual editor content overrides
+ * - Team member management
+ * - Navigation and SEO features
+ * - Multiple layout types (standard, team, list, testimonials, video)
+ */
+
 const mongoose = require('mongoose');
 
 // Define team member sub-schema

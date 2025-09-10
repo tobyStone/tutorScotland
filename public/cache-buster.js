@@ -1,6 +1,16 @@
 /**
- * Cache Buster Utility
- * Adds timestamp-based cache busting to prevent browser caching issues
+ * @fileoverview Cache busting utility for preventing browser caching issues
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Client-side cache busting system:
+ * - Adds timestamp-based cache busting parameters
+ * - Prevents browser caching of dynamic content
+ * - Hour-based timestamp generation for efficiency
+ * - Automatic script and stylesheet cache busting
+ *
+ * @performance Implements efficient hour-based cache invalidation
  */
 
 (function() {

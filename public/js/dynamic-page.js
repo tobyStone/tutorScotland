@@ -1,6 +1,17 @@
 /**
- * Dynamic Page Loader
- * This script handles loading and displaying dynamic pages with proper styling
+ * @fileoverview Dynamic page loading system for custom pages
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Dynamic page management system:
+ * - Loads custom pages based on URL slug
+ * - Handles proper styling and content injection
+ * - Manages page metadata and SEO elements
+ * - Integrates with dynamic sections system
+ *
+ * @performance Implements efficient page loading and content rendering
+ * @security Validates page slugs and content before rendering
  */
 
 async function loadDynamicPage() {

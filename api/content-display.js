@@ -1,8 +1,19 @@
 /**
- * /api/content-display - Combined API endpoint for blog and page content
- * Handles both blog operations (from blog.js) and page operations (from page.js)
- * Routes are determined by URL patterns and query parameters
+ * @fileoverview Combined content display API for blogs and dynamic pages
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Unified API endpoint handling:
+ * - Blog content display with SEO optimization
+ * - Dynamic page generation with sections
+ * - Content routing based on URL patterns
+ * - HTML generation for public-facing content
+ *
+ * @security Public API with no authentication required
+ * @performance Implements efficient database queries and HTML generation
  */
+
 const connectToDatabase = require('./connectToDatabase');
 const Blog = require('../models/Blog');
 const Section = require('../models/Section');

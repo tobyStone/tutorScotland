@@ -1,3 +1,24 @@
+/**
+ * @fileoverview Editor state management for visual editor
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Editor state management system:
+ * - Tracks edit mode status and active editor
+ * - Manages current page context
+ * - Provides event system for state changes
+ * - Handles editor lifecycle management
+ *
+ * @exports EditorState - Main state management class
+ * @performance Implements efficient state tracking and event handling
+ */
+
+/**
+ * Editor state management class
+ * @class EditorState
+ * @description Manages the state of the visual editor including edit mode and active editor tracking
+ */
 export class EditorState {
     constructor() {
         this._isEditMode = false;

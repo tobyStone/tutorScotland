@@ -1,6 +1,18 @@
 /**
- * dynamic-nav.js - Enhanced navigation with dropdown support and mobile functionality
- * This script handles mobile menu toggle, dropdown interactions, and adds custom pages
+ * @fileoverview Enhanced navigation system with dropdown and mobile support
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Comprehensive navigation management system:
+ * - Mobile menu toggle and accordion functionality
+ * - Dropdown interactions and submenu management
+ * - Custom page injection into navigation
+ * - Smooth anchor navigation and scrolling
+ * - Dynamic section anchor generation
+ *
+ * @requires nav-loader.js for navigation HTML loading
+ * @performance Implements efficient event delegation and smooth scrolling
  */
 
 /* ============================= NAV INTERACTIONS ============================= */

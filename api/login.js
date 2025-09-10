@@ -1,3 +1,19 @@
+/**
+ * @fileoverview Authentication API for Tutors Alliance Scotland admin access
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Secure authentication system supporting:
+ * - Admin login with bcrypt password hashing
+ * - JWT token generation and validation
+ * - HTTP-only cookie management
+ * - Role-based access control
+ *
+ * @security Implements secure password hashing and JWT tokens
+ * @performance Efficient database queries and token validation
+ */
+
 // api/login.js
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -20,6 +36,24 @@ try {
     }
 }
 
+/**
+ * Main authentication API handler
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} JSON response with authentication result
+ *
+ * @description Handles authentication operations:
+ * - GET ?check=admin: Verify admin authentication status
+ * - POST: Admin login with credentials validation
+ *
+ * @example
+ * // GET /api/login?check=admin
+ * // POST /api/login with { username, password }
+ *
+ * @security Uses bcrypt for password hashing and JWT for session management
+ * @throws {Error} 401 - Invalid credentials or authentication failure
+ * @throws {Error} 500 - Database connection or server errors
+ */
 module.exports = async (req, res) => {
     // Handle auth check requests
     if (req.method === 'GET' && req.query.check === 'admin') {

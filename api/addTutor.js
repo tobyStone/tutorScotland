@@ -1,3 +1,16 @@
+/**
+ * @fileoverview API endpoint for adding new tutors to the Tutors Alliance Scotland platform
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Handles tutor registration with comprehensive validation, region normalization,
+ * and admin authentication. Supports both public tutor applications and admin-managed additions.
+ *
+ * @security Requires admin authentication for direct tutor creation
+ * @performance Implements region synonym mapping for consistent data storage
+ */
+
 // api/addTutor.js
 const connectToDatabase = require('./connectToDatabase');
 const jwt = require('jsonwebtoken');
@@ -94,6 +107,31 @@ function verifyToken(req) {
     }
 }
 
+/**
+ * Main API handler for tutor management operations
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} JSON response with operation result
+ *
+ * @description Handles POST (create), PUT (update), and DELETE operations for tutors.
+ * Implements comprehensive validation, region normalization, and admin authentication.
+ *
+ * @example
+ * // POST /api/addTutor
+ * {
+ *   "name": "John Smith",
+ *   "subjects": ["Mathematics", "Physics"],
+ *   "costRange": "£20-30",
+ *   "regions": ["Edinburgh & Lothians"],
+ *   "description": "Experienced tutor...",
+ *   "contact": "john@example.com"
+ * }
+ *
+ * @security Admin authentication required for all operations
+ * @throws {Error} 401 - Invalid or missing authentication token
+ * @throws {Error} 400 - Invalid input data or validation errors
+ * @throws {Error} 500 - Database connection or server errors
+ */
 module.exports = async (req, res) => {
     // Allow POST, PUT, and DELETE methods
     if (!['POST', 'PUT', 'DELETE'].includes(req.method)) {

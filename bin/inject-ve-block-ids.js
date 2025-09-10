@@ -1,3 +1,20 @@
+/**
+ * @fileoverview Visual Editor Block ID injection utility
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Utility script for injecting unique block IDs into HTML elements:
+ * - Scans all HTML files in the public directory
+ * - Adds data-ve-block-id attributes to editable elements
+ * - Supports h1-h6, p, img, and a tags
+ * - Skips navigation elements to prevent conflicts
+ *
+ * @requires jsdom for HTML parsing
+ * @requires uuid for unique ID generation
+ * @performance Processes files in batch for efficiency
+ */
+
 import { JSDOM } from 'jsdom';
 import { v4 as uuid } from 'uuid';
 import fs from 'fs/promises';

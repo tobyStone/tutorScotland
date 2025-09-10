@@ -1,6 +1,28 @@
+/**
+ * @fileoverview Section sorting functionality for visual editor
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Section reordering system:
+ * - Drag-and-drop section reordering
+ * - Visual feedback during sorting
+ * - Persistent order storage
+ * - Integration with visual editor
+ *
+ * @requires ../api-service.js for API communication
+ * @requires ../editor-state.js for state management
+ * @performance Implements efficient drag-and-drop with visual feedback
+ */
+
 import { apiService } from '../api-service.js';
 import { editorState } from '../editor-state.js';
 
+/**
+ * Section sorting and reordering class
+ * @class SectionSorter
+ * @description Provides drag-and-drop functionality for reordering sections
+ */
 export class SectionSorter {
     constructor() {
         this.sortable = null;

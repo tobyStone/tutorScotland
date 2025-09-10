@@ -1,6 +1,17 @@
 /**
- * nav-loader.js - Loads the main navigation from partials and emits nav:loaded event
- * This script fetches the navigation HTML and injects it into the page
+ * @fileoverview Navigation loader for main navigation HTML injection
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Navigation loading system:
+ * - Fetches main navigation HTML from partials
+ * - Injects navigation into page DOM
+ * - Emits nav:loaded event for other scripts
+ * - Handles loading errors gracefully
+ *
+ * @performance Implements efficient HTML fetching and injection
+ * @requires /partials/main-nav.html for navigation content
  */
 (async () => {
   try {

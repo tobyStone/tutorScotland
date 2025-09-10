@@ -1,9 +1,18 @@
 /**
- * Dynamic Sections Loader
+ * @fileoverview Dynamic Sections Loader for Tutors Alliance Scotland
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
  *
- * This script handles loading and displaying dynamic sections for all pages.
- * It ensures that dynamic sections are properly positioned at the top, middle, or bottom
- * of the page content based on the admin's selection.
+ * @description Comprehensive dynamic content management system supporting:
+ * - Multiple section layouts (standard, team, list, testimonials, video)
+ * - Position-based rendering (top, middle, bottom)
+ * - Visual editor integration with block IDs
+ * - Fade-in animations and intersection observers
+ * - Navigation anchor generation
+ *
+ * @requires UUID library for block ID generation
+ * @performance Implements efficient DOM manipulation and lazy loading
  */
 
 // Helper function to create URL-friendly slugs

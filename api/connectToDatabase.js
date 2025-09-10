@@ -1,3 +1,19 @@
+/**
+ * @fileoverview Database connection utility for MongoDB with Mongoose
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Centralized database connection management:
+ * - MongoDB connection with proper error handling
+ * - Connection reuse and optimization
+ * - Environment-specific configuration loading
+ * - Connection state management
+ *
+ * @security Uses secure connection strings with authentication
+ * @performance Implements connection pooling and reuse
+ */
+
 // connectToDatabase.js
 
 const mongoose = require('mongoose');

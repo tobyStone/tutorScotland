@@ -1,8 +1,17 @@
 /**
- * Rolling Banner Functionality
- * This script initializes the rolling banner on all pages.
- * It fetches news content from the sections API with page=rolling-banner
- * and falls back to tutor information if no news is available.
+ * @fileoverview Rolling banner functionality for news and tutor information
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Rolling banner system:
+ * - Initializes rolling banner on all pages
+ * - Fetches news content from sections API
+ * - Falls back to tutor information if no news available
+ * - Integrates with responsive-helper.js for animation
+ *
+ * @requires responsive-helper.js for initRollingBanner function
+ * @performance Implements efficient content fetching and animation
  */
 document.addEventListener('DOMContentLoaded', function() {
     // Check if responsive-helper.js is loaded and initRollingBanner function exists

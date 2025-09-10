@@ -1,8 +1,19 @@
 /**
- * /api/video-sections - Video Section Management API
- * Handles CRUD operations for video sections that integrate with Google Cloud Storage
- * Uses the existing Section model with layout: 'video' and videoUrl field
+ * @fileoverview Video sections management API with Google Cloud integration
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Video section management system supporting:
+ * - Video section CRUD operations
+ * - Google Cloud Storage integration
+ * - Video URL validation and processing
+ * - Integration with existing Section model
+ *
+ * @security Admin authentication required for write operations
+ * @performance Implements efficient video processing and storage
  */
+
 const { formidable } = require('formidable');
 const connectToDatabase = require('./connectToDatabase');
 const Section = require('../models/Section');

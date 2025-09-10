@@ -1,3 +1,20 @@
+/**
+ * @fileoverview Tutors directory API for public tutor search and display
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Public-facing API for tutor directory functionality:
+ * - Advanced tutor search with multiple filters
+ * - Region-based filtering with synonym support
+ * - Subject and cost range filtering
+ * - Tutor list generation for rolling banner
+ * - Comprehensive HTML generation for tutor directory page
+ *
+ * @security Public API with no authentication required
+ * @performance Implements efficient database queries and caching strategies
+ */
+
 const connectToDatabase = require('./connectToDatabase');
 const mongoose = require('mongoose');
 
@@ -73,6 +90,27 @@ try {
     }
 }
 
+/**
+ * Main API handler for tutors directory operations
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} JSON response or HTML content
+ *
+ * @description Handles multiple tutor-related operations:
+ * - GET /api/tutors: Returns complete tutor directory HTML page
+ * - GET /api/tutorList: Returns JSON list of tutors for rolling banner
+ * - Supports advanced filtering by region, subject, cost range
+ * - Implements region synonym mapping for consistent searches
+ *
+ * @example
+ * // GET /api/tutors
+ * // GET /api/tutorList
+ * // GET /api/tutors?region=Edinburgh&subject=Mathematics
+ *
+ * @security Public API with no authentication required
+ * @performance Implements efficient database queries and HTML generation
+ * @throws {Error} 500 - Database connection or server errors
+ */
 module.exports = async (req, res) => {
     try {
         // Connect to the database with better error handling

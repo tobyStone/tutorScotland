@@ -1,9 +1,18 @@
 /**
- * Video Player Component for Tutors Alliance Scotland
- * 
- * This script creates a reusable video player component that can be
- * added to any page on the website. The player is initially invisible
- * and can be toggled to show/hide.
+ * @fileoverview Reusable video player component for Tutors Alliance Scotland
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Video player component system:
+ * - Reusable video player for any page
+ * - Toggle show/hide functionality
+ * - Support for multiple video sources
+ * - Responsive design and controls
+ * - Integration with video sections
+ *
+ * @performance Implements efficient video loading and playback
+ * @security Validates video URLs and sources
  */
 
 class TutorVideoPlayer {

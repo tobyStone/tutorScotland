@@ -1,13 +1,18 @@
 /**
- * responsive-helper.js  Tutors Alliance Scotland
- * -------------------------------------------------
- * ?  Guarantees every page links the **global style bundle** _and_
- *    `header-banner.css` so dynamic HTML never ships un?styled.
- * ?  Adds viewport / page?type classes to <body> for CSS hooks.
- * ?  Handles the rolling news / tutor banner with width?aware
- *    animation.
- * ?  Provides a single IntersectionObserver fade?in that also
- *    watches for nodes injected later by the dynamic?sections
+ * @fileoverview Responsive helper utilities for Tutors Alliance Scotland
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Comprehensive responsive utilities providing:
+ * - Global style bundle and header-banner.css linking
+ * - Viewport and page-type classes for CSS hooks
+ * - Rolling news/tutor banner with width-aware animation
+ * - IntersectionObserver fade-in for dynamic content
+ * - Dynamic content styling and animation management
+ *
+ * @performance Implements efficient intersection observers and animation handling
+ * @security Ensures proper CSS loading to prevent unstyled content
  *    loader.
  *
  * Drop this file in `/public/js/` and reference it with

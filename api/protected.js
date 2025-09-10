@@ -1,3 +1,19 @@
+/**
+ * @fileoverview Protected route authentication middleware for admin access
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Authentication verification system for protected admin routes:
+ * - JWT token validation from HTTP-only cookies
+ * - Role-based access control (admin/user)
+ * - Secure token verification with proper error handling
+ * - Cookie-based session management
+ *
+ * @security Implements secure JWT validation and role checking
+ * @performance Lightweight authentication middleware
+ */
+
 // api/protected.js
 const jwt = require('jsonwebtoken');
 const SECRET = process.env.JWT_SECRET;

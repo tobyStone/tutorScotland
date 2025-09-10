@@ -1,3 +1,19 @@
+/**
+ * @fileoverview Override Engine for visual editor content management
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Core engine for managing content overrides in the visual editor:
+ * - Content override storage and retrieval
+ * - Element type detection and handling
+ * - HTML content processing and sanitization
+ * - Integration with API service for persistence
+ *
+ * @requires ./api-service.js
+ * @requires ./editor-state.js
+ */
+
 // public/js/editor/override-engine.js
 
 import { apiService } from './api-service.js';

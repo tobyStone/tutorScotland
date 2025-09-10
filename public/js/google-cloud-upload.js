@@ -1,5 +1,20 @@
+/**
+ * @fileoverview Google Cloud Storage direct upload client for large videos
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Client-side Google Cloud Storage integration:
+ * - Direct upload for large video files (>4.5MB)
+ * - Progress tracking and error handling
+ * - Signed URL generation and validation
+ * - Integration with video sections system
+ *
+ * @security Uses signed URLs for secure direct uploads
+ * @performance Implements efficient large file upload with progress tracking
+ */
+
 // /public/js/google-cloud-upload.js
-// Client-side direct upload to Google Cloud Storage for large videos
 
 /**
  * Upload large video files directly to Google Cloud Storage

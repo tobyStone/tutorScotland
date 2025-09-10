@@ -1,3 +1,20 @@
+/**
+ * @fileoverview File upload API supporting images and videos with multiple storage backends
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Comprehensive file upload system supporting:
+ * - Image uploads to Vercel Blob with thumbnail generation
+ * - Video uploads with size-based routing (Vercel Blob vs Google Cloud)
+ * - File validation and security checks
+ * - Automatic thumbnail generation for images
+ * - Hash-based deduplication to prevent duplicate uploads
+ *
+ * @security Implements file type validation and size limits
+ * @performance Uses Sharp for efficient image processing and thumbnail generation
+ */
+
 // api/upload-image.js
 const { put } = require('@vercel/blob');
 const { formidable } = require('formidable');

@@ -1,10 +1,48 @@
+/**
+ * @fileoverview Visual Editor v2 for live content editing
+ * @author Tutors Alliance Scotland Development Team
+ * @version 2.0.0
+ * @since 2024-01-01
+ *
+ * @description Advanced visual editor supporting:
+ * - Live in-place content editing
+ * - Content override management
+ * - Image upload and management
+ * - Section reordering with drag-and-drop
+ * - Real-time preview and restore functionality
+ *
+ * @requires editor/editor-state.js
+ * @requires editor/api-service.js
+ * @requires editor/override-engine.js
+ * @requires editor/ui-manager.js
+ * @requires editor/features/section-sorter.js
+ *
+ * @security Admin authentication required for all editing operations
+ * @performance Implements efficient DOM manipulation and state management
+ */
+
 import { editorState } from './editor/editor-state.js';
 import { apiService } from './editor/api-service.js';
 import { overrideEngine } from './editor/override-engine.js';
 import { UIManager } from './editor/ui-manager.js';
 import { sectionSorter } from './editor/features/section-sorter.js';
 
+/**
+ * Main Visual Editor class for live content editing
+ * @class VisualEditor
+ * @description Provides comprehensive visual editing capabilities including:
+ * - In-place content editing with override management
+ * - Image upload and replacement functionality
+ * - Section reordering and management
+ * - Real-time preview and restore operations
+ * - Integration with admin authentication system
+ */
 class VisualEditor {
+    /**
+     * Initialize the Visual Editor
+     * @constructor
+     * @description Sets up UI manager, event handlers, and initializes the editor
+     */
     constructor() {
         this.uiManager = new UIManager({
             onToggle: this.toggleEditMode.bind(this),

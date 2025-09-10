@@ -1,5 +1,26 @@
+/**
+ * @fileoverview API service for visual editor communication
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Centralized API communication service for the visual editor:
+ * - Admin authentication status checking
+ * - Content override management
+ * - Image upload and management
+ * - Error handling and response processing
+ *
+ * @security Handles admin authentication and secure API communication
+ * @performance Implements efficient HTTP requests with proper caching
+ */
+
 const API_ROOT = '/api/content-manager';
 
+/**
+ * API service class for visual editor operations
+ * @class ApiService
+ * @description Provides methods for communicating with backend APIs
+ */
 class ApiService {
     async checkAdminStatus() {
         const resp = await fetch('/api/login?check=admin', {

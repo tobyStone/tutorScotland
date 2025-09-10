@@ -1,5 +1,27 @@
+/**
+ * @fileoverview Tutor model for Tutors Alliance Scotland directory
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Mongoose model for tutor profiles in the directory system
+ */
+
 // models/Tutor.js
 const mongoose = require('mongoose');
+
+/**
+ * Tutor profile schema definition
+ * @typedef {Object} Tutor
+ * @property {string} name - Tutor's full name
+ * @property {string[]} subjects - Array of subjects taught
+ * @property {string} costRange - Cost range using __P__ notation (e.g., "__P__", "__P____P__")
+ * @property {string[]} badges - Array of qualification badges
+ * @property {string} imagePath - Path to tutor's profile image
+ * @property {string} description - Detailed description of tutor's experience
+ * @property {string[]} regions - Array of regions served (e.g., "Edinburgh & Lothians", "Online")
+ * @property {string} contact - Contact information (email/website)
+ */
 
 const tutorSchema = new mongoose.Schema({
     name: String,

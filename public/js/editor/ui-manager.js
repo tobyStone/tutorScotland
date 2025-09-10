@@ -1,13 +1,23 @@
+/**
+ * @fileoverview UI Manager for Visual Editor interface management
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Core UI management system for the visual editor interface:
+ * - Modal creation and management
+ * - Edit mode toggling and state management
+ * - Element highlighting and selection
+ * - Form generation and validation
+ * - Image upload and preview functionality
+ *
+ * @security Integrates with admin authentication system
+ * @performance Implements efficient DOM manipulation and event handling
+ */
+
 /* ====================================================================== */
 /*                          UI MANAGER MODULE                            */
 /* ====================================================================== */
-
-/**
- * UI Manager for Visual Editor
- *
- * @description Core UI management system for the visual editor interface
- * @responsibilities
- *   - Modal creation and management
  *   - Editable element detection and overlay creation
  *   - Form handling and validation
  *   - Image browser integration

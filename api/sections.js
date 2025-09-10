@@ -1,7 +1,21 @@
 /**
- * /api/sections - create / list / delete dynamic sections
- * Images go to Vercel Blob, meta to MongoDB.
+ * @fileoverview Dynamic sections management API for Tutors Alliance Scotland
+ * @author Tutors Alliance Scotland Development Team
+ * @version 1.0.0
+ * @since 2024-01-01
+ *
+ * @description Comprehensive dynamic sections management supporting:
+ * - Section creation with image upload to Vercel Blob
+ * - Section listing with filtering and pagination
+ * - Section updates with validation and conflict resolution
+ * - Section deletion with proper cleanup
+ * - Team member management within sections
+ * - Navigation anchor generation and uniqueness
+ *
+ * @security Admin authentication required for write operations
+ * @performance Implements efficient blob storage and database operations
  */
+
 const { put } = require('@vercel/blob');
 const { formidable } = require('formidable');
 const fs = require('fs');
@@ -81,6 +95,30 @@ const parseForm = (req) => {
     });
 };
 
+/**
+ * Main API handler for dynamic sections management
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} JSON response with operation result
+ *
+ * @description Handles comprehensive section management:
+ * - POST: Create new sections with image upload and validation
+ * - PUT: Update existing sections with conflict resolution
+ * - DELETE: Remove sections with proper cleanup
+ * - GET: Retrieve sections with filtering and pagination
+ *
+ * @example
+ * // POST /api/sections with multipart form data
+ * // GET /api/sections?page=index
+ * // PUT /api/sections with section data
+ * // DELETE /api/sections?id=sectionId
+ *
+ * @security Admin authentication required for write operations
+ * @performance Implements efficient file upload and database operations
+ * @throws {Error} 400 - Invalid input data or validation errors
+ * @throws {Error} 401 - Authentication required for write operations
+ * @throws {Error} 500 - Database connection or server errors
+ */
 module.exports = async (req, res) => {
     try {
         await connectDB();
