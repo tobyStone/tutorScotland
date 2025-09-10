@@ -13,6 +13,7 @@
  *
  * @security Implements secure logging with data sanitization
  * @performance Lightweight logging with optional file persistence
+ * @serverless Compatible with Vercel and other serverless environments (console logging only)
  */
 
 const fs = require('fs');
@@ -123,23 +124,29 @@ function logSecurityEvent(eventType, severity, message, details = {}, req = null
         console.log(`   Client: ${logEntry.client.ip} - ${logEntry.client.userAgent}`);
     }
 
-    // File logging (optional - only in production or when LOG_SECURITY_TO_FILE is set)
-    if (process.env.NODE_ENV === 'production' || process.env.LOG_SECURITY_TO_FILE === 'true') {
+    // File logging (only when explicitly enabled and not in serverless environment)
+    // Skip file logging in Vercel/serverless environments as they don't have persistent file systems
+    const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.FUNCTIONS_WORKER;
+
+    if (!isServerless && process.env.LOG_SECURITY_TO_FILE === 'true') {
         try {
             const logDir = path.join(process.cwd(), 'logs');
             const logFile = path.join(logDir, 'security.log');
-            
+
             // Ensure logs directory exists
             if (!fs.existsSync(logDir)) {
                 fs.mkdirSync(logDir, { recursive: true });
             }
-            
+
             // Append to log file
             const logLine = JSON.stringify(logEntry) + '\n';
             fs.appendFileSync(logFile, logLine);
-            
+
         } catch (error) {
-            console.error('Failed to write security log to file:', error.message);
+            // Only log file system errors in development - in production, this is expected in serverless
+            if (process.env.NODE_ENV !== 'production') {
+                console.error('Failed to write security log to file:', error.message);
+            }
         }
     }
 
