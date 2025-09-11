@@ -639,20 +639,24 @@ async function handleFileUpload(req, res, payload) {
         } catch (kernelError) {
             console.warn('Advanced thumbnail generation failed, using fallback:', kernelError.message);
 
-            // Fallback to simpler thumbnail generation
-            const fallbackImg = sharp(buffer, { failOnError: true });
-            thumbnailBuffer = await fallbackImg
-                .resize(240, 240, { fit: 'cover', position: 'center' })
-                .jpeg({ quality: 90 })
-                .toBuffer();
+            try {
+                // Fallback to simpler thumbnail generation with more lenient settings
+                const fallbackImg = sharp(buffer, { failOnError: false, limitInputPixels: false });
+                thumbnailBuffer = await fallbackImg
+                    .resize(240, 240, { fit: 'cover', position: 'center' })
+                    .jpeg({ quality: 90 })
+                    .toBuffer();
 
-            if (!thumbnailBuffer || thumbnailBuffer.length === 0) {
-                console.warn('Fallback thumbnail generation also failed, but continuing...');
-                // Don't throw error - main image upload can still succeed
-                // throw new Error('Fallback thumbnail generation also failed');
+                if (!thumbnailBuffer || thumbnailBuffer.length === 0) {
+                    console.warn('Fallback thumbnail generation produced empty buffer, skipping thumbnail...');
+                    thumbnailBuffer = null; // Skip thumbnail upload
+                } else {
+                    console.log(`✅ Fallback thumbnail generated: ${thumbnailBuffer.length} bytes`);
+                }
+            } catch (fallbackError) {
+                console.warn('Fallback thumbnail generation also failed, skipping thumbnail:', fallbackError.message);
+                thumbnailBuffer = null; // Skip thumbnail upload entirely
             }
-
-            console.log(`✅ Fallback thumbnail generated: ${thumbnailBuffer.length} bytes`);
         }
 
         const putOpts = { access: 'public', contentType: uploadedFile.mimetype, overwrite: true };
