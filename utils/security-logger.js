@@ -191,12 +191,16 @@ const SecurityLogger = {
     /**
      * Log rate limited login attempt
      */
-    loginRateLimited: (email, req, attempts) => {
+    loginRateLimited: (email, req, attempts, minutesRemaining = 15) => {
         logSecurityEvent(
             SecurityEventType.LOGIN_RATE_LIMITED,
             SecuritySeverity.HIGH,
             `Rate limited login attempt for email: ${email}`,
-            { email, attempts, rateLimitWindow: '15 minutes' },
+            {
+                email,
+                attempts,
+                rateLimitWindow: `${minutesRemaining} minute${minutesRemaining !== 1 ? 's' : ''}`
+            },
             req
         );
     },

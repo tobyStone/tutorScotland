@@ -197,13 +197,15 @@ module.exports = async (req, res) => {
 
     if (!checkRateLimit(clientIP, email)) {
         debugLog(`Rate limit check FAILED - returning 429`);
-        SecurityLogger.loginRateLimited(email, req, MAX_ATTEMPTS);
 
         // Calculate actual time remaining for this specific user
         const key = `${clientIP}:${email}`;
         const attempts = loginAttempts.get(key);
         const timeRemaining = attempts ? RATE_LIMIT_WINDOW - (Date.now() - attempts.firstAttempt) : RATE_LIMIT_WINDOW;
         const minutesRemaining = Math.ceil(timeRemaining / 60000);
+
+        // Log with accurate time remaining
+        SecurityLogger.loginRateLimited(email, req, attempts ? attempts.count : MAX_ATTEMPTS, minutesRemaining);
 
         return res.status(429).json({
             message: `Too many failed login attempts. Please try again in ${minutesRemaining} minute${minutesRemaining !== 1 ? 's' : ''}.`,
