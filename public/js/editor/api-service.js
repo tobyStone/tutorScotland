@@ -25,6 +25,7 @@ class ApiService {
     async checkAdminStatus() {
         const resp = await fetch('/api/login?check=admin', {
             cache: 'no-store',
+            credentials: 'include', // ✅ SECURITY FIX: Include cookies for authentication
             headers: { 'Cache-Control': 'no-cache' }
         });
         if (!resp.ok) throw new Error('Admin check failed');
@@ -32,7 +33,9 @@ class ApiService {
     }
 
     async loadOverrides(pageKey) {
-        const r = await fetch(`${API_ROOT}?operation=overrides&page=${pageKey}`);
+        const r = await fetch(`${API_ROOT}?operation=overrides&page=${pageKey}`, {
+            credentials: 'include' // ✅ SECURITY FIX: Include cookies for authentication
+        });
         if (!r.ok) throw new Error('Failed to load overrides');
         return r.json();
     }
@@ -41,6 +44,7 @@ class ApiService {
         const url = payload._id ? `${API_ROOT}?operation=override&id=${payload._id}` : `${API_ROOT}?operation=override`;
         const r = await fetch(url, {
             method: 'POST',
+            credentials: 'include', // ✅ SECURITY FIX: Include cookies for authentication
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
@@ -49,14 +53,19 @@ class ApiService {
     }
 
     async deleteOverride(id) {
-        const r = await fetch(`${API_ROOT}?id=${id}`, { method: 'DELETE' });
+        const r = await fetch(`${API_ROOT}?id=${id}`, {
+            method: 'DELETE',
+            credentials: 'include' // ✅ SECURITY FIX: Include cookies for authentication
+        });
         if (!r.ok) throw new Error('Failed to delete override');
         return true;
     }
 
     async loadImages({ page, search, sort }) {
         const params = new URLSearchParams({ operation: 'list-images', page, search, sort });
-        const r = await fetch(`${API_ROOT}?${params.toString()}`);
+        const r = await fetch(`${API_ROOT}?${params.toString()}`, {
+            credentials: 'include' // ✅ SECURITY FIX: Include cookies for authentication
+        });
         if (!r.ok) throw new Error('Failed to load images');
         return r.json();
     }
@@ -105,6 +114,7 @@ class ApiService {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.open('POST', '/api/upload-image', true);
+            xhr.withCredentials = true; // ✅ SECURITY FIX: Include cookies for authentication
             xhr.upload.onprogress = e => {
                 if (e.lengthComputable && onProgress) onProgress((e.loaded / e.total) * 100);
             };
@@ -181,7 +191,9 @@ class ApiService {
     }
 
     async getSectionOrder(pageKey) {
-        const r = await fetch(`${API_ROOT}?operation=get-order&page=${pageKey}`);
+        const r = await fetch(`${API_ROOT}?operation=get-order&page=${pageKey}`, {
+            credentials: 'include' // ✅ SECURITY FIX: Include cookies for authentication
+        });
         if (!r.ok) throw new Error('Failed to load section order');
         return r.json();
     }
@@ -189,6 +201,7 @@ class ApiService {
     async setSectionOrder(pageKey, order) {
         const r = await fetch(`${API_ROOT}?operation=set-order`, {
             method: 'POST',
+            credentials: 'include', // ✅ SECURITY FIX: Include cookies for authentication
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ targetPage: pageKey, order })
         });
