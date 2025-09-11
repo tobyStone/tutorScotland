@@ -20,6 +20,8 @@ const jwt = require('jsonwebtoken');
 const { serialize, parse } = require('cookie');  // <-- important for setting cookies manually
 const connectToDatabase = require('./connectToDatabase');
 const { SecurityLogger } = require('../utils/security-logger');
+const fs = require('fs');
+const path = require('path');
 
 // Import User model - use try/catch approach similar to tutors.js
 let User;
@@ -42,6 +44,43 @@ try {
 const loginAttempts = new Map();
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
 const MAX_ATTEMPTS = 5;
+
+// 📝 LOGGING: Persistent security log file
+const LOG_FILE = path.join(process.cwd(), 'logs', 'security.log');
+
+/**
+ * Write security events to persistent log file
+ * @param {string} level - Log level (INFO, WARN, ERROR)
+ * @param {string} message - Log message
+ * @param {Object} data - Additional data to log
+ */
+function writeToSecurityLog(level, message, data = {}) {
+    const timestamp = new Date().toISOString();
+    const logEntry = {
+        timestamp,
+        level,
+        message,
+        ...data
+    };
+
+    const logLine = JSON.stringify(logEntry) + '\n';
+
+    try {
+        // Ensure logs directory exists
+        const logsDir = path.dirname(LOG_FILE);
+        if (!fs.existsSync(logsDir)) {
+            fs.mkdirSync(logsDir, { recursive: true });
+        }
+
+        // Append to log file
+        fs.appendFileSync(LOG_FILE, logLine);
+        console.log(`📝 Logged to ${LOG_FILE}: ${message}`);
+    } catch (error) {
+        console.error('Failed to write to security log:', error);
+        // Still log to console as fallback
+        console.log(`📝 SECURITY LOG [${level}]: ${message}`, data);
+    }
+}
 
 /**
  * Check and update rate limiting for login attempts
@@ -115,6 +154,15 @@ function recordFailedAttempt(clientIP, email) {
     console.log(`🔍 DEBUG: After increment - attempts object:`, JSON.stringify(attempts));
     console.log(`🔍 DEBUG: loginAttempts Map size after: ${loginAttempts.size}`);
     console.log(`🔍 DEBUG: recordFailedAttempt COMPLETE`);
+
+    // Write to persistent log
+    writeToSecurityLog('WARN', 'Failed login attempt recorded', {
+        email,
+        clientIP,
+        attemptNumber: attempts.count,
+        maxAttempts: MAX_ATTEMPTS,
+        timeWindow: `${RATE_LIMIT_WINDOW / 60000} minutes`
+    });
 }
 
 /**
@@ -185,6 +233,12 @@ module.exports = async (req, res) => {
 
     if (!checkRateLimit(clientIP, email)) {
         console.log(`🔍 DEBUG: Rate limit check FAILED - returning 429`);
+        writeToSecurityLog('WARN', 'Login rate limited', {
+            email,
+            clientIP,
+            attempts: MAX_ATTEMPTS,
+            userAgent: req.headers['user-agent']
+        });
         SecurityLogger.loginRateLimited(email, req, MAX_ATTEMPTS);
         return res.status(429).json({
             message: 'Too many failed login attempts. Please try again in 15 minutes.',
@@ -258,6 +312,14 @@ module.exports = async (req, res) => {
             redirectUrl = '/tutorszone.html';
         }
 
+
+        // Log successful login
+        writeToSecurityLog('INFO', 'Successful login', {
+            email: user.email,
+            role: user.role,
+            clientIP,
+            redirectUrl
+        });
 
         return res.status(200).json({
             user: { id: user._id, email: user.email, name: user.name, role: user.role },
