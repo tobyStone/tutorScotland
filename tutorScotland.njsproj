@@ -56,6 +56,9 @@
     <Content Include="api\upload-image.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="bin\inject-ve-block-ids.js" />
+    <Content Include="bin\Microsoft.NodejsTools.WebRole.dll" />
+    <Content Include="bin\migrate-section-block-ids.js" />
     <Content Include="models\Blog.js">
       <SubType>Code</SubType>
     </Content>
@@ -89,7 +92,6 @@
     <Content Include="public\css\nav.css" />
     <Content Include="public\css\typography-module.css" />
     <Content Include="public\css\ui-responsive-module.css" />
-    <Content Include="public\debug-visual-editor.js" />
     <Content Include="public\editor.css" />
     <Content Include="public\header-banner.css" />
     <Content Include="public\index.html">
@@ -165,10 +167,6 @@
     <Content Include="public\styles2.css">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="public\test-context-isolation-script.js" />
-    <Content Include="public\test-editor.html" />
-    <Content Include="public\test-reorder.html" />
-    <Content Include="public\test-ve-ids.js" />
     <Content Include="public\tutorConnect.html">
       <SubType>Code</SubType>
     </Content>
@@ -228,6 +226,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="bin\" />
     <Folder Include="index\" />
     <Folder Include="api\" />
     <Folder Include="models\" />

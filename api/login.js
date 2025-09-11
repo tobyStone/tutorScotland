@@ -54,21 +54,34 @@ function checkRateLimit(clientIP, email) {
     const now = Date.now();
     const attempts = loginAttempts.get(key) || { count: 0, firstAttempt: now, lastAttempt: 0 };
 
+    console.log(`🔍 DEBUG: checkRateLimit ENTRY for ${email} from ${clientIP}`);
+    console.log(`🔍 DEBUG: Current attempts object:`, JSON.stringify(attempts));
+    console.log(`🔍 DEBUG: MAX_ATTEMPTS: ${MAX_ATTEMPTS}, RATE_LIMIT_WINDOW: ${RATE_LIMIT_WINDOW}ms`);
+
     // Reset if window has expired
     if (now - attempts.firstAttempt > RATE_LIMIT_WINDOW) {
+        console.log(`🔍 DEBUG: Rate limit window expired, resetting attempts for ${email}`);
         attempts.count = 0;
         attempts.firstAttempt = now;
     }
 
-    // Check if rate limited
+    // Check if rate limited (block after MAX_ATTEMPTS failed attempts)
     if (attempts.count >= MAX_ATTEMPTS) {
         const timeRemaining = RATE_LIMIT_WINDOW - (now - attempts.firstAttempt);
+        console.log(`🔍 DEBUG: Rate limit check - count: ${attempts.count}, timeRemaining: ${timeRemaining}ms`);
         if (timeRemaining > 0) {
             console.warn(`🚨 RATE LIMIT: ${email} from ${clientIP} - ${attempts.count} attempts, ${Math.ceil(timeRemaining / 60000)} minutes remaining`);
+            console.log(`🔍 DEBUG: checkRateLimit RETURNING FALSE (rate limited)`);
             return false;
         }
+        // If time window expired, reset the attempts
+        console.log(`🔍 DEBUG: Rate limit window expired after max attempts, resetting for ${email}`);
+        attempts.count = 0;
+        attempts.firstAttempt = now;
+        loginAttempts.set(`${clientIP}:${email}`, attempts);
     }
 
+    console.log(`🔍 DEBUG: checkRateLimit RETURNING TRUE (allowing request) - final count: ${attempts.count}`);
     return true;
 }
 
@@ -82,11 +95,26 @@ function recordFailedAttempt(clientIP, email) {
     const now = Date.now();
     const attempts = loginAttempts.get(key) || { count: 0, firstAttempt: now, lastAttempt: 0 };
 
+    console.log(`🔍 DEBUG: recordFailedAttempt ENTRY for ${email} from ${clientIP}`);
+    console.log(`🔍 DEBUG: Key: ${key}`);
+    console.log(`🔍 DEBUG: Before increment - attempts object:`, JSON.stringify(attempts));
+    console.log(`🔍 DEBUG: loginAttempts Map size before: ${loginAttempts.size}`);
+
+    // Reset if window has expired
+    if (now - attempts.firstAttempt > RATE_LIMIT_WINDOW) {
+        console.log(`🔍 DEBUG: recordFailedAttempt - window expired, resetting`);
+        attempts.count = 0;
+        attempts.firstAttempt = now;
+    }
+
     attempts.count++;
     attempts.lastAttempt = now;
     loginAttempts.set(key, attempts);
 
     console.warn(`🚨 FAILED LOGIN: ${email} from ${clientIP} - Attempt ${attempts.count}/${MAX_ATTEMPTS}`);
+    console.log(`🔍 DEBUG: After increment - attempts object:`, JSON.stringify(attempts));
+    console.log(`🔍 DEBUG: loginAttempts Map size after: ${loginAttempts.size}`);
+    console.log(`🔍 DEBUG: recordFailedAttempt COMPLETE`);
 }
 
 /**
@@ -129,22 +157,34 @@ setInterval(() => {
  * @throws {Error} 500 - Database connection or server errors
  */
 module.exports = async (req, res) => {
+    // 🔍 DEBUG: Track every single request
+    const clientIP = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] || 'unknown';
+    console.log(`🔍 DEBUG: ===== NEW REQUEST =====`);
+    console.log(`🔍 DEBUG: Method: ${req.method}`);
+    console.log(`🔍 DEBUG: Client IP: ${clientIP}`);
+    console.log(`🔍 DEBUG: User-Agent: ${req.headers['user-agent']}`);
+    console.log(`🔍 DEBUG: Request body:`, req.body);
+    console.log(`🔍 DEBUG: Current loginAttempts Map size: ${loginAttempts.size}`);
+
     // Handle auth check requests
     if (req.method === 'GET' && req.query.check === 'admin') {
+        console.log(`🔍 DEBUG: Handling admin check request`);
         return handleAdminCheck(req, res);
     }
 
     if (req.method !== 'POST') {
+        console.log(`🔍 DEBUG: Method not allowed: ${req.method}`);
         res.setHeader('Allow', ['POST', 'GET']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 
     const { email, password } = req.body;
+    console.log(`🔍 DEBUG: POST request for email: ${email}`);
 
     // 🔒 SECURITY: Rate limiting check
-    const clientIP = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] || 'unknown';
 
     if (!checkRateLimit(clientIP, email)) {
+        console.log(`🔍 DEBUG: Rate limit check FAILED - returning 429`);
         SecurityLogger.loginRateLimited(email, req, MAX_ATTEMPTS);
         return res.status(429).json({
             message: 'Too many failed login attempts. Please try again in 15 minutes.',
@@ -152,6 +192,8 @@ module.exports = async (req, res) => {
             retryAfter: 15 * 60 // seconds
         });
     }
+
+    console.log(`🔍 DEBUG: Rate limit check PASSED - proceeding with authentication`);
 
     try {
         await connectToDatabase();
