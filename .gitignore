@@ -1,15 +1,9 @@
 # Node modules
 node_modules/
 
-#database seeding
-seedDatabase.js
-seedUsers.js
 
 # Environment variables
 .env
-
-#non minified code
-copy_scripts.js
 
 # Vercel-specific build output
 .vercel/

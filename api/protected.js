@@ -70,9 +70,6 @@ function verify(req, res) {
     }
 }
 
-// Export verify for use in other routes
-exports.verify = verify;
-
 const handler = async (req, res) => {
     console.log('Protected route accessed with headers:', req.headers);
 
@@ -107,7 +104,9 @@ const handler = async (req, res) => {
         });
 };
 
+// Export both the handler and verify function
 module.exports = handler;
+module.exports.verify = verify;
 
 // Tell Vercel we need the Node runtime
 module.exports.config = { runtime: 'nodejs18.x' };
