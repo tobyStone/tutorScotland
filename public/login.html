@@ -122,7 +122,13 @@
                 });
                 const data = await response.json();
                 if (!response.ok) {
-                    alert(data.message || 'Login failed');
+                    // Handle rate limiting with more detailed feedback
+                    if (response.status === 429 && data.retryAfter) {
+                        const minutes = Math.ceil(data.retryAfter / 60);
+                        alert(`${data.message}\n\nYou can try again in approximately ${minutes} minute${minutes !== 1 ? 's' : ''}.`);
+                    } else {
+                        alert(data.message || 'Login failed');
+                    }
                     return;
                 }
                 // The token is set as an HTTP-only cookie by the server.
