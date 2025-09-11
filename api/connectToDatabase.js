@@ -63,8 +63,8 @@ async function connectToDatabase() {
         try {
             // Connect to the database
             await mongoose.connect(dbUri, {
-                useNewUrlParser: true,
-                useUnifiedTopology: true,
+                // Removed deprecated options: useNewUrlParser and useUnifiedTopology
+                // These have no effect since Node.js Driver version 4.0.0
                 serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
                 maxPoolSize: 10, // Maintain up to 10 socket connections
             });

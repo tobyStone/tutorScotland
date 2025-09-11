@@ -105,8 +105,9 @@ function checkRateLimit(clientIP, email) {
  * Record a failed login attempt
  * @param {string} clientIP - Client IP address
  * @param {string} email - Email that failed
+ * @param {Object} req - Express request object for security logging
  */
-function recordFailedAttempt(clientIP, email) {
+function recordFailedAttempt(clientIP, email, req) {
     const key = `${clientIP}:${email}`;
     const now = Date.now();
     const attempts = loginAttempts.get(key) || { count: 0, firstAttempt: now, lastAttempt: 0 };
@@ -218,17 +219,14 @@ module.exports = async (req, res) => {
         // Search for the user by email (case-insensitive)
         const user = await User.findOne({ email: new RegExp('^' + email + '$', 'i') });
         if (!user) {
-            recordFailedAttempt(clientIP, email);
-            SecurityLogger.loginFailed(email, req, 1);
+            recordFailedAttempt(clientIP, email, req);
             return res.status(404).json({ message: 'User not found' });
         }
 
         // Compare passwords using bcrypt
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            recordFailedAttempt(clientIP, email);
-            const attempts = loginAttempts.get(`${clientIP}:${email}`)?.count || 1;
-            SecurityLogger.loginFailed(email, req, attempts);
+            recordFailedAttempt(clientIP, email, req);
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
