@@ -151,7 +151,7 @@ module.exports = async (req, res) => {
     }
 
     // Otherwise, handle regular file upload
-    return handleFileUpload(req, res);
+    return handleFileUpload(req, res, payload);
 };
 
 // Handle signed URL generation for large video uploads (enhanced with tech team's security model)
@@ -266,7 +266,7 @@ async function handleSignedUrlRequest(req, res) {
 }
 
 // Handle regular file upload (images, small videos, and large video fallback)
-async function handleFileUpload(req, res) {
+async function handleFileUpload(req, res, payload) {
 
     // ✅ UPLOAD GUARD: Prevent too many concurrent uploads
     if (activeUploads.size >= MAX_CONCURRENT_UPLOADS) {
@@ -281,6 +281,7 @@ async function handleFileUpload(req, res) {
 
     console.log(`🔄 Starting upload ${uploadId} (${activeUploads.size}/${MAX_CONCURRENT_UPLOADS} active)`);
 
+    let uploadedFile; // Declare outside try block so it's available in catch block
     try {
         const form = formidable({
             keepExtensions: true,
@@ -295,7 +296,7 @@ async function handleFileUpload(req, res) {
         });
 
         const fileObj = (files.file || files.image);
-        const uploadedFile = Array.isArray(fileObj) ? fileObj[0] : fileObj;
+        uploadedFile = Array.isArray(fileObj) ? fileObj[0] : fileObj;
         if (!uploadedFile) {
             return res.status(400).json({ message: 'No file provided' });
         }
