@@ -1,26 +1,12 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { describe, it, expect, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
 import { vi } from 'vitest';
 
 describe('Dynamic Sections Integration Tests', () => {
-  let mongoServer;
   let testSections;
 
-  beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
-    await mongoose.connect(mongoUri);
-    console.log('Test database connected successfully');
-  });
-
-  afterAll(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
-    console.log('Test database torn down successfully');
-  });
-
   beforeEach(async () => {
+    // Note: Database connection is handled by global setup
     await mongoose.connection.db.dropDatabase();
     console.log('Test database cleared successfully');
 

@@ -6,9 +6,9 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     setupFiles: ['./tests/config/setup.js'],
-    testTimeout: 10000,
-    hookTimeout: 10000,
-    teardownTimeout: 10000,
+    testTimeout: 30000, // Increased for CI environment and MongoDB Memory Server startup
+    hookTimeout: 30000, // Increased for database setup/teardown
+    teardownTimeout: 30000, // Increased for proper cleanup
     // Separate test patterns for different types
     include: [
       'tests/unit/**/*.test.js',
@@ -42,8 +42,8 @@ export default defineConfig({
     // Environment variables for testing
     env: {
       NODE_ENV: 'test',
-      JWT_SECRET: 'test-jwt-secret-key-for-testing-only',
-      MONGODB_URI: 'mongodb://localhost:27017/tutorscotland-test'
+      JWT_SECRET: 'test-jwt-secret-key-for-testing-only'
+      // Note: MONGODB_URI not needed - tests use MongoDB Memory Server
     }
   },
   resolve: {

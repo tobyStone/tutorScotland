@@ -1,5 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { describe, it, expect, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
@@ -12,17 +11,10 @@ function canonicalizeRegion(input = '') {
 }
 
 describe('Tutor search by regions', () => {
-  let mongoServer;
-
-  beforeAll(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
-    await mongoose.connect(mongoUri);
-  });
-
-  afterAll(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
+  beforeEach(async () => {
+    // Note: Database connection is handled by global setup
+    await mongoose.connection.db.dropDatabase();
+    console.log('Test database cleared successfully');
   });
 
   it('stores and searches tutors by regions (handles case and "and" vs "&")', async () => {

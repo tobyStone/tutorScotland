@@ -1,6 +1,4 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose from 'mongoose';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -33,16 +31,12 @@ vi.mock('sharp', () => ({
 }));
 
 describe('Image Upload Pipeline Integration', () => {
-  let mongoServer;
   let testImageBuffer;
   let testImagePath;
 
   beforeAll(async () => {
-    // Start MongoDB Memory Server
-    mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
-    await mongoose.connect(mongoUri);
-    console.log('Test database connected successfully');
+    // Note: Database connection is handled by global setup
+    console.log('Setting up image upload test fixtures');
 
     // Create test image buffer
     testImagePath = path.join(__dirname, '../../fixtures/data/test-image.jpg');
@@ -73,10 +67,9 @@ describe('Image Upload Pipeline Integration', () => {
   });
 
   afterAll(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
-    console.log('Test database torn down successfully');
-    
+    // Note: Database teardown is handled by global setup
+    console.log('Cleaning up image upload test fixtures');
+
     // Clean up test image
     if (fs.existsSync(testImagePath)) {
       fs.unlinkSync(testImagePath);
@@ -331,8 +324,10 @@ describe('Image Upload Pipeline Integration', () => {
       const processor = sharp(testImageBuffer);
       const metadata = await processor.metadata();
       
-      const originalRatio = metadata.width / metadata.height;
-      
+      // Calculate original aspect ratio for validation
+      expect(metadata.width).toBeGreaterThan(0);
+      expect(metadata.height).toBeGreaterThan(0);
+
       // Resize maintaining aspect ratio
       await processor.resize(400, null, { 
         withoutEnlargement: true,
@@ -340,8 +335,8 @@ describe('Image Upload Pipeline Integration', () => {
       }).toBuffer();
       
       // The aspect ratio should be maintained
-      const expectedHeight = Math.round(400 / originalRatio);
       expect(mockSharp.resize).toHaveBeenCalled();
+      // Note: In a real test, we would verify the calculated height matches the aspect ratio
     });
   });
 });

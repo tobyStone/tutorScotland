@@ -61,6 +61,21 @@
     <Content Include="bin\inject-ve-block-ids.js" />
     <Content Include="bin\Microsoft.NodejsTools.WebRole.dll" />
     <Content Include="bin\migrate-section-block-ids.js" />
+    <Content Include="docs\admin-files-separation-plan.md" />
+    <Content Include="docs\cors-configuration-fix.md" />
+    <Content Include="docs\css-technical-debt.md" />
+    <Content Include="docs\final-video-upload-architecture.md" />
+    <Content Include="docs\gmail-nodemailer-troubleshooting.md" />
+    <Content Include="docs\gmail-setup-guide.md" />
+    <Content Include="docs\google-analytics-verification-guide.md" />
+    <Content Include="docs\google-cloud-permissions-fix.md" />
+    <Content Include="docs\google-cloud-setup-guide.md" />
+    <Content Include="docs\jsdoc-documentation-guide.md" />
+    <Content Include="docs\pre-launch-testing-checklist.md" />
+    <Content Include="docs\security-debug-config.md" />
+    <Content Include="docs\security-enhancements-implemented.md" />
+    <Content Include="docs\security-recommendations.md" />
+    <Content Include="docs\security-regression-test.md" />
     <Content Include="models\Blog.js">
       <SubType>Code</SubType>
     </Content>
@@ -182,17 +197,8 @@
     <Content Include="public\tutorszone.html">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="seedBlogs.js">
-      <SubType>Code</SubType>
-    </Content>
-    <Content Include="seedDatabase.js">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="package.json" />
     <Content Include="README.md" />
-    <Content Include="seedUsers.js">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="tests\config\mocks.js" />
     <Content Include="tests\config\setup.js" />
     <Content Include="tests\config\test-db.js" />
@@ -210,6 +216,8 @@
     <Content Include="tests\integration\api\tutor-search.test.js" />
     <Content Include="tests\integration\models\section-schema.test.js" />
     <Content Include="tests\migration\schema-migration.test.js" />
+    <Content Include="tests\README.md" />
+    <Content Include="tests\security-validation.js" />
     <Content Include="tests\setup\test-db.js" />
     <Content Include="tests\smoke\css-preservation.test.js" />
     <Content Include="tests\smoke\css-preservation.test.js-snapshots\dynamic-sections-styling-chromium-win32.png" />
@@ -220,16 +228,19 @@
     <Content Include="tests\smoke\health-check.test.js" />
     <Content Include="tests\smoke\navigation.test.js" />
     <Content Include="tests\smoke\visual-regression.test.js" />
+    <Content Include="tests\TESTING_STRATEGY.md" />
     <Content Include="tests\unit\models\User.test.js" />
-    <Content Include="updateDatabase.js">
-      <SubType>Code</SubType>
-    </Content>
+    <Content Include="utils\error-handler.js" />
+    <Content Include="utils\security-headers.js" />
+    <Content Include="utils\security-logger.js" />
+    <Content Include="utils\view-security-logs.js" />
     <Content Include="vercel.json">
       <SubType>Code</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
+    <Folder Include="docs\" />
     <Folder Include="index\" />
     <Folder Include="api\" />
     <Folder Include="models\" />
@@ -256,6 +267,7 @@
     <Folder Include="tests\smoke\css-preservation.test.js-snapshots\" />
     <Folder Include="tests\unit\" />
     <Folder Include="tests\unit\models\" />
+    <Folder Include="utils\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>

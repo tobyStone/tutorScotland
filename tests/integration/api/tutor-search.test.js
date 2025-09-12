@@ -1,27 +1,11 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
-import { MongoMemoryServer } from 'mongodb-memory-server';
+import { describe, it, expect, beforeEach } from 'vitest';
 import mongoose from 'mongoose';
 
 // Import models (you'll need to adjust paths based on your structure)
 // import Tutor from '../../../models/Tutor.js';
 
 describe('Tutor Search & Filtering Integration', () => {
-  let mongoServer;
   let testTutors;
-
-  beforeAll(async () => {
-    // Start MongoDB Memory Server
-    mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
-    await mongoose.connect(mongoUri);
-    console.log('Test database connected successfully');
-  });
-
-  afterAll(async () => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
-    console.log('Test database torn down successfully');
-  });
 
   beforeEach(async () => {
     // Clear database and seed with test data
