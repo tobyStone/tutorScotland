@@ -103,9 +103,28 @@ export async function uploadImage(file, folder = 'content-images') {
                 continue;
             }
 
-            const result = await r.json();
-            console.log('✅ Upload successful:', result.url);
-            return result.url;
+            // ✅ IMPROVED: Better response handling with detailed logging
+            let result;
+            try {
+                const responseText = await r.text();
+                console.log('📄 Raw response:', responseText);
+
+                result = JSON.parse(responseText);
+                console.log('✅ Parsed response:', result);
+            } catch (parseError) {
+                console.error('❌ Failed to parse response as JSON:', parseError);
+                console.error('❌ Response status:', r.status);
+                console.error('❌ Response headers:', Object.fromEntries(r.headers.entries()));
+                throw new Error(`Server returned invalid JSON response (status ${r.status})`);
+            }
+
+            if (result.url) {
+                console.log('✅ Upload successful:', result.url);
+                return result.url;
+            } else {
+                console.error('❌ Response missing URL field:', result);
+                throw new Error('Server response missing URL field');
+            }
 
         } catch (error) {
             console.error(`❌ Upload attempt ${uploadAttempts} failed:`, error.message);
