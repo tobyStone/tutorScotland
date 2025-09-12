@@ -543,75 +543,117 @@ const cleanupOldData = async () => {
 | `/api/protected` | ✅ JWT + Role-based | ✅ Role validation | N/A | ✅ **LOW** |
 | `/api/addTutor` | ✅ Admin only | ✅ Required fields | N/A | ✅ **LOW** |
 | `/api/blog-writer` | ⚠️ Mixed (GET unprotected) | ✅ Basic | N/A | ⚠️ **MEDIUM** |
-| `/api/content-manager` | ❌ **MISSING** | ❌ **MISSING** | N/A | 🚨 **CRITICAL** |
-| `/api/sections` | ❌ **MISSING** | ⚠️ Basic | ✅ File validation | 🚨 **CRITICAL** |
+| `/api/content-manager` | ✅ **Admin only** | ✅ **STRONG** | N/A | ✅ **FULLY SECURED** |
+| `/api/sections` | ✅ **Admin only** | ✅ **STRONG** | ✅ File validation | ✅ **FULLY SECURED** |
 | `/api/upload-image` | ✅ **FIXED** | ✅ **STRONG** | ✅ **EXCELLENT** | ✅ **LOW** |
 | `/api/tutors` | ❌ Public | ❌ **MISSING** | N/A | ⚠️ **MEDIUM** |
 | `/api/content-display` | ❌ Public | ❌ **MISSING** | N/A | ⚠️ **MEDIUM** |
-| `/api/video-sections` | ❌ **MISSING** | ✅ Basic | ✅ Video validation | 🚨 **CRITICAL** |
+| `/api/video-sections` | ✅ **Admin only** | ✅ **STRONG** | ✅ Video validation | ✅ **FULLY SECURED** |
 
-### **🚨 Critical Vulnerabilities Requiring Immediate Action**
+### **✅ RESOLVED: Previously Critical Vulnerabilities**
 
-#### **1. Unauthenticated Content Management (CRITICAL)**
+#### **1. ✅ Content Management Authentication (COMPLETED - Sept 10, 2024)**
 ```javascript
-// VULNERABLE: Anyone can modify website content
-// /api/content-manager - No authentication check
-// /api/sections - No authentication check
-// /api/video-sections - No authentication check
+// ✅ IMPLEMENTED: All content management APIs now secured
+// /api/content-manager - Admin authentication required ✅
+// /api/sections - Admin authentication required ✅
+// /api/video-sections - Admin authentication required ✅
 
-// REQUIRED FIX: Add authentication to all write operations
+// Current implementation in all three APIs:
 const { verify } = require('./protected');
 
 module.exports = async (req, res) => {
-    // Add authentication check for write operations
+    // Authentication check for write operations
     if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
         const [ok, payload] = verify(req, res);
         if (!ok) {
-            return res.status(401).json({ message: 'Authentication required' });
+            SecurityLogger.unauthorizedAccess('content-manager', req);
+            return res.status(401).json({
+                message: 'Authentication required for content management',
+                error: 'UNAUTHORIZED_CONTENT_ACCESS'
+            });
         }
         if (payload.role !== 'admin') {
-            return res.status(403).json({ message: 'Admin access required' });
+            SecurityLogger.unauthorizedAccess('content-manager', req, { userId: payload.id, role: payload.role });
+            return res.status(403).json({
+                message: 'Admin access required for content management',
+                error: 'INSUFFICIENT_PERMISSIONS'
+            });
         }
+        // Log successful admin content management access
+        SecurityLogger.adminAction(`content-manager-${operation}`, { userId: payload.id, role: payload.role }, req);
     }
     // ... rest of handler
 };
 ```
 
-#### **2. Unauthenticated File Uploads (CRITICAL)**
+#### **2. ✅ File Upload Authentication (COMPLETED - December 2024)**
 ```javascript
-// VULNERABLE: Anyone can upload files
-// /api/upload-image - No authentication check
+// ✅ IMPLEMENTED: File upload authentication secured
+// /api/upload-image - Role-based authentication required ✅
 
-// REQUIRED FIX: Add authentication
+// Current implementation:
 module.exports = async (req, res) => {
-    // Add authentication check
+    // Authentication check for all uploads
     const { verify } = require('./protected');
     const [ok, payload] = verify(req, res);
     if (!ok) {
-        return res.status(401).json({ message: 'Authentication required' });
+        SecurityLogger.unauthorizedAccess('upload-image', req);
+        return res.status(401).json({
+            message: 'Authentication required for file uploads',
+            error: 'UNAUTHORIZED_UPLOAD_ACCESS'
+        });
     }
-    // ... existing upload logic
+
+    // Role-based permissions: admin, tutor, blogwriter only
+    if (!['admin', 'tutor', 'blogwriter'].includes(payload.role)) {
+        SecurityLogger.unauthorizedAccess('upload-image', req, { userId: payload.id, role: payload.role });
+        return res.status(403).json({
+            message: 'Insufficient permissions for file uploads',
+            error: 'INSUFFICIENT_UPLOAD_PERMISSIONS'
+        });
+    }
+
+    // Log successful authenticated upload
+    SecurityLogger.fileUpload(payload.id, req, { role: payload.role });
+    // ... existing upload logic with comprehensive validation
 };
 ```
 
-#### **3. Missing Rate Limiting (HIGH)**
+#### **3. ✅ Login Rate Limiting (COMPLETED - September 2024)**
 ```javascript
-// VULNERABLE: No protection against brute force
-// /api/login - No rate limiting
+// ✅ IMPLEMENTED: Comprehensive rate limiting system
+// /api/login - 5 attempts per 15 minutes with security logging ✅
 
-// REQUIRED FIX: Implement rate limiting
-const rateLimit = require('express-rate-limit');
+// Current implementation:
+const loginAttempts = new Map();
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+const MAX_ATTEMPTS = 5;
 
-const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // 5 attempts per window
-    message: 'Too many login attempts, please try again later',
-    standardHeaders: true,
-    legacyHeaders: false,
-});
+function checkRateLimit(clientIP, email) {
+    const key = `${clientIP}:${email}`;
+    const attempts = loginAttempts.get(key) || { count: 0, firstAttempt: now };
 
-// Apply to login endpoint
-app.use('/api/login', loginLimiter);
+    if (attempts.count >= MAX_ATTEMPTS) {
+        const timeRemaining = RATE_LIMIT_WINDOW - (now - attempts.firstAttempt);
+        if (timeRemaining > 0) {
+            const minutesRemaining = Math.ceil(timeRemaining / (60 * 1000));
+            SecurityLogger.loginRateLimited(email, req, attempts.count, minutesRemaining);
+            return false; // Rate limited
+        }
+    }
+    return true;
+}
+
+// Automatic cleanup of old entries every 30 minutes
+setInterval(() => {
+    const now = Date.now();
+    for (const [key, attempts] of loginAttempts.entries()) {
+        if (now - attempts.firstAttempt > RATE_LIMIT_WINDOW * 2) {
+            loginAttempts.delete(key);
+        }
+    }
+}, 30 * 60 * 1000);
 ```
 
 ### **✅ Strong Security Implementations**
@@ -630,6 +672,81 @@ app.use('/api/login', loginLimiter);
 - ✅ **HTTP-only cookies**: Prevents XSS token theft
 - ✅ **Role-based access**: Admin/user role separation
 - ✅ **Proper error handling**: No information leakage
+
+## 🚨 **REMAINING SECURITY PRIORITIES (Updated Assessment)**
+
+### **🔴 HIGH PRIORITY - Input Validation & Sanitization**
+
+#### **1. Public API Input Validation (HIGH)**
+```javascript
+// VULNERABLE: No input validation on public endpoints
+// /api/tutors - No search parameter validation
+// /api/content-display - No page parameter validation
+
+// REQUIRED FIX: Add input validation
+const validator = require('validator');
+
+// Example for /api/tutors
+if (req.query.search && !validator.isLength(req.query.search, { min: 1, max: 100 })) {
+    return res.status(400).json({ message: 'Invalid search parameter' });
+}
+
+// Example for /api/content-display
+if (req.query.page && !validator.isAlphanumeric(req.query.page.replace('-', ''))) {
+    return res.status(400).json({ message: 'Invalid page parameter' });
+}
+```
+
+#### **2. CSRF Protection (HIGH)**
+```javascript
+// MISSING: CSRF protection on admin forms
+// Current: No SameSite cookie attribute
+// Current: No CSRF tokens
+
+// REQUIRED FIX: Add CSRF protection
+// In api/login.js - Update cookie settings:
+const serializedCookie = serialize('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict', // ADD THIS
+    maxAge: 3 * 60 * 60,
+    path: '/'
+});
+
+// Add CSRF token generation and validation
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
+```
+
+### **🟡 MEDIUM PRIORITY - Enhanced Security**
+
+#### **3. Security Headers (MEDIUM)**
+```javascript
+// MISSING: Security headers for XSS/clickjacking protection
+// REQUIRED: Add security headers middleware
+
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    next();
+});
+```
+
+#### **4. Enhanced Error Handling (MEDIUM)**
+```javascript
+// IMPROVEMENT: More secure error messages
+// Current: Some errors may leak information
+// REQUIRED: Sanitize all error responses
+
+function sanitizeError(error, isProduction = process.env.NODE_ENV === 'production') {
+    if (isProduction) {
+        return { message: 'An error occurred' };
+    }
+    return { message: error.message, stack: error.stack };
+}
+```
 
 ### **⚠️ Moderate Security Concerns**
 
@@ -915,9 +1032,9 @@ const serializedCookie = serialize('token', token, {
 | `/api/addTutor` | ✅ **Admin only** | ✅ **Inherited** | ✅ **Required fields** | ✅ **FULLY SECURED** |
 | `/api/upload-image` | ✅ **Role-based** | ✅ **Concurrent limits** | ✅ **EXCELLENT** | ✅ **FULLY SECURED** |
 | `/api/blog-writer` | ⚠️ **Mixed (GET public)** | ❌ **None** | ✅ **Basic** | ⚠️ **MEDIUM RISK** |
-| `/api/content-manager` | ❌ **MISSING** | ❌ **None** | ❌ **MISSING** | 🚨 **HIGH RISK** |
-| `/api/sections` | ❌ **MISSING** | ❌ **None** | ⚠️ **Basic** | 🚨 **HIGH RISK** |
-| `/api/video-sections` | ❌ **MISSING** | ❌ **None** | ✅ **Basic** | 🚨 **HIGH RISK** |
+| `/api/content-manager` | ✅ **Admin only** | ✅ **Inherited** | ✅ **STRONG** | ✅ **FULLY SECURED** |
+| `/api/sections` | ✅ **Admin only** | ✅ **Inherited** | ✅ **STRONG** | ✅ **FULLY SECURED** |
+| `/api/video-sections` | ✅ **Admin only** | ✅ **Inherited** | ✅ **EXCELLENT** | ✅ **FULLY SECURED** |
 | `/api/tutors` | ❌ **Public** | ❌ **None** | ❌ **MISSING** | ⚠️ **MEDIUM RISK** |
 | `/api/content-display` | ❌ **Public** | ❌ **None** | ❌ **MISSING** | ⚠️ **MEDIUM RISK** |
 

@@ -1973,14 +1973,31 @@
 
             const editId = addSectionForm.dataset.editId;
             const originalPage = pageSel.value; // [MOVE-SECTION] remember original page
+
+            // 🐛 DEBUG: Log edit state
+            console.log('Form submission debug:');
+            console.log('- editId:', editId);
+            console.log('- originalPage:', originalPage);
+            console.log('- isEditing:', !!editId);
+
             if (editId) {
                 fd.append('editId', editId);
+                console.log('- Added editId to form data:', editId);
             }
 
             /* rolling-banner special-case */
             if (pageSel.value === 'rolling-banner') {
                 const txt = fd.get('rollingText').trim();
                 if (!txt) return alert('Please enter news content for the rolling banner');
+
+                // 🐛 DEBUG: Log rolling banner form data
+                console.log('Rolling banner form data:');
+                console.log('- rollingText:', txt);
+                console.log('- editId:', editId);
+                console.log('- All form data before processing:');
+                for (const [key, value] of fd.entries()) {
+                    console.log(`  ${key}:`, value);
+                }
 
                 fd.set('heading', 'Rolling News');
                 fd.set('text', txt);
@@ -1991,6 +2008,12 @@
                 ].forEach(key => fd.delete(key));
 
                 fd.delete('rollingText');
+
+                // 🐛 DEBUG: Log final form data being sent
+                console.log('Final rolling banner form data being sent:');
+                for (const [key, value] of fd.entries()) {
+                    console.log(`  ${key}:`, value);
+                }
             }
 
             /* optional image upload (skip for rolling-banner) */
@@ -2016,9 +2039,30 @@
             */
 
             // Send to the appropriate API endpoint based on section type
-            const apiEndpoint = sectionLayout.value === 'video' ? '/api/video-sections' : '/api/sections';
+            // 🐛 FIX: For rolling-banner, always use /api/sections regardless of sectionLayout.value
+            const isRollingBanner = pageSel.value === 'rolling-banner';
+            const apiEndpoint = (!isRollingBanner && sectionLayout.value === 'video') ? '/api/video-sections' : '/api/sections';
+
+            console.log('API endpoint selection:');
+            console.log('- isRollingBanner:', isRollingBanner);
+            console.log('- sectionLayout.value:', sectionLayout.value);
+            console.log('- selected apiEndpoint:', apiEndpoint);
+
             const r = await fetch(apiEndpoint, { method: 'POST', body: fd });
-            if (!r.ok) { return alert(await r.text()); }
+
+            // 🐛 DEBUG: Log response details
+            console.log('API Response:');
+            console.log('- Status:', r.status);
+            console.log('- OK:', r.ok);
+
+            if (!r.ok) {
+                const errorText = await r.text();
+                console.error('API Error:', errorText);
+                return alert(errorText);
+            }
+
+            const responseData = await r.json();
+            console.log('API Success Response:', responseData);
 
             alert(`Section ${editId ? 'updated' : 'added'} successfully!`);
 
@@ -2084,10 +2128,13 @@
                 // Handle rolling-banner sections differently
                 if (pageSel.value === 'rolling-banner') {
                     sectionFormHeading.textContent = 'Edit Rolling Banner News';
-                    
+
                     // For rolling-banner, populate the rolling text field
                     addSectionForm.querySelector('[name="rollingText"]').value = section.text || '';
-                    
+
+                    // 🐛 FIX: Set layout to 'standard' for rolling banner to avoid API endpoint confusion
+                    sectionLayout.value = 'standard';
+
                     // Hide all meta controls for rolling-banner
                     document.getElementById('metaControls').style.display = 'none';
                     document.getElementById('rollingBannerFields').style.display = 'block';

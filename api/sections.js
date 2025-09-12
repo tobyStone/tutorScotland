@@ -163,13 +163,27 @@ module.exports = async (req, res) => {
                 const editId = getField('editId');
                 if (editId) {
                     console.log('Update operation detected for ID:', editId);
-                    
+
                     // Get the current section to check if it's rolling-banner
                     const currentDoc = await Section.findById(editId);
                     if (!currentDoc) {
                         return res.status(404).json({ message: 'Section not found for update' });
                     }
-                    
+
+                    // 🐛 DEBUG: Log rolling banner update details
+                    if (currentDoc.page === 'rolling-banner') {
+                        console.log('🔄 ROLLING BANNER UPDATE DEBUG:');
+                        console.log('- Current document:', {
+                            _id: currentDoc._id,
+                            page: currentDoc.page,
+                            heading: currentDoc.heading,
+                            text: currentDoc.text
+                        });
+                        console.log('- Incoming fields:', Object.keys(fields));
+                        console.log('- Text field value:', fields.text);
+                        console.log('- Heading field value:', fields.heading);
+                    }
+
                     // 💡 Safety net: Strip irrelevant fields for rolling-banner updates
                     if (currentDoc.page === 'rolling-banner') {
                         delete fields.layout;
@@ -283,6 +297,11 @@ module.exports = async (req, res) => {
                         updateData.buttonBlockId = uuidv4();
                     }
 
+                    // 🐛 DEBUG: Log update data for rolling banner
+                    if (currentDoc.page === 'rolling-banner') {
+                        console.log('🔄 ROLLING BANNER UPDATE DATA:', updateData);
+                    }
+
                     if (Object.keys(updateData).length === 1) { // Only contains updatedAt
                         return res.status(400).json({ message: 'No fields to update provided' });
                     }
@@ -291,7 +310,18 @@ module.exports = async (req, res) => {
                     if (!updatedDoc) {
                         return res.status(404).json({ message: 'Section not found for update' });
                     }
-                    console.log('Section updated successfully:', updatedDoc);
+
+                    // 🐛 DEBUG: Log successful rolling banner update
+                    if (currentDoc.page === 'rolling-banner') {
+                        console.log('✅ ROLLING BANNER UPDATED SUCCESSFULLY:', {
+                            _id: updatedDoc._id,
+                            heading: updatedDoc.heading,
+                            text: updatedDoc.text
+                        });
+                    } else {
+                        console.log('Section updated successfully:', updatedDoc);
+                    }
+
                     return res.status(200).json(updatedDoc);
                 }
 

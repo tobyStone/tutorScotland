@@ -43,6 +43,7 @@
     <Content Include="api\connectToDatabase.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\content-display.js" />
     <Content Include="api\content-manager.js" />
     <Content Include="api\login.js">
       <SubType>Code</SubType>
@@ -56,6 +57,7 @@
     <Content Include="api\upload-image.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="api\video-sections.js" />
     <Content Include="bin\inject-ve-block-ids.js" />
     <Content Include="bin\Microsoft.NodejsTools.WebRole.dll" />
     <Content Include="bin\migrate-section-block-ids.js" />
@@ -131,6 +133,7 @@
     <Content Include="public\js\editor\features\section-sorter.js" />
     <Content Include="public\js\editor\override-engine.js" />
     <Content Include="public\js\editor\ui-manager.js" />
+    <Content Include="public\js\google-analytics.js" />
     <Content Include="public\js\nav-loader.js" />
     <Content Include="public\js\pages.js" />
     <Content Include="public\js\rolling-banner.js" />
