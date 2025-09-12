@@ -255,6 +255,8 @@ module.exports = async (req, res) => {
                 <script src="/responsive-helper.js"></script>
                 <script src="/js/nav-loader.js" defer></script>
                 <script src="/js/dynamic-nav.js" defer></script>
+                <!-- Google Analytics -->
+                <script src="/js/google-analytics.js" defer></script>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
                 <script>
@@ -711,6 +713,8 @@ module.exports = async (req, res) => {
                     .message { margin-top: 20px; }
                     .stack { margin-top: 20px; white-space: pre-wrap; background: #f5f5f5; padding: 10px; }
                 </style>
+                <!-- Google Analytics -->
+                <script src="/js/google-analytics.js" defer></script>
             </head>
             <body>
                 <h1>Something went wrong</h1>

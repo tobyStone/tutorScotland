@@ -278,6 +278,8 @@ function generateFullBlogPage(postsHtml, category, heroImage) {
           <script src="/responsive-helper.js"></script>
           <script src="/js/nav-loader.js" defer></script>
           <script src="/js/dynamic-nav.js" defer></script>
+          <!-- Google Analytics -->
+          <script src="/js/google-analytics.js" defer></script>
           <style>
             /* Blog Hero Banner */
             .blog-hero-banner {
