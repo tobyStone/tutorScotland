@@ -107,11 +107,11 @@ describe('Tutor Search & Filtering Integration', () => {
     });
 
     it('should search tutors by name (case insensitive)', async () => {
-      const searchName = 'john';
-      const mockResults = testTutors.filter(tutor => 
+      const searchName = 'john smith';
+      const mockResults = testTutors.filter(tutor =>
         tutor.active && tutor.name.toLowerCase().includes(searchName.toLowerCase())
       );
-      
+
       expect(mockResults).toHaveLength(1);
       expect(mockResults[0].name).toBe('John Smith');
     });

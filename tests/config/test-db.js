@@ -89,7 +89,7 @@ export async function seedTestData() {
     try {
         User = mongoose.model('User');
     } catch {
-        User = require('../../models/user.js');
+        User = require('../../models/User.js');
     }
     const bcrypt = require('bcryptjs');
     

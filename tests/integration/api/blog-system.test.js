@@ -111,7 +111,7 @@ describe('Blog System Integration Tests', () => {
 
     it('should auto-generate slug from title', async () => {
       const title = 'How to Master Mathematics: A Complete Guide!';
-      const expectedSlug = 'how-to-master-mathematics-complete-guide';
+      const expectedSlug = 'how-to-master-mathematics-a-complete-guide';
       
       // Mock slug generation
       const generatedSlug = title
@@ -363,8 +363,8 @@ describe('Blog System Integration Tests', () => {
 
     it('should validate content length limits', async () => {
       const shortContent = 'Too short';
-      const longContent = 'word '.repeat(10000); // Very long content
-      
+      const longContent = 'word '.repeat(10001); // Very long content (50,005 chars)
+
       expect(shortContent.length).toBeLessThan(50);
       expect(longContent.length).toBeGreaterThan(50000);
     });

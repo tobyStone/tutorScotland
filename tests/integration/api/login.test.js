@@ -10,7 +10,7 @@ process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
 process.env.NODE_ENV = 'test';
 
 // Import models AFTER setting environment
-const User = require('../../../models/user.js');
+const User = require('../../../models/User.js');
 
 // Import the login handler
 const loginHandler = require('../../../api/login.js');
