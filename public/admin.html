@@ -1872,7 +1872,17 @@
             const moveVal = addSectionForm.dataset.editId       // only present while editing
                                   ? fd.get('targetPage')?.trim()
                               : '';
-            const newPage = moveVal || pageSel.value.trim();
+
+            // 🐛 FIX: For rolling-banner sections, ignore moveVal and always use 'rolling-banner'
+            const isRollingBannerPage = pageSel.value === 'rolling-banner';
+            const newPage = isRollingBannerPage ? 'rolling-banner' : (moveVal || pageSel.value.trim());
+
+            console.log('Page selection logic:');
+            console.log('- isRollingBannerPage:', isRollingBannerPage);
+            console.log('- pageSel.value:', pageSel.value);
+            console.log('- moveVal:', moveVal);
+            console.log('- final newPage:', newPage);
+
             if (!PAGES.includes(newPage)) {
                 return alert('Unknown target page: ' + newPage);
             }
@@ -2138,6 +2148,9 @@
                     // Hide all meta controls for rolling-banner
                     document.getElementById('metaControls').style.display = 'none';
                     document.getElementById('rollingBannerFields').style.display = 'block';
+
+                    // 🐛 FIX: Hide move section controls for rolling banner
+                    document.getElementById('movePageRow').style.display = 'none';
                 } else {
                     // Handle regular sections
                     sectionLayout.value = section.layout || 'standard';
