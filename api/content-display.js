@@ -17,13 +17,72 @@
 const connectToDatabase = require('./connectToDatabase');
 const Blog = require('../models/Blog');
 const Section = require('../models/Section');
+const { applyAPISecurityHeaders, applyHTMLSecurityHeaders } = require('../utils/security-headers');
+const { handleAPIError, handleValidationError, handleNotFoundError } = require('../utils/error-handler');
+
+/**
+ * Validate and sanitize input parameters for content display API
+ * @param {Object} query - Request query parameters
+ * @param {string} url - Request URL
+ * @returns {Object} Validation result with sanitized parameters or error
+ */
+function validateContentParams(query, url) {
+    const { slug, category } = query;
+    const errors = [];
+
+    // Validate slug parameter (for page operations)
+    if (slug !== undefined) {
+        if (typeof slug !== 'string' || slug.length > 100) {
+            errors.push('Slug parameter must be a string with maximum 100 characters');
+        } else if (!/^[a-zA-Z0-9\-_]+$/.test(slug)) {
+            errors.push('Slug parameter can only contain letters, numbers, hyphens, and underscores');
+        }
+    }
+
+    // Validate category parameter (for blog operations)
+    if (category !== undefined) {
+        if (typeof category !== 'string' || category.length > 50) {
+            errors.push('Category parameter must be a string with maximum 50 characters');
+        } else if (!/^[a-zA-Z0-9\-_\s]+$/.test(category) && category !== 'all') {
+            errors.push('Category parameter contains invalid characters');
+        }
+    }
+
+    // Validate URL structure
+    if (url && typeof url === 'string') {
+        // Check for potential path traversal attempts
+        if (url.includes('..') || url.includes('//')) {
+            errors.push('Invalid URL structure detected');
+        }
+    }
+
+    if (errors.length > 0) {
+        return { valid: false, errors };
+    }
+
+    return {
+        valid: true,
+        sanitized: {
+            slug: slug ? slug.trim() : undefined,
+            category: category ? category.trim() : undefined
+        }
+    };
+}
 
 module.exports = async (req, res) => {
     try {
+        // Validate input parameters
+        const validation = validateContentParams(req.query, req.url);
+        if (!validation.valid) {
+            console.log('Content display input validation failed:', validation.errors);
+            return handleValidationError(res, validation.errors);
+        }
+
         await connectToDatabase();
 
         // Determine operation type based on URL and query parameters
-        const { url, query, method } = req;
+        const { url, method } = req;
+        const query = validation.sanitized;
         
         // PAGE OPERATIONS - Handle /api/page requests
         if (url.includes('/api/page') || query.slug) {
@@ -35,7 +94,7 @@ module.exports = async (req, res) => {
         
     } catch (error) {
         console.error('Content Display API error:', error);
-        return res.status(500).json({ message: 'Server error' });
+        return handleAPIError(res, error, 500);
     }
 };
 
@@ -49,7 +108,7 @@ async function handlePageOperation(req, res) {
             const slug = req.query.slug;
 
             if (!slug) {
-                return res.status(400).json({ message: 'Slug parameter is required' });
+                return handleValidationError(res, ['Slug parameter is required']);
             }
 
             try {
@@ -60,9 +119,10 @@ async function handlePageOperation(req, res) {
                 }).lean();
 
                 if (!page) {
-                    return res.status(404).json({ message: 'Page not found' });
+                    return handleNotFoundError(res, 'Page');
                 }
 
+                applyAPISecurityHeaders(res);
                 return res.status(200).json(page);
             } catch (e) {
                 console.error('PAGE_GET error', e);
@@ -87,8 +147,17 @@ async function handlePageOperation(req, res) {
  */
 async function handleBlogOperation(req, res) {
     try {
-        // Grab ?category= from the query string (e.g. /blog?category=secondary)
-        const { category } = req.query;
+        // Use validated category parameter
+        const validation = validateContentParams(req.query, req.url);
+        if (!validation.valid) {
+            console.log('Blog operation input validation failed:', validation.errors);
+            return res.status(400).json({
+                message: 'Invalid input parameters',
+                errors: validation.errors
+            });
+        }
+
+        const { category } = validation.sanitized;
 
         // Build a query object:
         let query = {};
@@ -135,10 +204,13 @@ async function handleBlogOperation(req, res) {
         // Create the full HTML page with the filter form
         const html = generateFullBlogPage(postsHtml, category, heroImage);
 
+        // Apply HTML security headers
+        applyHTMLSecurityHeaders(res);
         res.setHeader('Content-Type', 'text/html');
         return res.status(200).send(html);
     } catch (err) {
         console.error('Error in blog route:', err);
+        applyHTMLSecurityHeaders(res);
         return res.status(500).send('<p>Server Error</p>');
     }
 }

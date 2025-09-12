@@ -256,11 +256,12 @@ module.exports = async (req, res) => {
             { expiresIn: '3h' }
         );
 
-        // Manually set the HTTP-only cookie using the `cookie` library
+        // Manually set the HTTP-only cookie with enhanced security
         // In Vercel serverless, res.cookie() is not available.
         const serializedCookie = serialize('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',  // CSRF protection - prevents cross-site requests
             maxAge: 3 * 60 * 60, // 3 hours in seconds
             path: '/'            // cookie valid on entire site
         });

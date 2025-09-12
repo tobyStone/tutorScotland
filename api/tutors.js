@@ -17,6 +17,8 @@
 
 const connectToDatabase = require('./connectToDatabase');
 const mongoose = require('mongoose');
+const { applyAPISecurityHeaders, applyHTMLSecurityHeaders } = require('../utils/security-headers');
+const { handleAPIError, handleValidationError } = require('../utils/error-handler');
 
 function escapeRegExp(str = '') {
   return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -91,6 +93,62 @@ try {
 }
 
 /**
+ * Validate and sanitize input parameters for tutors API
+ * @param {Object} query - Request query parameters
+ * @returns {Object} Validation result with sanitized parameters or error
+ */
+function validateTutorParams(query) {
+    const { subject, mode, region, format } = query;
+    const errors = [];
+
+    // Validate subject parameter
+    if (subject !== undefined) {
+        if (typeof subject !== 'string' || subject.length > 100) {
+            errors.push('Subject parameter must be a string with maximum 100 characters');
+        } else if (!/^[a-zA-Z\s\-&]+$/.test(subject)) {
+            errors.push('Subject parameter contains invalid characters');
+        }
+    }
+
+    // Validate mode parameter
+    if (mode !== undefined) {
+        if (typeof mode !== 'string' || !['online', 'in-person', ''].includes(mode.toLowerCase())) {
+            errors.push('Mode parameter must be "online", "in-person", or empty');
+        }
+    }
+
+    // Validate region parameter
+    if (region !== undefined) {
+        if (typeof region !== 'string' || region.length > 100) {
+            errors.push('Region parameter must be a string with maximum 100 characters');
+        } else if (!/^[a-zA-Z\s\-&,()]+$/.test(region)) {
+            errors.push('Region parameter contains invalid characters');
+        }
+    }
+
+    // Validate format parameter
+    if (format !== undefined) {
+        if (typeof format !== 'string' || !['json'].includes(format.toLowerCase())) {
+            errors.push('Format parameter must be "json" or empty');
+        }
+    }
+
+    if (errors.length > 0) {
+        return { valid: false, errors };
+    }
+
+    return {
+        valid: true,
+        sanitized: {
+            subject: subject ? subject.trim() : undefined,
+            mode: mode ? mode.trim() : '',
+            region: region ? region.trim() : undefined,
+            format: format ? format.trim() : undefined
+        }
+    };
+}
+
+/**
  * Main API handler for tutors directory operations
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -107,34 +165,48 @@ try {
  * // GET /api/tutorList
  * // GET /api/tutors?region=Edinburgh&subject=Mathematics
  *
- * @security Public API with no authentication required
+ * @security Public API with input validation and sanitization
  * @performance Implements efficient database queries and HTML generation
+ * @throws {Error} 400 - Invalid input parameters
  * @throws {Error} 500 - Database connection or server errors
  */
 module.exports = async (req, res) => {
     try {
+        // Validate input parameters
+        const validation = validateTutorParams(req.query);
+        if (!validation.valid) {
+            console.log('Input validation failed:', validation.errors);
+            return handleValidationError(res, validation.errors);
+        }
+
         // Connect to the database with better error handling
         await connectToDatabase();
         console.log('Database connected successfully');
 
+        // Use sanitized parameters
+        const { subject, mode = '', region, format } = validation.sanitized;
+
         // Check if this is a request for the tutor list (for rolling banner or admin page)
         if (req.url === '/api/tutorlist') {
+            // Apply API security headers
+            applyAPISecurityHeaders(res);
             // For the rolling banner, we don't need the _id field
             const tutors = await Tutor.find({}, 'name subjects -_id').lean();
             return res.status(200).json(tutors);
         }
 
         // For the admin page, we need the _id field for deletion functionality
-        if (req.query.format === 'json') {
+        if (format === 'json') {
+            // Apply API security headers
+            applyAPISecurityHeaders(res);
             const tutors = await Tutor.find({}).lean();
             return res.status(200).json(tutors);
         }
 
-        const { subject, mode = '', region } = req.query;
         const modeLc = mode.toLowerCase().trim();
         let query = {};
 
-        console.log("Received query parameters:", { subject, mode, region });
+        console.log("Received and validated query parameters:", { subject, mode, region, format });
 
         const subjectSynonyms = {
             mathematics: 'math',
@@ -696,12 +768,17 @@ module.exports = async (req, res) => {
             </html>
         `;
 
+        // Apply HTML security headers
+        applyHTMLSecurityHeaders(res);
         res.setHeader('Content-Type', 'text/html');
         return res.status(200).send(html);
     } catch (error) {
         console.error("Error in tutors API:", error);
 
-        // Send a more detailed error message for debugging
+        // Use enhanced error handling
+        return handleAPIError(res, error, 500);
+
+        // Fallback HTML error for direct browser access (unreachable due to return above)
         const errorHtml = `
             <!DOCTYPE html>
             <html>
