@@ -19,9 +19,9 @@ beforeEach(async () => {
 // Global test utilities
 global.testUtils = {
   createTestUser: async (role = 'admin') => {
-    const User = require('../../models/user.js');
+    const User = require('../../models/User.js');
     const bcrypt = require('bcryptjs');
-    
+
     return await User.create({
       name: `Test ${role}`,
       email: `test-${role}@tutorscotland.test`,
@@ -29,15 +29,15 @@ global.testUtils = {
       role
     });
   },
-  
+
   generateJWT: (payload) => {
     const jwt = require('jsonwebtoken');
     return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
   },
-  
+
   createTestTutor: async (overrides = {}) => {
-    const Tutor = require('../../models/tutor.js');
-    
+    const Tutor = require('../../models/Tutor.js');
+
     return await Tutor.create({
       name: 'Test Tutor',
       subjects: ['Mathematics'],
@@ -50,10 +50,10 @@ global.testUtils = {
       ...overrides
     });
   },
-  
+
   createTestBlog: async (overrides = {}) => {
     const Blog = require('../../models/Blog.js');
-    
+
     return await Blog.create({
       title: 'Test Blog Post',
       author: 'Test Author',
@@ -65,10 +65,10 @@ global.testUtils = {
       ...overrides
     });
   },
-  
+
   createTestSection: async (overrides = {}) => {
     const Section = require('../../models/Section.js');
-    
+
     return await Section.create({
       page: 'index',
       heading: 'Test Section',
