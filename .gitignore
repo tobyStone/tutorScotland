@@ -19,6 +19,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Test coverage
+coverage/
+
 # Security documentation (contains sensitive information)
 docs/security-requirements.md
 security-requirements.md

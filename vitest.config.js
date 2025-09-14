@@ -2,6 +2,14 @@ import { defineConfig } from 'vitest/config';
 import path from 'path';
 
 export default defineConfig({
+  // Enable mixed module support
+  esbuild: {
+    target: 'node18'
+  },
+  // Define module resolution for mixed CommonJS/ES modules
+  define: {
+    global: 'globalThis',
+  },
   test: {
     globals: true,
     environment: 'node',
@@ -9,6 +17,12 @@ export default defineConfig({
     testTimeout: 30000, // Increased for CI environment and MongoDB Memory Server startup
     hookTimeout: 30000, // Increased for database setup/teardown
     teardownTimeout: 30000, // Increased for proper cleanup
+    // Handle mixed module systems (ES modules in tests, CommonJS in models/API)
+    server: {
+      deps: {
+        external: ['mongoose', 'bcryptjs', 'jsonwebtoken']
+      }
+    },
     // Separate test patterns for different types
     include: [
       'tests/unit/**/*.test.js',
