@@ -19,7 +19,7 @@ npm run test:e2e          # End-to-end tests only
 # Development workflow
 npm run test:watch        # Watch mode for development
 npm run test:coverage     # Generate coverage report
-```
+```''
 
 ## Test Structure
 
