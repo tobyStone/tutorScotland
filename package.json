@@ -25,6 +25,9 @@
     "test:migration": "vitest run tests/migration/ tests/integration/models/",
     "test:schema-safety": "vitest run tests/integration/models/section-schema.test.js",
     "db:fix-slug-index": "node scripts/fix-slug-index.js",
+    "security:check": "node scripts/security-check.js",
+    "security:audit": "npm audit --audit-level=moderate",
+    "security:fix": "npm audit fix",
     "prepare": "husky install",
     "pre-push": "npm run test:all"
   },

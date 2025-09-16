@@ -22,6 +22,9 @@ yarn-error.log*
 # Test coverage
 coverage/
 
+# Security reports
+security-report.json
+
 # Security documentation (contains sensitive information)
 docs/security-requirements.md
 security-requirements.md

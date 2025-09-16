@@ -1,0 +1,152 @@
+name: Security Scan
+
+on:
+  # Run on every push to main
+  push:
+    branches: [ main ]
+  
+  # Run on every pull request
+  pull_request:
+    branches: [ main ]
+  
+  # Run weekly on Sundays at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * 0'
+  
+  # Allow manual triggering
+  workflow_dispatch:
+
+jobs:
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run security audit
+        run: npm run security:audit
+        continue-on-error: true
+      
+      - name: Run detailed security check
+        run: npm run security:check
+        continue-on-error: true
+      
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-report
+          path: security-report.json
+          retention-days: 30
+      
+      - name: Comment on PR (if applicable)
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            try {
+              const report = JSON.parse(fs.readFileSync('security-report.json', 'utf8'));
+              const { summary } = report;
+              
+              let comment = '## 🛡️ Security Scan Results\n\n';
+              comment += `📦 **Total vulnerabilities:** ${summary.total}\n`;
+              comment += `🏭 **Production dependencies:** ${summary.byType.production}\n`;
+              comment += `🔧 **Development dependencies:** ${summary.byType.development}\n`;
+              comment += `🔴 **High risk:** ${summary.highRisk}\n\n`;
+              
+              if (summary.byType.production > 0) {
+                comment += '🚨 **ATTENTION:** Production vulnerabilities found! Please review and fix.\n\n';
+              } else if (summary.total === 0) {
+                comment += '✅ **Great!** No vulnerabilities found.\n\n';
+              } else {
+                comment += '✅ **Good!** Only development vulnerabilities found - can be addressed in next sprint.\n\n';
+              }
+              
+              comment += '📊 **By Severity:**\n';
+              Object.entries(summary.bySeverity).forEach(([severity, count]) => {
+                if (count > 0) {
+                  const emoji = severity === 'critical' ? '🔴' : severity === 'high' ? '🟠' : severity === 'moderate' ? '🟡' : '🟢';
+                  comment += `- ${emoji} ${severity}: ${count}\n`;
+                }
+              });
+              
+              comment += '\n📄 Detailed report available in workflow artifacts.';
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } catch (error) {
+              console.log('Could not read security report:', error.message);
+            }
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          # Fail on critical and high severity vulnerabilities
+          fail-on-severity: high
+          # Allow moderate and low severity in development dependencies
+          allow-dependencies-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC
+          comment-summary-in-pr: true
+
+  codeql-analysis:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'schedule'
+    
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # Exclude test files and node_modules from analysis
+          paths-ignore: |
+            tests/**
+            node_modules/**
+            coverage/**
+            scripts/test-*.js
+      
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
