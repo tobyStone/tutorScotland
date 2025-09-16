@@ -85,9 +85,9 @@ describe('Dynamic Sections API Integration (Real API Testing)', () => {
   beforeEach(async () => {
     // Clear sections collection
     await Section.deleteMany({});
-    
-    // Seed with test data
-    await Section.insertMany([
+
+    // Seed with test data using create() to ensure validation runs
+    await Section.create([
       {
         page: 'about',
         heading: 'Our Mission',
@@ -119,6 +119,7 @@ describe('Dynamic Sections API Integration (Real API Testing)', () => {
         imageUrl: 'https://example.com/sarah.jpg',
         team: [{
           name: 'Sarah Johnson',
+          bio: 'Experienced mathematics tutor with 10 years of teaching experience, specializing in algebra, calculus, and statistics.',
           role: 'Mathematics Tutor',
           experience: '10 years',
           subjects: ['Algebra', 'Calculus', 'Statistics']
