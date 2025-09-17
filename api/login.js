@@ -64,17 +64,18 @@ function debugLog(message, data = null) {
 // Note: Security logging now handled by SecurityLogger utility (serverless-compatible)
 
 /**
- * Check and update rate limiting for login attempts
+ * ✅ SECURITY FIX: Atomic rate limit check with attempt reservation
+ * Reserves an attempt slot atomically to prevent race condition attacks
  * @param {string} clientIP - Client IP address
  * @param {string} email - Email being attempted
- * @returns {boolean} - True if request is allowed, false if rate limited
+ * @returns {Object} - { allowed: boolean, reservationToken: string|null }
  */
-function checkRateLimit(clientIP, email) {
+function checkRateLimitAndReserve(clientIP, email) {
     const key = `${clientIP}:${email}`;
     const now = Date.now();
     const attempts = loginAttempts.get(key) || { count: 0, firstAttempt: now, lastAttempt: 0 };
 
-    debugLog(`checkRateLimit for ${email} from ${clientIP} - current count: ${attempts.count}`);
+    debugLog(`checkRateLimitAndReserve for ${email} from ${clientIP} - current count: ${attempts.count}`);
 
     // Reset if window has expired
     if (now - attempts.firstAttempt > RATE_LIMIT_WINDOW) {
@@ -83,22 +84,61 @@ function checkRateLimit(clientIP, email) {
         attempts.firstAttempt = now;
     }
 
-    // Check if rate limited (block after MAX_ATTEMPTS failed attempts)
+    // Check if rate limited BEFORE incrementing (block after MAX_ATTEMPTS failed attempts)
     if (attempts.count >= MAX_ATTEMPTS) {
         const timeRemaining = RATE_LIMIT_WINDOW - (now - attempts.firstAttempt);
         if (timeRemaining > 0) {
             // ALWAYS log rate limiting events (security-critical)
             console.warn(`🚨 RATE LIMIT: ${email} from ${clientIP} - ${attempts.count} attempts, ${Math.ceil(timeRemaining / 60000)} minutes remaining`);
-            return false;
+            return { allowed: false, reservationToken: null };
         }
         // If time window expired, reset the attempts
         debugLog(`Rate limit window expired after max attempts, resetting for ${email}`);
         attempts.count = 0;
         attempts.firstAttempt = now;
-        loginAttempts.set(`${clientIP}:${email}`, attempts);
     }
 
-    return true;
+    // ✅ ATOMIC RESERVATION: Increment counter immediately to reserve the slot
+    attempts.count++;
+    attempts.lastAttempt = now;
+    loginAttempts.set(key, attempts);
+
+    // Generate reservation token for rollback on success
+    const reservationToken = `${key}:${now}:${attempts.count}`;
+
+    debugLog(`Rate limit check PASSED and slot RESERVED for ${email} from ${clientIP} - new count: ${attempts.count}`);
+    return { allowed: true, reservationToken };
+}
+
+/**
+ * ✅ SECURITY FIX: Release reservation on successful login
+ * @param {string} reservationToken - Token from checkRateLimitAndReserve
+ */
+function releaseReservation(reservationToken) {
+    if (!reservationToken) return;
+
+    try {
+        const [keyPart1, keyPart2, timestamp, expectedCount] = reservationToken.split(':');
+        const key = `${keyPart1}:${keyPart2}`;
+        const attempts = loginAttempts.get(key);
+
+        if (attempts && attempts.count > 0) {
+            attempts.count--;
+            loginAttempts.set(key, attempts);
+            debugLog(`Released reservation for ${key} - new count: ${attempts.count}`);
+        }
+    } catch (error) {
+        console.error('Error releasing reservation:', error);
+    }
+}
+
+/**
+ * @deprecated - Use checkRateLimitAndReserve instead
+ * Legacy function kept for backward compatibility
+ */
+function checkRateLimit(clientIP, email) {
+    const result = checkRateLimitAndReserve(clientIP, email);
+    return result.allowed;
 }
 
 /**
@@ -193,9 +233,10 @@ module.exports = async (req, res) => {
     const { email, password } = req.body;
     debugLog(`POST login request for email: ${email}`);
 
-    // 🔒 SECURITY: Rate limiting check
+    // ✅ SECURITY FIX: Atomic rate limiting with reservation
+    const rateLimitResult = checkRateLimitAndReserve(clientIP, email);
 
-    if (!checkRateLimit(clientIP, email)) {
+    if (!rateLimitResult.allowed) {
         debugLog(`Rate limit check FAILED - returning 429`);
 
         // Calculate actual time remaining for this specific user
@@ -229,18 +270,21 @@ module.exports = async (req, res) => {
         // Search for the user by email (case-insensitive)
         const user = await User.findOne({ email: new RegExp('^' + email + '$', 'i') });
         if (!user) {
-            recordFailedAttempt(clientIP, email, req);
+            // ✅ SECURITY FIX: Failed attempt - reservation becomes permanent (no rollback)
+            SecurityLogger.loginFailed(email, 'User not found', req);
             return res.status(404).json({ message: 'User not found' });
         }
 
         // Compare passwords using bcrypt
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            recordFailedAttempt(clientIP, email, req);
+            // ✅ SECURITY FIX: Failed attempt - reservation becomes permanent (no rollback)
+            SecurityLogger.loginFailed(email, 'Invalid credentials', req);
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Clear rate limiting on successful login
+        // ✅ SECURITY FIX: Success - release reservation and clear all attempts
+        releaseReservation(rateLimitResult.reservationToken);
         clearAttempts(clientIP, email);
         SecurityLogger.loginSuccess(email, user.role, req);
 
