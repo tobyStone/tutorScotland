@@ -268,6 +268,25 @@ const SecurityLogger = {
             { contentType, userInfo, ...details },
             req
         );
+    },
+
+    /**
+     * Log malicious file upload attempt blocked
+     */
+    maliciousFileBlocked: (filename, threatType, userInfo, req, details = {}) => {
+        logSecurityEvent(
+            SecurityEventType.UNAUTHORIZED_UPLOAD,
+            SecuritySeverity.CRITICAL,
+            `MALICIOUS FILE BLOCKED: ${threatType} detected in ${filename}`,
+            {
+                filename: sanitizeInput(filename),
+                threatType,
+                userInfo,
+                blocked: true,
+                ...details
+            },
+            req
+        );
     }
 };
 

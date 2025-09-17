@@ -89,6 +89,75 @@ const ALLOWED_VIDEO_MIME = [
 // NEW: Add a mapping for sharp format verification
 const ALLOWED_SHARP_FORMATS = ['jpeg', 'png', 'webp', 'gif'];
 
+// ✅ ENHANCED SECURITY: File content signature detection
+const DANGEROUS_SIGNATURES = [
+    { signature: [0x3C, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74], name: 'HTML Script Tag', description: '<script' },
+    { signature: [0x3C, 0x68, 0x74, 0x6D, 0x6C], name: 'HTML Document', description: '<html' },
+    { signature: [0x3C, 0x21, 0x44, 0x4F, 0x43, 0x54, 0x59, 0x50, 0x45], name: 'HTML DOCTYPE', description: '<!DOCTYPE' },
+    { signature: [0x3C, 0x3F, 0x70, 0x68, 0x70], name: 'PHP Script', description: '<?php' },
+    { signature: [0x4D, 0x5A], name: 'Windows Executable', description: 'PE/MZ header' },
+    { signature: [0x7F, 0x45, 0x4C, 0x46], name: 'Linux Executable', description: 'ELF header' },
+    { signature: [0x23, 0x21, 0x2F, 0x62, 0x69, 0x6E], name: 'Shell Script', description: '#!/bin' },
+    { signature: [0x50, 0x4B, 0x03, 0x04], name: 'ZIP Archive', description: 'ZIP header (potential polyglot)' },
+    { signature: [0x3C, 0x69, 0x66, 0x72, 0x61, 0x6D, 0x65], name: 'HTML Iframe', description: '<iframe' },
+    { signature: [0x3C, 0x6F, 0x62, 0x6A, 0x65, 0x63, 0x74], name: 'HTML Object', description: '<object' }
+];
+
+/**
+ * Detect malicious file content by examining file signatures
+ * @param {Buffer} buffer - File buffer to analyze
+ * @returns {Object|null} - Detection result or null if safe
+ */
+function detectMaliciousContent(buffer) {
+    if (!buffer || buffer.length === 0) {
+        return { name: 'Empty File', description: 'Zero-byte file detected' };
+    }
+
+    // Check first 512 bytes for signatures (sufficient for most headers)
+    const checkLength = Math.min(buffer.length, 512);
+    const checkBuffer = buffer.slice(0, checkLength);
+
+    for (const danger of DANGEROUS_SIGNATURES) {
+        if (checkBuffer.length >= danger.signature.length) {
+            // Check for exact signature match
+            const match = danger.signature.every((byte, index) => checkBuffer[index] === byte);
+            if (match) {
+                return danger;
+            }
+
+            // Also check for case-insensitive text patterns (for HTML/script content)
+            if (danger.signature.length > 2) {
+                const textPattern = String.fromCharCode(...danger.signature).toLowerCase();
+                const bufferText = checkBuffer.toString('ascii', 0, Math.min(100, checkBuffer.length)).toLowerCase();
+                if (bufferText.includes(textPattern)) {
+                    return danger;
+                }
+            }
+        }
+    }
+
+    // Additional heuristic checks
+    const bufferText = checkBuffer.toString('ascii', 0, Math.min(200, checkBuffer.length)).toLowerCase();
+
+    // Check for common XSS patterns
+    const xssPatterns = ['javascript:', 'vbscript:', 'onload=', 'onerror=', 'onclick='];
+    for (const pattern of xssPatterns) {
+        if (bufferText.includes(pattern)) {
+            return { name: 'XSS Pattern', description: `Detected: ${pattern}` };
+        }
+    }
+
+    // Check for SQL injection patterns in file content
+    const sqlPatterns = ['union select', 'drop table', 'insert into', '-- ', '/*'];
+    for (const pattern of sqlPatterns) {
+        if (bufferText.includes(pattern)) {
+            return { name: 'SQL Injection Pattern', description: `Detected: ${pattern}` };
+        }
+    }
+
+    return null; // File appears safe
+}
+
 // ✅ RACE CONDITION PREVENTION: Upload guard to prevent simultaneous uploads
 const activeUploads = new Map();
 const MAX_CONCURRENT_UPLOADS = 2;
@@ -283,9 +352,21 @@ async function handleFileUpload(req, res, payload) {
 
     let uploadedFile; // Declare outside try block so it's available in catch block
     try {
+        // ✅ ENHANCED: Improved formidable configuration for better security and error handling
         const form = formidable({
             keepExtensions: true,
-            maxFileSize: MAX_LARGE_VIDEO_UPLOAD  // Use the largest limit to support Google Cloud fallback
+            maxFileSize: MAX_LARGE_VIDEO_UPLOAD,  // Use the largest limit to support Google Cloud fallback
+            maxTotalFileSize: MAX_LARGE_VIDEO_UPLOAD, // Prevent multiple file attacks
+            uploadTimeout: 60000, // 60 second timeout for large files
+            allowEmptyFiles: false, // Block empty file uploads
+            minFileSize: 1, // Minimum 1 byte (prevent zero-byte attacks)
+            // Enhanced error handling
+            onError: (err) => {
+                console.error('🚨 Formidable upload error:', err.message);
+                if (err.code === 'LIMIT_FILE_SIZE') {
+                    console.error(`File size limit exceeded: ${err.received} bytes received`);
+                }
+            }
         });
 
         const [fields, files] = await new Promise((resolve, reject) => {
@@ -397,6 +478,38 @@ async function handleFileUpload(req, res, payload) {
                 message: 'File read error. Please try uploading again.'
             });
         }
+
+        // ✅ ENHANCED SECURITY: Deep content inspection for malicious files
+        console.log('🔍 Performing deep content security scan...');
+        const maliciousContent = detectMaliciousContent(buffer);
+        if (maliciousContent) {
+            console.error(`🚨 SECURITY ALERT: Malicious content detected - ${maliciousContent.name}: ${maliciousContent.description}`);
+
+            // Clean up temp file immediately
+            fs.unlink(uploadedFile.filepath, (err) => {
+                if (err) console.error('Error deleting malicious temp file:', err);
+            });
+
+            // Log security incident
+            try {
+                SecurityLogger.maliciousFileBlocked(
+                    uploadedFile.originalFilename || 'unknown',
+                    maliciousContent.name,
+                    { userId: payload.id, role: payload.role },
+                    req
+                );
+            } catch (logError) {
+                console.error('Security logging error:', logError);
+            }
+
+            return res.status(415).json({
+                message: `Blocked malicious file content: ${maliciousContent.name}`,
+                error: 'MALICIOUS_CONTENT_DETECTED',
+                details: maliciousContent.description,
+                filename: uploadedFile.originalFilename
+            });
+        }
+        console.log('✅ Content security scan passed - file appears safe');
 
         // Handle videos differently - skip Sharp processing
         if (isVideo) {
