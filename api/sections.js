@@ -24,6 +24,36 @@ const connectDB = require('./connectToDatabase');
 
 const MAX_UPLOAD = 4.5 * 1024 * 1024;  // 4.5 MB
 
+// Response compatibility adapter for testing environment
+function createVercelCompatibleResponse(res) {
+    if (!res.status) {
+        res.status = function(code) {
+            res.statusCode = code;
+            return res;
+        };
+    }
+
+    if (!res.json) {
+        res.json = function(data) {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(data));
+            return res;
+        };
+    }
+
+    if (!res.end) {
+        res.end = function(data) {
+            if (data && typeof data === 'string') {
+                res.write(data);
+            }
+            res.finished = true;
+            return res;
+        };
+    }
+
+    return res;
+}
+
 // Utility function to create URL-friendly slugs
 const slugify = (str) => {
     return str.toString().toLowerCase()
@@ -120,6 +150,9 @@ const parseForm = (req) => {
  * @throws {Error} 500 - Database connection or server errors
  */
 module.exports = async (req, res) => {
+    // Apply response compatibility adapter for testing environment
+    res = createVercelCompatibleResponse(res);
+
     try {
         await connectDB();
 

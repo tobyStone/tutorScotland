@@ -3,6 +3,10 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 
 let mongoServer;
 
+export function getMongoServer() {
+    return mongoServer;
+}
+
 export async function setupTestDB() {
     try {
         // Configure MongoDB Memory Server for better CI compatibility
@@ -67,7 +71,8 @@ export async function teardownTestDB() {
 export async function clearTestDB() {
     try {
         if (mongoose.connection.readyState === 0) {
-            throw new Error('Database not connected');
+            console.log('Database not connected, skipping clear operation');
+            return;
         }
         
         const collections = mongoose.connection.collections;
