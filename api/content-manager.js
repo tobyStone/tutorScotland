@@ -18,6 +18,8 @@ const connectDB = require('./connectToDatabase');
 const Section = require('../models/Section');
 const Order = require('../models/Order');
 const { list } = require('@vercel/blob');
+const { csrfProtection } = require('../utils/csrf-protection');
+const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
 const { SecurityLogger } = require('../utils/security-logger');
 
 const ITEMS_PER_PAGE = 20;
@@ -56,6 +58,28 @@ const ITEMS_PER_PAGE = 20;
  * @throws {Error} 500 - Database connection or server errors
  */
 module.exports = async (req, res) => {
+    // Phase 2: Apply comprehensive security headers
+    applyComprehensiveSecurityHeaders(res, 'api');
+
+    // Phase 2: Apply CSRF protection for state-changing operations
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+        try {
+            await new Promise((resolve, reject) => {
+                csrfProtection(req, res, (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                });
+            });
+        } catch (csrfError) {
+            console.error('CSRF Protection failed for content-manager API:', csrfError);
+            return res.status(403).json({
+                error: 'Forbidden',
+                message: 'CSRF protection failed',
+                code: 'CSRF_VIOLATION'
+            });
+        }
+    }
+
     try {
         await connectDB();
 

@@ -21,6 +21,8 @@ const { formidable } = require('formidable');
 const fs = require('fs');
 const { lookup } = require('mime-types');
 const { SecurityLogger } = require('../utils/security-logger');
+const { csrfProtection } = require('../utils/csrf-protection');
+const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
 
 // Google Cloud Storage for large video uploads (using tech team's recommended approach)
 let storage;
@@ -176,9 +178,29 @@ setInterval(() => {
 }, 5 * 60 * 1000);
 
 module.exports = async (req, res) => {
+    // Phase 2: Apply comprehensive security headers
+    applyComprehensiveSecurityHeaders(res, 'api');
+
     if (req.method !== 'POST') {
         res.setHeader('Allow', ['POST']);
         return res.status(405).end('Method Not Allowed');
+    }
+
+    // Phase 2: Apply CSRF protection for POST requests
+    try {
+        await new Promise((resolve, reject) => {
+            csrfProtection(req, res, (err) => {
+                if (err) reject(err);
+                else resolve();
+            });
+        });
+    } catch (csrfError) {
+        console.error('CSRF Protection failed for file upload:', csrfError);
+        return res.status(403).json({
+            error: 'Forbidden',
+            message: 'CSRF protection failed',
+            code: 'CSRF_VIOLATION'
+        });
     }
 
     // 🔒 SECURITY FIX: Add authentication requirement for all file uploads

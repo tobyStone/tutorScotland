@@ -21,6 +21,8 @@ const { formidable } = require('formidable');
 const fs = require('fs');
 const Section = require('../models/Section');
 const connectDB = require('./connectToDatabase');
+const { csrfProtection } = require('../utils/csrf-protection');
+const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
 
 const MAX_UPLOAD = 4.5 * 1024 * 1024;  // 4.5 MB
 
@@ -156,6 +158,28 @@ const parseForm = (req) => {
 module.exports = async (req, res) => {
     // Apply response compatibility adapter for testing environment
     res = createVercelCompatibleResponse(res);
+
+    // Phase 2: Apply comprehensive security headers
+    applyComprehensiveSecurityHeaders(res, 'api');
+
+    // Phase 2: Apply CSRF protection for state-changing operations
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+        try {
+            await new Promise((resolve, reject) => {
+                csrfProtection(req, res, (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                });
+            });
+        } catch (csrfError) {
+            console.error('CSRF Protection failed for sections API:', csrfError);
+            return res.status(403).json({
+                error: 'Forbidden',
+                message: 'CSRF protection failed',
+                code: 'CSRF_VIOLATION'
+            });
+        }
+    }
 
     try {
         await connectDB();

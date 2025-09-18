@@ -18,6 +18,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { logSecurityEvent: sentryLogSecurityEvent, logError: sentryLogError } = require('./sentry-integration');
 
 /**
  * Security event types for categorization
@@ -50,25 +51,69 @@ const SecuritySeverity = {
 /**
  * Sanitize log data to prevent log injection attacks
  * @param {any} data - Data to sanitize
+ * @param {Set} visited - Set to track visited objects (prevent circular references)
+ * @param {number} depth - Current recursion depth (prevent deep recursion)
  * @returns {any} Sanitized data
  */
-function sanitizeLogData(data) {
+function sanitizeLogData(data, visited = new Set(), depth = 0) {
+    // Prevent infinite recursion
+    if (depth > 5) {
+        return '[Object too deep]';
+    }
+
     if (typeof data === 'string') {
         // Remove control characters and limit length
         return data.replace(/[\x00-\x1f\x7f-\x9f]/g, '').substring(0, 1000);
     }
-    
-    if (typeof data === 'object' && data !== null) {
-        const sanitized = {};
-        for (const [key, value] of Object.entries(data)) {
-            // Sanitize keys and values
-            const cleanKey = key.replace(/[\x00-\x1f\x7f-\x9f]/g, '').substring(0, 100);
-            sanitized[cleanKey] = sanitizeLogData(value);
+
+    if (typeof data === 'number' || typeof data === 'boolean') {
+        return data;
+    }
+
+    if (data === null || data === undefined) {
+        return data;
+    }
+
+    if (typeof data === 'object') {
+        // Prevent circular references
+        if (visited.has(data)) {
+            return '[Circular Reference]';
         }
+
+        // Handle arrays
+        if (Array.isArray(data)) {
+            visited.add(data);
+            const sanitized = data.slice(0, 10).map(item =>
+                sanitizeLogData(item, visited, depth + 1)
+            );
+            visited.delete(data);
+            return sanitized;
+        }
+
+        // Handle regular objects
+        visited.add(data);
+        const sanitized = {};
+        let count = 0;
+
+        for (const [key, value] of Object.entries(data)) {
+            // Limit number of properties to prevent huge logs
+            if (count >= 20) {
+                sanitized['...'] = '[More properties truncated]';
+                break;
+            }
+
+            // Sanitize keys and values
+            const cleanKey = String(key).replace(/[\x00-\x1f\x7f-\x9f]/g, '').substring(0, 100);
+            sanitized[cleanKey] = sanitizeLogData(value, visited, depth + 1);
+            count++;
+        }
+
+        visited.delete(data);
         return sanitized;
     }
-    
-    return data;
+
+    // For functions, symbols, etc.
+    return String(data).substring(0, 100);
 }
 
 /**
@@ -77,10 +122,11 @@ function sanitizeLogData(data) {
  * @returns {Object} Client information
  */
 function extractClientInfo(req) {
+    const headers = req.headers || {};
     return {
-        ip: req.ip || req.connection?.remoteAddress || req.headers['x-forwarded-for'] || 'unknown',
-        userAgent: req.headers['user-agent'] || 'unknown',
-        referer: req.headers.referer || 'unknown',
+        ip: req.ip || req.connection?.remoteAddress || headers['x-forwarded-for'] || 'unknown',
+        userAgent: headers['user-agent'] || 'unknown',
+        referer: headers.referer || 'unknown',
         method: req.method || 'unknown',
         url: req.url || 'unknown',
         timestamp: new Date().toISOString()
@@ -150,11 +196,36 @@ function logSecurityEvent(eventType, severity, message, details = {}, req = null
         }
     }
 
+    // Phase 2: Log to Sentry for production monitoring
+    try {
+        sentryLogSecurityEvent(eventType, {
+            severity,
+            message,
+            details: sanitizedDetails,
+            timestamp: logEntry.timestamp
+        }, req);
+    } catch (sentryError) {
+        console.error('Failed to log security event to Sentry:', sentryError);
+    }
+
     // Critical events should trigger immediate alerts (in production)
     if (severity === SecuritySeverity.CRITICAL && process.env.NODE_ENV === 'production') {
-        // TODO: Implement email/Slack alerts for critical security events
+        // Phase 2: Enhanced critical event handling with Sentry
         console.error('🚨 CRITICAL SECURITY EVENT - IMMEDIATE ATTENTION REQUIRED');
         console.error('Event:', JSON.stringify(logEntry, null, 2));
+
+        // Log critical events to Sentry with high priority
+        try {
+            sentryLogSecurityEvent(`CRITICAL_${eventType}`, {
+                severity: 'CRITICAL',
+                message: `CRITICAL SECURITY EVENT: ${message}`,
+                details: sanitizedDetails,
+                timestamp: logEntry.timestamp,
+                priority: 'HIGH'
+            }, req);
+        } catch (sentryError) {
+            console.error('Failed to log critical security event to Sentry:', sentryError);
+        }
     }
 }
 
@@ -286,6 +357,42 @@ const SecurityLogger = {
                 ...details
             },
             req
+        );
+    },
+
+    /**
+     * Log CSRF validation attempt
+     */
+    csrfValidation: (data) => {
+        logSecurityEvent(
+            'CSRF_VALIDATION',
+            SecuritySeverity.LOW,
+            'CSRF protection validation',
+            data
+        );
+    },
+
+    /**
+     * Log security violation
+     */
+    securityViolation: (data) => {
+        logSecurityEvent(
+            'SECURITY_VIOLATION',
+            SecuritySeverity.CRITICAL,
+            'Security violation detected',
+            data
+        );
+    },
+
+    /**
+     * Log error events
+     */
+    error: (data) => {
+        logSecurityEvent(
+            'ERROR',
+            SecuritySeverity.HIGH,
+            'System error occurred',
+            data
         );
     }
 };

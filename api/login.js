@@ -20,6 +20,8 @@ const jwt = require('jsonwebtoken');
 const { serialize, parse } = require('cookie');  // <-- important for setting cookies manually
 const connectToDatabase = require('./connectToDatabase');
 const { SecurityLogger } = require('../utils/security-logger');
+const { csrfProtection } = require('../utils/csrf-protection');
+const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
 
 // Import User model - use try/catch approach similar to tutors.js
 let User;
@@ -212,6 +214,28 @@ setInterval(() => {
  * @throws {Error} 500 - Database connection or server errors
  */
 module.exports = async (req, res) => {
+    // Phase 2: Apply comprehensive security headers
+    applyComprehensiveSecurityHeaders(res, 'api');
+
+    // Phase 2: Apply CSRF protection for POST requests
+    if (req.method === 'POST') {
+        try {
+            await new Promise((resolve, reject) => {
+                csrfProtection(req, res, (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                });
+            });
+        } catch (csrfError) {
+            console.error('CSRF Protection failed:', csrfError);
+            return res.status(403).json({
+                error: 'Forbidden',
+                message: 'CSRF protection failed',
+                code: 'CSRF_VIOLATION'
+            });
+        }
+    }
+
     // Get client IP for security logging
     const clientIP = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] || 'unknown';
 

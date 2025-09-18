@@ -95,11 +95,28 @@ function applyAPISecurityHeaders(res) {
         allowInlineStyles: false,
         allowInlineScripts: false
     });
-    
+
     // Additional API-specific headers
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
+
+    // Phase 2 Enhanced API Security Headers
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow, nosnippet, noarchive');
+    res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+
+    // Permissions Policy for APIs
+    res.setHeader('Permissions-Policy', [
+        'camera=()',
+        'microphone=()',
+        'geolocation=()',
+        'payment=()',
+        'usb=()',
+        'magnetometer=()',
+        'gyroscope=()',
+        'accelerometer=()'
+    ].join(', '));
 }
 
 /**
@@ -116,11 +133,45 @@ function applyHTMLSecurityHeaders(res) {
             "object-src 'none'" // Prevent object/embed elements
         ]
     });
+
+    // Phase 2 Enhanced HTML Security Headers
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production';
+
+    // HTTP Strict Transport Security (HSTS) - Production only
+    if (isProduction) {
+        res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    }
+
+    // Cross-Origin policies for HTML
+    res.setHeader('Cross-Origin-Embedder-Policy', 'unsafe-none'); // Allow embedding for now
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'); // Allow cross-origin for public content
+}
+
+/**
+ * Phase 2: Comprehensive security headers with CSRF protection
+ * @param {Object} res - Express response object
+ * @param {string} contentType - Content type ('api' or 'html')
+ */
+function applyComprehensiveSecurityHeaders(res, contentType = 'api') {
+    if (contentType === 'api') {
+        applyAPISecurityHeaders(res);
+    } else {
+        applyHTMLSecurityHeaders(res);
+    }
+
+    // Additional Phase 2 security enhancements
+    res.setHeader('X-DNS-Prefetch-Control', 'off');
+    res.setHeader('X-Download-Options', 'noopen');
+    res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+
+    console.log(`✅ Phase 2 Security Headers: Applied comprehensive headers for ${contentType}`);
 }
 
 module.exports = {
     applySecurityHeaders,
     securityHeadersMiddleware,
     applyAPISecurityHeaders,
-    applyHTMLSecurityHeaders
+    applyHTMLSecurityHeaders,
+    applyComprehensiveSecurityHeaders
 };
