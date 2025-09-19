@@ -350,7 +350,7 @@ const SecurityLogger = {
             SecuritySeverity.CRITICAL,
             `MALICIOUS FILE BLOCKED: ${threatType} detected in ${filename}`,
             {
-                filename: sanitizeInput(filename),
+                filename: sanitizeLogData(filename),
                 threatType,
                 userInfo,
                 blocked: true,

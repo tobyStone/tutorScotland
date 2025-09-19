@@ -21,6 +21,7 @@ const { list } = require('@vercel/blob');
 const { csrfProtection } = require('../utils/csrf-protection');
 const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
 const { SecurityLogger } = require('../utils/security-logger');
+const { validateText, validateObjectId, validateURL } = require('../utils/input-validation');
 
 const ITEMS_PER_PAGE = 20;
 
@@ -60,6 +61,21 @@ const ITEMS_PER_PAGE = 20;
 module.exports = async (req, res) => {
     // Phase 2: Apply comprehensive security headers
     applyComprehensiveSecurityHeaders(res, 'api');
+
+    // ✅ SECURITY FIX: Request size validation for write operations
+    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+        const requestSize = req.headers['content-length'];
+        const MAX_REQUEST_SIZE = 512 * 1024; // 512KB should be enough for content management
+
+        if (requestSize && parseInt(requestSize) > MAX_REQUEST_SIZE) {
+            SecurityLogger.securityEvent('OVERSIZED_REQUEST', {
+                size: requestSize,
+                maxSize: MAX_REQUEST_SIZE,
+                endpoint: '/api/content-manager'
+            }, req);
+            return res.status(413).json({ message: 'Request too large' });
+        }
+    }
 
     // Phase 2: Apply CSRF protection for state-changing operations
     if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {

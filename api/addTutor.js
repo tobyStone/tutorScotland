@@ -15,7 +15,6 @@
 const connectToDatabase = require('./connectToDatabase');
 const jwt = require('jsonwebtoken');
 const Tutor = require('../models/Tutor');
-const cookieParser = require('cookie-parser');
 
 // Canonical region labels used across the app
 const CANONICAL_REGIONS = [

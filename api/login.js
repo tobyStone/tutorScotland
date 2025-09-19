@@ -22,6 +22,7 @@ const connectToDatabase = require('./connectToDatabase');
 const { SecurityLogger } = require('../utils/security-logger');
 const { csrfProtection } = require('../utils/csrf-protection');
 const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
+const { validateLoginCredentials } = require('../utils/input-validation');
 
 // Import User model - use try/catch approach similar to tutors.js
 let User;
@@ -254,7 +255,30 @@ module.exports = async (req, res) => {
         return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 
-    const { email, password } = req.body;
+    // ✅ SECURITY FIX: Request size validation
+    const requestSize = req.headers['content-length'];
+    const MAX_REQUEST_SIZE = 1024; // 1KB should be enough for login credentials
+
+    if (requestSize && parseInt(requestSize) > MAX_REQUEST_SIZE) {
+        SecurityLogger.securityEvent('OVERSIZED_REQUEST', {
+            size: requestSize,
+            maxSize: MAX_REQUEST_SIZE,
+            endpoint: '/api/login'
+        }, req);
+        return res.status(413).json({ message: 'Request too large' });
+    }
+
+    // ✅ SECURITY FIX: Comprehensive input validation
+    const validationResult = validateLoginCredentials(req.body, req);
+    if (!validationResult.valid) {
+        SecurityLogger.loginFailed('invalid_input', req, 1);
+        return res.status(400).json({
+            message: 'Invalid input data',
+            errors: validationResult.errors
+        });
+    }
+
+    const { email, password } = validationResult.sanitized;
     debugLog(`POST login request for email: ${email}`);
 
     // ✅ SECURITY FIX: Atomic rate limiting with reservation
@@ -293,18 +317,17 @@ module.exports = async (req, res) => {
 
         // Search for the user by email (case-insensitive)
         const user = await User.findOne({ email: new RegExp('^' + email + '$', 'i') });
-        if (!user) {
-            // ✅ SECURITY FIX: Failed attempt - reservation becomes permanent (no rollback)
-            SecurityLogger.loginFailed(email, 'User not found', req);
-            return res.status(404).json({ message: 'User not found' });
-        }
 
-        // Compare passwords using bcrypt
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
+        // ✅ SECURITY FIX: Always perform password comparison to prevent timing attacks
+        // Use a dummy hash if user doesn't exist to maintain consistent timing
+        const hashToCompare = user ? user.password : '$2b$10$dummyhashtopreventtimingattacksabcdefghijklmnopqrstuvwxyz';
+        const isMatch = await bcrypt.compare(password, hashToCompare);
+
+        if (!user || !isMatch) {
             // ✅ SECURITY FIX: Failed attempt - reservation becomes permanent (no rollback)
-            SecurityLogger.loginFailed(email, 'Invalid credentials', req);
-            return res.status(400).json({ message: 'Invalid credentials' });
+            SecurityLogger.loginFailed(email, req, 1);
+            // ✅ SECURITY FIX: Prevent email enumeration - use same response for both cases
+            return res.status(401).json({ message: 'Invalid email or password' });
         }
 
         // ✅ SECURITY FIX: Success - release reservation and clear all attempts
@@ -312,9 +335,21 @@ module.exports = async (req, res) => {
         clearAttempts(clientIP, email);
         SecurityLogger.loginSuccess(email, user.role, req);
 
-        // Ensure JWT_SECRET is set
+        // ✅ SECURITY FIX: Ensure JWT_SECRET is set and strong
         if (!process.env.JWT_SECRET) {
             return res.status(500).json({ message: 'Internal server error: JWT_SECRET not set' });
+        }
+
+        // ✅ SECURITY FIX: Check for weak JWT secrets
+        const jwtSecret = process.env.JWT_SECRET;
+        const weakSecrets = ['secret', 'jwt_secret', 'your_secret_key', 'mysecret', 'test', 'dev', 'development'];
+        if (jwtSecret.length < 32 || weakSecrets.includes(jwtSecret.toLowerCase())) {
+            console.error('SECURITY WARNING: Weak JWT_SECRET detected');
+            SecurityLogger.securityEvent('WEAK_JWT_SECRET', {
+                secretLength: jwtSecret.length,
+                isCommonWeak: weakSecrets.includes(jwtSecret.toLowerCase())
+            }, req);
+            return res.status(500).json({ message: 'Internal server error: Security configuration issue' });
         }
 
         // Generate a JWT token with the user's ID and role

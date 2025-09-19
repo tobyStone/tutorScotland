@@ -53,10 +53,17 @@ function verify(req, res) {
         return [false, "No authentication token found"];
     }
 
-    // Check if JWT_SECRET is set
+    // ✅ SECURITY FIX: Check if JWT_SECRET is set and strong
     if (!SECRET) {
         console.log('JWT_SECRET is not set');
         return [false, "Server configuration error: JWT_SECRET missing"];
+    }
+
+    // ✅ SECURITY FIX: Check for weak JWT secrets
+    const weakSecrets = ['secret', 'jwt_secret', 'your_secret_key', 'mysecret', 'test', 'dev', 'development'];
+    if (SECRET.length < 32 || weakSecrets.includes(SECRET.toLowerCase())) {
+        console.error('SECURITY WARNING: Weak JWT_SECRET detected in protected route');
+        return [false, "Server configuration error: Security configuration issue"];
     }
 
     try {

@@ -16,6 +16,123 @@
 const connectToDatabase = require('./connectToDatabase');
 const Blog = require('../models/Blog');
 const jwt = require('jsonwebtoken');
+const { validateText, validateObjectId } = require('../utils/input-validation');
+
+/**
+ * Validate blog post data
+ * @param {Object} blogData - Blog data to validate
+ * @returns {Object} Validation result
+ */
+function validateBlogData(blogData) {
+    const errors = [];
+    const sanitized = {};
+
+    // Validate title
+    const titleValidation = validateText(blogData.title, {
+        required: true,
+        minLength: 1,
+        maxLength: 200,
+        fieldName: 'title'
+    });
+    if (!titleValidation.valid) {
+        errors.push(titleValidation.error);
+    } else {
+        sanitized.title = titleValidation.sanitized;
+    }
+
+    // Validate content
+    const contentValidation = validateText(blogData.content, {
+        required: true,
+        minLength: 1,
+        maxLength: 50000,
+        allowHTML: true,
+        fieldName: 'content'
+    });
+    if (!contentValidation.valid) {
+        errors.push(contentValidation.error);
+    } else {
+        sanitized.content = contentValidation.sanitized;
+    }
+
+    // Validate excerpt
+    const excerptValidation = validateText(blogData.excerpt, {
+        required: true,
+        minLength: 1,
+        maxLength: 500,
+        fieldName: 'excerpt'
+    });
+    if (!excerptValidation.valid) {
+        errors.push(excerptValidation.error);
+    } else {
+        sanitized.excerpt = excerptValidation.sanitized;
+    }
+
+    // Validate author
+    const authorValidation = validateText(blogData.author, {
+        required: true,
+        minLength: 1,
+        maxLength: 100,
+        fieldName: 'author'
+    });
+    if (!authorValidation.valid) {
+        errors.push(authorValidation.error);
+    } else {
+        sanitized.author = authorValidation.sanitized;
+    }
+
+    // Validate optional fields
+    if (blogData.category) {
+        const categoryValidation = validateText(blogData.category, {
+            maxLength: 50,
+            fieldName: 'category'
+        });
+        if (!categoryValidation.valid) {
+            errors.push(categoryValidation.error);
+        } else {
+            sanitized.category = categoryValidation.sanitized;
+        }
+    }
+
+    if (blogData.tags) {
+        const tagsValidation = validateText(blogData.tags, {
+            maxLength: 200,
+            fieldName: 'tags'
+        });
+        if (!tagsValidation.valid) {
+            errors.push(tagsValidation.error);
+        } else {
+            sanitized.tags = tagsValidation.sanitized;
+        }
+    }
+
+    if (blogData.imagePath) {
+        const imageValidation = validateText(blogData.imagePath, {
+            maxLength: 500,
+            fieldName: 'imagePath'
+        });
+        if (!imageValidation.valid) {
+            errors.push(imageValidation.error);
+        } else {
+            sanitized.imagePath = imageValidation.sanitized;
+        }
+    }
+
+    // Validate editId if present
+    if (blogData.editId) {
+        const idValidation = validateObjectId(blogData.editId);
+        if (!idValidation.valid) {
+            errors.push('Invalid blog ID format');
+        } else {
+            sanitized.editId = idValidation.sanitized;
+        }
+    }
+
+    return {
+        valid: errors.length === 0,
+        errors,
+        sanitized
+    };
+}
 
 // Helper function to extract and verify token
 function verifyToken(req) {
@@ -92,6 +209,17 @@ function verifyToken(req) {
 module.exports = async (req, res) => {
     console.log('Blog writer API called with method:', req.method);
     console.log('Request headers:', req.headers);
+
+    // ✅ SECURITY FIX: Request size validation for write operations
+    if (['POST', 'PUT'].includes(req.method)) {
+        const requestSize = req.headers['content-length'];
+        const MAX_REQUEST_SIZE = 1024 * 1024; // 1MB should be enough for blog content
+
+        if (requestSize && parseInt(requestSize) > MAX_REQUEST_SIZE) {
+            console.error(`Request too large: ${requestSize} bytes (max: ${MAX_REQUEST_SIZE})`);
+            return res.status(413).json({ message: 'Request too large' });
+        }
+    }
 
     // Allow POST, GET, PUT, and DELETE requests
     if (!['POST', 'GET', 'PUT', 'DELETE'].includes(req.method)) {
@@ -315,40 +443,43 @@ module.exports = async (req, res) => {
             }
         }
 
-        // Log the request body for debugging
-        console.log('Request body:', req.body);
-
-        // Extract fields from request body
-        const {
-            title,
-            author,
-            slug,
-            category,
-            status,
-            excerpt,
-            metaDescription,
-            focusKeyword,
-            tags,
-            featured,
-            publishDate,
-            content,
-            imagePath
-        } = req.body;
-
-        // Validate required fields
-        if (!title || !content || !excerpt) {
-            console.log('Missing required fields:', { title, content, excerpt });
+        // ✅ SECURITY FIX: Comprehensive input validation
+        const validationResult = validateBlogData(req.body);
+        if (!validationResult.valid) {
+            console.log('Blog validation failed:', validationResult.errors);
             return res.status(400).json({
-                message: "Missing required fields: title, content, and excerpt are required"
+                message: "Invalid input data",
+                errors: validationResult.errors
             });
         }
 
+        // Use sanitized data
+        const {
+            title,
+            author,
+            content,
+            excerpt,
+            category: rawCategory,
+            tags,
+            imagePath
+        } = validationResult.sanitized;
+
+        // Extract additional fields that don't need validation
+        const {
+            slug,
+            status,
+            metaDescription,
+            focusKeyword,
+            featured,
+            publishDate
+        } = req.body;
+
         // Process category field
         let categoryArray = [];
-        if (category === 'general') {
+        if (rawCategory === 'general') {
             categoryArray = ['parent', 'tutor'];
-        } else if (category === 'parent' || category === 'tutor') {
-            categoryArray = [category];
+        } else if (rawCategory === 'parent' || rawCategory === 'tutor') {
+            categoryArray = [rawCategory];
         } else {
             // Default to general if category is invalid
             categoryArray = ['parent', 'tutor'];
