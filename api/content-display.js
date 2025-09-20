@@ -19,6 +19,7 @@ const Blog = require('../models/Blog');
 const Section = require('../models/Section');
 const { applyAPISecurityHeaders, applyHTMLSecurityHeaders } = require('../utils/security-headers');
 const { handleAPIError, handleValidationError, handleNotFoundError } = require('../utils/error-handler');
+const { sanitizeString } = require('../utils/input-validation');
 
 /**
  * Validate and sanitize input parameters for content display API
@@ -261,23 +262,31 @@ function generateBlogHTML(postPairs, posts, category, heroImage) {
                         }
                     }
 
+                    // ✅ SECURITY FIX: Sanitize all blog data to prevent XSS
+                    const safeTitle = sanitizeString(post.title || '', { maxLength: 200 });
+                    const safeAuthor = sanitizeString(post.author || '', { maxLength: 100 });
+                    const safeExcerpt = sanitizeString(post.excerpt || '', { maxLength: 500 });
+                    const safeContent = sanitizeString(post.content || '', { maxLength: 200 }); // Only for excerpt
+                    const safeImagePath = sanitizeString(post.imagePath || '', { maxLength: 500 });
+                    const safeId = sanitizeString(post._id?.toString() || '', { maxLength: 50 });
+
                     return `
                 <div class="blog-card">
                     <div class="blog-card-inner">
-                        ${post.imagePath ?
+                        ${safeImagePath ?
                             `<div class="blog-image-container">
-                                <img src="${post.imagePath}" alt="${post.title}" class="blog-card-image">
+                                <img src="${safeImagePath}" alt="${safeTitle}" class="blog-card-image">
                                 ${categoryDisplay ? `<span class="blog-category ${categoryClass}">${categoryDisplay}</span>` : ''}
                             </div>` :
                             `${categoryDisplay ? `<span class="blog-category ${categoryClass} no-image">${categoryDisplay}</span>` : ''}`
                         }
                         <div class="blog-card-content">
-                            <h2 class="blog-card-title">${post.title}</h2>
-                            <p class="blog-card-byline">By ${post.author}</p>
-                            ${post.excerpt ?
-                                `<p class="blog-card-excerpt">${post.excerpt}</p>` :
-                                `<p class="blog-card-excerpt">${post.content.substring(0, 150)}${post.content.length > 150 ? '...' : ''}</p>`}
-                            <a href="/blog/${post._id}" class="blog-read-more">Read more</a>
+                            <h2 class="blog-card-title">${safeTitle}</h2>
+                            <p class="blog-card-byline">By ${safeAuthor}</p>
+                            ${safeExcerpt ?
+                                `<p class="blog-card-excerpt">${safeExcerpt}</p>` :
+                                `<p class="blog-card-excerpt">${safeContent.substring(0, 150)}${safeContent.length > 150 ? '...' : ''}</p>`}
+                            <a href="/blog/${safeId}" class="blog-read-more">Read more</a>
                         </div>
                     </div>
                 </div>`;
@@ -304,10 +313,18 @@ function generateBlogHTML(postPairs, posts, category, heroImage) {
                 }
             }
 
+            // ✅ SECURITY FIX: Sanitize blog post data for full view
+            const safeTitle = sanitizeString(post.title || '', { maxLength: 200 });
+            const safeAuthor = sanitizeString(post.author || '', { maxLength: 100 });
+            const safeImagePath = sanitizeString(post.imagePath || '', { maxLength: 500 });
+            const safeId = sanitizeString(post._id?.toString() || '', { maxLength: 50 });
+            // Note: For blog content, we allow HTML but still sanitize for safety
+            const safeContent = sanitizeString(post.content || '', { maxLength: 100000, allowHTML: true });
+
             return `
             <!-- Full Blog Post ${index + 1} -->
-            <section id="post-${post._id}" class="blog-full-post fade-in-section" style="display: none;">
-                <div class="blog-post-hero" style="background-image: url('${post.imagePath || heroImage}')">
+            <section id="post-${safeId}" class="blog-full-post fade-in-section" style="display: none;">
+                <div class="blog-post-hero" style="background-image: url('${safeImagePath || heroImage}')">
                     <div class="blog-post-hero-overlay">
                         ${categoryDisplay ? `<span class="blog-category ${categoryClass}">${categoryDisplay}</span>` : ''}
                     </div>
@@ -315,11 +332,11 @@ function generateBlogHTML(postPairs, posts, category, heroImage) {
                 <div class="blog-post-content">
                     <a href="/blog" class="blog-back-button">&larr; Back to all posts</a>
                     <div class="blog-post-header">
-                        <h1>${post.title}</h1>
-                        <p class="blog-post-author">By ${post.author}</p>
+                        <h1>${safeTitle}</h1>
+                        <p class="blog-post-author">By ${safeAuthor}</p>
                     </div>
                     <div class="blog-post-text">
-                        ${post.content}
+                        ${safeContent}
                     </div>
                 </div>
             </section>

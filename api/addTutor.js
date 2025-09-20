@@ -15,6 +15,7 @@
 const connectToDatabase = require('./connectToDatabase');
 const jwt = require('jsonwebtoken');
 const Tutor = require('../models/Tutor');
+const { validateText, validateEmail } = require('../utils/input-validation');
 
 // Canonical region labels used across the app
 const CANONICAL_REGIONS = [
@@ -362,11 +363,81 @@ module.exports = async (req, res) => {
             imagePath = ''
         } = req.body;
 
-        // Validate required fields
-        if (!name || !subjects || !costRange) {
-            console.log('Missing required fields:', { name, subjects, costRange });
+        // ✅ SECURITY FIX: Comprehensive input validation
+        const errors = [];
+
+        // Validate name
+        const nameValidation = validateText(name, {
+            required: true,
+            minLength: 1,
+            maxLength: 100,
+            fieldName: 'name'
+        });
+        if (!nameValidation.valid) {
+            errors.push(nameValidation.error);
+        }
+
+        // Validate subjects
+        if (!subjects || (Array.isArray(subjects) && subjects.length === 0)) {
+            errors.push('At least one subject is required');
+        } else {
+            const subjectArray = Array.isArray(subjects) ? subjects : [subjects];
+            for (const subject of subjectArray) {
+                const subjectValidation = validateText(subject, {
+                    required: true,
+                    maxLength: 50,
+                    fieldName: 'subject'
+                });
+                if (!subjectValidation.valid) {
+                    errors.push(`Invalid subject: ${subjectValidation.error}`);
+                }
+            }
+        }
+
+        // Validate cost range
+        const costValidation = validateText(costRange, {
+            required: true,
+            maxLength: 50,
+            fieldName: 'costRange'
+        });
+        if (!costValidation.valid) {
+            errors.push(costValidation.error);
+        }
+
+        // Validate optional fields
+        if (contact) {
+            // Check if it's an email or URL
+            if (contact.includes('@')) {
+                const emailValidation = validateEmail(contact);
+                if (!emailValidation.valid) {
+                    errors.push(`Invalid contact email: ${emailValidation.error}`);
+                }
+            } else {
+                const contactValidation = validateText(contact, {
+                    maxLength: 200,
+                    fieldName: 'contact'
+                });
+                if (!contactValidation.valid) {
+                    errors.push(contactValidation.error);
+                }
+            }
+        }
+
+        if (description) {
+            const descValidation = validateText(description, {
+                maxLength: 1000,
+                fieldName: 'description'
+            });
+            if (!descValidation.valid) {
+                errors.push(descValidation.error);
+            }
+        }
+
+        if (errors.length > 0) {
+            console.log('Tutor validation failed:', errors);
             return res.status(400).json({
-                message: "Missing required fields: name, subjects, and costRange are required"
+                message: "Invalid input data",
+                errors
             });
         }
 

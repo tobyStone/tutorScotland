@@ -68,6 +68,7 @@ const sharp = require('sharp');
 sharp.cache(false);
 sharp.concurrency(2);
 const fsPromises = require('fs/promises');
+const crypto = require('crypto');
 // ────────────────────────────────────────────────
 
 const MAX_UPLOAD = 4 * 1024 * 1024;  // 4MB for images
@@ -164,15 +165,28 @@ function detectMaliciousContent(buffer) {
 const activeUploads = new Map();
 const MAX_CONCURRENT_UPLOADS = 2;
 
+// ✅ HASH-BASED DEDUPLICATION: Track uploaded file hashes to prevent duplicates
+const uploadedHashes = new Map(); // hash -> { url, thumbnailUrl, timestamp }
+
 // ✅ CLEANUP: Periodic cleanup of stale upload entries (every 5 minutes)
 setInterval(() => {
     const now = Date.now();
     const staleThreshold = 5 * 60 * 1000; // 5 minutes
+    const hashCacheThreshold = 24 * 60 * 60 * 1000; // 24 hours for hash cache
 
+    // Clean up active uploads
     for (const [uploadId, timestamp] of activeUploads.entries()) {
         if (now - timestamp > staleThreshold) {
             console.log(`🧹 Cleaning up stale upload: ${uploadId}`);
             activeUploads.delete(uploadId);
+        }
+    }
+
+    // Clean up old hash entries (keep for 24 hours)
+    for (const [hash, data] of uploadedHashes.entries()) {
+        if (now - data.timestamp > hashCacheThreshold) {
+            console.log(`🧹 Cleaning up old hash entry: ${hash.substring(0, 16)}...`);
+            uploadedHashes.delete(hash);
         }
     }
 }, 5 * 60 * 1000);
@@ -533,6 +547,32 @@ async function handleFileUpload(req, res, payload) {
         }
         console.log('✅ Content security scan passed - file appears safe');
 
+        // ✅ HASH-BASED DEDUPLICATION: Calculate file hash to check for duplicates
+        const fileHash = crypto.createHash('sha256').update(buffer).digest('hex');
+        console.log(`🔍 File hash: ${fileHash.substring(0, 16)}...`);
+
+        // Check if we've already uploaded this exact file
+        if (uploadedHashes.has(fileHash)) {
+            const existing = uploadedHashes.get(fileHash);
+            console.log(`♻️ Duplicate file detected - returning existing URLs`);
+
+            // Clean up temp file
+            fs.unlink(uploadedFile.filepath, (err) => {
+                if (err) console.error('Error deleting temp file:', err);
+            });
+
+            // Remove from active uploads
+            activeUploads.delete(uploadId);
+
+            return res.status(200).json({
+                message: 'File already exists - returning existing URLs',
+                url: existing.url,
+                thumbnailUrl: existing.thumbnailUrl,
+                duplicate: true,
+                originalHash: fileHash.substring(0, 16)
+            });
+        }
+
         // Handle videos differently - skip Sharp processing
         if (isVideo) {
             console.log(`📹 Processing video upload: ${filename}`);
@@ -888,6 +928,14 @@ async function handleFileUpload(req, res, payload) {
         activeUploads.delete(uploadId);
         console.log(`✅ Upload ${uploadId} completed successfully`);
 
+        // ✅ HASH-BASED DEDUPLICATION: Store hash for future deduplication
+        uploadedHashes.set(fileHash, {
+            url,
+            thumbnailUrl,
+            timestamp: Date.now()
+        });
+        console.log(`💾 Stored file hash for deduplication: ${fileHash.substring(0, 16)}...`);
+
         // Log successful file upload
         try {
             SecurityLogger.fileUpload(
@@ -905,7 +953,8 @@ async function handleFileUpload(req, res, payload) {
             thumb: thumbnailUrl,
             width: metadata.width,
             height: metadata.height,
-            type: uploadedFile.mimetype
+            type: uploadedFile.mimetype,
+            hash: fileHash.substring(0, 16) // Return truncated hash for reference
         });
 
     } catch (error) {

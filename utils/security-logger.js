@@ -201,7 +201,7 @@ function logSecurityEvent(eventType, severity, message, details = {}, req = null
         sentryLogSecurityEvent(eventType, {
             severity,
             message,
-            details: sanitizedDetails,
+            details: logEntry.details,
             timestamp: logEntry.timestamp
         }, req);
     } catch (sentryError) {
@@ -311,6 +311,19 @@ const SecurityLogger = {
             SecuritySeverity.LOW,
             `File uploaded: ${filename}`,
             { filename, fileSize, userInfo },
+            req
+        );
+    },
+
+    /**
+     * Generic security event logging
+     */
+    securityEvent: (eventType, details, req) => {
+        logSecurityEvent(
+            eventType,
+            SecuritySeverity.MEDIUM,
+            `Security event: ${eventType}`,
+            details,
             req
         );
     },

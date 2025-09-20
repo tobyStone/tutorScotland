@@ -19,6 +19,7 @@ const connectToDatabase = require('./connectToDatabase');
 const mongoose = require('mongoose');
 const { applyAPISecurityHeaders, applyHTMLSecurityHeaders } = require('../utils/security-headers');
 const { handleAPIError, handleValidationError } = require('../utils/error-handler');
+const { sanitizeString } = require('../utils/input-validation');
 
 function escapeRegExp(str = '') {
   return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -244,27 +245,42 @@ module.exports = async (req, res) => {
         let tutorsHtml = '';
 
         if (tutors.length > 0) {
-            tutorsHtml = tutors.map(tutor => `
+            tutorsHtml = tutors.map(tutor => {
+                // ✅ SECURITY FIX: Sanitize all tutor data to prevent XSS
+                const safeName = sanitizeString(tutor.name || '', { maxLength: 100 });
+                const safeSubjects = (tutor.subjects || []).map(subject =>
+                    sanitizeString(subject, { maxLength: 50 })
+                ).join(', ');
+                const safeBadges = (tutor.badges || []).map(badge =>
+                    sanitizeString(badge, { maxLength: 100 })
+                );
+                const safeRegions = (tutor.regions || []).map(region =>
+                    sanitizeString(region, { maxLength: 100 })
+                ).join(', ');
+                const safeImagePath = sanitizeString(tutor.imagePath || '', { maxLength: 500 });
+                const safeCostRange = sanitizeString(tutor.costRange || '', { maxLength: 50 });
+
+                return `
                 <section class="tutor-card">
-                    <img src="${tutor.imagePath || '/images/tutor0.jpg'}"
-                    alt="Tutor ${tutor.name}"
+                    <img src="${safeImagePath || '/images/tutor0.jpg'}"
+                    alt="Tutor ${safeName}"
                     onerror="this.src='/images/tutor0.jpg'"
                     class="tutor-image" loading="lazy"
                     decoding="async"
                     width="300" height="200"
                     style="object-fit:cover; object-position: center center; display: block;">
-                    <h3>${tutor.name}</h3>
-                    <p>Subjects: ${tutor.subjects.join(', ')}</p>
-                    <p>Cost: <span class="purple-pound">${tutor.costRange.replace(/__P__/g, '&pound')} per hour</span></p>
+                    <h3>${safeName}</h3>
+                    <p>Subjects: ${safeSubjects}</p>
+                    <p>Cost: <span class="purple-pound">${safeCostRange.replace(/__P__/g, '&pound')} per hour</span></p>
                     <ul>
-                        ${tutor.badges.map(badge => `
+                        ${safeBadges.map(badge => `
                             <li class="badge-item">
                                 ${badge} <span class="badge-tick">&#10004;</span>
                             </li>
                         `).join('')}
                     </ul>
                     <p class="available-in custom-style">
-                        <strong>Available in:</strong> ${(tutor.regions || []).join(', ')}
+                        <strong>Available in:</strong> ${safeRegions}
                     </p>
                     ${(() => {
                         if (!tutor.contact) return ''; // Exit if no contact info
@@ -301,7 +317,8 @@ module.exports = async (req, res) => {
                         return ''; // Fallback for any other case
                     })()}
                 </section>
-            `).join('');
+                `;
+            }).join('');
         } else {
             tutorsHtml = `
                 <div class="no-tutors-message">
