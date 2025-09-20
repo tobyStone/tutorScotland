@@ -14,9 +14,8 @@ import { vi } from 'vitest';
 process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
 process.env.NODE_ENV = 'test';
 
-// Import models and API handler
-const User = require('../../../models/User.js');
-const uploadHandler = require('../../../api/upload-image.js');
+// Import models and API handler (using dynamic imports for mixed module compatibility)
+let User, uploadHandler;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -95,6 +94,10 @@ describe('Image Upload Pipeline Integration', () => {
   beforeAll(async () => {
     // Note: Database connection is handled by global setup
     console.log('Setting up image upload test fixtures');
+
+    // Dynamic imports for mixed module compatibility
+    User = (await import('../../../models/User.js')).default;
+    uploadHandler = (await import('../../../api/upload-image.js')).default;
 
     // Create test image buffer
     testImagePath = path.join(__dirname, '../../fixtures/data/test-image.jpg');
@@ -415,6 +418,12 @@ describe('File Upload API Integration (Real API Testing)', () => {
   beforeAll(async () => {
     // Note: Database connection handled by global setup
     console.log('🔧 Setting up real API integration tests');
+
+    // Dynamic imports for mixed module compatibility (if not already loaded)
+    if (!User) {
+      User = (await import('../../../models/User.js')).default;
+      uploadHandler = (await import('../../../api/upload-image.js')).default;
+    }
 
     // Create test app
     app = createTestApp();

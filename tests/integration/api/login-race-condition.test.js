@@ -118,7 +118,8 @@ describe('Login Race Condition Security Tests', () => {
 
       // Analyze results
       const rateLimitedRequests = results.filter(r => r.status === 429);
-      const failedRequests = results.filter(r => r.status === 404 || r.status === 400);
+      // ✅ SECURITY FIX: Include 401 responses from hardened login handler
+      const failedRequests = results.filter(r => r.status === 401 || r.status === 404 || r.status === 400);
       const totalBlocked = rateLimitedRequests.length;
       const totalProcessed = failedRequests.length;
 
@@ -174,7 +175,8 @@ describe('Login Race Condition Security Tests', () => {
       
       const successfulLogins = validResults.filter(r => r.status === 200);
       const rateLimitedInvalid = invalidResults.filter(r => r.status === 429);
-      const processedInvalid = invalidResults.filter(r => r.status === 404 || r.status === 400);
+      // ✅ SECURITY FIX: Include 401 responses from hardened login handler
+      const processedInvalid = invalidResults.filter(r => r.status === 401 || r.status === 404 || r.status === 400);
 
       console.log(`📊 Valid: ${successfulLogins.length} success, Invalid: ${processedInvalid.length} processed, ${rateLimitedInvalid.length} rate-limited`);
 

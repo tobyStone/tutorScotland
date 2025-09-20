@@ -135,9 +135,10 @@ describe('Login API Integration (ENABLED - Fixed for vitest 2.1)', () => {
       const response = await request(app)
         .post('/')
         .send(loginData)
-        .expect(404);
+        .expect(401);
 
-      expect(response.body).toHaveProperty('message', 'User not found');
+      // ✅ SECURITY FIX: Hardened response prevents email enumeration
+      expect(response.body).toHaveProperty('message', 'Invalid email or password');
     });
 
     it('should reject login with invalid password', async () => {
@@ -149,9 +150,10 @@ describe('Login API Integration (ENABLED - Fixed for vitest 2.1)', () => {
       const response = await request(app)
         .post('/')
         .send(loginData)
-        .expect(400);
+        .expect(401);
 
-      expect(response.body).toHaveProperty('message', 'Invalid credentials');
+      // ✅ SECURITY FIX: Hardened response prevents email enumeration
+      expect(response.body).toHaveProperty('message', 'Invalid email or password');
     });
 
     it('should handle case-insensitive email login', async () => {
@@ -220,10 +222,10 @@ describe('Login API Integration (ENABLED - Fixed for vitest 2.1)', () => {
       const response = await request(app)
         .post('/')
         .send({})
-        .expect(404); // API returns 404 for missing email
+        .expect(400); // API returns 400 for missing required fields
 
       // Should handle missing email/password gracefully
-      expect(response.body).toHaveProperty('message', 'User not found');
+      expect(response.body).toHaveProperty('message', 'Invalid input data');
     });
   });
 
