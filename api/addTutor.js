@@ -16,6 +16,8 @@ const connectToDatabase = require('./connectToDatabase');
 const jwt = require('jsonwebtoken');
 const Tutor = require('../models/Tutor');
 const { validateText, validateEmail } = require('../utils/input-validation');
+const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
+const { csrfProtection } = require('../utils/csrf-protection');
 
 // Canonical region labels used across the app
 const CANONICAL_REGIONS = [
@@ -133,10 +135,22 @@ function verifyToken(req) {
  * @throws {Error} 500 - Database connection or server errors
  */
 module.exports = async (req, res) => {
+    // ✅ CRITICAL SECURITY FIX: Apply comprehensive security headers
+    applyComprehensiveSecurityHeaders(res);
+
     // Allow POST, PUT, and DELETE methods
     if (!['POST', 'PUT', 'DELETE'].includes(req.method)) {
         res.setHeader('Allow', ['POST', 'PUT', 'DELETE']);
         return res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
+
+    // ✅ CRITICAL SECURITY FIX: CSRF protection for all state-changing operations
+    const csrfResult = csrfProtection(req, res);
+    if (!csrfResult.success) {
+        return res.status(403).json({
+            message: 'CSRF token validation failed',
+            error: csrfResult.error
+        });
     }
 
     // Verify authentication

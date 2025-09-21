@@ -17,6 +17,8 @@ const connectToDatabase = require('./connectToDatabase');
 const Blog = require('../models/Blog');
 const jwt = require('jsonwebtoken');
 const { validateText, validateObjectId } = require('../utils/input-validation');
+const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
+const { csrfProtection } = require('../utils/csrf-protection');
 
 /**
  * Validate blog post data
@@ -207,8 +209,22 @@ function verifyToken(req) {
  * @throws {Error} 500 - Database connection or server errors
  */
 module.exports = async (req, res) => {
+    // ✅ CRITICAL SECURITY FIX: Apply comprehensive security headers
+    applyComprehensiveSecurityHeaders(res);
+
     console.log('Blog writer API called with method:', req.method);
     console.log('Request headers:', req.headers);
+
+    // ✅ CRITICAL SECURITY FIX: CSRF protection for state-changing operations
+    if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
+        const csrfResult = csrfProtection(req, res);
+        if (!csrfResult.success) {
+            return res.status(403).json({
+                message: 'CSRF token validation failed',
+                error: csrfResult.error
+            });
+        }
+    }
 
     // ✅ SECURITY FIX: Request size validation for write operations
     if (['POST', 'PUT'].includes(req.method)) {

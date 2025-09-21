@@ -17,6 +17,8 @@
 const { formidable } = require('formidable');
 const connectToDatabase = require('./connectToDatabase');
 const Section = require('../models/Section');
+const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
+const { csrfProtection } = require('../utils/csrf-protection');
 
 // Convert formidable's callback to a promise
 const parseForm = (req) => {
@@ -46,9 +48,23 @@ const parseForm = (req) => {
 
 module.exports = async (req, res) => {
     try {
+        // ✅ CRITICAL SECURITY FIX: Apply comprehensive security headers
+        applyComprehensiveSecurityHeaders(res);
+
         await connectToDatabase();
 
         const { method } = req;
+
+        // ✅ CRITICAL SECURITY FIX: CSRF protection for state-changing operations
+        if (['POST', 'PUT', 'DELETE'].includes(method)) {
+            const csrfResult = csrfProtection(req, res);
+            if (!csrfResult.success) {
+                return res.status(403).json({
+                    message: 'CSRF token validation failed',
+                    error: csrfResult.error
+                });
+            }
+        }
 
         // 🔒 SECURITY FIX: Add authentication for write operations
         if (['POST', 'PUT', 'DELETE'].includes(method)) {
