@@ -224,8 +224,8 @@ describe('Login Race Condition Security Tests', () => {
           .post('/')
           .send({ email: testEmail, password: wrongPassword });
 
-        // Should process the attempt (not immediately rate limited)
-        expect([400, 404]).toContain(nextAttemptResponse.status);
+        // Should process the attempt (not immediately rate limited) - hardened to 401
+        expect([400, 404, 401]).toContain(nextAttemptResponse.status);
       } else {
         console.log('✅ Rate limiting prevented login (security working)');
       }

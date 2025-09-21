@@ -79,9 +79,9 @@ describe('Add Tutor API Security Integration Tests', () => {
     // Clear database and reset mocks
     await mongoose.connection.db.dropDatabase();
     vi.clearAllMocks();
-    
-    // Default mock implementations
-    mockCsrfProtection.mockReturnValue({ success: true });
+
+    // Default mock implementations - CSRF as callback-based middleware
+    mockCsrfProtection.mockImplementation((req, res, next) => next());
     mockApplySecurityHeaders.mockImplementation(() => {});
   });
 
@@ -138,10 +138,9 @@ describe('Add Tutor API Security Integration Tests', () => {
     });
 
     it('should return 403 when CSRF validation fails', async () => {
-      // Mock CSRF failure
-      mockCsrfProtection.mockReturnValue({ 
-        success: false, 
-        error: 'Invalid CSRF token' 
+      // Mock CSRF failure - callback with error
+      mockCsrfProtection.mockImplementation((req, res, next) => {
+        next(new Error('Invalid CSRF token'));
       });
 
       const response = await request(app)
@@ -192,7 +191,7 @@ describe('Add Tutor API Security Integration Tests', () => {
 
       // Reset mocks
       vi.clearAllMocks();
-      mockCsrfProtection.mockReturnValue({ success: true });
+      mockCsrfProtection.mockImplementation((req, res, next) => next());
       mockApplySecurityHeaders.mockImplementation(() => {});
 
       // Test PUT
@@ -206,7 +205,7 @@ describe('Add Tutor API Security Integration Tests', () => {
 
       // Reset mocks
       vi.clearAllMocks();
-      mockCsrfProtection.mockReturnValue({ success: true });
+      mockCsrfProtection.mockImplementation((req, res, next) => next());
       mockApplySecurityHeaders.mockImplementation(() => {});
 
       // Test DELETE
@@ -220,10 +219,9 @@ describe('Add Tutor API Security Integration Tests', () => {
     });
 
     it('should handle security failures gracefully', async () => {
-      // Mock CSRF failure
-      mockCsrfProtection.mockReturnValue({ 
-        success: false, 
-        error: 'CSRF token missing' 
+      // Mock CSRF failure - callback with error
+      mockCsrfProtection.mockImplementation((req, res, next) => {
+        next(new Error('CSRF token missing'));
       });
 
       const response = await request(app)

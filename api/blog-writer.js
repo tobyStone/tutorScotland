@@ -217,11 +217,21 @@ module.exports = async (req, res) => {
 
     // ✅ CRITICAL SECURITY FIX: CSRF protection for state-changing operations
     if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
-        const csrfResult = csrfProtection(req, res);
-        if (!csrfResult.success) {
+        try {
+            await new Promise((resolve, reject) => {
+                csrfProtection(req, res, (err) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+        } catch (error) {
+            console.log('CSRF validation failed:', error.message);
             return res.status(403).json({
                 message: 'CSRF token validation failed',
-                error: csrfResult.error
+                error: error.message
             });
         }
     }

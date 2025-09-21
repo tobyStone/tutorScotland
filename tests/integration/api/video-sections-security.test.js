@@ -79,9 +79,9 @@ describe('Video Sections API Security Integration Tests', () => {
     // Clear database and reset mocks
     await mongoose.connection.db.dropDatabase();
     vi.clearAllMocks();
-    
-    // Default mock implementations
-    mockCsrfProtection.mockReturnValue({ success: true });
+
+    // Default mock implementations - CSRF as callback-based middleware
+    mockCsrfProtection.mockImplementation((req, res, next) => next());
     mockApplySecurityHeaders.mockImplementation(() => {});
   });
 
@@ -96,10 +96,9 @@ describe('Video Sections API Security Integration Tests', () => {
     });
 
     it('should apply security headers even for failed requests', async () => {
-      // Mock CSRF failure
-      mockCsrfProtection.mockReturnValue({ 
-        success: false, 
-        error: 'Invalid CSRF token' 
+      // Mock CSRF failure - callback with error
+      mockCsrfProtection.mockImplementation((req, res, next) => {
+        next(new Error('Invalid CSRF token'));
       });
 
       const response = await request(app)
@@ -154,10 +153,9 @@ describe('Video Sections API Security Integration Tests', () => {
     });
 
     it('should return 403 when CSRF validation fails', async () => {
-      // Mock CSRF failure
-      mockCsrfProtection.mockReturnValue({ 
-        success: false, 
-        error: 'Invalid CSRF token' 
+      // Mock CSRF failure - callback with error
+      mockCsrfProtection.mockImplementation((req, res, next) => {
+        next(new Error('Invalid CSRF token'));
       });
 
       const response = await request(app)
