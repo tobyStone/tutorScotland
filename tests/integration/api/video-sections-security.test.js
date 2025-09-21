@@ -192,10 +192,9 @@ describe('Video Sections API Security Integration Tests', () => {
     });
 
     it('should handle security failures gracefully', async () => {
-      // Mock CSRF failure
-      mockCsrfProtection.mockReturnValue({ 
-        success: false, 
-        error: 'CSRF token missing' 
+      // Mock CSRF failure - callback with error
+      mockCsrfProtection.mockImplementation((req, res, next) => {
+        next(new Error('CSRF token missing'));
       });
 
       const response = await request(app)
@@ -215,7 +214,7 @@ describe('Video Sections API Security Integration Tests', () => {
       for (const method of methods) {
         // Reset mocks for each test
         vi.clearAllMocks();
-        mockCsrfProtection.mockReturnValue({ success: true });
+        mockCsrfProtection.mockImplementation((req, res, next) => next());
         mockApplySecurityHeaders.mockImplementation(() => {});
 
         await request(app)[method.toLowerCase()]('/')

@@ -183,10 +183,9 @@ describe('Blog Writer API Security Integration Tests', () => {
     });
 
     it('should handle security failures gracefully', async () => {
-      // Mock CSRF failure
-      mockCsrfProtection.mockReturnValue({ 
-        success: false, 
-        error: 'CSRF token missing' 
+      // Mock CSRF failure - callback with error
+      mockCsrfProtection.mockImplementation((req, res, next) => {
+        next(new Error('CSRF token missing'));
       });
 
       const response = await request(app)
