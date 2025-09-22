@@ -6,6 +6,7 @@ import request from 'supertest';
 import { createServer } from 'http';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import createVercelCompatibleResponse from '../../utils/createVercelCompatibleResponse.js';
 
 // Mock external services
 import { vi } from 'vitest';
@@ -23,29 +24,8 @@ const __dirname = path.dirname(__filename);
 // Create test server with Vercel-compatible response object
 function createTestApp() {
   return createServer((req, res) => {
-    // Add Vercel-compatible response methods
-    if (!res.status) {
-      res.status = function(code) {
-        res.statusCode = code;
-        return res;
-      };
-    }
-    if (!res.json) {
-      res.json = function(data) {
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(data));
-        return res;
-      };
-    }
-    if (!res.send) {
-      res.send = function(data) {
-        if (typeof data === 'object') {
-          return res.json(data);
-        }
-        res.end(data);
-        return res;
-      };
-    }
+    // ✅ SECURITY FIX: Use shared response helper with proper charset handling
+    createVercelCompatibleResponse(res);
 
     // Parse cookies for authentication
     const cookieHeader = req.headers.cookie;
