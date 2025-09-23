@@ -177,10 +177,12 @@ describe('Pre-Authentication Exposure Security', () => {
         test('should have secure templates in templates directory', async () => {
             const adminTemplatePath = path.join(__dirname, '../../../templates/admin-dashboard.html');
             const blogTemplatePath = path.join(__dirname, '../../../templates/blog-writer-dashboard.html');
+            const tutorTemplatePath = path.join(__dirname, '../../../templates/tutor-zone-dashboard.html');
 
             // Templates should exist
             let adminTemplateExists = true;
             let blogTemplateExists = true;
+            let tutorTemplateExists = true;
 
             try {
                 await fs.access(adminTemplatePath);
@@ -194,8 +196,15 @@ describe('Pre-Authentication Exposure Security', () => {
                 blogTemplateExists = false;
             }
 
+            try {
+                await fs.access(tutorTemplatePath);
+            } catch {
+                tutorTemplateExists = false;
+            }
+
             expect(adminTemplateExists).toBe(true);
             expect(blogTemplateExists).toBe(true);
+            expect(tutorTemplateExists).toBe(true);
 
             // Templates should contain the actual dashboard content
             if (adminTemplateExists) {
@@ -209,6 +218,57 @@ describe('Pre-Authentication Exposure Security', () => {
                 expect(blogTemplate).toContain('blog-writer-dashboard');
                 expect(blogTemplate).toContain('Blog Management');
             }
+
+            if (tutorTemplateExists) {
+                const tutorTemplate = await fs.readFile(tutorTemplatePath, 'utf8');
+                expect(tutorTemplate).toContain('tutorzone-page');
+                expect(tutorTemplate).toContain('Resources for Tutors');
+            }
+        });
+
+        test('should serve minimal redirect page for public tutorszone.html', async () => {
+            const tutorzonePath = path.join(__dirname, '../../../public/tutorszone.html');
+            const tutorzoneHtml = await fs.readFile(tutorzonePath, 'utf8');
+
+            // Should contain redirect script and minimal content
+            expect(tutorzoneHtml).toContain('window.location.href = \'/tutorszone\'');
+            expect(tutorzoneHtml).toContain('Redirecting to secure tutor zone');
+
+            // Should NOT contain sensitive tutor content
+            expect(tutorzoneHtml).not.toContain('Resources for Tutors');
+            expect(tutorzoneHtml).not.toContain('Professional Development');
+            expect(tutorzoneHtml).not.toContain('Connect with Fellow Tutors');
+            expect(tutorzoneHtml).not.toContain('Training & Certification');
+            expect(tutorzoneHtml).not.toContain('resource-list');
+        });
+    });
+
+    describe('API Security', () => {
+        test('should require authentication for content-manager overrides operation', async () => {
+            // This test would need to be run against a real server
+            // For now, we'll test that the sensitiveReadOperations array includes overrides
+            const contentManagerPath = path.join(__dirname, '../../../api/content-manager.js');
+            const contentManagerCode = await fs.readFile(contentManagerPath, 'utf8');
+
+            // Check that overrides is in sensitiveReadOperations
+            expect(contentManagerCode).toContain("sensitiveReadOperations = ['debug-sections', 'overrides', 'list-images']");
+        });
+
+        test('should require authentication for content-manager list-images operation', async () => {
+            const contentManagerPath = path.join(__dirname, '../../../api/content-manager.js');
+            const contentManagerCode = await fs.readFile(contentManagerPath, 'utf8');
+
+            // Check that list-images is in sensitiveReadOperations
+            expect(contentManagerCode).toContain("sensitiveReadOperations = ['debug-sections', 'overrides', 'list-images']");
+        });
+
+        test('should have proper authentication checks in protected.js for tutor role', async () => {
+            const protectedPath = path.join(__dirname, '../../../api/protected.js');
+            const protectedCode = await fs.readFile(protectedPath, 'utf8');
+
+            // Check that tutor role is supported for HTML serving
+            expect(protectedCode).toContain("requiredRole === 'tutor'");
+            expect(protectedCode).toContain('tutor-zone-dashboard.html');
         });
     });
 });

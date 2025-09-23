@@ -15,7 +15,7 @@
     },
     {
       "source": "/tutorszone",
-      "destination": "/tutorszone.html"
+      "destination": "/api/protected.js?role=tutor&html=true"
     },
     {
       "source": "/admin",

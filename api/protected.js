@@ -114,17 +114,29 @@ const handler = async (req, res) => {
 
     console.log(`Access granted to ${userRole} user: ${payloadOrMsg.username || 'unknown'}`);
 
-    // 🔒 SECURITY: Serve HTML template for authenticated admin users
-    if (serveHtml && requiredRole === 'admin') {
+    // 🔒 SECURITY: Serve HTML template for authenticated users
+    if (serveHtml) {
         try {
-            const templatePath = path.join(process.cwd(), 'templates', 'admin-dashboard.html');
+            let templatePath;
+            let errorMessage;
+
+            if (requiredRole === 'admin') {
+                templatePath = path.join(process.cwd(), 'templates', 'admin-dashboard.html');
+                errorMessage = 'Error loading admin dashboard';
+            } else if (requiredRole === 'tutor') {
+                templatePath = path.join(process.cwd(), 'templates', 'tutor-zone-dashboard.html');
+                errorMessage = 'Error loading tutor zone';
+            } else {
+                return res.status(400).json({ message: 'Invalid role for HTML serving' });
+            }
+
             const html = fs.readFileSync(templatePath, 'utf8');
 
             res.setHeader('Content-Type', 'text/html');
             return res.status(200).send(html);
         } catch (error) {
-            console.error('Error serving admin template:', error);
-            return res.status(500).json({ message: 'Error loading admin dashboard' });
+            console.error(`Error serving ${requiredRole} template:`, error);
+            return res.status(500).json({ message: errorMessage || 'Error loading dashboard' });
         }
     }
 
