@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Tutors Alliance Scotland</title>
+    <link rel="stylesheet" href="/css/styles2.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/media-queries.css">
+    <script src="/js/html-sanitizer.js" defer></script>
+</head>
+<body>
+    <!-- ─────────────── HEADER/BANNER ─────────────── -->
+    <header>
+        <h1 data-ve-block-id="0a085027-3a19-49be-87ae-b06a6e36d043">Tutors Alliance Scotland</h1>
+        <div class="header-links">
+            <a class="banner-login-link login-box" href="/" data-ve-block-id="a2c3c663-5d9d-4b5b-b630-e017bf8340b4">Home</a>
+            <a class="banner-login-link login-box" href="/login.html?role=admin" data-ve-block-id="ee305c05-9d20-4871-927f-7dfc04e21884">Login</a>
+        </div>
+    </header>
+
+    <!-- Navigation will be loaded here by nav-loader.js -->
+
+    <div class="rolling-banner">
+        <div class="rolling-content" id="tutorBanner"></div>
+    </div>
+
+    <!-- ─────────────── MAIN CONTENT ─────────────── -->
+    <main id="admin-dashboard">
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="content-tab">Manage Content</button>
+                <button class="tab-button" data-tab="tutors-tab">Manage Tutors</button>
+            </div>
+        </div>
+
+        <!-- Content Tab -->
+        <div id="content-tab" class="tab-content active">
+            <!-- ░░░░░░  ADD‑/DELETE SECTION  ░░░░░░ -->
+            <div class="admin-form-container">
+                <!-- Heading will change dynamically -->
+                <h3 id="sectionFormHeading" data-ve-block-id="8eee3405-0831-4242-b51f-c00b65269345">Add a Dynamic Section</h3>
+
+                <!-- ★ NEW – simplified form : only page, heading, paragraph, image ★ -->
+                <form id="addSection" enctype="multipart/form-data" autocomplete="off">
+                    <label>
+                        Target Page:
+                        <select name="page" id="pageSelect">
+                            <!-- Generated dynamically from pages.js -->
+                        </select>
+                        <a id="viewPageLink" href="/" target="_blank" style="margin-left:12px;font-size:.9em" data-ve-block-id="58511f1e-05ce-4b1b-a7b1-04dd59d69b20">🔗 Open Page</a>
+                    </label>
+
+                    <!-- [MOVE-SECTION] ▸ Hidden unless editing -->
+                    <label id="movePageRow" style="display:none;margin-top:10px;padding:8px;background:#f0f8ff;border-radius:4px;border-left:3px solid #4a90e2;">
+                        <span style="font-weight:500;color:#2c5aa0;">📍 Move this section to:</span>
+                        <select name="targetPage" id="movePageSelect" style="margin-left:8px;">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <small style="display:block;margin-top:4px;color:#666;font-style:italic;">
+                            Section will be moved to the selected page and admin view will switch automatically.<br>
+                            <strong>Note:</strong> You may need to reorder sections on the target page after moving.
+                        </small>
+                    </label>
+
+                    <!-- ▸▸▸ Rolling-banner ONLY fields (stays visible at all times) -->
+                    <div id="rollingBannerFields" style="display:none;">
+                        <label>News Content:
+                            <textarea name="rollingText" rows="3" required placeholder="Enter news content to display in the rolling banner"></textarea>
+                        </label>
+                    </div>
+
+                    <!-- ▸▸▸ Meta controls – hidden for banner -->
+                    <div id="metaControls">
+                        <label>Layout:
+                            <select name="layout" id="sectionLayout">
+                                <option value="standard" selected>Standard</option>
+                                <option value="team">Team Members Grid</option>
+                                <option value="list">List Section</option>
+                                <option value="testimonial">Testimonial Section</option>
+                                <option value="video">Video Section</option>
+                            </select>
+                        </label>
+
+                        <!-- ★ Navigation integration controls (always visible) -->
+                        <label style="display:flex; align-items:center;">
+                            <input type="checkbox" name="showInNav" id="showInNav" style="width:auto; margin-right:8px;">
+                            <span>Add a link to the navigation bar</span>
+                        </label>
+
+                        <label id="navCatRow" style="margin-top:10px; display:none;">
+                            Show under:
+                            <select name="navCategory" id="sectionNavCategory">
+                                <option value="tutors">For Tutors</option>
+                                <option value="parents">For Parents</option>
+                                <option value="about" selected>About TAS</option>
+                            </select>
+                        </label>
+
+                        <!-- ★ ONE shared heading field, outside the per-layout wrappers -->
+                        <label id="mainHeadingLabel">Heading:<input name="heading" required></label>
+
+                        <div id="standardFields">
+                            <!-- ★ Wrapper holds only the controls that belong to the Standard layout -->
+                            <div id="standardOnlyFields">
+                                <label>Paragraph:<textarea name="text" rows="3" required></textarea></label>
+                            </div><!-- /standardOnlyFields -->
+                        </div>
+
+                        <!-- ★ SHARED: Image and button fields available for all layout types -->
+                        <div id="sharedFields">
+                            <label>Image:<input type="file" name="image" id="sectionImage" accept="image/*"></label>
+                            <!-- To show current image and allow removal -->
+                            <div id="currentImagePreview" style="margin-top: 10px; display: none;">
+                                <p style="margin-bottom: 5px;" data-ve-block-id="09d85e4c-83d0-4bb1-836e-f6fb414b5946">Current Image:</p>
+                                <img src="" alt="Current Image" style="max-width: 100px; max-height: 100px; border-radius: 4px;" data-ve-block-id="0a1cfcab-196e-4c69-8198-94c82e8f690e">
+                                <label style="display: inline-flex; align-items: center; margin-left: 15px;">
+                                    <input type="checkbox" name="removeImage" value="true" style="width: auto; margin-right: 5px;"> Remove Image
+                                </label>
+                            </div>
+
+                            <!-- ★ NEW: Add button fields -->
+                            <hr style="border-top: 1px solid #b3a1b3; margin: 20px 0;">
+                            <label>Button Label (Optional): <input name="buttonLabel" placeholder="e.g. Learn More"></label>
+                            <label>Button URL (Optional): <input name="buttonUrl" type="url" placeholder="https://example.com"></label>
+
+                            <!-- ★ NEW: Checkbox to remove button, shown only during edit -->
+                            <label id="removeButtonRow" style="display:none; align-items:center; margin-top: 10px;">
+                              <input type="checkbox" name="removeButton" value="true" style="width:auto; margin-right:8px;">
+                              Remove Button
+                            </label>
+                        </div><!-- /sharedFields -->
+                    </div><!-- /metaControls -->
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/js/nav-loader.js"></script>
+    <script src="/js/dynamic-sections.js"></script>
+    <script src="/js/admin.js"></script>
+    <script src="/js/pages.js"></script>
+    <script src="/js/video-player.js"></script>
+    <script src="/js/visual-editor.js"></script>
+</body>
+</html>

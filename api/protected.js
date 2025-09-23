@@ -16,6 +16,8 @@
 
 // api/protected.js
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const path = require('path');
 const SECRET = process.env.JWT_SECRET;
 
 /* Small helper keeps everything in one file, so auth.js can disappear */
@@ -82,11 +84,17 @@ const handler = async (req, res) => {
 
     /* Which role is required?   /api/protected?role=admin   (default = tutor) */
     const requiredRole = (req.query.role || 'tutor').toLowerCase();
-    console.log(`Required role: ${requiredRole}`);
+    const serveHtml = req.query.html === 'true';
+    console.log(`Required role: ${requiredRole}, Serve HTML: ${serveHtml}`);
 
     const [ok, payloadOrMsg] = verify(req, res);
     if (!ok) {
         console.log(`Authentication failed: ${payloadOrMsg}`);
+        if (serveHtml) {
+            // Redirect to login for HTML requests
+            res.writeHead(302, { 'Location': `/login.html?role=${requiredRole}` });
+            return res.end();
+        }
         return res.status(401).json({ message: payloadOrMsg });
     }
 
@@ -96,10 +104,29 @@ const handler = async (req, res) => {
     const userRole = (payloadOrMsg.role || '').toLowerCase();
     if (userRole !== requiredRole) {
         console.log(`Access denied: User role is ${userRole}, required role is ${requiredRole}`);
+        if (serveHtml) {
+            // Redirect to login for HTML requests
+            res.writeHead(302, { 'Location': `/login.html?role=${requiredRole}` });
+            return res.end();
+        }
         return res.status(403).json({ message: `Access denied: ${requiredRole} only` });
     }
 
     console.log(`Access granted to ${userRole} user: ${payloadOrMsg.username || 'unknown'}`);
+
+    // 🔒 SECURITY: Serve HTML template for authenticated admin users
+    if (serveHtml && requiredRole === 'admin') {
+        try {
+            const templatePath = path.join(process.cwd(), 'templates', 'admin-dashboard.html');
+            const html = fs.readFileSync(templatePath, 'utf8');
+
+            res.setHeader('Content-Type', 'text/html');
+            return res.status(200).send(html);
+        } catch (error) {
+            console.error('Error serving admin template:', error);
+            return res.status(500).json({ message: 'Error loading admin dashboard' });
+        }
+    }
 
     /* Success return whatever you need */
     return res

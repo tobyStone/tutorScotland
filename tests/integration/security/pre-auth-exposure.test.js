@@ -18,8 +18,6 @@ const path = require('path');
 describe('Pre-Authentication Exposure Security', () => {
     describe('Admin Dashboard Security', () => {
         let adminHtml;
-        let dom;
-        let document;
 
         beforeAll(async () => {
             // Load the admin.html file
@@ -27,75 +25,40 @@ describe('Pre-Authentication Exposure Security', () => {
             adminHtml = await fs.readFile(adminPath, 'utf8');
         });
 
-        beforeEach(() => {
-            // Create a fresh DOM for each test
-            dom = new JSDOM(adminHtml, {
-                runScripts: 'dangerously',
-                resources: 'usable',
-                pretendToBeVisual: true
-            });
-            document = dom.window.document;
-            
-            // Mock fetch to simulate authentication failure
-            dom.window.fetch = async (url) => {
-                if (url.includes('/api/protected')) {
-                    return {
-                        ok: false,
-                        status: 401,
-                        text: async () => 'Unauthorized'
-                    };
-                }
-                throw new Error('Unexpected fetch call');
-            };
+        test('should serve minimal redirect page with no sensitive content', () => {
+            // 🔒 SECURITY: Public admin.html should only contain redirect, no sensitive forms
+            expect(adminHtml).toContain('window.location.href = \'/admin\'');
+            expect(adminHtml).toContain('Redirecting to secure admin portal');
+
+            // Should NOT contain any sensitive admin content
+            expect(adminHtml).not.toContain('admin-dashboard');
+            expect(adminHtml).not.toContain('addSection');
+            expect(adminHtml).not.toContain('tutorTable');
+            expect(adminHtml).not.toContain('Manage Content');
+            expect(adminHtml).not.toContain('Manage Tutors');
+            expect(adminHtml).not.toContain('sectionLayout');
+            expect(adminHtml).not.toContain('pageSelect');
         });
 
-        afterEach(() => {
-            dom.window.close();
+        test('should not expose any form elements in public HTML', () => {
+            // 🔒 SECURITY: No forms should be present in the public redirect page
+            expect(adminHtml).not.toContain('<form');
+            expect(adminHtml).not.toContain('enctype="multipart/form-data"');
+            expect(adminHtml).not.toContain('input type="file"');
+            expect(adminHtml).not.toContain('textarea');
+            expect(adminHtml).not.toContain('select');
         });
 
-        test('should hide admin dashboard content by default', () => {
-            const adminDashboard = document.getElementById('admin-dashboard');
-            const authLoading = document.getElementById('auth-loading');
-            
-            expect(adminDashboard).toBeTruthy();
-            expect(authLoading).toBeTruthy();
-            
-            // Admin dashboard should be hidden by default
-            expect(adminDashboard.style.display).toBe('none');
-            
-            // Loading screen should be visible
-            expect(authLoading.style.display).not.toBe('none');
-        });
-
-        test('should not expose sensitive form elements in initial HTML', () => {
-            // Check that sensitive elements are inside the hidden dashboard
-            const adminDashboard = document.getElementById('admin-dashboard');
-            
-            // These elements should exist but be hidden inside the dashboard
-            const tutorForm = adminDashboard.querySelector('form[id*="tutor"]');
-            const sectionForm = adminDashboard.querySelector('form[id*="section"]');
-            const tutorTable = adminDashboard.querySelector('#tutorTable');
-            
-            // Elements should exist in the hidden dashboard
-            expect(tutorForm || sectionForm || tutorTable).toBeTruthy();
-            
-            // But the dashboard itself should be hidden
-            expect(adminDashboard.style.display).toBe('none');
-        });
-
-        test('should show loading message while auth check is pending', () => {
-            const authLoading = document.getElementById('auth-loading');
-            const loadingText = authLoading.textContent;
-            
-            expect(loadingText).toContain('Verifying admin access');
-            expect(authLoading.style.display).not.toBe('none');
+        test('should have immediate redirect script', () => {
+            // 🔒 SECURITY: Should redirect immediately to server-authenticated endpoint
+            expect(adminHtml).toContain('<script>');
+            expect(adminHtml).toContain('window.location.href = \'/admin\'');
+            expect(adminHtml).not.toContain('fetch(\'/api/protected');
         });
     });
 
     describe('Blog Writer Security', () => {
         let blogWriterHtml;
-        let dom;
-        let document;
 
         beforeAll(async () => {
             // Load the blogWriter.html file
@@ -103,67 +66,35 @@ describe('Pre-Authentication Exposure Security', () => {
             blogWriterHtml = await fs.readFile(blogWriterPath, 'utf8');
         });
 
-        beforeEach(() => {
-            // Create a fresh DOM for each test
-            dom = new JSDOM(blogWriterHtml, {
-                runScripts: 'dangerously',
-                resources: 'usable',
-                pretendToBeVisual: true
-            });
-            document = dom.window.document;
-            
-            // Mock fetch to simulate authentication failure
-            dom.window.fetch = async (url) => {
-                if (url.includes('/api/protected')) {
-                    return {
-                        ok: false,
-                        status: 401,
-                        text: async () => 'Unauthorized'
-                    };
-                }
-                throw new Error('Unexpected fetch call');
-            };
+        test('should serve minimal redirect page with no sensitive content', () => {
+            // 🔒 SECURITY: Public blogWriter.html should only contain redirect, no sensitive forms
+            expect(blogWriterHtml).toContain('window.location.href = \'/blog-writer\'');
+            expect(blogWriterHtml).toContain('Redirecting to secure blog writer portal');
+
+            // Should NOT contain any sensitive blog writer content
+            expect(blogWriterHtml).not.toContain('blog-writer-dashboard');
+            expect(blogWriterHtml).not.toContain('blogForm');
+            expect(blogWriterHtml).not.toContain('blogTitle');
+            expect(blogWriterHtml).not.toContain('blogContent');
+            expect(blogWriterHtml).not.toContain('Blog Management');
+            expect(blogWriterHtml).not.toContain('Existing Blogs');
         });
 
-        afterEach(() => {
-            dom.window.close();
+        test('should not expose any form elements in public HTML', () => {
+            // 🔒 SECURITY: No forms should be present in the public redirect page
+            expect(blogWriterHtml).not.toContain('<form');
+            expect(blogWriterHtml).not.toContain('enctype="multipart/form-data"');
+            expect(blogWriterHtml).not.toContain('input type="file"');
+            expect(blogWriterHtml).not.toContain('textarea');
+            expect(blogWriterHtml).not.toContain('blogTitle');
+            expect(blogWriterHtml).not.toContain('blogContent');
         });
 
-        test('should hide blog writer dashboard content by default', () => {
-            const blogWriterDashboard = document.getElementById('blog-writer-dashboard');
-            const authLoading = document.getElementById('auth-loading');
-            
-            expect(blogWriterDashboard).toBeTruthy();
-            expect(authLoading).toBeTruthy();
-            
-            // Blog writer dashboard should be hidden by default
-            expect(blogWriterDashboard.style.display).toBe('none');
-            
-            // Loading screen should be visible
-            expect(authLoading.style.display).not.toBe('none');
-        });
-
-        test('should not expose blog editing forms in initial HTML', () => {
-            // Check that sensitive elements are inside the hidden dashboard
-            const blogWriterDashboard = document.getElementById('blog-writer-dashboard');
-            
-            // These elements should exist but be hidden inside the dashboard
-            const blogForm = blogWriterDashboard.querySelector('form');
-            const blogTable = blogWriterDashboard.querySelector('table');
-            
-            // Elements should exist in the hidden dashboard
-            expect(blogForm || blogTable).toBeTruthy();
-            
-            // But the dashboard itself should be hidden
-            expect(blogWriterDashboard.style.display).toBe('none');
-        });
-
-        test('should show loading message while auth check is pending', () => {
-            const authLoading = document.getElementById('auth-loading');
-            const loadingText = authLoading.textContent;
-            
-            expect(loadingText).toContain('Verifying blog writer access');
-            expect(authLoading.style.display).not.toBe('none');
+        test('should have immediate redirect script', () => {
+            // 🔒 SECURITY: Should redirect immediately to server-authenticated endpoint
+            expect(blogWriterHtml).toContain('<script>');
+            expect(blogWriterHtml).toContain('window.location.href = \'/blog-writer\'');
+            expect(blogWriterHtml).not.toContain('fetch(\'/api/protected');
         });
     });
 
@@ -171,26 +102,113 @@ describe('Pre-Authentication Exposure Security', () => {
         test('should not expose debug-sections.html in production', async () => {
             const debugPath = path.join(__dirname, '../../../public/debug-sections.html');
             const rootDebugPath = path.join(__dirname, '../../../debug-sections.html');
-            
+
             // Check that debug-sections.html doesn't exist in public or root
             let publicExists = true;
             let rootExists = true;
-            
+
             try {
                 await fs.access(debugPath);
             } catch {
                 publicExists = false;
             }
-            
+
             try {
                 await fs.access(rootDebugPath);
             } catch {
                 rootExists = false;
             }
-            
+
             // Debug file should not exist in either location
             expect(publicExists).toBe(false);
             expect(rootExists).toBe(false);
+        });
+
+        test('should not expose demo-context-indicators.html in production', async () => {
+            const demoPath = path.join(__dirname, '../../../public/demo-context-indicators.html');
+
+            // Check that demo-context-indicators.html doesn't exist in public
+            let demoExists = true;
+
+            try {
+                await fs.access(demoPath);
+            } catch {
+                demoExists = false;
+            }
+
+            // Demo file should not exist
+            expect(demoExists).toBe(false);
+        });
+    });
+
+    describe('Server-Side Authentication Security', () => {
+        test('should serve minimal redirect page for public admin.html', async () => {
+            const adminPath = path.join(__dirname, '../../../public/admin.html');
+            const adminHtml = await fs.readFile(adminPath, 'utf8');
+
+            // Should contain redirect script and minimal content
+            expect(adminHtml).toContain('window.location.href = \'/admin\'');
+            expect(adminHtml).toContain('Redirecting to secure admin portal');
+
+            // Should NOT contain sensitive admin forms or content
+            expect(adminHtml).not.toContain('addSection');
+            expect(adminHtml).not.toContain('tutorTable');
+            expect(adminHtml).not.toContain('admin-dashboard');
+            expect(adminHtml).not.toContain('Manage Content');
+            expect(adminHtml).not.toContain('Manage Tutors');
+        });
+
+        test('should serve minimal redirect page for public blogWriter.html', async () => {
+            const blogWriterPath = path.join(__dirname, '../../../public/blogWriter.html');
+            const blogWriterHtml = await fs.readFile(blogWriterPath, 'utf8');
+
+            // Should contain redirect script and minimal content
+            expect(blogWriterHtml).toContain('window.location.href = \'/blog-writer\'');
+            expect(blogWriterHtml).toContain('Redirecting to secure blog writer portal');
+
+            // Should NOT contain sensitive blog writer forms or content
+            expect(blogWriterHtml).not.toContain('blogForm');
+            expect(blogWriterHtml).not.toContain('blogTitle');
+            expect(blogWriterHtml).not.toContain('blogContent');
+            expect(blogWriterHtml).not.toContain('Blog Management');
+            expect(blogWriterHtml).not.toContain('Existing Blogs');
+        });
+
+        test('should have secure templates in templates directory', async () => {
+            const adminTemplatePath = path.join(__dirname, '../../../templates/admin-dashboard.html');
+            const blogTemplatePath = path.join(__dirname, '../../../templates/blog-writer-dashboard.html');
+
+            // Templates should exist
+            let adminTemplateExists = true;
+            let blogTemplateExists = true;
+
+            try {
+                await fs.access(adminTemplatePath);
+            } catch {
+                adminTemplateExists = false;
+            }
+
+            try {
+                await fs.access(blogTemplatePath);
+            } catch {
+                blogTemplateExists = false;
+            }
+
+            expect(adminTemplateExists).toBe(true);
+            expect(blogTemplateExists).toBe(true);
+
+            // Templates should contain the actual dashboard content
+            if (adminTemplateExists) {
+                const adminTemplate = await fs.readFile(adminTemplatePath, 'utf8');
+                expect(adminTemplate).toContain('admin-dashboard');
+                expect(adminTemplate).toContain('Manage Content');
+            }
+
+            if (blogTemplateExists) {
+                const blogTemplate = await fs.readFile(blogTemplatePath, 'utf8');
+                expect(blogTemplate).toContain('blog-writer-dashboard');
+                expect(blogTemplate).toContain('Blog Management');
+            }
         });
     });
 });

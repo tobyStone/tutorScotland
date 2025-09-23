@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Writer - Tutors Alliance Scotland</title>
+    <link rel="stylesheet" href="/css/styles2.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/media-queries.css">
+    <script src="/js/html-sanitizer.js" defer></script>
+</head>
+<body>
+    <!-- ─────────────── HEADER/BANNER ─────────────── -->
+    <header>
+        <h1 data-ve-block-id="0a085027-3a19-49be-87ae-b06a6e36d043">Tutors Alliance Scotland</h1>
+        <div class="header-links">
+            <a class="banner-login-link login-box" href="/" data-ve-block-id="a2c3c663-5d9d-4b5b-b630-e017bf8340b4">Home</a>
+            <a class="banner-login-link login-box" href="/login.html?role=blogwriter" data-ve-block-id="ee305c05-9d20-4871-927f-7dfc04e21884">Login</a>
+        </div>
+    </header>
+
+    <!-- Navigation will be loaded here by nav-loader.js -->
+
+    <div class="rolling-banner">
+        <div class="rolling-content" id="tutorBanner"></div>
+    </div>
+
+    <!-- ─────────────── MAIN CONTENT ─────────────── -->
+    <main id="blog-writer-dashboard">
+        <div class="admin-form-container">
+            <h2 data-ve-block-id="8eee3405-0831-4242-b51f-c00b65269345">Blog Management</h2>
+            
+            <!-- Blog Form -->
+            <form id="blogForm" enctype="multipart/form-data" autocomplete="off">
+                <input type="hidden" id="blogId" name="blogId">
+                
+                <label>Title:
+                    <input type="text" id="blogTitle" name="title" required maxlength="200" placeholder="Enter blog title">
+                </label>
+                
+                <label>Content:
+                    <textarea id="blogContent" name="content" rows="15" required placeholder="Write your blog content here..."></textarea>
+                </label>
+                
+                <label>Author:
+                    <input type="text" id="blogAuthor" name="author" required maxlength="100" placeholder="Author name">
+                </label>
+                
+                <label>Tags (comma-separated):
+                    <input type="text" id="blogTags" name="tags" placeholder="education, tutoring, scotland">
+                </label>
+                
+                <label>Meta Description:
+                    <textarea id="blogMetaDescription" name="metaDescription" rows="3" maxlength="160" placeholder="Brief description for search engines (max 160 characters)"></textarea>
+                </label>
+                
+                <label>Featured Image:
+                    <input type="file" id="blogImage" name="image" accept="image/*">
+                </label>
+                
+                <div id="currentImagePreview" style="margin-top: 10px; display: none;">
+                    <p>Current Image:</p>
+                    <img src="" alt="Current Image" style="max-width: 200px; max-height: 200px; border-radius: 4px;">
+                    <label style="display: inline-flex; align-items: center; margin-left: 15px;">
+                        <input type="checkbox" name="removeImage" value="true" style="width: auto; margin-right: 5px;"> Remove Image
+                    </label>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" id="saveBlogBtn" class="btn-primary">Save Blog</button>
+                    <button type="button" id="publishBlogBtn" class="btn-success">Publish</button>
+                    <button type="button" id="cancelBlogBtn" class="btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Blog List -->
+        <div class="admin-form-container">
+            <h3>Existing Blogs</h3>
+            <div id="blogList">
+                <!-- Blog list will be populated here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="/js/nav-loader.js"></script>
+    <script src="/js/dynamic-sections.js"></script>
+    <script src="/js/blogWriter.js"></script>
+</body>
+</html>

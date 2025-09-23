@@ -19,7 +19,7 @@
     },
     {
       "source": "/admin",
-      "destination": "/admin.html"
+      "destination": "/api/protected.js?role=admin&html=true"
     },
     {
       "source": "/login",
