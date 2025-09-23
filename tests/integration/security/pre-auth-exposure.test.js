@@ -251,7 +251,8 @@ describe('Pre-Authentication Exposure Security', () => {
             const contentManagerCode = await fs.readFile(contentManagerPath, 'utf8');
 
             // Check that overrides is in sensitiveReadOperations
-            expect(contentManagerCode).toContain("sensitiveReadOperations = ['debug-sections', 'overrides', 'list-images']");
+            expect(contentManagerCode).toContain("'overrides'");
+            expect(contentManagerCode).toContain("sensitiveReadOperations");
         });
 
         test('should require authentication for content-manager list-images operation', async () => {
@@ -259,7 +260,8 @@ describe('Pre-Authentication Exposure Security', () => {
             const contentManagerCode = await fs.readFile(contentManagerPath, 'utf8');
 
             // Check that list-images is in sensitiveReadOperations
-            expect(contentManagerCode).toContain("sensitiveReadOperations = ['debug-sections', 'overrides', 'list-images']");
+            expect(contentManagerCode).toContain("'list-images'");
+            expect(contentManagerCode).toContain("sensitiveReadOperations");
         });
 
         test('should have proper authentication checks in protected.js for tutor role', async () => {
@@ -269,6 +271,70 @@ describe('Pre-Authentication Exposure Security', () => {
             // Check that tutor role is supported for HTML serving
             expect(protectedCode).toContain("requiredRole === 'tutor'");
             expect(protectedCode).toContain('tutor-zone-dashboard.html');
+        });
+
+        test('should protect section order API behind authentication', async () => {
+            const contentManagerPath = path.join(__dirname, '../../../api/content-manager.js');
+            const contentManagerCode = await fs.readFile(contentManagerPath, 'utf8');
+
+            // Check that get-order is in sensitiveReadOperations
+            expect(contentManagerCode).toContain("'get-order'");
+            expect(contentManagerCode).toContain("sensitiveReadOperations");
+        });
+    });
+
+    describe('Visual Editor Security', () => {
+        test('should use secure bootstrap instead of direct visual editor loading', async () => {
+            const publicFiles = [
+                'public/contact.html',
+                'public/page-template.html',
+                'public/about-us.html',
+                'public/index.html',
+                'public/login.html',
+                'public/page.html',
+                'public/parents.html',
+                'public/partnerships.html',
+                'public/publicConnect.html',
+                'public/tutorConnect.html',
+                'public/tutorDirectory.html',
+                'public/tutorMembership.html'
+            ];
+
+            for (const filePath of publicFiles) {
+                const fullPath = path.join(__dirname, '../../../', filePath);
+                const content = await fs.readFile(fullPath, 'utf8');
+
+                // Should use bootstrap, not direct visual editor
+                expect(content).toContain('visual-editor-bootstrap.js');
+                expect(content).not.toContain('visual-editor-v2.js');
+            }
+        });
+
+        test('should have secure bootstrap script that checks authentication', async () => {
+            const bootstrapPath = path.join(__dirname, '../../../public/js/visual-editor-bootstrap.js');
+            const bootstrapCode = await fs.readFile(bootstrapPath, 'utf8');
+
+            // Should check admin authentication before loading
+            expect(bootstrapCode).toContain('checkAdminAuth');
+            expect(bootstrapCode).toContain('/api/protected?role=admin');
+            expect(bootstrapCode).toContain('Not authenticated as admin - visual editor not loaded');
+        });
+
+        test('should have conditional initialization in visual editor', async () => {
+            const visualEditorPath = path.join(__dirname, '../../../public/js/visual-editor-v2.js');
+            const visualEditorCode = await fs.readFile(visualEditorPath, 'utf8');
+
+            // Should have conditional initialization logic
+            expect(visualEditorCode).toContain('initializeVisualEditor');
+            expect(visualEditorCode).toContain('authentication required');
+        });
+
+        test('should allow direct loading in admin dashboard template', async () => {
+            const adminTemplatePath = path.join(__dirname, '../../../templates/admin-dashboard.html');
+            const adminTemplate = await fs.readFile(adminTemplatePath, 'utf8');
+
+            // Admin template should directly load visual editor (already authenticated)
+            expect(adminTemplate).toContain('visual-editor-v2.js');
         });
     });
 });

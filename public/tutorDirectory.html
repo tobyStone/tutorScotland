@@ -148,7 +148,8 @@
             }
         </script>
 
-        <script type="module" src="/js/visual-editor-v2.js?v=20250101-CACHE-BUST&t=1735747200" defer=""></script>
+        <!-- 🔒 SECURITY: Load visual editor only for authenticated admins -->
+        <script src="/js/visual-editor-bootstrap.js" defer=""></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
                 initRollingBanner();

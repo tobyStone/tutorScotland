@@ -15,7 +15,8 @@
     <script src="/js/dynamic-nav.js" defer=""></script>
     <!-- Google Analytics -->
     <script src="/js/google-analytics.js" defer=""></script>
-    <script type="module" src="/js/visual-editor-v2.js?v=20250101-CACHE-BUST&t=1735747800" defer=""></script>
+    <!-- 🔒 SECURITY: Load visual editor only for authenticated admins -->
+    <script src="/js/visual-editor-bootstrap.js" defer=""></script>
     <style>
         /* Custom styles for team member images */
         .team-member img {

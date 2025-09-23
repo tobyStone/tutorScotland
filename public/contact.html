@@ -178,7 +178,8 @@
     <!-- order matters -- all scripts are defered so they execute in DOM order -->
 
     <script src="/js/rolling-banner.js" defer=""></script>   <!-- *uses* initRollingBanner -->
-    <script type="module" src="/js/visual-editor-v2.js?v=20250101-CACHE-BUST&t=1735747200" defer=""></script>
+    <!-- 🔒 SECURITY: Load visual editor only for authenticated admins -->
+    <script src="/js/visual-editor-bootstrap.js" defer=""></script>
 
     <!-- 🔒 SECURITY: Load HTML sanitizer before dynamic sections -->
     <script src="/js/html-sanitizer.js" defer=""></script>

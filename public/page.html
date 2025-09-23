@@ -23,7 +23,8 @@
     <script src="/js/nav-loader.js" defer=""></script>
     <script src="/js/dynamic-nav.js" defer=""></script>
     <script src="/js/rolling-banner.js" defer=""></script>
-    <script type="module" src="/js/visual-editor-v2.js?v=20250101-CACHE-BUST&t=1735747300" defer=""></script>
+    <!-- 🔒 SECURITY: Load visual editor only for authenticated admins -->
+    <script src="/js/visual-editor-bootstrap.js" defer=""></script>
     <!-- Google Analytics -->
     <script src="/js/google-analytics.js" defer=""></script>
 </head>
@@ -367,7 +368,7 @@
     <script src="/responsive-helper.js" defer=""></script>   <!-- defines initRollingBanner -->
     <script src="/js/rolling-banner.js" defer=""></script>   <!-- *uses* initRollingBanner -->
     <script src="/js/dynamic-nav.js" defer=""></script>
-    <script type="module" src="/js/visual-editor-v2.js?v=20250101-CACHE-BUST&t=1735747300" defer=""></script>
+
 
     <!-- 🔒 SECURITY: Load HTML sanitizer before dynamic sections -->
     <script src="/js/html-sanitizer.js" defer=""></script>
