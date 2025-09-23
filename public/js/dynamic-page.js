@@ -41,7 +41,11 @@ async function loadDynamicPage() {
         
         const heroContent = document.createElement('div');
         heroContent.className = 'hero-content';
-        heroContent.innerHTML = `<h1>${page.heading}</h1>`;
+
+        // 🔒 SECURITY FIX: Use safe DOM manipulation instead of innerHTML
+        const heroHeading = document.createElement('h1');
+        heroHeading.textContent = page.heading;
+        heroContent.appendChild(heroHeading);
         
         heroSection.appendChild(heroShield);
         heroSection.appendChild(heroContent);
@@ -60,7 +64,13 @@ async function loadDynamicPage() {
         
         // Add the page content
         if (page.text) {
-            mainContent.innerHTML = page.text;
+            // 🔒 SECURITY FIX: Use HTML sanitizer for page content
+            if (window.HTMLSanitizer && window.HTMLSanitizer.safeSetInnerHTML) {
+                window.HTMLSanitizer.safeSetInnerHTML(mainContent, page.text);
+            } else {
+                // Fallback: at least escape basic HTML entities
+                mainContent.textContent = page.text;
+            }
         }
 
         // Add image if available
@@ -83,6 +93,7 @@ async function loadDynamicPage() {
         }
 
         // Clear existing content
+        // 🔒 SECURITY: Safe to clear content this way
         main.innerHTML = '';
 
         // Add elements to the page
@@ -105,13 +116,27 @@ async function loadDynamicPage() {
         // Show error message to user
         const main = document.querySelector('main');
         if (main) {
-            main.innerHTML = `
-                <div class="error-message">
-                    <h1>Page Not Found</h1>
-                    <p>Sorry, the page you're looking for doesn't exist.</p>
-                    <a href="/" class="btn-primary">Return to Home</a>
-                </div>
-            `;
+            // 🔒 SECURITY FIX: Use safe DOM creation for error message
+            main.innerHTML = ''; // Clear first
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+
+            const errorHeading = document.createElement('h1');
+            errorHeading.textContent = 'Page Not Found';
+
+            const errorText = document.createElement('p');
+            errorText.textContent = "Sorry, the page you're looking for doesn't exist.";
+
+            const homeLink = document.createElement('a');
+            homeLink.href = '/';
+            homeLink.className = 'btn-primary';
+            homeLink.textContent = 'Return to Home';
+
+            errorDiv.appendChild(errorHeading);
+            errorDiv.appendChild(errorText);
+            errorDiv.appendChild(homeLink);
+            main.appendChild(errorDiv);
         }
     }
 }

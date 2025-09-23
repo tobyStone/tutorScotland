@@ -184,7 +184,10 @@ module.exports = async (req, res) => {
     try {
         await connectDB();
 
-        // 🔒 SECURITY FIX: Add authentication for write operations
+        // 🔒 SECURITY FIX: Add authentication for write operations and check user role for read operations
+        let isAuthenticated = false;
+        let userPayload = null;
+
         if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
             const { verify } = require('./protected');
             const [ok, payload] = verify(req, res);
@@ -206,6 +209,16 @@ module.exports = async (req, res) => {
             }
 
             console.log(`✅ Authenticated sections management by admin ${payload.id}`);
+            isAuthenticated = true;
+            userPayload = payload;
+        } else {
+            // For GET requests, check if user is authenticated (but don't require it)
+            const { verify } = require('./protected');
+            const [ok, payload] = verify(req, res);
+            if (ok && payload.role === 'admin') {
+                isAuthenticated = true;
+                userPayload = payload;
+            }
         }
 
         // CREATE
@@ -454,17 +467,54 @@ module.exports = async (req, res) => {
                 const heading = getField('heading')?.toString().trim() || '';
                 const text = getField('text')?.toString().trim() || '';
 
-                // Keep your original validation, adjusted for different layout types
+                // 🔒 SECURITY FIX: Comprehensive input validation and sanitization
                 let layout = getField('layout') || 'standard';
-                if (!heading || !text) {
-                    if (['team', 'list', 'testimonial'].includes(layout)) {
-                        // Special layouts have their own text content structure
-                        if (!heading) {
-                            return res.status(400).json({ message: 'Heading required' });
+
+                // Validate and sanitize heading
+                const headingValidation = validateText(heading, {
+                    required: true,
+                    minLength: 1,
+                    maxLength: 200,
+                    allowHTML: false,
+                    fieldName: 'heading'
+                });
+                if (!headingValidation.valid) {
+                    return res.status(400).json({ message: headingValidation.error });
+                }
+                const sanitizedHeading = headingValidation.sanitized;
+
+                // Validate and sanitize text content based on layout
+                let sanitizedText = '';
+                if (['team', 'list', 'testimonial'].includes(layout)) {
+                    // Special layouts have JSON text content - validate structure but allow HTML in content
+                    if (text) {
+                        const textValidation = validateText(text, {
+                            required: false,
+                            maxLength: 50000, // Larger limit for JSON content
+                            allowHTML: true, // Allow HTML in JSON content but will be sanitized later
+                            fieldName: 'text'
+                        });
+                        if (!textValidation.valid) {
+                            return res.status(400).json({ message: textValidation.error });
                         }
-                    } else {
-                        return res.status(400).json({ message: 'Heading and text required' });
+                        sanitizedText = textValidation.sanitized;
                     }
+                } else {
+                    // Standard layout - validate text content
+                    if (!text) {
+                        return res.status(400).json({ message: 'Text content is required for standard sections' });
+                    }
+                    const textValidation = validateText(text, {
+                        required: true,
+                        minLength: 1,
+                        maxLength: 10000,
+                        allowHTML: true, // Allow HTML but will be sanitized
+                        fieldName: 'text'
+                    });
+                    if (!textValidation.valid) {
+                        return res.status(400).json({ message: textValidation.error });
+                    }
+                    sanitizedText = textValidation.sanitized;
                 }
 
                 // ✅ NEW: Validate testimonial JSON format
@@ -550,13 +600,40 @@ module.exports = async (req, res) => {
                     (Array.isArray(fields.position) ? fields.position[0] : fields.position).toString().toLowerCase()
                     : 'bottom';
 
-                // Get button fields
-                const buttonLabel = fields.buttonLabel ?
+                // 🔒 SECURITY FIX: Validate and sanitize button fields
+                let sanitizedButtonLabel = '';
+                let sanitizedButtonUrl = '';
+
+                const rawButtonLabel = fields.buttonLabel ?
                     (Array.isArray(fields.buttonLabel) ? fields.buttonLabel[0] : fields.buttonLabel).toString().trim()
                     : '';
-                const buttonUrl = fields.buttonUrl ?
+                const rawButtonUrl = fields.buttonUrl ?
                     (Array.isArray(fields.buttonUrl) ? fields.buttonUrl[0] : fields.buttonUrl).toString().trim()
                     : '';
+
+                if (rawButtonLabel) {
+                    const buttonLabelValidation = validateText(rawButtonLabel, {
+                        required: false,
+                        maxLength: 100,
+                        allowHTML: false,
+                        fieldName: 'buttonLabel'
+                    });
+                    if (!buttonLabelValidation.valid) {
+                        return res.status(400).json({ message: buttonLabelValidation.error });
+                    }
+                    sanitizedButtonLabel = buttonLabelValidation.sanitized;
+                }
+
+                if (rawButtonUrl) {
+                    const buttonUrlValidation = validateURL(rawButtonUrl, {
+                        allowedProtocols: ['http', 'https'],
+                        maxLength: 2048
+                    });
+                    if (!buttonUrlValidation.valid) {
+                        return res.status(400).json({ message: `Button URL validation failed: ${buttonUrlValidation.error}` });
+                    }
+                    sanitizedButtonUrl = buttonUrlValidation.sanitized;
+                }
 
                 // Get navigation fields
                 const navCategory = fields.navCategory ?
@@ -580,15 +657,65 @@ module.exports = async (req, res) => {
                     layout = 'standard';
                 }
 
+                // 🔒 SECURITY FIX: Validate and sanitize team member data
                 let team = [];
                 if (layout === 'team' && fields.team) {
                     try {
                         const teamData = Array.isArray(fields.team) ? fields.team[0] : fields.team;
-                        team = JSON.parse(teamData);
-                        console.log('Parsed team data:', team);
+                        const parsedTeam = JSON.parse(teamData);
+
+                        // Validate each team member
+                        if (Array.isArray(parsedTeam)) {
+                            for (const member of parsedTeam) {
+                                if (!member.name || !member.bio) {
+                                    return res.status(400).json({ message: 'Each team member must have name and bio fields' });
+                                }
+
+                                // Validate and sanitize team member fields
+                                const nameValidation = validateText(member.name, {
+                                    required: true,
+                                    maxLength: 100,
+                                    allowHTML: false,
+                                    fieldName: 'team member name'
+                                });
+                                if (!nameValidation.valid) {
+                                    return res.status(400).json({ message: nameValidation.error });
+                                }
+
+                                const bioValidation = validateText(member.bio, {
+                                    required: true,
+                                    maxLength: 1000,
+                                    allowHTML: true, // Allow HTML in bio but will be sanitized on render
+                                    fieldName: 'team member bio'
+                                });
+                                if (!bioValidation.valid) {
+                                    return res.status(400).json({ message: bioValidation.error });
+                                }
+
+                                // Sanitize team member data
+                                member.name = nameValidation.sanitized;
+                                member.bio = bioValidation.sanitized;
+
+                                // Validate quote if present
+                                if (member.quote) {
+                                    const quoteValidation = validateText(member.quote, {
+                                        required: false,
+                                        maxLength: 500,
+                                        allowHTML: false,
+                                        fieldName: 'team member quote'
+                                    });
+                                    if (!quoteValidation.valid) {
+                                        return res.status(400).json({ message: quoteValidation.error });
+                                    }
+                                    member.quote = quoteValidation.sanitized;
+                                }
+                            }
+                            team = parsedTeam;
+                        }
+                        console.log('Validated team data:', team);
                     } catch (e) {
                         console.error('Error parsing team data:', e);
-                        team = [];
+                        return res.status(400).json({ message: 'Invalid team data format' });
                     }
                 }
 
@@ -597,18 +724,33 @@ module.exports = async (req, res) => {
                 const headingBlockId = uuidv4();
                 const contentBlockId = uuidv4();
                 const imageBlockId = image ? uuidv4() : '';
-                const buttonBlockId = (buttonLabel && buttonUrl) ? uuidv4() : '';
+                const buttonBlockId = (sanitizedButtonLabel && sanitizedButtonUrl) ? uuidv4() : '';
 
                 console.log('Creating section with data:', {
-                    page, heading, text, image, isFullPage, slug, isPublished, position, navCategory, showInNav, navAnchor, layout, team,
+                    page, heading: sanitizedHeading, text: sanitizedText, image, isFullPage, slug, isPublished, position, navCategory, showInNav, navAnchor, layout, team,
                     headingBlockId, contentBlockId, imageBlockId, buttonBlockId
                 });
 
-                // Build document data, only including slug if it has a value
+                // Build document data using sanitized values, only including slug if it has a value
                 const docData = {
-                    page, heading, text, image, isFullPage, isPublished, position, buttonLabel, buttonUrl,
-                    navCategory, showInNav, navAnchor, layout, team,
-                    headingBlockId, contentBlockId, imageBlockId, buttonBlockId
+                    page,
+                    heading: sanitizedHeading,
+                    text: sanitizedText,
+                    image,
+                    isFullPage,
+                    isPublished,
+                    position,
+                    buttonLabel: sanitizedButtonLabel,
+                    buttonUrl: sanitizedButtonUrl,
+                    navCategory,
+                    showInNav,
+                    navAnchor,
+                    layout,
+                    team,
+                    headingBlockId,
+                    contentBlockId,
+                    imageBlockId,
+                    buttonBlockId
                 };
 
                 // Only include slug field if it has a value (for full pages)
@@ -681,10 +823,19 @@ module.exports = async (req, res) => {
                     // If slug is provided, get a specific page
                     if (req.query.slug) {
                         const slug = Array.isArray(req.query.slug) ? req.query.slug[0] : req.query.slug;
-                        const page = await Section.findOne({
+
+                        // 🔒 SECURITY FIX: Add isPublished filter for anonymous users
+                        const query = {
                             isFullPage: true,
                             slug: slug
-                        }).lean();
+                        };
+
+                        // Only show published pages to anonymous users
+                        if (!isAuthenticated) {
+                            query.isPublished = true;
+                        }
+
+                        const page = await Section.findOne(query).lean();
 
                         if (!page) {
                             return res.status(404).json({ message: 'Page not found' });
@@ -694,9 +845,13 @@ module.exports = async (req, res) => {
                     }
 
                     // Otherwise, get all pages
-                    const pages = await Section.find({
-                        isFullPage: true
-                    }).sort({ createdAt: -1 }).lean();
+                    // 🔒 SECURITY FIX: Add isPublished filter for anonymous users
+                    const query = { isFullPage: true };
+                    if (!isAuthenticated) {
+                        query.isPublished = true;
+                    }
+
+                    const pages = await Section.find(query).sort({ createdAt: -1 }).lean();
 
                     // ✅ BACKWARD COMPATIBILITY: Normalize layout field
                     const normalizedPages = pages.map(page => {
@@ -722,12 +877,20 @@ module.exports = async (req, res) => {
                 : 'index';
 
             try {
-                const list = await Section.find({
+                // 🔒 SECURITY FIX: Add isPublished filter for anonymous users
+                const query = {
                     page,
                     isFullPage: { $ne: true }, // Exclude full pages from regular sections
                     isContentOverride: { $ne: true }, // ✅ FIXED: Exclude content overrides from dynamic sections
                     layout: { $ne: 'video' } // Exclude video sections (handled by video-sections API)
-                }).sort({ position: 1, createdAt: 1 }).lean();
+                };
+
+                // Only show published sections to anonymous users
+                if (!isAuthenticated) {
+                    query.isPublished = true;
+                }
+
+                const list = await Section.find(query).sort({ position: 1, createdAt: 1 }).lean();
 
                 // ✅ BACKWARD COMPATIBILITY: Normalize layout field for existing records
                 const normalizedList = list.map(section => {

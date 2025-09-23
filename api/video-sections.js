@@ -76,7 +76,10 @@ module.exports = async (req, res) => {
             }
         }
 
-        // 🔒 SECURITY FIX: Add authentication for write operations
+        // 🔒 SECURITY FIX: Add authentication for write operations and check user role for read operations
+        let isAuthenticated = false;
+        let userPayload = null;
+
         if (['POST', 'PUT', 'DELETE'].includes(method)) {
             const { verify } = require('./protected');
             const [ok, payload] = verify(req, res);
@@ -98,6 +101,16 @@ module.exports = async (req, res) => {
             }
 
             console.log(`✅ Authenticated video sections management by admin ${payload.id}`);
+            isAuthenticated = true;
+            userPayload = payload;
+        } else {
+            // For GET requests, check if user is authenticated (but don't require it)
+            const { verify } = require('./protected');
+            const [ok, payload] = verify(req, res);
+            if (ok && payload.role === 'admin') {
+                isAuthenticated = true;
+                userPayload = payload;
+            }
         }
 
         const { operation } = req.query;
@@ -311,10 +324,28 @@ async function handleListVideos(req, res) {
 async function handleGetVideoSections(req, res) {
     try {
         const { page } = req.query;
-        
+
         let query = { layout: 'video' };
         if (page) {
             query.page = page;
+        }
+
+        // 🔒 SECURITY FIX: Add isPublished filter for anonymous users
+        // Check if user is authenticated by trying to verify token
+        let isAuthenticated = false;
+        try {
+            const { verify } = require('./protected');
+            const [ok, payload] = verify(req, res);
+            if (ok && payload.role === 'admin') {
+                isAuthenticated = true;
+            }
+        } catch (error) {
+            // User is not authenticated, continue with anonymous access
+        }
+
+        // Only show published video sections to anonymous users
+        if (!isAuthenticated) {
+            query.isPublished = true;
         }
 
         const videoSections = await Section.find(query)

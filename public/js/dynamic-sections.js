@@ -36,11 +36,17 @@ function uuidv4() {
     );
 }
 
-// ✅ NEW: Add a helper to inject IDs into an HTML string
+// ✅ NEW: Add a helper to inject IDs into an HTML string with sanitization
 function ensureBlockIds(htmlString) {
     if (!htmlString) return '';
+
+    // 🔒 SECURITY FIX: Sanitize HTML before processing
+    const sanitizedHTML = window.HTMLSanitizer ?
+        window.HTMLSanitizer.sanitizeHTML(htmlString) :
+        htmlString; // Fallback if sanitizer not loaded
+
     const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlString;
+    tempDiv.innerHTML = sanitizedHTML;
     const editableTags = ['p', 'img', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'li'];
     editableTags.forEach(tag => {
         tempDiv.querySelectorAll(tag).forEach(el => {
@@ -427,29 +433,91 @@ function createDynamicSectionElement(section, index) {
         grid.setAttribute('role', 'list');
 
         if (section.team?.length) {
-            grid.innerHTML = section.team.map(m => `
-                <div class="team-member" role="listitem">
-                    <h3 class="tm-title">${m.name}</h3>
-                    <div class="avatar" role="img" aria-label="${m.name}'s photo">
-                        <img src="${m.image || '/images/default-avatar.png'}"
-                             alt=""
-                             loading="lazy">
-                    </div>
-                    <div class="tm-content">
-                        <p class="tm-bio">${m.bio}</p>
-                        ${m.quote ? `<p><span class="tm-quote">${m.quote}</span></p>` : ''}
-                    </div>
-                </div>
-            `).join('');
+            // 🔒 SECURITY FIX: Use safe DOM methods instead of innerHTML
+            grid.innerHTML = ''; // Clear existing content
+
+            section.team.forEach(m => {
+                const memberDiv = document.createElement('div');
+                memberDiv.className = 'team-member';
+                memberDiv.setAttribute('role', 'listitem');
+
+                // Create title element safely
+                const titleElement = document.createElement('h3');
+                titleElement.className = 'tm-title';
+                if (window.HTMLSanitizer) {
+                    window.HTMLSanitizer.safeSetTextContent(titleElement, m.name);
+                } else {
+                    titleElement.textContent = m.name; // Fallback
+                }
+                memberDiv.appendChild(titleElement);
+
+                // Create avatar element safely
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar';
+                avatarDiv.setAttribute('role', 'img');
+                avatarDiv.setAttribute('aria-label', `${m.name}'s photo`);
+
+                const img = document.createElement('img');
+                const imageSrc = m.image || '/images/default-avatar.png';
+                if (window.HTMLSanitizer && window.HTMLSanitizer.isValidURL(imageSrc, ['http:', 'https:', '/'])) {
+                    img.src = imageSrc;
+                    img.alt = '';
+                    img.loading = 'lazy';
+                    avatarDiv.appendChild(img);
+                }
+                memberDiv.appendChild(avatarDiv);
+
+                // Create content element safely
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'tm-content';
+
+                const bioP = document.createElement('p');
+                bioP.className = 'tm-bio';
+                if (window.HTMLSanitizer) {
+                    window.HTMLSanitizer.safeSetInnerHTML(bioP, m.bio);
+                } else {
+                    bioP.textContent = m.bio; // Fallback - no HTML
+                }
+                contentDiv.appendChild(bioP);
+
+                if (m.quote) {
+                    const quoteP = document.createElement('p');
+                    const quoteSpan = document.createElement('span');
+                    quoteSpan.className = 'tm-quote';
+                    if (window.HTMLSanitizer) {
+                        window.HTMLSanitizer.safeSetTextContent(quoteSpan, m.quote);
+                    } else {
+                        quoteSpan.textContent = m.quote; // Fallback
+                    }
+                    quoteP.appendChild(quoteSpan);
+                    contentDiv.appendChild(quoteP);
+                }
+
+                memberDiv.appendChild(contentDiv);
+                grid.appendChild(memberDiv);
+            });
         } else {
-            grid.innerHTML = '<p class="no-members">No team members to display</p>';
+            const noMembersP = document.createElement('p');
+            noMembersP.className = 'no-members';
+            noMembersP.textContent = 'No team members to display';
+            grid.appendChild(noMembersP);
         }
 
         article.appendChild(grid);
 
-        // Add button if available
+        // 🔒 SECURITY FIX: Add button safely
         if (section.buttonLabel && section.buttonUrl) {
-            article.insertAdjacentHTML('beforeend', buttonHtml(section));
+            const safeButton = window.HTMLSanitizer ?
+                window.HTMLSanitizer.createSafeButton(section.buttonLabel, section.buttonUrl) :
+                null;
+
+            if (safeButton) {
+                const buttonGroup = document.createElement('div');
+                buttonGroup.className = 'button-group';
+                buttonGroup.style.marginTop = '1rem';
+                buttonGroup.appendChild(safeButton);
+                article.appendChild(buttonGroup);
+            }
         }
 
         // Wrap the article in the styled container
@@ -509,27 +577,47 @@ function createDynamicSectionElement(section, index) {
         leftColumn.appendChild(existingManagedContent);
     }
 
-    // Add button to left column (if present, use stable block ID from database)
+    // 🔒 SECURITY FIX: Add button to left column safely (if present, use stable block ID from database)
     if (section.buttonLabel && section.buttonUrl) {
         const buttonBlockId = section.buttonBlockId || uuidv4();
         const existingManagedButton = document.querySelector(`[data-ve-button-id="${buttonBlockId}"][data-ve-managed="true"]`);
         if (!existingManagedButton) {
-            leftColumn.insertAdjacentHTML('beforeend', buttonHtml({ ...section, buttonBlockId }));
+            const safeButton = window.HTMLSanitizer ?
+                window.HTMLSanitizer.createSafeButton(section.buttonLabel, section.buttonUrl) :
+                null;
+
+            if (safeButton) {
+                safeButton.setAttribute('data-ve-button-id', buttonBlockId);
+                const buttonGroup = document.createElement('div');
+                buttonGroup.className = 'button-group';
+                buttonGroup.style.marginTop = '1rem';
+                buttonGroup.appendChild(safeButton);
+                leftColumn.appendChild(buttonGroup);
+            }
         } else {
             console.log(`[VE Integration] Preserving editor-managed button for block ID: ${buttonBlockId}`);
         }
     }
 
-    // Add image to right column if present
+    // 🔒 SECURITY FIX: Add image to right column safely if present
     if (section.image) {
         const imageBlockId = section.imageBlockId || uuidv4();
         const existingManagedImage = document.querySelector(`[data-ve-block-id="${imageBlockId}"][data-ve-managed="true"]`);
         if (!existingManagedImage) {
-            const img = document.createElement('img');
-            img.src = section.image;
-            img.alt = section.heading || 'Dynamic section image';
-            img.setAttribute('data-ve-block-id', imageBlockId);
-            rightColumn.appendChild(img);
+            // Validate image URL before creating element
+            const isValidImageUrl = window.HTMLSanitizer ?
+                window.HTMLSanitizer.isValidURL(section.image, ['http:', 'https:', '/']) :
+                true; // Fallback - allow all URLs if sanitizer not loaded
+
+            if (isValidImageUrl) {
+                const img = document.createElement('img');
+                img.src = section.image;
+                img.alt = section.heading || 'Dynamic section image';
+                img.setAttribute('data-ve-block-id', imageBlockId);
+                rightColumn.appendChild(img);
+            } else {
+                console.warn('Blocked unsafe image URL:', section.image);
+            }
         } else {
             console.log(`[VE Integration] Preserving editor-managed image for block ID: ${imageBlockId}`);
             rightColumn.appendChild(existingManagedImage);
@@ -636,9 +724,19 @@ function createListSectionElement(section, index, article) {
 
     listBox.appendChild(listElement);
 
-    // Add button if available
+    // 🔒 SECURITY FIX: Add button safely if available
     if (section.buttonLabel && section.buttonUrl) {
-        listBox.insertAdjacentHTML('beforeend', buttonHtml(section));
+        const safeButton = window.HTMLSanitizer ?
+            window.HTMLSanitizer.createSafeButton(section.buttonLabel, section.buttonUrl) :
+            null;
+
+        if (safeButton) {
+            const buttonGroup = document.createElement('div');
+            buttonGroup.className = 'button-group';
+            buttonGroup.style.marginTop = '1rem';
+            buttonGroup.appendChild(safeButton);
+            listBox.appendChild(buttonGroup);
+        }
     }
 
     // Assemble the structure - add content box first
@@ -788,7 +886,12 @@ function createTestimonialSectionElement(section, index, article) {
             }
 
             console.log('Quote text built:', quoteText);
-            quoteParagraph.innerHTML = quoteText;
+            // 🔒 SECURITY FIX: Use safe HTML rendering
+            if (window.HTMLSanitizer) {
+                window.HTMLSanitizer.safeSetInnerHTML(quoteParagraph, quoteText);
+            } else {
+                quoteParagraph.innerHTML = quoteText; // Fallback
+            }
             quoteCard.appendChild(quoteParagraph);
 
             // Add rating if present (convert string to number)
@@ -797,7 +900,8 @@ function createTestimonialSectionElement(section, index, article) {
                 console.log('Adding rating:', rating);
                 const ratingDiv = document.createElement('div');
                 ratingDiv.className = 'testimonial-rating';
-                ratingDiv.innerHTML = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+                // 🔒 SECURITY FIX: Use textContent for star rating (no HTML needed)
+                ratingDiv.textContent = '★'.repeat(rating) + '☆'.repeat(5 - rating);
                 ratingDiv.style.cssText = 'color: #FFD700; margin-top: 0.5rem; font-size: 1.2rem;';
                 quoteCard.appendChild(ratingDiv);
             }
@@ -817,9 +921,19 @@ function createTestimonialSectionElement(section, index, article) {
 
     testimonialArticle.appendChild(testimonialsContainer);
 
-    // Add button if available
+    // 🔒 SECURITY FIX: Add button safely if available
     if (section.buttonLabel && section.buttonUrl) {
-        testimonialArticle.insertAdjacentHTML('beforeend', buttonHtml(section));
+        const safeButton = window.HTMLSanitizer ?
+            window.HTMLSanitizer.createSafeButton(section.buttonLabel, section.buttonUrl) :
+            null;
+
+        if (safeButton) {
+            const buttonGroup = document.createElement('div');
+            buttonGroup.className = 'button-group';
+            buttonGroup.style.marginTop = '1rem';
+            buttonGroup.appendChild(safeButton);
+            testimonialArticle.appendChild(buttonGroup);
+        }
     }
 
     return testimonialArticle;
@@ -885,18 +999,38 @@ function createVideoSectionElement(section, index) {
         video.style.cssText = 'width: 100%; height: auto; display: block;';
         video.setAttribute('data-video-url', section.videoUrl);
 
-        // Add multiple source formats for better compatibility
-        const videoExtension = section.videoUrl.split('.').pop().toLowerCase();
-        if (videoExtension === 'mp4') {
-            video.innerHTML = `<source src="${section.videoUrl}" type="video/mp4">`;
-        } else if (videoExtension === 'webm') {
-            video.innerHTML = `<source src="${section.videoUrl}" type="video/webm">`;
-        } else if (videoExtension === 'ogg') {
-            video.innerHTML = `<source src="${section.videoUrl}" type="video/ogg">`;
-        }
+        // 🔒 SECURITY FIX: Add video sources safely with URL validation
+        const isValidVideoUrl = window.HTMLSanitizer ?
+            window.HTMLSanitizer.isValidURL(section.videoUrl, ['http:', 'https:', '/']) :
+            true; // Fallback
 
-        // Add fallback message
-        video.innerHTML += '<p>Your browser does not support the video tag.</p>';
+        if (isValidVideoUrl) {
+            const videoExtension = section.videoUrl.split('.').pop().toLowerCase();
+
+            // Create source element safely
+            const source = document.createElement('source');
+            source.src = section.videoUrl;
+
+            if (videoExtension === 'mp4') {
+                source.type = 'video/mp4';
+            } else if (videoExtension === 'webm') {
+                source.type = 'video/webm';
+            } else if (videoExtension === 'ogg') {
+                source.type = 'video/ogg';
+            }
+
+            video.appendChild(source);
+
+            // Add fallback message safely
+            const fallbackP = document.createElement('p');
+            fallbackP.textContent = 'Your browser does not support the video tag.';
+            video.appendChild(fallbackP);
+        } else {
+            console.warn('Blocked unsafe video URL:', section.videoUrl);
+            const errorP = document.createElement('p');
+            errorP.textContent = 'Video unavailable due to security restrictions.';
+            video.appendChild(errorP);
+        }
 
         // Add error handling for video loading
         video.addEventListener('error', function() {

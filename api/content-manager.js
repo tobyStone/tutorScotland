@@ -112,11 +112,13 @@ module.exports = async (req, res) => {
             bodyKeys: body ? Object.keys(body) : 'no body'
         });
 
-        // 🔒 SECURITY FIX: Add authentication for write operations
+        // 🔒 SECURITY FIX: Add authentication for write operations and sensitive read operations
         const writeOperations = ['set-order', 'remove-from-order', 'override', 'backup'];
+        const sensitiveReadOperations = ['debug-sections']; // Operations that expose sensitive data
         const isWriteOperation = ['POST', 'PUT', 'DELETE'].includes(method) || writeOperations.includes(operation);
+        const isSensitiveReadOperation = sensitiveReadOperations.includes(operation);
 
-        if (isWriteOperation) {
+        if (isWriteOperation || isSensitiveReadOperation) {
             const { verify } = require('./protected');
             const [ok, payload] = verify(req, res);
             if (!ok) {
@@ -127,7 +129,7 @@ module.exports = async (req, res) => {
                 });
             }
 
-            // Require admin role for content management
+            // Require admin role for content management and sensitive operations
             if (payload.role !== 'admin') {
                 SecurityLogger.unauthorizedAccess('content-manager', req, { userId: payload.id, role: payload.role });
                 return res.status(403).json({
