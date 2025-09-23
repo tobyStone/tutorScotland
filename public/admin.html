@@ -40,6 +40,12 @@
     <style>
         /* Remaining embedded styles for complex admin functionality */
 
+        /* 🔒 SECURITY: Loading spinner animation for auth check */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* ================================================================== */
         /*                    ADMIN FORM CONTAINERS                           */
         /* ================================================================== */
@@ -341,7 +347,16 @@
     </div>
 
     <!-- ─────────────── MAIN CONTENT ─────────────── -->
-    <main>
+    <!-- 🔒 SECURITY: Hide admin content until authentication succeeds -->
+    <div id="auth-loading" style="display: flex; justify-content: center; align-items: center; min-height: 50vh; font-size: 1.2em; color: #666;">
+        <div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin: 0 auto;"></div>
+            </div>
+            Verifying admin access...
+        </div>
+    </div>
+    <main id="admin-dashboard" style="display: none;">
         <!-- Tabs Navigation -->
         <div class="tabs-container">
             <div class="tab-buttons">
@@ -785,8 +800,23 @@
         import { uploadLargeVideo, shouldUseDirectUpload, formatFileSize, validateVideoFile } from '/js/google-cloud-upload.js';
 
         /* ── page‑guard: only admins allowed ───────────────────────── */
-        const auth = await fetch('/api/protected?role=admin');
-        if (!auth.ok) { location.href = '/login.html?role=admin'; throw 0; }
+        try {
+            const auth = await fetch('/api/protected?role=admin');
+            if (!auth.ok) {
+                // Keep loading screen visible while redirecting
+                location.href = '/login.html?role=admin';
+                throw new Error('Authentication failed');
+            }
+
+            // 🔒 SECURITY: Only show admin dashboard after successful auth
+            document.getElementById('auth-loading').style.display = 'none';
+            document.getElementById('admin-dashboard').style.display = 'block';
+
+        } catch (error) {
+            // On any error, redirect to login without showing dashboard
+            location.href = '/login.html?role=admin';
+            throw error;
+        }
 
         /* ── rolling banner text ──────────────────────────────────── */
         // First try to fetch news from sections API
