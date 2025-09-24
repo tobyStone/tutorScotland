@@ -9,6 +9,7 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import { createServer } from 'http';
+import createVercelCompatibleResponse from '../../utils/createVercelCompatibleResponse.js';
 import blogWriterHandler from '../../../api/blog-writer.js';
 
 // Mock CSRF protection to verify it's called
@@ -42,6 +43,9 @@ describe('Blog Writer API Security Integration Tests', () => {
 
     // Create HTTP server with blog handler
     app = createServer((req, res) => {
+      // ✅ SECURITY FIX: Use shared response helper with proper charset handling
+      createVercelCompatibleResponse(res);
+
       // Parse request body for POST/PUT requests
       if (['POST', 'PUT'].includes(req.method)) {
         let body = '';

@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import request from 'supertest';
 import { createServer } from 'http';
 import bcrypt from 'bcryptjs';
+import createVercelCompatibleResponse from '../../utils/createVercelCompatibleResponse.js';
 
 // Set up test environment
 process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
@@ -14,6 +15,9 @@ const loginHandler = require('../../../api/login.js');
 // Create test server
 function createTestApp() {
   return createServer((req, res) => {
+    // ✅ SECURITY FIX: Use shared response helper with proper charset handling
+    createVercelCompatibleResponse(res);
+
     // Add Express-like properties
     req.ip = req.connection.remoteAddress || '127.0.0.1';
     

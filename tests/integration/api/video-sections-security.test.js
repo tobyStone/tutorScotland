@@ -9,6 +9,7 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import { createServer } from 'http';
+import createVercelCompatibleResponse from '../../utils/createVercelCompatibleResponse.js';
 import videoSectionsHandler from '../../../api/video-sections.js';
 
 // Mock CSRF protection to verify it's called
@@ -42,6 +43,9 @@ describe('Video Sections API Security Integration Tests', () => {
 
     // Create HTTP server with video-sections handler
     app = createServer((req, res) => {
+      // ✅ SECURITY FIX: Use shared response helper with proper charset handling
+      createVercelCompatibleResponse(res);
+
       // Parse request body for POST/PUT/DELETE requests
       if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
         let body = '';
