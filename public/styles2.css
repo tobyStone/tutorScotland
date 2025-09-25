@@ -2883,6 +2883,79 @@ header {
     }
 }
 
+/* ======================================================================
+   SAMSUNG PHONE NESTED ELEMENT FIX - Aggressive CSS rules for Samsung devices
+   Targets Samsung phones that have issues with nested flexbox layouts
+   ====================================================================== */
+@media (max-width: 400px) and (orientation: portrait) {
+    /* Force team members container to use block layout instead of flex */
+    .team-members,
+    .team-members[style*="display: flex"] {
+        display: block !important;
+        flex-wrap: nowrap !important;
+        justify-content: initial !important;
+        gap: 0 !important;
+    }
+
+    /* Force each team member card to full width block layout */
+    .team-member,
+    .team-members .team-member,
+    .team-member[style*="flex:"] {
+        display: block !important;
+        flex: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 20px 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Fix nested image containers that cause Samsung display issues */
+    .team-member div[style*="display: flex"] {
+        display: block !important;
+        text-align: center !important;
+        align-items: initial !important;
+        justify-content: initial !important;
+    }
+
+    /* Ensure images display properly */
+    .team-member img {
+        display: block !important;
+        margin: 0 auto !important;
+        max-width: 150px !important;
+        max-height: 150px !important;
+    }
+}
+
+/* Even more aggressive rules for very narrow Samsung screens */
+@media (max-width: 360px) and (orientation: portrait) {
+    .team-members,
+    .team-members[style*="display: flex"] {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .team-member {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 0 15px 0 !important;
+        padding: 15px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Force all nested containers to block display */
+    .team-member * {
+        display: block !important;
+    }
+
+    /* Exception for images - keep them as inline-block for centering */
+    .team-member img {
+        display: inline-block !important;
+        margin: 0 auto !important;
+    }
+}
+
 /* Landscape-specific adjustments for dynamic sections alignment */
 @media (max-width: 1200px) and (orientation: landscape) {
     #dynamicSections,

@@ -12,12 +12,10 @@ This comprehensive checklist ensures all website functionality is working correc
 - [ ] Admin login works and redirects to `/admin.html`
 - [ ] Tutor login works and redirects to `/tutorszone.html`
 - [ ] Blogwriter login works and redirects to `/blogWriter.html`
-- [ ] Parent login works (if applicable)
 - [ ] Invalid credentials show appropriate error messages
 - [ ] Rate limiting works (5 failed attempts = 15-minute lockout)
 - [ ] Session persistence across browser tabs/windows
 - [ ] Logout functionality works properly
-- [ ] "Remember me" functionality (if implemented)
 
 ### **Role-Based Access Control**
 - [ ] Admin can access all admin functions

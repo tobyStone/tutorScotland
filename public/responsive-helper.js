@@ -101,6 +101,68 @@
             searchFormContainer.style.display = showForm ? "block" : "none";
             directoryLink.style.display = showForm ? "none" : "block";
         }
+
+        // Samsung phone nested element fix - JavaScript fallback ---------------
+        applySamsungTeamMemberFix(w, h, isPortrait);
+    }
+
+    /**
+     * Samsung phone nested element fix - JavaScript fallback
+     * Applies aggressive styling fixes for Samsung devices that have issues with nested flexbox
+     */
+    function applySamsungTeamMemberFix(width, height, isPortrait) {
+        // Only apply on very narrow portrait screens (Samsung phone range)
+        if (!isPortrait || width > 400) return;
+
+        const teamMembersContainers = document.querySelectorAll('.team-members');
+
+        teamMembersContainers.forEach(container => {
+            // Force container to block layout
+            container.style.display = 'block';
+            container.style.flexWrap = 'nowrap';
+            container.style.justifyContent = 'initial';
+            container.style.gap = '0';
+
+            // Force each team member to block layout
+            const teamMembers = container.querySelectorAll('.team-member');
+            teamMembers.forEach(member => {
+                member.style.display = 'block';
+                member.style.flex = 'none';
+                member.style.width = '100%';
+                member.style.maxWidth = '100%';
+                member.style.margin = '0 0 20px 0';
+                member.style.boxSizing = 'border-box';
+
+                // Fix nested image containers
+                const flexContainers = member.querySelectorAll('div[style*="display: flex"]');
+                flexContainers.forEach(flexDiv => {
+                    flexDiv.style.display = 'block';
+                    flexDiv.style.textAlign = 'center';
+                    flexDiv.style.alignItems = 'initial';
+                    flexDiv.style.justifyContent = 'initial';
+                });
+
+                // Ensure images display properly
+                const images = member.querySelectorAll('img');
+                images.forEach(img => {
+                    img.style.display = 'block';
+                    img.style.margin = '0 auto';
+                    img.style.maxWidth = '150px';
+                    img.style.maxHeight = '150px';
+                });
+            });
+        });
+
+        // Log debug information for troubleshooting
+        if (width <= 360) {
+            console.log('Samsung team member fix applied for very narrow screen:', {
+                width,
+                height,
+                isPortrait,
+                teamContainers: teamMembersContainers.length,
+                userAgent: navigator.userAgent.includes('Samsung') ? 'Samsung detected' : 'Generic mobile'
+            });
+        }
     }
 
     function initResponsiveFeatures() {
@@ -268,6 +330,16 @@
                         if (node.nodeType === 1 && (node.classList.contains('fade-in-section') || node.classList.contains('fade-in-on-scroll')) && !node.classList.contains('site-footer')) {
                             io.observe(node);
                         }
+
+                        // Apply Samsung fix to newly added team member sections
+                        if (node.nodeType === 1 && (node.classList.contains('team-members') || node.querySelector('.team-members'))) {
+                            setTimeout(() => {
+                                const w = window.innerWidth;
+                                const h = window.innerHeight;
+                                const isPortrait = h > w;
+                                applySamsungTeamMemberFix(w, h, isPortrait);
+                            }, 100); // Small delay to ensure DOM is ready
+                        }
                     });
                 });
             }
@@ -283,5 +355,13 @@
         initResponsiveFeatures();
         initRollingBanner();
         initFadeObserver();
+
+        // Apply Samsung fix to any existing team member sections
+        setTimeout(() => {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            const isPortrait = h > w;
+            applySamsungTeamMemberFix(w, h, isPortrait);
+        }, 500); // Delay to ensure all content is loaded
     });
 })();

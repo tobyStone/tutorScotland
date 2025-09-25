@@ -89,8 +89,69 @@ test.describe('Hardware-Specific Rendering Tests', () => {
         }
       }
     });
+
+    test('team member sections display correctly on Samsung portrait', async ({ page }) => {
+      await page.goto('/about-us.html');
+      await page.setViewportSize({ width: 320, height: 658 });
+
+      // Wait for page to load and responsive helper to apply fixes
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(1000); // Allow time for Samsung fix to apply
+
+      // Check team members container
+      const teamMembersContainer = page.locator('.team-members');
+      if (await teamMembersContainer.count() > 0) {
+        // Verify container is using block layout (not flex)
+        const containerStyle = await teamMembersContainer.evaluate(el => {
+          const style = window.getComputedStyle(el);
+          return {
+            display: style.display,
+            flexWrap: style.flexWrap,
+            width: style.width
+          };
+        });
+
+        expect(containerStyle.display).toBe('block');
+
+        // Check individual team member cards
+        const teamMembers = page.locator('.team-member');
+        const memberCount = await teamMembers.count();
+
+        for (let i = 0; i < memberCount; i++) {
+          const member = teamMembers.nth(i);
+
+          // Verify member card is visible and properly sized
+          await expect(member).toBeVisible();
+
+          const memberStyle = await member.evaluate(el => {
+            const style = window.getComputedStyle(el);
+            return {
+              display: style.display,
+              width: style.width,
+              flex: style.flex
+            };
+          });
+
+          expect(memberStyle.display).toBe('block');
+
+          // Check that images within team members are visible
+          const memberImages = member.locator('img');
+          const imageCount = await memberImages.count();
+
+          for (let j = 0; j < imageCount; j++) {
+            const img = memberImages.nth(j);
+            await expect(img).toBeVisible();
+
+            const boundingBox = await img.boundingBox();
+            expect(boundingBox).not.toBeNull();
+            expect(boundingBox.width).toBeGreaterThan(0);
+            expect(boundingBox.height).toBeGreaterThan(0);
+          }
+        }
+      }
+    });
   });
-  
+
   test.describe('iOS Safari Viewport Issues', () => {
     test('viewport height units work correctly on iOS', async ({ page, browserName }) => {
       test.skip(browserName !== 'webkit', 'iOS-specific test');
