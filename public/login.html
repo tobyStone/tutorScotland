@@ -121,6 +121,7 @@
                 const response = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include', // Essential for cookie-based authentication
                     body: JSON.stringify({ email, password })
                 });
                 const data = await response.json();
