@@ -1151,14 +1151,8 @@ if (typeof module !== 'undefined' && module.exports) {
     window.initDynamicSectionsObserver = initDynamicSectionsObserver;
 }
 
-// ES module export (when loaded as module)
-if (typeof export !== 'undefined') {
-    try {
-        export { loadDynamicSections, initDynamicSectionsObserver };
-    } catch (e) {
-        // Ignore export errors in non-module contexts
-    }
-}
+// ES module export (must be at top level)
+export { loadDynamicSections, initDynamicSectionsObserver };
 
 /* ------------------------------------------------------------------------- */
 /*  BOOTSTRAP  ✧  runs exactly once no matter how the script was loaded      */
