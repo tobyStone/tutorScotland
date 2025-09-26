@@ -17,7 +17,7 @@
  * @type {string[]}
  * @constant
  */
-export const PAGES = [
+const PAGES = [
   'index',
   'about-us',
   'contact',
@@ -29,3 +29,21 @@ export const PAGES = [
   'partnerships',
   'rolling-banner'
 ];
+
+// Export compatibility for both module and non-module contexts
+if (typeof module !== 'undefined' && module.exports) {
+    // Node.js/CommonJS environment
+    module.exports = { PAGES };
+} else if (typeof window !== 'undefined') {
+    // Browser environment - attach to window for global access
+    window.PAGES = PAGES;
+}
+
+// ES module export (when loaded as module)
+if (typeof export !== 'undefined') {
+    try {
+        export { PAGES };
+    } catch (e) {
+        // Ignore export errors in non-module contexts
+    }
+}

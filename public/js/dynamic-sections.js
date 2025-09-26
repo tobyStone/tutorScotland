@@ -1141,8 +1141,24 @@ function initDynamicSectionsObserver() {
     }, { threshold: 0.1 }); // threshold=0.1 => trigger at 10% visibility
 }
 
-// Export functions for use in other scripts
-export { loadDynamicSections, initDynamicSectionsObserver };
+// Export functions for use in other scripts (compatible with both module and non-module contexts)
+if (typeof module !== 'undefined' && module.exports) {
+    // Node.js/CommonJS environment
+    module.exports = { loadDynamicSections, initDynamicSectionsObserver };
+} else if (typeof window !== 'undefined') {
+    // Browser environment - attach to window for global access
+    window.loadDynamicSections = loadDynamicSections;
+    window.initDynamicSectionsObserver = initDynamicSectionsObserver;
+}
+
+// ES module export (when loaded as module)
+if (typeof export !== 'undefined') {
+    try {
+        export { loadDynamicSections, initDynamicSectionsObserver };
+    } catch (e) {
+        // Ignore export errors in non-module contexts
+    }
+}
 
 /* ------------------------------------------------------------------------- */
 /*  BOOTSTRAP  ✧  runs exactly once no matter how the script was loaded      */
