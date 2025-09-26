@@ -746,7 +746,7 @@ module.exports = async (req, res) => {
                 </main>
 
                 <!-- SOCIAL ICONS FOOTER -->
-                <footer class="site-footer fade-in-section">
+                <footer class="site-footer fade-in-section is-visible">
                     <div class="footer-icons">
                         <a href="https://www.instagram.com/tutorsalliancescotland/" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                         <a href="https://www.facebook.com/tutorsalliancescotland/" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -760,7 +760,7 @@ module.exports = async (req, res) => {
                             <h4>Extra Information</h4>
                             <ul>
                                 <li><a href="/tutoring-standards.html">The TAS Way: Governance and Guidance</a></li>
-                                <li><a href="/faq.html">FAQ's</a></li>
+                                <li><a href="/parents.html#faq">FAQ's</a></li>
                                 <li><a href="/privacy-policy.html">Privacy Policy</a></li>
                                 <li><a href="/safeguarding-policy.html">Safeguarding Policy</a></li>
                                 <li><a href="/terms-and-conditions.html">Terms and Conditions</a></li>
