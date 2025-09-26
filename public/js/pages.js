@@ -39,11 +39,5 @@ if (typeof module !== 'undefined' && module.exports) {
     window.PAGES = PAGES;
 }
 
-// ES module export (when loaded as module)
-if (typeof export !== 'undefined') {
-    try {
-        export { PAGES };
-    } catch (e) {
-        // Ignore export errors in non-module contexts
-    }
-}
+// ES module export (must be at top level)
+export { PAGES };
