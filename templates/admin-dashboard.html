@@ -167,6 +167,92 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- ░░░░░░  CREATE NEW PAGE  ░░░░░░ -->
+            <div class="admin-form-container">
+                <h3 id="pageFormHeading" data-ve-block-id="43a4e36a-6975-46a8-beb1-94b6a0eb2908">Create a New Page</h3>
+
+                <form id="pageForm" enctype="multipart/form-data" autocomplete="off">
+                    <label>Page URL (e.g., "summer-tutoring"):
+                        <input type="text" name="slug" id="pageSlug" required>
+                    </label>
+
+                    <label>Page Title:
+                        <input name="heading" required>
+                    </label>
+
+                    <label>Page Content:
+                        <textarea name="text" rows="6" required></textarea>
+                    </label>
+
+                    <label>Show in Navigation Menu:
+                        <input type="checkbox" name="showInNav" id="pageShowInNav" style="width: auto; margin-right: 8px;">
+                        Add to navigation
+                    </label>
+
+                    <label id="pageNavCatRow" style="margin-top: 10px; display: none;">
+                        Navigation Category:
+                        <select name="navCategory" id="pageNavCategory">
+                            <option value="tutors">For Tutors</option>
+                            <option value="parents">For Parents</option>
+                            <option value="about" selected>About TAS</option>
+                        </select>
+                    </label>
+
+                    <label>Page Image:
+                        <input type="file" name="image" id="pageImage" accept="image/*">
+                    </label>
+
+                    <!-- Current Image Preview -->
+                    <div id="currentPageImagePreview" style="display: none; margin-top: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa;">
+                        <p style="margin-bottom: 5px;">Current Image:</p>
+                        <img src="" alt="Current Image" style="max-width: 120px; border-radius: 4px;">
+                        <label style="display: inline-flex; align-items: center; margin-left: 15px;">
+                            <input type="checkbox" name="removeImage" value="true" style="width: auto; margin-right: 5px;"> Remove Image
+                        </label>
+                    </div>
+
+                    <label>Button Label (Optional):
+                        <input name="buttonLabel" placeholder="e.g. Learn More">
+                    </label>
+
+                    <label>Button URL (Optional):
+                        <input name="buttonUrl" type="url" placeholder="https://example.com">
+                    </label>
+
+                    <label>
+                        <input type="checkbox" name="isPublished" id="isPublished" style="width: auto; margin-right: 8px;" checked>
+                        Publish immediately
+                    </label>
+
+                    <!-- Page Edit Options (shown only during edit) -->
+                    <div id="pageEditOptions" style="display: none; margin-top: 15px; padding: 10px; background-color: #f0f8ff; border-radius: 4px; border-left: 3px solid #4a90e2;">
+                        <h4 style="margin-top: 0;">Page Options</h4>
+                        <p style="margin-bottom: 10px; font-size: 0.9em; color: #666;">Additional options available when editing existing pages.</p>
+                    </div>
+
+                    <button type="submit" id="submitPageBtn">Create Page</button>
+                    <button type="button" id="cancelPageEditBtn" class="cancel-btn" style="display: none;">Cancel Edit</button>
+                </form>
+            </div>
+
+            <!-- ░░░░░░  EXISTING PAGES TABLE  ░░░░░░ -->
+            <div class="admin-form-container">
+                <h3 style="margin-top: 35px;" data-ve-block-id="657dfb5e-7981-4780-8bab-bdcd5af52e68">Existing Pages</h3>
+                <table id="pagesTable" class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>URL</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Tutors Tab -->

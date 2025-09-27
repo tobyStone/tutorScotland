@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initPageDropdowns();
     initSectionManagement();
     initTutorManagement();
-    
+    initPageManagement();
+
     console.log('[Admin Dashboard] Initialization complete');
 });
 
@@ -941,6 +942,378 @@ function initTutorManagement() {
 }
 
 /**
+ * Initialize page management functionality
+ */
+function initPageManagement() {
+    const pageForm = document.getElementById('pageForm');
+    if (!pageForm) {
+        console.log('[Admin Dashboard] Page form not found, skipping page management init');
+        return;
+    }
+
+    // Get form elements
+    const pagesTbody = document.querySelector('#pagesTable tbody');
+    const pageFormHeading = document.getElementById('pageFormHeading');
+    const submitPageBtn = document.getElementById('submitPageBtn');
+    const cancelPageEditBtn = document.getElementById('cancelPageEditBtn');
+    const pageEditOptions = document.getElementById('pageEditOptions');
+    const currentPageImagePreview = document.getElementById('currentPageImagePreview');
+    const pageShowInNav = document.getElementById('pageShowInNav');
+    const pageNavCatRow = document.getElementById('pageNavCatRow');
+    const pageImage = document.getElementById('pageImage');
+
+    // Store all pages for editing
+    let allPages = [];
+
+    // Helper: Reset form to create mode
+    function resetPageForm() {
+        pageForm.reset();
+        delete pageForm.dataset.editId;
+        pageFormHeading.textContent = 'Create a New Page';
+        submitPageBtn.textContent = 'Create Page';
+        cancelPageEditBtn.style.display = 'none';
+        pageEditOptions.style.display = 'none';
+        currentPageImagePreview.style.display = 'none';
+        currentPageImagePreview.innerHTML = '';
+
+        // Reset navigation category visibility
+        if (pageNavCatRow) pageNavCatRow.style.display = 'none';
+
+        console.log('[Admin Dashboard] Page form reset to create mode');
+    }
+
+    // Navigation controls for pages
+    if (pageShowInNav && pageNavCatRow) {
+        pageShowInNav.addEventListener('change', () => {
+            pageNavCatRow.style.display = pageShowInNav.checked ? 'block' : 'none';
+        });
+        // Set initial state
+        pageNavCatRow.style.display = pageShowInNav.checked ? 'block' : 'none';
+    }
+
+    // Cancel edit button
+    if (cancelPageEditBtn) {
+        cancelPageEditBtn.addEventListener('click', resetPageForm);
+    }
+
+    // Load and display pages
+    async function loadPages() {
+        try {
+            const response = await fetch('/api/sections?isFullPage=true');
+            if (!response.ok) {
+                throw new Error('Failed to fetch pages');
+            }
+
+            const pages = await response.json();
+            allPages = pages; // Store for editing
+
+            if (!pagesTbody) return;
+
+            pagesTbody.innerHTML = '';
+
+            if (pages.length === 0) {
+                pagesTbody.innerHTML = '<tr><td colspan="4">No pages found</td></tr>';
+                return;
+            }
+
+            pages.forEach(page => {
+                const row = document.createElement('tr');
+                row.dataset.id = page._id;
+
+                // Title cell
+                const titleCell = document.createElement('td');
+                titleCell.textContent = page.heading || 'Untitled';
+                titleCell.style.maxWidth = '200px';
+                titleCell.style.overflow = 'hidden';
+                titleCell.style.textOverflow = 'ellipsis';
+                row.appendChild(titleCell);
+
+                // URL cell
+                const urlCell = document.createElement('td');
+                const pageUrl = page.slug === 'index' ? '/' : `/${page.slug}.html`;
+                const urlLink = document.createElement('a');
+                urlLink.href = pageUrl;
+                urlLink.target = '_blank';
+                urlLink.textContent = pageUrl;
+                urlLink.style.color = '#0066cc';
+                urlCell.appendChild(urlLink);
+                row.appendChild(urlCell);
+
+                // Status cell
+                const statusCell = document.createElement('td');
+                const statusSpan = document.createElement('span');
+                statusSpan.textContent = page.isPublished ? 'Published' : 'Draft';
+                statusSpan.style.padding = '4px 8px';
+                statusSpan.style.borderRadius = '4px';
+                statusSpan.style.fontSize = '0.8em';
+                statusSpan.style.fontWeight = 'bold';
+                if (page.isPublished) {
+                    statusSpan.style.backgroundColor = '#d4edda';
+                    statusSpan.style.color = '#155724';
+                } else {
+                    statusSpan.style.backgroundColor = '#fff3cd';
+                    statusSpan.style.color = '#856404';
+                }
+                statusCell.appendChild(statusSpan);
+                row.appendChild(statusCell);
+
+                // Actions cell
+                const actionsCell = document.createElement('td');
+
+                const editButton = document.createElement('button');
+                editButton.innerHTML = '✏️';
+                editButton.title = 'Edit Page';
+                editButton.className = 'edit-page';
+                editButton.dataset.id = page._id;
+                actionsCell.appendChild(editButton);
+
+                const toggleButton = document.createElement('button');
+                toggleButton.innerHTML = page.isPublished ? '📴' : '📢';
+                toggleButton.title = page.isPublished ? 'Unpublish Page' : 'Publish Page';
+                toggleButton.className = 'toggle-page';
+                toggleButton.dataset.id = page._id;
+                toggleButton.dataset.pub = page.isPublished.toString();
+                actionsCell.appendChild(toggleButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '🗑️';
+                deleteButton.title = 'Delete Page';
+                deleteButton.className = 'delete-page';
+                deleteButton.dataset.id = page._id;
+                actionsCell.appendChild(deleteButton);
+
+                row.appendChild(actionsCell);
+                pagesTbody.appendChild(row);
+            });
+
+            console.log(`[Admin Dashboard] Loaded ${pages.length} pages`);
+
+        } catch (error) {
+            console.error('[Admin Dashboard] Error loading pages:', error);
+            if (pagesTbody) {
+                pagesTbody.innerHTML = '<tr><td colspan="4">Error loading pages</td></tr>';
+            }
+        }
+    }
+
+    // Handle form submission
+    pageForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const isEditing = !!pageForm.dataset.editId;
+        const pageId = pageForm.dataset.editId;
+
+        try {
+            const formData = new FormData(pageForm);
+
+            // Set required fields for page creation
+            formData.append('isFullPage', 'true');
+
+            // Handle navigation category
+            const pageNavCategory = document.getElementById('pageNavCategory');
+            formData.set('navCategory', pageNavCategory.value || 'about');
+
+            // Handle published status
+            const isPublished = document.getElementById('isPublished');
+            formData.set('isPublished', isPublished.checked ? 'true' : 'false');
+
+            // Handle button fields
+            formData.set('buttonLabel', formData.get('buttonLabel') || '');
+            formData.set('buttonUrl', formData.get('buttonUrl') || '');
+
+            // Handle image upload if present
+            if (pageImage.files[0]) {
+                const imageFile = pageImage.files[0];
+                if (imageFile.size > 2 * 1024 * 1024) {
+                    alert('Image file is too large (max 2MB)');
+                    return;
+                }
+
+                try {
+                    // Use upload helper if available
+                    if (typeof uploadImage === 'function') {
+                        const imageUrl = await uploadImage(imageFile, 'pages');
+                        formData.set('imagePath', imageUrl);
+                    } else {
+                        // Fallback upload method
+                        const uploadFormData = new FormData();
+                        uploadFormData.append('file', imageFile);
+                        uploadFormData.append('folder', 'pages');
+                        const uploadResponse = await fetch('/api/upload-image', {
+                            method: 'POST',
+                            body: uploadFormData
+                        });
+                        if (!uploadResponse.ok) throw new Error('Image upload failed');
+                        const uploadResult = await uploadResponse.json();
+                        formData.set('imagePath', uploadResult.url);
+                    }
+                } catch (uploadError) {
+                    alert('Image upload failed: ' + uploadError.message);
+                    return;
+                }
+            }
+
+            // Remove the file input from form data to avoid sending it
+            formData.delete('image');
+
+            // Add editId for updates
+            if (isEditing) {
+                formData.append('editId', pageId);
+            }
+
+            console.log(`[Admin Dashboard] Submitting page ${isEditing ? 'update' : 'creation'}`);
+
+            const response = await fetch('/api/sections', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText);
+            }
+
+            const result = await response.json();
+            console.log(`[Admin Dashboard] Page ${isEditing ? 'updated' : 'created'} successfully`);
+            alert(`Page ${isEditing ? 'updated' : 'created'} successfully!`);
+
+            // Reset form and reload pages
+            resetPageForm();
+            loadPages();
+
+        } catch (error) {
+            console.error('[Admin Dashboard] Page save error:', error);
+            alert('Error saving page: ' + error.message);
+        }
+    });
+
+    // Handle table interactions (edit/delete/toggle publish)
+    if (pagesTbody) {
+        pagesTbody.addEventListener('click', async (e) => {
+            const button = e.target.closest('button');
+            if (!button) return;
+
+            const pageId = button.dataset.id;
+
+            if (button.classList.contains('edit-page')) {
+                // Find the page to edit
+                const page = allPages.find(p => p._id === pageId);
+                if (!page) {
+                    alert('Page not found for editing');
+                    return;
+                }
+
+                // Populate form for editing
+                populatePageForm(page);
+                pageForm.scrollIntoView({ behavior: 'smooth' });
+
+            } else if (button.classList.contains('toggle-page')) {
+                // Toggle publish status
+                const currentStatus = button.dataset.pub === 'true';
+                const newStatus = !currentStatus;
+
+                if (!confirm(`${newStatus ? 'Publish' : 'Unpublish'} this page?`)) {
+                    return;
+                }
+
+                try {
+                    const formData = new FormData();
+                    formData.append('editId', pageId);
+                    formData.append('isPublished', newStatus.toString());
+                    formData.append('isFullPage', 'true');
+
+                    const response = await fetch('/api/sections', {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'include'
+                    });
+
+                    if (response.ok) {
+                        alert(`Page ${newStatus ? 'published' : 'unpublished'} successfully!`);
+                        loadPages(); // Refresh the pages list
+                    } else {
+                        const error = await response.text();
+                        alert(`Failed to ${newStatus ? 'publish' : 'unpublish'} page: ${error}`);
+                    }
+                } catch (error) {
+                    console.error('[Admin Dashboard] Error toggling page status:', error);
+                    alert('An error occurred while updating the page status.');
+                }
+
+            } else if (button.classList.contains('delete-page')) {
+                if (!confirm('Are you sure you want to delete this page? This action cannot be undone.')) {
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/sections?id=${pageId}`, {
+                        method: 'DELETE',
+                        credentials: 'include'
+                    });
+
+                    if (response.ok) {
+                        alert('Page deleted successfully!');
+                        loadPages(); // Refresh the pages list
+                    } else {
+                        const error = await response.text();
+                        alert(`Failed to delete page: ${error}`);
+                    }
+                } catch (error) {
+                    console.error('[Admin Dashboard] Error deleting page:', error);
+                    alert('An error occurred while deleting the page.');
+                }
+            }
+        });
+    }
+
+    // Populate form for editing
+    function populatePageForm(page) {
+        // Set basic fields
+        pageForm.slug.value = page.slug || '';
+        pageForm.heading.value = page.heading || '';
+        pageForm.text.value = page.text || '';
+        pageForm.buttonLabel.value = page.buttonLabel || '';
+        pageForm.buttonUrl.value = page.buttonUrl || '';
+
+        // Set checkboxes
+        const isPublished = document.getElementById('isPublished');
+        if (isPublished) isPublished.checked = !!page.isPublished;
+
+        if (pageShowInNav) {
+            pageShowInNav.checked = !!page.showInNav;
+            if (pageNavCatRow) pageNavCatRow.style.display = pageShowInNav.checked ? 'block' : 'none';
+        }
+
+        const pageNavCategory = document.getElementById('pageNavCategory');
+        if (pageNavCategory) pageNavCategory.value = page.navCategory || 'about';
+
+        // Show current image if exists
+        if (page.image && currentPageImagePreview) {
+            currentPageImagePreview.innerHTML = `
+                <p style="margin-bottom: 5px;">Current Image:</p>
+                <img src="${page.image}" alt="Current Image" style="max-width: 120px; border-radius: 4px;">
+            `;
+            currentPageImagePreview.style.display = 'block';
+        }
+
+        // Update UI for edit mode
+        pageForm.dataset.editId = page._id;
+        pageFormHeading.textContent = 'Edit Page';
+        submitPageBtn.textContent = 'Update Page';
+        cancelPageEditBtn.style.display = 'inline-block';
+        pageEditOptions.style.display = 'block';
+
+        console.log('[Admin Dashboard] Form populated for editing page:', page._id);
+    }
+
+    // Initialize page management
+    loadPages();
+
+    console.log('[Admin Dashboard] Page management initialized');
+}
+
+/**
  * Utility function to show loading state
  * @param {HTMLElement} element - Element to show loading state on
  * @param {boolean} isLoading - Whether to show or hide loading state
@@ -985,6 +1358,7 @@ if (typeof module !== 'undefined' && module.exports) {
         initPageDropdowns,
         initSectionManagement,
         initTutorManagement,
+        initPageManagement,
         setLoadingState,
         validateFormData
     };
@@ -994,6 +1368,7 @@ if (typeof module !== 'undefined' && module.exports) {
         initPageDropdowns,
         initSectionManagement,
         initTutorManagement,
+        initPageManagement,
         setLoadingState,
         validateFormData
     };
