@@ -23,6 +23,7 @@ const Section = require('../models/Section');
 const connectDB = require('./connectToDatabase');
 const { csrfProtection } = require('../utils/csrf-protection');
 const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
+const { validateText, validateURL } = require('../utils/input-validation');
 
 const MAX_UPLOAD = 4.5 * 1024 * 1024;  // 4.5 MB
 
