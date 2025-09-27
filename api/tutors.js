@@ -341,8 +341,6 @@ module.exports = async (req, res) => {
                 <link rel="stylesheet" href="/css/animation-module.css">
                 <link rel="stylesheet" href="/header-banner.css">
                 <link rel="stylesheet" href="/css/nav.css">
-                <!-- Font Awesome for social icons -->
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
                 <script src="/responsive-helper.js"></script>
                 <script src="/js/nav-loader.js" defer></script>
                 <script src="/js/dynamic-nav.js" defer></script>
@@ -744,14 +742,6 @@ module.exports = async (req, res) => {
                 </div>
                 </div>
                 </main>
-
-                <!-- SOCIAL ICONS FOOTER -->
-                <footer class="site-footer fade-in-section is-visible">
-                    <div class="footer-icons">
-                        <a href="https://www.instagram.com/tutorsalliancescotland/" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.facebook.com/tutorsalliancescotland/" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    </div>
-                </footer>
 
                 <!-- STATIC BOTTOM FOOTER -->
                 <footer class="static-footer">
