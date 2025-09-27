@@ -195,27 +195,70 @@ function initSectionManagement() {
     // Helper: Update view page link
     function updatePageLink(selectedPage) {
         if (viewPageLink && selectedPage) {
-            const pageUrl = selectedPage === 'index' ? '/' : `/${selectedPage}.html`;
-            viewPageLink.href = pageUrl;
+            if (selectedPage === 'rolling-banner') {
+                // Hide view page link for rolling banner (it's not a real page)
+                viewPageLink.style.display = 'none';
+            } else {
+                const pageUrl = selectedPage === 'index' ? '/' : `/${selectedPage}.html`;
+                viewPageLink.href = pageUrl;
+                viewPageLink.style.display = 'inline-block';
+            }
         }
     }
 
-    // Helper: Toggle layout-specific fields
+    // Helper: Toggle layout-specific fields and required attributes
     function toggleLayoutFields() {
+        const currentPage = pageSelect.value;
         const layout = sectionLayout.value;
+        const isBanner = currentPage === 'rolling-banner';
+
         const standardFields = document.getElementById('standardFields');
         const rollingBannerFields = document.getElementById('rollingBannerFields');
         const metaControls = document.getElementById('metaControls');
 
-        // Show/hide fields based on layout
-        if (layout === 'rolling-banner') {
+        // Get form elements for required attribute management
+        const headingInput = sectionForm.querySelector('[name="heading"]');
+        const standardTextarea = sectionForm.querySelector('#standardOnlyFields textarea[name="text"]');
+        const rollingTextarea = sectionForm.querySelector('[name="rollingText"]');
+
+        console.log('[Admin Dashboard] toggleLayoutFields - isBanner:', isBanner, 'layout:', layout);
+
+        // Show/hide field groups based on page type
+        if (isBanner) {
+            // Rolling banner mode
             if (rollingBannerFields) rollingBannerFields.style.display = 'block';
             if (metaControls) metaControls.style.display = 'none';
+
+            // Set form to novalidate to prevent HTML5 validation conflicts
+            sectionForm.setAttribute('novalidate', '');
+
+            // Manage required attributes for banner mode
+            if (headingInput) headingInput.removeAttribute('required');
+            if (standardTextarea) standardTextarea.removeAttribute('required');
+            if (rollingTextarea) rollingTextarea.setAttribute('required', '');
+
         } else {
+            // Regular section mode
             if (rollingBannerFields) rollingBannerFields.style.display = 'none';
             if (metaControls) metaControls.style.display = 'block';
 
-            // Toggle standard-specific fields
+            // Remove novalidate to enable HTML5 validation
+            sectionForm.removeAttribute('novalidate');
+
+            // Manage required attributes for regular mode
+            if (headingInput) headingInput.setAttribute('required', '');
+            if (rollingTextarea) rollingTextarea.removeAttribute('required');
+
+            // Standard layout text field is only required for standard layout
+            if (standardTextarea) {
+                if (layout === 'standard') {
+                    standardTextarea.setAttribute('required', '');
+                } else {
+                    standardTextarea.removeAttribute('required');
+                }
+            }
+
+            // Toggle standard-specific fields visibility
             if (standardFields) {
                 const standardOnlyFields = document.getElementById('standardOnlyFields');
                 if (standardOnlyFields) {
@@ -223,6 +266,12 @@ function initSectionManagement() {
                 }
             }
         }
+
+        // Update view page link visibility
+        updatePageLink(currentPage);
+
+        console.log('[Admin Dashboard] Field toggling complete - rollingText required:',
+                   rollingTextarea ? rollingTextarea.hasAttribute('required') : 'N/A');
     }
 
     // Page dropdown change handler
@@ -230,7 +279,7 @@ function initSectionManagement() {
         pageSelect.addEventListener('change', () => {
             loadSections();
             resetSectionForm(); // Preserves the just-chosen page
-            updatePageLink(pageSelect.value);
+            toggleLayoutFields(); // Update field visibility and required attributes
         });
     }
 
@@ -370,16 +419,43 @@ function initSectionManagement() {
 
         const isEditing = !!sectionForm.dataset.editId;
         const sectionId = sectionForm.dataset.editId;
+        const currentPage = pageSelect.value;
+        const isRollingBanner = currentPage === 'rolling-banner';
 
         try {
             const formData = new FormData(sectionForm);
+
+            // Special handling for rolling-banner sections
+            if (isRollingBanner) {
+                const rollingText = formData.get('rollingText')?.trim();
+                if (!rollingText) {
+                    alert('Please enter news content for the rolling banner');
+                    return;
+                }
+
+                // For rolling banner, convert rollingText to text field and clean up form data
+                formData.set('text', rollingText);
+                formData.set('page', 'rolling-banner');
+
+                // Remove fields we don't want for banner sections
+                ['layout', 'showInNav', 'navCategory', 'imagePath',
+                 'buttonLabel', 'buttonUrl', 'position', 'team', 'rollingText'].forEach(key => {
+                    formData.delete(key);
+                });
+
+                console.log('[Admin Dashboard] Processing rolling banner section');
+            }
+
             const layout = formData.get('layout') || 'standard';
 
             // Determine the correct API endpoint
             let apiUrl;
             let method = isEditing ? 'PUT' : 'POST';
 
-            if (layout === 'video') {
+            // For rolling-banner, always use /api/sections regardless of layout
+            if (isRollingBanner) {
+                apiUrl = isEditing ? `/api/sections?id=${sectionId}` : '/api/sections';
+            } else if (layout === 'video') {
                 apiUrl = isEditing ? `/api/video-sections?id=${sectionId}` : '/api/video-sections';
             } else {
                 apiUrl = isEditing ? `/api/sections?id=${sectionId}` : '/api/sections';
@@ -390,7 +466,7 @@ function initSectionManagement() {
                 formData.append('editId', sectionId);
             }
 
-            console.log(`[Admin Dashboard] Submitting ${method} to ${apiUrl}`);
+            console.log(`[Admin Dashboard] Submitting ${method} to ${apiUrl} (rolling-banner: ${isRollingBanner})`);
 
             const response = await fetch(apiUrl, {
                 method: method,
@@ -410,6 +486,22 @@ function initSectionManagement() {
             // Reset form and reload sections
             resetSectionForm();
             loadSections();
+
+            // Refresh rolling banner immediately if we just added/updated news
+            if (isRollingBanner) {
+                try {
+                    const bannerResponse = await fetch('/api/sections?page=rolling-banner');
+                    if (bannerResponse.ok) {
+                        const bannerSections = await bannerResponse.json();
+                        const tutorBanner = document.getElementById('tutorBanner');
+                        if (tutorBanner && bannerSections.length > 0) {
+                            tutorBanner.textContent = bannerSections.map(s => s.text).join(' | ');
+                        }
+                    }
+                } catch (bannerError) {
+                    console.error('[Admin Dashboard] Error refreshing banner:', bannerError);
+                }
+            }
 
         } catch (error) {
             console.error('[Admin Dashboard] Section save error:', error);
@@ -469,24 +561,44 @@ function initSectionManagement() {
 
     // Populate form for editing
     function populateSectionForm(section) {
+        const isRollingBanner = section.page === 'rolling-banner';
+
         // Set basic fields
         if (pageSelect) pageSelect.value = section.page || '';
 
-        const headingField = sectionForm.querySelector('[name="heading"]');
-        if (headingField) headingField.value = section.heading || '';
+        // Handle rolling-banner sections differently
+        if (isRollingBanner) {
+            // For rolling-banner, populate the rolling text field with section.text
+            const rollingTextField = sectionForm.querySelector('[name="rollingText"]');
+            if (rollingTextField) rollingTextField.value = section.text || '';
 
-        const textField = sectionForm.querySelector('[name="text"]');
-        if (textField) textField.value = section.text || '';
+            // Set layout to 'standard' for rolling banner to avoid API endpoint confusion
+            const layoutField = sectionForm.querySelector('[name="layout"]');
+            if (layoutField) layoutField.value = 'standard';
 
-        const layoutField = sectionForm.querySelector('[name="layout"]');
-        if (layoutField) {
-            layoutField.value = section.layout || 'standard';
-            toggleLayoutFields(); // Update field visibility
+            // Update form heading
+            sectionFormHeading.textContent = 'Edit Rolling Banner News';
+
+        } else {
+            // Regular sections
+            const headingField = sectionForm.querySelector('[name="heading"]');
+            if (headingField) headingField.value = section.heading || '';
+
+            const textField = sectionForm.querySelector('[name="text"]');
+            if (textField) textField.value = section.text || '';
+
+            const layoutField = sectionForm.querySelector('[name="layout"]');
+            if (layoutField) {
+                layoutField.value = section.layout || 'standard';
+            }
+
+            // Clear rolling text field for regular sections
+            const rollingTextField = sectionForm.querySelector('[name="rollingText"]');
+            if (rollingTextField) rollingTextField.value = '';
         }
 
-        // Rolling banner specific
-        const rollingTextField = sectionForm.querySelector('[name="rollingText"]');
-        if (rollingTextField) rollingTextField.value = section.rollingText || '';
+        // Update field visibility based on section type
+        toggleLayoutFields();
 
         // Navigation fields
         if (showInNav) {
