@@ -59,7 +59,38 @@ form button:hover {
     background: #003F8F
 }
 
-/* Tab styling */
+/* Tab styling - Updated for .tab-button classes */
+.tabs-container {
+    max-width: 700px;
+    margin: 20px auto;
+}
+
+.tab-buttons {
+    display: flex;
+    margin-bottom: 0;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 12px 20px;
+    background: #E6F0FF;
+    color: #0057B7;
+    border: 1px solid #0057B7;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    font-size: 1.05em;
+    cursor: pointer;
+    transition: .25s;
+    text-align: center;
+    font-weight: bold;
+}
+
+.tab-button.active {
+    background: #0057B7;
+    color: white;
+}
+
+/* Legacy tab styles - kept for backward compatibility */
 .tabs {
     display: flex;
     margin-bottom: 20px;
