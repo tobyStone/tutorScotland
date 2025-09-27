@@ -136,41 +136,407 @@ function updateViewPageLink(selectedPage) {
  */
 function initSectionManagement() {
     const sectionForm = document.getElementById('addSection');
-    if (!sectionForm) return;
-    
-    // Handle section form submission
+    if (!sectionForm) {
+        console.log('[Admin Dashboard] Section form not found, skipping section management init');
+        return;
+    }
+
+    // Get form elements
+    const pageSelect = document.getElementById('pageSelect');
+    const viewPageLink = document.getElementById('viewPageLink');
+    const sectionTbody = document.querySelector('#sectionTable tbody');
+    const sectionFormHeading = document.getElementById('sectionFormHeading');
+    const submitSectionBtn = document.getElementById('submitSectionBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const currentImagePreview = document.getElementById('currentImagePreview');
+    const removeButtonRow = document.getElementById('removeButtonRow');
+    const movePageRow = document.getElementById('movePageRow');
+    const movePageSelect = document.getElementById('movePageSelect');
+    const showInNav = document.getElementById('showInNav');
+    const navCatRow = document.getElementById('navCatRow');
+    const sectionLayout = document.getElementById('sectionLayout');
+
+    // Store all sections for editing
+    let allSections = [];
+
+    // Helper: Reset form to create mode but keep page selection
+    function resetSectionForm() {
+        const currentPage = pageSelect.value; // Remember current page
+        sectionForm.reset(); // Native reset (clears all fields including selects)
+        pageSelect.value = currentPage; // Restore page selection
+
+        delete sectionForm.dataset.editId;
+        sectionFormHeading.textContent = 'Add a Dynamic Section';
+        submitSectionBtn.textContent = 'Add Section';
+        cancelEditBtn.style.display = 'none';
+        currentImagePreview.style.display = 'none';
+
+        // Reset checkboxes
+        const removeImageCheckbox = sectionForm.querySelector('[name="removeImage"]');
+        if (removeImageCheckbox) removeImageCheckbox.checked = false;
+
+        const removeButtonCheckbox = sectionForm.querySelector('[name="removeButton"]');
+        if (removeButtonCheckbox) removeButtonCheckbox.checked = false;
+
+        // Hide conditional elements
+        if (movePageRow) movePageRow.style.display = 'none';
+        if (removeButtonRow) removeButtonRow.style.display = 'none';
+        if (navCatRow) navCatRow.style.display = showInNav.checked ? 'block' : 'none';
+
+        // Reset button fields
+        const buttonLabel = sectionForm.querySelector('[name="buttonLabel"]');
+        const buttonUrl = sectionForm.querySelector('[name="buttonUrl"]');
+        if (buttonLabel) buttonLabel.value = '';
+        if (buttonUrl) buttonUrl.value = '';
+
+        console.log('[Admin Dashboard] Section form reset to create mode');
+    }
+
+    // Helper: Update view page link
+    function updatePageLink(selectedPage) {
+        if (viewPageLink && selectedPage) {
+            const pageUrl = selectedPage === 'index' ? '/' : `/${selectedPage}.html`;
+            viewPageLink.href = pageUrl;
+        }
+    }
+
+    // Helper: Toggle layout-specific fields
+    function toggleLayoutFields() {
+        const layout = sectionLayout.value;
+        const standardFields = document.getElementById('standardFields');
+        const rollingBannerFields = document.getElementById('rollingBannerFields');
+        const metaControls = document.getElementById('metaControls');
+
+        // Show/hide fields based on layout
+        if (layout === 'rolling-banner') {
+            if (rollingBannerFields) rollingBannerFields.style.display = 'block';
+            if (metaControls) metaControls.style.display = 'none';
+        } else {
+            if (rollingBannerFields) rollingBannerFields.style.display = 'none';
+            if (metaControls) metaControls.style.display = 'block';
+
+            // Toggle standard-specific fields
+            if (standardFields) {
+                const standardOnlyFields = document.getElementById('standardOnlyFields');
+                if (standardOnlyFields) {
+                    standardOnlyFields.style.display = layout === 'standard' ? 'block' : 'none';
+                }
+            }
+        }
+    }
+
+    // Page dropdown change handler
+    if (pageSelect) {
+        pageSelect.addEventListener('change', () => {
+            loadSections();
+            resetSectionForm(); // Preserves the just-chosen page
+            updatePageLink(pageSelect.value);
+        });
+    }
+
+    // Cancel edit button
+    if (cancelEditBtn) {
+        cancelEditBtn.addEventListener('click', resetSectionForm);
+    }
+
+    // Navigation controls
+    if (showInNav && navCatRow) {
+        showInNav.addEventListener('change', () => {
+            navCatRow.style.display = showInNav.checked ? 'block' : 'none';
+        });
+        // Set initial state
+        navCatRow.style.display = showInNav.checked ? 'block' : 'none';
+    }
+
+    // Layout change handler
+    if (sectionLayout) {
+        sectionLayout.addEventListener('change', toggleLayoutFields);
+        toggleLayoutFields(); // Set initial state
+    }
+
+    // Load sections for the current page
+    async function loadSections() {
+        const currentPage = pageSelect.value;
+        if (!currentPage) return;
+
+        try {
+            // Load both regular sections and video sections
+            const [sectionsResponse, videoSectionsResponse] = await Promise.all([
+                fetch(`/api/sections?page=${currentPage}`),
+                fetch(`/api/video-sections?page=${currentPage}`)
+            ]);
+
+            let sections = [];
+            let videoSections = [];
+
+            if (sectionsResponse.ok) {
+                sections = await sectionsResponse.json();
+            }
+
+            if (videoSectionsResponse.ok) {
+                videoSections = await videoSectionsResponse.json();
+            }
+
+            // Combine and sort sections
+            allSections = [...sections, ...videoSections].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+            // Populate table
+            populateSectionsTable(allSections);
+
+            console.log(`[Admin Dashboard] Loaded ${allSections.length} sections for page: ${currentPage}`);
+
+        } catch (error) {
+            console.error('[Admin Dashboard] Error loading sections:', error);
+            if (sectionTbody) {
+                sectionTbody.innerHTML = '<tr><td colspan="7">Error loading sections</td></tr>';
+            }
+        }
+    }
+
+    // Populate sections table
+    function populateSectionsTable(sections) {
+        if (!sectionTbody) return;
+
+        sectionTbody.innerHTML = '';
+
+        if (sections.length === 0) {
+            sectionTbody.innerHTML = '<tr><td colspan="7">No sections found for this page</td></tr>';
+            return;
+        }
+
+        sections.forEach((section, index) => {
+            const row = document.createElement('tr');
+            row.dataset.id = section._id;
+            row.dataset.type = section.layout === 'video' ? 'video' : 'regular';
+
+            // Order number
+            const orderCell = document.createElement('td');
+            orderCell.textContent = index + 1;
+            row.appendChild(orderCell);
+
+            // Heading
+            const headingCell = document.createElement('td');
+            headingCell.textContent = section.heading || section.rollingText || 'No heading';
+            headingCell.style.maxWidth = '200px';
+            headingCell.style.overflow = 'hidden';
+            headingCell.style.textOverflow = 'ellipsis';
+            row.appendChild(headingCell);
+
+            // Layout
+            const layoutCell = document.createElement('td');
+            layoutCell.textContent = section.layout || 'standard';
+            row.appendChild(layoutCell);
+
+            // Position
+            const positionCell = document.createElement('td');
+            positionCell.textContent = section.position || 'bottom';
+            row.appendChild(positionCell);
+
+            // Image indicator
+            const imageCell = document.createElement('td');
+            imageCell.textContent = section.imagePath ? '✅' : '❌';
+            row.appendChild(imageCell);
+
+            // Button indicator
+            const buttonCell = document.createElement('td');
+            buttonCell.textContent = (section.buttonLabel && section.buttonUrl) ? '✅' : '❌';
+            row.appendChild(buttonCell);
+
+            // Actions
+            const actionsCell = document.createElement('td');
+
+            const editButton = document.createElement('button');
+            editButton.innerHTML = '✏️';
+            editButton.title = 'Edit Section';
+            editButton.className = 'edit-section';
+            editButton.dataset.id = section._id;
+            actionsCell.appendChild(editButton);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML = '🗑️';
+            deleteButton.title = 'Delete Section';
+            deleteButton.className = 'delete-section';
+            deleteButton.dataset.id = section._id;
+            actionsCell.appendChild(deleteButton);
+
+            row.appendChild(actionsCell);
+            sectionTbody.appendChild(row);
+        });
+    }
+
+    // Handle form submission
     sectionForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+
+        const isEditing = !!sectionForm.dataset.editId;
+        const sectionId = sectionForm.dataset.editId;
+
         try {
-            const formData = new FormData(this);
-            const response = await fetch('/api/sections', {
-                method: 'POST',
-                body: formData
+            const formData = new FormData(sectionForm);
+            const layout = formData.get('layout') || 'standard';
+
+            // Determine the correct API endpoint
+            let apiUrl;
+            let method = isEditing ? 'PUT' : 'POST';
+
+            if (layout === 'video') {
+                apiUrl = isEditing ? `/api/video-sections?id=${sectionId}` : '/api/video-sections';
+            } else {
+                apiUrl = isEditing ? `/api/sections?id=${sectionId}` : '/api/sections';
+            }
+
+            // Add editId for PUT requests
+            if (isEditing) {
+                formData.append('editId', sectionId);
+            }
+
+            console.log(`[Admin Dashboard] Submitting ${method} to ${apiUrl}`);
+
+            const response = await fetch(apiUrl, {
+                method: method,
+                body: formData,
+                credentials: 'include'
             });
-            
+
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(errorText);
             }
-            
+
             const result = await response.json();
-            alert('Section saved successfully!');
-            
-            // Reset form
-            this.reset();
-            
-            // Refresh any section lists if they exist
-            if (typeof loadSections === 'function') {
-                loadSections();
-            }
-            
+            console.log(`[Admin Dashboard] Section ${isEditing ? 'updated' : 'created'} successfully`);
+            alert(`Section ${isEditing ? 'updated' : 'saved'} successfully!`);
+
+            // Reset form and reload sections
+            resetSectionForm();
+            loadSections();
+
         } catch (error) {
             console.error('[Admin Dashboard] Section save error:', error);
             alert('Error saving section: ' + error.message);
         }
     });
-    
+
+    // Handle table interactions (edit/delete)
+    if (sectionTbody) {
+        sectionTbody.addEventListener('click', async (e) => {
+            const sectionId = e.target.dataset.id;
+
+            if (e.target.classList.contains('edit-section')) {
+                // Find the section to edit
+                const section = allSections.find(s => s._id === sectionId);
+                if (!section) {
+                    alert('Section not found for editing');
+                    return;
+                }
+
+                // Populate form for editing
+                populateSectionForm(section);
+                sectionForm.scrollIntoView({ behavior: 'smooth' });
+
+            } else if (e.target.classList.contains('delete-section')) {
+                if (!confirm('Are you sure you want to delete this section?')) {
+                    return;
+                }
+
+                try {
+                    // Determine API endpoint based on section type
+                    const row = e.target.closest('tr');
+                    const sectionType = row.dataset.type;
+                    const apiUrl = sectionType === 'video'
+                        ? `/api/video-sections?id=${sectionId}`
+                        : `/api/sections?id=${sectionId}`;
+
+                    const response = await fetch(apiUrl, {
+                        method: 'DELETE',
+                        credentials: 'include'
+                    });
+
+                    if (response.ok) {
+                        alert('Section deleted successfully!');
+                        loadSections(); // Refresh the sections list
+                    } else {
+                        const error = await response.text();
+                        alert(`Failed to delete section: ${error}`);
+                    }
+                } catch (error) {
+                    console.error('[Admin Dashboard] Error deleting section:', error);
+                    alert('An error occurred while deleting the section.');
+                }
+            }
+        });
+    }
+
+    // Populate form for editing
+    function populateSectionForm(section) {
+        // Set basic fields
+        if (pageSelect) pageSelect.value = section.page || '';
+
+        const headingField = sectionForm.querySelector('[name="heading"]');
+        if (headingField) headingField.value = section.heading || '';
+
+        const textField = sectionForm.querySelector('[name="text"]');
+        if (textField) textField.value = section.text || '';
+
+        const layoutField = sectionForm.querySelector('[name="layout"]');
+        if (layoutField) {
+            layoutField.value = section.layout || 'standard';
+            toggleLayoutFields(); // Update field visibility
+        }
+
+        // Rolling banner specific
+        const rollingTextField = sectionForm.querySelector('[name="rollingText"]');
+        if (rollingTextField) rollingTextField.value = section.rollingText || '';
+
+        // Navigation fields
+        if (showInNav) {
+            showInNav.checked = !!section.showInNav;
+            if (navCatRow) navCatRow.style.display = showInNav.checked ? 'block' : 'none';
+        }
+
+        const navCategoryField = sectionForm.querySelector('[name="navCategory"]');
+        if (navCategoryField) navCategoryField.value = section.navCategory || 'about';
+
+        // Button fields
+        const buttonLabelField = sectionForm.querySelector('[name="buttonLabel"]');
+        const buttonUrlField = sectionForm.querySelector('[name="buttonUrl"]');
+        if (buttonLabelField) buttonLabelField.value = section.buttonLabel || '';
+        if (buttonUrlField) buttonUrlField.value = section.buttonUrl || '';
+
+        // Show current image if exists
+        if (section.imagePath && currentImagePreview) {
+            currentImagePreview.style.display = 'block';
+            const img = currentImagePreview.querySelector('img');
+            if (img) img.src = section.imagePath;
+        }
+
+        // Show remove button option if button exists
+        if ((section.buttonLabel && section.buttonUrl) && removeButtonRow) {
+            removeButtonRow.style.display = 'block';
+        }
+
+        // Show move page option (except for rolling banner)
+        if (movePageRow && movePageSelect && section.layout !== 'rolling-banner') {
+            movePageRow.style.display = 'block';
+            movePageSelect.value = section.page || '';
+        }
+
+        // Update UI for edit mode
+        sectionForm.dataset.editId = section._id;
+        sectionFormHeading.textContent = 'Edit Section';
+        submitSectionBtn.textContent = 'Update Section';
+        cancelEditBtn.style.display = 'inline-block';
+
+        console.log('[Admin Dashboard] Form populated for editing section:', section._id);
+    }
+
+    // Initialize sections management
+    if (pageSelect) {
+        // Load sections for initial page
+        loadSections();
+        updatePageLink(pageSelect.value);
+    }
+
     console.log('[Admin Dashboard] Section management initialized');
 }
 
