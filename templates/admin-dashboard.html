@@ -143,6 +143,107 @@
                 </form>
             </div>
         </div>
+
+        <!-- Tutors Tab -->
+        <div id="tutors-tab" class="tab-content">
+            <!-- ░░░░░░  ADD/EDIT TUTOR FORM  ░░░░░░ -->
+            <div class="admin-form-container">
+                <h3 id="tutorFormHeading" data-ve-block-id="13e6c683-aa50-44ba-92dd-feee30f7c319">Add a Tutor</h3>
+
+                <form id="tutorForm" autocomplete="off">
+                    <label>Tutor Name:
+                        <input type="text" name="name" required>
+                    </label>
+
+                    <label>Subjects (comma-separated):
+                        <input type="text" name="subjects" required>
+                    </label>
+
+                    <label>Cost Range:
+                        <select name="costRange" id="costRangeInput">
+                            <option value="£">£15-20 per hour</option>
+                            <option value="££">£20-25 per hour</option>
+                            <option value="£££">£25-30 per hour</option>
+                            <option value="££££">£30-35 per hour</option>
+                            <option value="£££££">£35+ per hour</option>
+                        </select>
+                    </label>
+
+                    <label>Badges (comma-separated):
+                        <input type="text" name="badges">
+                    </label>
+
+                    <label>Tutor Image:
+                        <input type="file" id="imageField" accept="image/*">
+                    </label>
+
+                    <label>Description:
+                        <textarea name="description" rows="3"></textarea>
+                    </label>
+
+                    <label>Contact (email or website):
+                        <input type="text" name="contact">
+                    </label>
+
+                    <label>Regions:
+                        <select name="regions" id="regionsSelect" multiple>
+                            <option value="online">Online</option>
+                            <option value="aberdeen & aberdeenshire">Aberdeen & Aberdeenshire</option>
+                            <option value="angus & dundee">Angus & Dundee</option>
+                            <option value="argyll & bute">Argyll & Bute</option>
+                            <option value="ayrshire">Ayrshire</option>
+                            <option value="borders">Borders</option>
+                            <option value="dumfries & galloway">Dumfries & Galloway</option>
+                            <option value="edinburgh & lothians">Edinburgh & Lothians</option>
+                            <option value="fife">Fife</option>
+                            <option value="glasgow & west central">Glasgow & West Central</option>
+                            <option value="highlands">Highlands</option>
+                            <option value="lanarkshire">Lanarkshire</option>
+                            <option value="moray">Moray</option>
+                            <option value="perth & kinross">Perth & Kinross</option>
+                            <option value="stirling & clackmannanshire">Stirling & Clackmannanshire</option>
+                            <option value="western isles">Western Isles</option>
+                            <option value="orkney">Orkney</option>
+                            <option value="shetland">Shetland</option>
+                            <option value="caithness & sutherland">Caithness & Sutherland</option>
+                        </select>
+                    </label>
+
+                    <!-- Current Image Preview -->
+                    <div id="currentTutorImagePreview" style="display: none; margin-top: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa;">
+                        <p style="margin-bottom: 5px;">Current Image:</p>
+                        <img src="" alt="Current Image" style="max-width: 150px; border-radius: 4px; margin-bottom: 10px;">
+                        <label style="display: inline-flex; align-items: center; margin-left: 15px;">
+                            <input type="checkbox" name="removeImage" value="true" style="width: auto; margin-right: 5px;"> Remove Image
+                        </label>
+                    </div>
+
+                    <button type="submit" id="submitTutorBtn">Add Tutor</button>
+                    <button type="button" id="cancelTutorEditBtn" style="display: none; background-color: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">Cancel Edit</button>
+                </form>
+            </div>
+
+            <!-- ░░░░░░  MANAGE TUTORS  ░░░░░░ -->
+            <div class="admin-form-container">
+                <h3 data-ve-block-id="39d7ff9d-4901-48f1-86e1-0755df97f9ae">Manage Existing Tutors</h3>
+                <p data-ve-block-id="f128aec9-bb79-4cbb-92e2-efce7b8f5367">Click on a tutor's name to view details. Use the delete button to remove a tutor.</p>
+
+                <table id="tutorTable" class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Subjects</th>
+                            <th>Cost</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </main>
 
     <!-- Visual Editor Templates -->
