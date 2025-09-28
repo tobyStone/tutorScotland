@@ -107,7 +107,9 @@ function populatePageDropdowns(pages) {
         pages.forEach(page => {
             const option = document.createElement('option');
             option.value = page;
-            option.textContent = page.charAt(0).toUpperCase() + page.slice(1).replace(/-/g, ' ');
+            // ✅ FIXED: Map 'index' to 'Landing Page' for display (matches pre-bf1328c behavior)
+            const displayName = page === 'index' ? 'Landing Page' : page.charAt(0).toUpperCase() + page.slice(1).replace(/-/g, ' ');
+            option.textContent = displayName;
             select.appendChild(option);
         });
         
