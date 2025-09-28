@@ -235,6 +235,17 @@ function initSectionManagement() {
             if (rollingBannerFields) rollingBannerFields.style.display = 'block';
             if (metaControls) metaControls.style.display = 'none';
 
+            // Hide heading field for rolling banner (it uses news content instead)
+            const mainHeadingLabel = document.getElementById('mainHeadingLabel');
+            if (mainHeadingLabel) mainHeadingLabel.style.display = 'none';
+
+            // Hide shared fields (image, button) for rolling banner
+            const sharedFields = document.getElementById('sharedFields');
+            if (sharedFields) sharedFields.style.display = 'none';
+
+            // Hide standard fields for rolling banner
+            if (standardFields) standardFields.style.display = 'none';
+
             // Set form to novalidate to prevent HTML5 validation conflicts
             sectionForm.setAttribute('novalidate', '');
 
@@ -247,6 +258,17 @@ function initSectionManagement() {
             // Regular section mode
             if (rollingBannerFields) rollingBannerFields.style.display = 'none';
             if (metaControls) metaControls.style.display = 'block';
+
+            // Show heading field for regular sections
+            const mainHeadingLabel = document.getElementById('mainHeadingLabel');
+            if (mainHeadingLabel) mainHeadingLabel.style.display = 'block';
+
+            // Show shared fields (image, button) for regular sections
+            const sharedFields = document.getElementById('sharedFields');
+            if (sharedFields) sharedFields.style.display = 'block';
+
+            // Show standard fields for regular sections
+            if (standardFields) standardFields.style.display = 'block';
 
             // Remove novalidate to enable HTML5 validation
             sectionForm.removeAttribute('novalidate');
@@ -371,7 +393,11 @@ function initSectionManagement() {
 
             // Heading
             const headingCell = document.createElement('td');
-            headingCell.textContent = section.heading || section.rollingText || 'No heading';
+            // For rolling banner sections, show the text content instead of heading
+            const displayText = section.page === 'rolling-banner'
+                ? (section.text || 'No content')
+                : (section.heading || 'No heading');
+            headingCell.textContent = displayText;
             headingCell.style.maxWidth = '200px';
             headingCell.style.overflow = 'hidden';
             headingCell.style.textOverflow = 'ellipsis';
@@ -379,22 +405,46 @@ function initSectionManagement() {
 
             // Layout
             const layoutCell = document.createElement('td');
-            layoutCell.textContent = section.layout || 'standard';
+            if (section.page === 'rolling-banner') {
+                layoutCell.textContent = 'Banner';
+                layoutCell.style.fontStyle = 'italic';
+                layoutCell.style.color = '#666';
+            } else {
+                layoutCell.textContent = section.layout || 'standard';
+            }
             row.appendChild(layoutCell);
 
             // Position
             const positionCell = document.createElement('td');
-            positionCell.textContent = section.position || 'bottom';
+            if (section.page === 'rolling-banner') {
+                positionCell.textContent = 'Rolling';
+                positionCell.style.fontStyle = 'italic';
+                positionCell.style.color = '#666';
+            } else {
+                positionCell.textContent = section.position || 'bottom';
+            }
             row.appendChild(positionCell);
 
             // Image indicator
             const imageCell = document.createElement('td');
-            imageCell.textContent = section.imagePath ? '✅' : '❌';
+            if (section.page === 'rolling-banner') {
+                imageCell.textContent = 'N/A';
+                imageCell.style.fontStyle = 'italic';
+                imageCell.style.color = '#999';
+            } else {
+                imageCell.textContent = section.imagePath ? '✅' : '❌';
+            }
             row.appendChild(imageCell);
 
             // Button indicator
             const buttonCell = document.createElement('td');
-            buttonCell.textContent = (section.buttonLabel && section.buttonUrl) ? '✅' : '❌';
+            if (section.page === 'rolling-banner') {
+                buttonCell.textContent = 'N/A';
+                buttonCell.style.fontStyle = 'italic';
+                buttonCell.style.color = '#999';
+            } else {
+                buttonCell.textContent = (section.buttonLabel && section.buttonUrl) ? '✅' : '❌';
+            }
             row.appendChild(buttonCell);
 
             // Actions
@@ -2190,7 +2240,7 @@ function initAdvancedSectionBuilders() {
  */
 function initRollingBannerHandling() {
     const pageSelect = document.getElementById('pageSelect');
-    const sectionForm = document.getElementById('sectionForm');
+    const sectionForm = document.getElementById('addSection');
     const metaControls = document.getElementById('metaControls');
     const rollingBannerFields = document.getElementById('rollingBannerFields');
     const standardOnlyFields = document.getElementById('standardOnlyFields');
@@ -2200,79 +2250,8 @@ function initRollingBannerHandling() {
         return;
     }
 
-    /**
-     * Toggle fields and validation based on rolling banner selection
-     */
-    function toggleRollingBannerFields() {
-        const isRollingBanner = pageSelect.value === 'rolling-banner';
-
-        console.log('[Admin Dashboard] Toggle rolling banner fields:', isRollingBanner);
-
-        // Show/hide field blocks
-        if (metaControls) {
-            metaControls.style.display = isRollingBanner ? 'none' : 'block';
-        }
-        if (rollingBannerFields) {
-            rollingBannerFields.style.display = isRollingBanner ? 'block' : 'none';
-        }
-        if (standardOnlyFields) {
-            standardOnlyFields.style.display = isRollingBanner ? 'none' : 'block';
-        }
-
-        // Handle form validation
-        const headingInput = sectionForm.querySelector('input[name="heading"]');
-        const standardTextarea = sectionForm.querySelector('#standardOnlyFields textarea[name="text"]');
-        const rollingTextarea = sectionForm.querySelector('textarea[name="rollingText"]');
-
-        if (isRollingBanner) {
-            // Disable HTML5 validation for rolling banner to prevent conflicts
-            sectionForm.setAttribute('novalidate', '');
-
-            // Remove required attributes from standard fields
-            if (headingInput) headingInput.removeAttribute('required');
-            if (standardTextarea) standardTextarea.removeAttribute('required');
-
-            // Set rolling text as required
-            if (rollingTextarea) rollingTextarea.setAttribute('required', '');
-
-        } else {
-            // Re-enable HTML5 validation for regular sections
-            sectionForm.removeAttribute('novalidate');
-
-            // Set standard fields as required
-            if (headingInput) headingInput.setAttribute('required', '');
-
-            // Standard textarea only required for standard layout
-            if (standardTextarea) {
-                const sectionLayout = document.getElementById('sectionLayout');
-                if (sectionLayout && sectionLayout.value === 'standard') {
-                    standardTextarea.setAttribute('required', '');
-                } else {
-                    standardTextarea.removeAttribute('required');
-                }
-            }
-
-            // Remove required from rolling text
-            if (rollingTextarea) rollingTextarea.removeAttribute('required');
-        }
-
-        // Hide move page controls for rolling banner
-        const movePageRow = document.getElementById('movePageRow');
-        if (movePageRow) {
-            movePageRow.style.display = isRollingBanner ? 'none' : 'block';
-        }
-
-        // Update view page link
-        const viewPageLink = document.getElementById('viewPageLink');
-        if (viewPageLink) {
-            if (isRollingBanner) {
-                viewPageLink.style.display = 'none';
-            } else {
-                viewPageLink.style.display = 'inline-block';
-                viewPageLink.href = pageSelect.value === 'index' ? '/' : `/${pageSelect.value}.html`;
-            }
-        }
-    }
+    // Note: Rolling banner field toggling is now handled by the main toggleLayoutFields() function
+    // in initSectionManagement() to avoid conflicts and ensure consistent behavior
 
     /**
      * Refresh rolling banner content immediately after updates
@@ -2295,13 +2274,8 @@ function initRollingBannerHandling() {
         }
     }
 
-    // Wire up page selection change handler
-    if (pageSelect) {
-        pageSelect.addEventListener('change', toggleRollingBannerFields);
-
-        // Initialize on page load
-        toggleRollingBannerFields();
-    }
+    // Note: Page selection change handler is already set up in initSectionManagement()
+    // which calls toggleLayoutFields() that now includes rolling banner logic
 
     // Export refresh function for use after form submissions
     window.refreshRollingBanner = refreshRollingBanner;
@@ -2558,7 +2532,7 @@ function initVideoManagement() {
             }
 
             // Auto-populate heading if empty
-            const sectionForm = document.getElementById('sectionForm');
+            const sectionForm = document.getElementById('addSection');
             if (sectionForm) {
                 const headingInput = sectionForm.querySelector('[name="heading"]');
                 if (headingInput && !headingInput.value.trim()) {
