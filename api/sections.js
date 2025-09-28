@@ -59,10 +59,15 @@ function createVercelCompatibleResponse(res) {
 
 // Utility function to create URL-friendly slugs
 const slugify = (str) => {
+    if (!str || typeof str !== 'string') {
+        return 'untitled-' + Date.now().toString(36);
+    }
     return str.toString().toLowerCase()
         .replace(/[^\w\s-]/g, '')        // remove symbols
         .trim()
-        .replace(/\s+/g, '-');           // spaces → dashes
+        .replace(/\s+/g, '-')            // spaces → dashes
+        .replace(/^-+|-+$/g, '')         // remove leading/trailing dashes
+        || 'untitled-' + Date.now().toString(36); // fallback if empty after processing
 };
 
 // Helper: Vercel Blob upload
@@ -225,6 +230,19 @@ module.exports = async (req, res) => {
         // CREATE
         if (req.method === 'POST') {
             console.log('POST request received for sections API');
+
+            // Ensure database connection
+            try {
+                await connectDB();
+                console.log('Database connection verified');
+            } catch (dbError) {
+                console.error('Database connection failed:', dbError);
+                return res.status(500).json({
+                    message: 'Database connection failed',
+                    error: dbError.message
+                });
+            }
+
             try {
                 let fields, files;
 
@@ -235,11 +253,20 @@ module.exports = async (req, res) => {
                     files = {};
                 } else {
                     console.log('Starting form parsing...');
-                    const result = await parseForm(req);
-                    fields = result.fields;
-                    files = result.files;
+                    try {
+                        const result = await parseForm(req);
+                        fields = result.fields;
+                        files = result.files;
+                        console.log('Form parsing completed successfully');
+                        console.log('Parsed fields keys:', Object.keys(fields));
+                    } catch (parseError) {
+                        console.error('Form parsing error:', parseError);
+                        return res.status(400).json({
+                            message: 'Failed to parse form data',
+                            error: parseError.message
+                        });
+                    }
                 }
-                console.log('Form parsing completed successfully');
 
                 // Helper to get a single value from a field that might be an array
                 const getField = (name) => Array.isArray(fields[name]) ? fields[name][0] : fields[name];
@@ -249,6 +276,12 @@ module.exports = async (req, res) => {
                 const editId = getField('editId');
                 if (editId) {
                     console.log('Update operation detected for ID:', editId);
+
+                    // Validate editId format (MongoDB ObjectId)
+                    if (!editId.match(/^[0-9a-fA-F]{24}$/)) {
+                        console.error('Invalid editId format:', editId);
+                        return res.status(400).json({ message: 'Invalid section ID format' });
+                    }
 
                     // Get the current section to check if it's rolling-banner
                     const currentDoc = await Section.findById(editId);
@@ -298,13 +331,38 @@ module.exports = async (req, res) => {
                           updateData.page = newPage.toLowerCase().trim();
                         }
 
-                    if (fields.heading) updateData.heading = getField('heading').trim();
-                    if (fields.text) updateData.text = getField('text').trim();
-                    if (fields.position) updateData.position = getField('position').toLowerCase();
+                    if (fields.heading) {
+                        const headingValue = getField('heading');
+                        if (headingValue && typeof headingValue === 'string') {
+                            updateData.heading = headingValue.trim();
+                        }
+                    }
+                    if (fields.text) {
+                        const textValue = getField('text');
+                        if (textValue && typeof textValue === 'string') {
+                            updateData.text = textValue.trim();
+                        }
+                    }
+                    if (fields.position) {
+                        const positionValue = getField('position');
+                        if (positionValue && typeof positionValue === 'string') {
+                            updateData.position = positionValue.toLowerCase();
+                        }
+                    }
 
                     // Add button update logic
-                    if (fields.buttonLabel) updateData.buttonLabel = getField('buttonLabel').trim();
-                    if (fields.buttonUrl) updateData.buttonUrl = getField('buttonUrl').trim();
+                    if (fields.buttonLabel) {
+                        const buttonLabelValue = getField('buttonLabel');
+                        if (buttonLabelValue && typeof buttonLabelValue === 'string') {
+                            updateData.buttonLabel = buttonLabelValue.trim();
+                        }
+                    }
+                    if (fields.buttonUrl) {
+                        const buttonUrlValue = getField('buttonUrl');
+                        if (buttonUrlValue && typeof buttonUrlValue === 'string') {
+                            updateData.buttonUrl = buttonUrlValue.trim();
+                        }
+                    }
 
                     // Handle explicit button removal
                     if (getField('removeButton') === 'true') {
@@ -313,28 +371,42 @@ module.exports = async (req, res) => {
                     }
 
                     // Add navigation update logic
-                    if (fields.showInNav) updateData.showInNav = getField('showInNav') === 'true';
-                    if (fields.navCategory) updateData.navCategory = getField('navCategory').toLowerCase();
+                    if (fields.showInNav) {
+                        const showInNavValue = getField('showInNav');
+                        updateData.showInNav = showInNavValue === 'true';
+                    }
+                    if (fields.navCategory) {
+                        const navCategoryValue = getField('navCategory');
+                        if (navCategoryValue && typeof navCategoryValue === 'string') {
+                            updateData.navCategory = navCategoryValue.toLowerCase();
+                        }
+                    }
 
                     // Re-calculate navAnchor if either heading OR page is changing
                         if (fields.heading || updateData.page) {
-                                // finalPage   = where the row will live after the update
-                                    const finalPage = updateData.page || currentDoc.page;
-                                // finalHeading = updated heading (if supplied) or keep existing
-                                    const finalHeading = fields.heading
-                                            ? getField('heading').trim()
-                                        : currentDoc.heading;
-                            
-                                    let newAnchor = slugify(finalHeading);
-                            
-                                    // Ensure uniqueness within the *destination* page
-                                    const collision = await Section.exists({
-                                            page: finalPage,
-                                            navAnchor: newAnchor,
-                                            _id: { $ne: editId }
-                                    });
-                        if (collision) newAnchor += '-' + Date.now().toString(36);
-                                            updateData.navAnchor = newAnchor;
+                                try {
+                                    // finalPage   = where the row will live after the update
+                                        const finalPage = updateData.page || currentDoc.page;
+                                    // finalHeading = updated heading (if supplied) or keep existing
+                                        const finalHeading = fields.heading
+                                                ? getField('heading').trim()
+                                            : currentDoc.heading;
+
+                                        let newAnchor = slugify(finalHeading);
+
+                                        // Ensure uniqueness within the *destination* page
+                                        const collision = await Section.exists({
+                                                page: finalPage,
+                                                navAnchor: newAnchor,
+                                                _id: { $ne: editId }
+                                        });
+                            if (collision) newAnchor += '-' + Date.now().toString(36);
+                                                updateData.navAnchor = newAnchor;
+                                } catch (anchorError) {
+                                    console.error('Error generating navAnchor:', anchorError);
+                                    // Fallback to a safe anchor
+                                    updateData.navAnchor = 'section-' + Date.now().toString(36);
+                                }
                     }
 
                     // Add layout update logic with validation
@@ -392,9 +464,23 @@ module.exports = async (req, res) => {
                         return res.status(400).json({ message: 'No fields to update provided' });
                     }
 
-                    const updatedDoc = await Section.findByIdAndUpdate(editId, updateData, { new: true });
-                    if (!updatedDoc) {
-                        return res.status(404).json({ message: 'Section not found for update' });
+                    console.log('About to update section with data:', JSON.stringify(updateData, null, 2));
+
+                    let updatedDoc;
+                    try {
+                        updatedDoc = await Section.findByIdAndUpdate(editId, updateData, { new: true });
+                        if (!updatedDoc) {
+                            console.error('Section not found for update, editId:', editId);
+                            return res.status(404).json({ message: 'Section not found for update' });
+                        }
+                    } catch (updateError) {
+                        console.error('Database update error:', updateError);
+                        console.error('Update data that caused error:', JSON.stringify(updateData, null, 2));
+                        return res.status(500).json({
+                            message: 'Database update failed',
+                            error: updateError.message,
+                            details: updateError.name
+                        });
                     }
 
                     // 🐛 DEBUG: Log successful rolling banner update
