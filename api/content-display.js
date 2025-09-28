@@ -364,7 +364,7 @@ function generateFullBlogPage(postsHtml, category, heroImage) {
           <link rel="stylesheet" href="/header-banner.css">
           <link rel="stylesheet" href="/css/nav.css">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <script src="/responsive-helper.js"></script>
+          <script src="/responsive-helper.js" defer></script>
           <script src="/js/nav-loader.js" defer></script>
           <script src="/js/dynamic-nav.js" defer></script>
           <!-- Google Analytics -->
@@ -847,12 +847,10 @@ function generateFullBlogPage(postsHtml, category, heroImage) {
             ${postsHtml}
           </main>
 
-          <script src="/responsive-helper.js"></script>
+          <script src="/responsive-helper.js" defer></script>
           <script>
-            // Initialize the rolling banner using responsive-helper.js
-            document.addEventListener('DOMContentLoaded', function() {
-              initRollingBanner();
-            });
+            // Rolling banner initialization is now handled automatically by responsive-helper.js
+            // No manual initialization needed to prevent race conditions
 
             // Set the active filter button based on the current category
             const currentCategory = '${category || ''}';

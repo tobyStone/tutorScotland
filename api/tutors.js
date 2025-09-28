@@ -341,7 +341,7 @@ module.exports = async (req, res) => {
                 <link rel="stylesheet" href="/css/animation-module.css">
                 <link rel="stylesheet" href="/header-banner.css">
                 <link rel="stylesheet" href="/css/nav.css">
-                <script src="/responsive-helper.js"></script>
+                <script src="/responsive-helper.js" defer></script>
                 <script src="/js/nav-loader.js" defer></script>
                 <script src="/js/dynamic-nav.js" defer></script>
                 <!-- Google Analytics -->
