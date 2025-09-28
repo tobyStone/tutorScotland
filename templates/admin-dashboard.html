@@ -141,6 +141,75 @@
                         </div><!-- /sharedFields -->
                     </div><!-- /metaControls -->
 
+                    <!-- ░░░░░░  TEAM BUILDER FIELDS  ░░░░░░ -->
+                    <div id="teamBuilder" style="display:none; margin-top:15px;">
+                        <h4 style="margin-bottom: 10px; color: #4a90e2;">Team Members</h4>
+                        <button type="button" id="addMemberBtn" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-bottom: 15px;">
+                            ➕ Add Team Member
+                        </button>
+                        <div id="teamMemberList"></div>
+                        <input type="hidden" name="team" id="teamData">
+                    </div>
+
+                    <!-- ░░░░░░  LIST BUILDER FIELDS  ░░░░░░ -->
+                    <div id="listBuilder" style="display:none; margin-top:15px;">
+                        <h4 style="margin-bottom: 10px; color: #4a90e2;">List Items</h4>
+                        <label>List Description (Optional):
+                            <textarea id="listDescription" rows="2" placeholder="Brief description of the list..."></textarea>
+                        </label>
+                        <label>List Type:
+                            <select id="listType">
+                                <option value="unordered">Bullet Points (•)</option>
+                                <option value="ordered">Numbered List (1, 2, 3...)</option>
+                            </select>
+                        </label>
+                        <button type="button" id="addListItemBtn" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin: 10px 0;">
+                            ➕ Add List Item
+                        </button>
+                        <div id="listItemsList"></div>
+                        <input type="hidden" name="listItems" id="listItemsData">
+                    </div>
+
+                    <!-- ░░░░░░  TESTIMONIAL BUILDER FIELDS  ░░░░░░ -->
+                    <div id="testimonialBuilder" style="display:none; margin-top:15px;">
+                        <h4 style="margin-bottom: 10px; color: #4a90e2;">Testimonials</h4>
+                        <button type="button" id="addTestimonialBtn" style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-bottom: 15px;">
+                            ➕ Add Testimonial
+                        </button>
+                        <div id="testimonialList"></div>
+                        <input type="hidden" name="testimonials" id="testimonialsData">
+                    </div>
+
+                    <!-- ░░░░░░  VIDEO BUILDER FIELDS  ░░░░░░ -->
+                    <div id="videoBuilder" style="display:none; margin-top:15px;">
+                        <h4 style="margin-bottom: 10px; color: #4a90e2;">Video Section</h4>
+                        <label>Video URL:
+                            <input type="url" name="videoUrl" id="videoUrl" placeholder="https://example.com/video.mp4">
+                        </label>
+                        <button type="button" id="browseVideosBtn" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                            📹 Browse Available Videos
+                        </button>
+                        <div id="videoBrowser" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; background: #f8f9fa;">
+                            <h5>Available Videos</h5>
+                            <div id="videoLoadingMsg">Loading videos...</div>
+                            <div id="videoCategories" style="display: none;">
+                                <div id="staticVideosSection">
+                                    <h6>Static Videos</h6>
+                                    <div id="staticVideosList"></div>
+                                </div>
+                                <div id="blobVideosSection">
+                                    <h6>Uploaded Videos</h6>
+                                    <div id="blobVideosList"></div>
+                                </div>
+                                <div id="googleCloudVideosSection">
+                                    <h6>Google Cloud Videos</h6>
+                                    <div id="googleCloudVideosList"></div>
+                                </div>
+                            </div>
+                            <div id="noVideosMsg" style="display: none;">No videos available</div>
+                        </div>
+                    </div>
+
                     <!-- Form Action Buttons -->
                     <button type="submit" id="submitSectionBtn">Add Section</button>
                     <button type="button" id="cancelEditBtn" class="cancel-btn" style="display: none;">Cancel Edit</button>

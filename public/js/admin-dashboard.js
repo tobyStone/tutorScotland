@@ -40,6 +40,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initSectionManagement();
     initTutorManagement();
     initPageManagement();
+    initAdvancedSectionBuilders();
+    initVideoManagement();
+    initURLParameterHandling();
 
     console.log('[Admin Dashboard] Initialization complete');
 });
@@ -449,20 +452,133 @@ function initSectionManagement() {
 
             const layout = formData.get('layout') || 'standard';
 
-            // Determine the correct API endpoint
+            // Handle different layout types with special processing
+            if (!isRollingBanner) {
+                if (layout === 'team') {
+                    // Ensure team data is current
+                    const teamDataElement = document.getElementById('teamData');
+                    if (teamDataElement) {
+                        // Trigger update to make sure data is current
+                        if (typeof updateTeamData === 'function') {
+                            updateTeamData();
+                        }
+
+                        const teamDataValue = teamDataElement.value;
+                        if (!teamDataValue || teamDataValue === '[]') {
+                            alert('Please add at least one team member');
+                            return;
+                        }
+
+                        // Set team data and placeholder text
+                        formData.set('text', 'Team members section'); // Placeholder text
+                        formData.set('team', teamDataValue);
+
+                        // Remove the main image field since team sections use individual member images
+                        formData.delete('image');
+
+                        console.log('[Admin Dashboard] Processing team section with', JSON.parse(teamDataValue).length, 'members');
+                    }
+                } else if (layout === 'list') {
+                    // Ensure list data is current
+                    if (typeof updateListData === 'function') {
+                        updateListData();
+                    }
+
+                    const listItemsDataElement = document.getElementById('listItemsData');
+                    if (listItemsDataElement) {
+                        const listDataValue = listItemsDataElement.value;
+                        if (!listDataValue || listDataValue === '{}' || listDataValue === '[]') {
+                            alert('Please add at least one list item');
+                            return;
+                        }
+
+                        // Validate list data structure
+                        try {
+                            const listData = JSON.parse(listDataValue);
+                            if (!listData.items || !Array.isArray(listData.items) || listData.items.length === 0) {
+                                alert('Please add at least one list item');
+                                return;
+                            }
+
+                            // Set list data as text content
+                            formData.set('text', listDataValue);
+                            console.log('[Admin Dashboard] Processing list section with', listData.items.length, 'items');
+
+                        } catch (e) {
+                            alert('Invalid list data format');
+                            return;
+                        }
+                    }
+                } else if (layout === 'testimonial') {
+                    // Ensure testimonial data is current
+                    if (typeof updateTestimonialData === 'function') {
+                        updateTestimonialData();
+                    }
+
+                    const testimonialsDataElement = document.getElementById('testimonialsData');
+                    if (testimonialsDataElement) {
+                        const testimonialsJson = testimonialsDataElement.value;
+                        if (!testimonialsJson || testimonialsJson === '[]') {
+                            alert('Please add at least one testimonial');
+                            return;
+                        }
+
+                        // Validate testimonial JSON before submitting
+                        try {
+                            const testimonialData = JSON.parse(testimonialsJson);
+                            if (!Array.isArray(testimonialData)) {
+                                alert('Invalid testimonial data format - must be an array');
+                                return;
+                            }
+
+                            // Validate each testimonial has required fields
+                            for (let i = 0; i < testimonialData.length; i++) {
+                                const testimonial = testimonialData[i];
+                                if (!testimonial.quote || typeof testimonial.quote !== 'string') {
+                                    alert(`Testimonial ${i + 1} is missing a quote`);
+                                    return;
+                                }
+                                if (!testimonial.author || typeof testimonial.author !== 'string') {
+                                    alert(`Testimonial ${i + 1} is missing an author`);
+                                    return;
+                                }
+                            }
+
+                            // Set testimonials data as text content
+                            formData.set('text', testimonialsJson);
+                            console.log('[Admin Dashboard] Processing testimonial section with', testimonialData.length, 'testimonials');
+
+                        } catch (e) {
+                            console.error('Invalid testimonial JSON on client:', e.message);
+                            alert('Invalid testimonial data format: ' + e.message);
+                            return;
+                        }
+                    }
+                } else if (layout === 'video') {
+                    // Video handling
+                    const videoUrl = formData.get('videoUrl')?.trim();
+                    if (!videoUrl) {
+                        alert('Please enter a video URL or select a video');
+                        return;
+                    }
+                    console.log('[Admin Dashboard] Processing video section');
+                }
+            }
+
+            // Determine the correct API endpoint (always POST, use editId for updates)
             let apiUrl;
-            let method = isEditing ? 'PUT' : 'POST';
+            const method = 'POST'; // Always use POST, original API design
 
             // For rolling-banner, always use /api/sections regardless of layout
             if (isRollingBanner) {
-                apiUrl = isEditing ? `/api/sections?id=${sectionId}` : '/api/sections';
+                apiUrl = '/api/sections';
             } else if (layout === 'video') {
-                apiUrl = isEditing ? `/api/video-sections?id=${sectionId}` : '/api/video-sections';
+                apiUrl = '/api/video-sections';
             } else {
-                apiUrl = isEditing ? `/api/sections?id=${sectionId}` : '/api/sections';
+                apiUrl = '/api/sections';
             }
 
-            // Add editId for PUT requests
+            // Add editId for updates (original API design)
             if (isEditing) {
                 formData.append('editId', sectionId);
             }
@@ -596,6 +712,58 @@ function initSectionManagement() {
             // Clear rolling text field for regular sections
             const rollingTextField = sectionForm.querySelector('[name="rollingText"]');
             if (rollingTextField) rollingTextField.value = '';
+
+            // Handle layout-specific data population
+            if (section.layout === 'team' && section.team) {
+                // Populate team builder with existing team data
+                if (typeof populateTeamBuilder === 'function') {
+                    populateTeamBuilder(section.team);
+                }
+                console.log('[Admin Dashboard] Populated team builder with', section.team.length, 'members');
+            } else if (section.layout === 'list' && section.text) {
+                // Populate list builder with existing list data
+                try {
+                    const listData = JSON.parse(section.text);
+                    if (typeof populateListBuilder === 'function') {
+                        populateListBuilder(listData);
+                    }
+                    console.log('[Admin Dashboard] Populated list builder with', listData.items?.length || 0, 'items');
+                } catch (e) {
+                    console.log('[Admin Dashboard] Could not parse list data:', e);
+                    // Try to handle legacy format
+                    if (typeof populateListBuilder === 'function') {
+                        populateListBuilder({ items: [], listType: 'unordered', description: '' });
+                    }
+                }
+            } else if (section.layout === 'testimonial' && section.text) {
+                // Populate testimonial builder with existing testimonial data
+                try {
+                    let testimonialData = JSON.parse(section.text);
+
+                    // Convert old single testimonial format to array format
+                    if (testimonialData.quote && !Array.isArray(testimonialData)) {
+                        testimonialData = [testimonialData];
+                    }
+
+                    if (typeof populateTestimonialBuilder === 'function') {
+                        populateTestimonialBuilder(testimonialData);
+                    }
+                    console.log('[Admin Dashboard] Populated testimonial builder with', testimonialData.length, 'testimonials');
+                } catch (e) {
+                    console.log('[Admin Dashboard] Could not parse testimonial data:', e);
+                    // Add one empty testimonial for editing
+                    if (typeof populateTestimonialBuilder === 'function') {
+                        populateTestimonialBuilder([]);
+                    }
+                }
+            } else if (section.layout === 'video' && section.videoUrl) {
+                // Populate video URL field
+                const videoUrlField = sectionForm.querySelector('[name="videoUrl"]');
+                if (videoUrlField) {
+                    videoUrlField.value = section.videoUrl;
+                }
+                console.log('[Admin Dashboard] Populated video URL:', section.videoUrl);
+            }
         }
 
         // Update field visibility based on section type
@@ -1314,6 +1482,1272 @@ function initPageManagement() {
 }
 
 /**
+ * Initialize advanced section layout builders (team, list, testimonials, video)
+ */
+function initAdvancedSectionBuilders() {
+    console.log('[Admin Dashboard] Initializing advanced section builders');
+
+    // Get layout selector and builder containers
+    const sectionLayout = document.getElementById('sectionLayout');
+    const teamBuilder = document.getElementById('teamBuilder');
+    const listBuilder = document.getElementById('listBuilder');
+    const testimonialBuilder = document.getElementById('testimonialBuilder');
+    const videoBuilder = document.getElementById('videoBuilder');
+    const standardOnlyFields = document.getElementById('standardOnlyFields');
+    const sharedFields = document.getElementById('sharedFields');
+
+    if (!sectionLayout) {
+        console.log('[Admin Dashboard] Section layout selector not found, skipping advanced builders init');
+        return;
+    }
+
+    // Team builder elements
+    const addMemberBtn = document.getElementById('addMemberBtn');
+    const teamMemberList = document.getElementById('teamMemberList');
+    const teamData = document.getElementById('teamData');
+
+    // Initialize team members array
+    let teamMembers = [];
+
+    /**
+     * Create a team member card with form fields and image upload
+     * @param {number} index - Index of the team member
+     * @returns {HTMLElement} The created team member card element
+     */
+    function createTeamMemberCard(index) {
+        const el = document.createElement('div');
+        el.className = 'team-member-form';
+        el.style.cssText = 'border:1px solid #ddd; padding:15px; margin:10px 0; border-radius:5px; background:#f9f9f9';
+
+        el.innerHTML = `
+            <h4 style="margin-top: 0; color: #4a90e2;">Team Member ${index + 1}</h4>
+
+            <div class="form-group">
+                <label>Name & Role:
+                    <input type="text" class="member-nameRole form-control"
+                           placeholder="e.g., John Smith - Marketing Director"
+                           style="width: 100%; margin-bottom: 10px;" required>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>Bio:
+                    <textarea class="member-bio form-control" rows="3"
+                              placeholder="Brief description of the team member's background and expertise..."
+                              style="width: 100%; margin-bottom: 10px;" required></textarea>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>Quote (Optional):
+                    <input type="text" class="member-quote form-control"
+                           placeholder="e.g., 'Passionate about helping students succeed'"
+                           style="width: 100%; margin-bottom: 10px;">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>Member Image:
+                    <input type="file" class="member-image" accept="image/*"
+                           style="width: 100%; margin-bottom: 10px;">
+                </label>
+                <div class="image-preview" style="display: none; margin-top: 10px;">
+                    <p style="margin-bottom: 5px;">Preview:</p>
+                    <img src="" alt="Team Member Preview"
+                         style="max-width: 120px; max-height: 120px; border-radius: 4px; object-fit: cover;">
+                </div>
+            </div>
+
+            <button type="button" class="remove-member"
+                    style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; float: right;">
+                🗑️ Remove Member
+            </button>
+            <div style="clear: both;"></div>
+        `;
+
+        // Get elements for event handling
+        const imageInput = el.querySelector('.member-image');
+        const previewDiv = el.querySelector('.image-preview');
+        const previewImg = previewDiv.querySelector('img');
+
+        // Handle image preview and upload
+        imageInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                // Show preview immediately
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImg.src = e.target.result;
+                    previewDiv.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+
+                // Upload immediately to prevent race conditions
+                if (!el.dataset.uploading) {
+                    el.dataset.uploading = 'true';
+
+                    try {
+                        // Use upload helper if available
+                        let imagePath;
+                        if (typeof uploadImage === 'function') {
+                            imagePath = await uploadImage(file, 'team');
+                        } else {
+                            // Fallback upload method
+                            const uploadFormData = new FormData();
+                            uploadFormData.append('file', file);
+                            uploadFormData.append('folder', 'team');
+                            const uploadResponse = await fetch('/api/upload-image', {
+                                method: 'POST',
+                                body: uploadFormData
+                            });
+                            if (!uploadResponse.ok) throw new Error('Image upload failed');
+                            const uploadResult = await uploadResponse.json();
+                            imagePath = uploadResult.url;
+                        }
+
+                        el.dataset.imageUploaded = 'true';
+                        el.dataset.existingImage = imagePath;
+                        console.log('Team member image uploaded successfully:', imagePath);
+
+                    } catch (err) {
+                        console.error('Team member image upload failed:', err);
+                        alert('Image upload failed: ' + err.message);
+
+                        // Clear the file input on failure
+                        imageInput.value = '';
+                        previewDiv.style.display = 'none';
+
+                    } finally {
+                        delete el.dataset.uploading;
+                    }
+                }
+            } else {
+                previewDiv.style.display = 'none';
+                delete el.dataset.imageUploaded;
+                delete el.dataset.existingImage;
+            }
+
+            // Update team data after upload is complete
+            updateTeamData();
+        });
+
+        // Remove button handler
+        el.querySelector('.remove-member').addEventListener('click', () => {
+            if (confirm('Are you sure you want to remove this team member?')) {
+                el.remove();
+                updateTeamData();
+            }
+        });
+
+        // Field change handlers
+        el.querySelectorAll('input, textarea').forEach(input => {
+            input.addEventListener('input', updateTeamData);
+            input.addEventListener('change', updateTeamData);
+        });
+
+        return el;
+    }
+
+    /**
+     * Add a new team member card
+     */
+    function addTeamMember() {
+        const card = createTeamMemberCard(teamMemberList.children.length);
+        teamMemberList.appendChild(card);
+        updateTeamData();
+
+        // Scroll to the new card
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Focus on the name field
+        const nameField = card.querySelector('.member-nameRole');
+        if (nameField) {
+            setTimeout(() => nameField.focus(), 100);
+        }
+
+        console.log('[Admin Dashboard] Added new team member card');
+    }
+
+    /**
+     * Update team data JSON from current form state
+     */
+    function updateTeamData() {
+        teamMembers = []; // Reset
+
+        // Collect data from all team member forms
+        const forms = teamMemberList.querySelectorAll('.team-member-form');
+        forms.forEach(form => {
+            const name = form.querySelector('.member-nameRole').value.trim();
+            const bio = form.querySelector('.member-bio').value.trim();
+            const quote = form.querySelector('.member-quote').value.trim();
+
+            // Skip incomplete cards (require name and bio)
+            if (!name || !bio) return;
+
+            // Use existing uploaded image path (upload happens per-card)
+            const imagePath = form.dataset.existingImage || '';
+
+            teamMembers.push({
+                name: name,
+                bio: bio,
+                quote: quote,
+                image: imagePath
+            });
+        });
+
+        // Update hidden field
+        if (teamData) {
+            teamData.value = JSON.stringify(teamMembers);
+        }
+
+        console.log('[Admin Dashboard] Team data updated:', teamMembers);
+    }
+
+    /**
+     * Populate team builder with existing data (for editing)
+     * @param {Array} existingTeam - Array of team member objects
+     */
+    function populateTeamBuilder(existingTeam) {
+        if (!existingTeam || !Array.isArray(existingTeam)) return;
+
+        // Clear existing cards
+        teamMemberList.innerHTML = '';
+        teamMembers = [];
+
+        // Create cards for each existing team member
+        existingTeam.forEach((member, index) => {
+            const card = createTeamMemberCard(index);
+
+            // Pre-fill fields from the section data
+            card.querySelector('.member-nameRole').value = member.name || '';
+            card.querySelector('.member-bio').value = member.bio || '';
+            card.querySelector('.member-quote').value = member.quote || '';
+
+            // Handle existing image
+            if (member.image) {
+                // Remember and display the existing image
+                card.dataset.imageUploaded = 'true';
+                card.dataset.existingImage = member.image; // This prevents the image from being lost on update
+
+                const previewDiv = card.querySelector('.image-preview');
+                const previewImg = previewDiv.querySelector('img');
+
+                previewImg.src = member.image;
+                previewDiv.style.display = 'block';
+            }
+
+            teamMemberList.appendChild(card);
+        });
+
+        // Sync the populated data to the hidden input
+        updateTeamData();
+
+        console.log('[Admin Dashboard] Team builder populated with', existingTeam.length, 'members');
+    }
+
+    /**
+     * Clear team builder (for form reset)
+     */
+    function clearTeamBuilder() {
+        teamMemberList.innerHTML = '';
+        teamMembers = [];
+        if (teamData) {
+            teamData.value = '[]';
+        }
+        console.log('[Admin Dashboard] Team builder cleared');
+    }
+
+    // Wire up the add member button
+    if (addMemberBtn) {
+        addMemberBtn.addEventListener('click', addTeamMember);
+    }
+
+    // Layout switching logic
+    if (sectionLayout) {
+        sectionLayout.addEventListener('change', () => {
+            const layoutValue = sectionLayout.value;
+            const isTeam = layoutValue === 'team';
+            const isList = layoutValue === 'list';
+            const isTestimonial = layoutValue === 'testimonial';
+            const isVideo = layoutValue === 'video';
+            const isStandard = layoutValue === 'standard';
+
+            console.log('[Admin Dashboard] Layout changed to:', layoutValue);
+
+            // Show/hide builder sections
+            if (teamBuilder) teamBuilder.style.display = isTeam ? 'block' : 'none';
+            if (listBuilder) listBuilder.style.display = isList ? 'block' : 'none';
+            if (testimonialBuilder) testimonialBuilder.style.display = isTestimonial ? 'block' : 'none';
+            if (videoBuilder) videoBuilder.style.display = isVideo ? 'block' : 'none';
+            if (standardOnlyFields) standardOnlyFields.style.display = isStandard ? 'block' : 'none';
+
+            // Handle shared image field visibility
+            if (sharedFields) {
+                const imageField = sharedFields.querySelector('label');
+                const imagePreview = document.getElementById('currentImagePreview');
+
+                if (imageField && imageField.querySelector('input[name="image"]')) {
+                    // Hide shared image field for team sections since images are handled per team member
+                    imageField.style.display = isTeam ? 'none' : 'block';
+                }
+
+                if (imagePreview) {
+                    // Hide image preview for team sections
+                    if (isTeam) {
+                        imagePreview.style.display = 'none';
+                    }
+                }
+            }
+
+            // Set required attributes for team fields
+            const teamFields = teamMemberList.querySelectorAll('.member-nameRole, .member-bio');
+            teamFields.forEach(el => {
+                if (isTeam) {
+                    el.setAttribute('required', '');
+                } else {
+                    el.removeAttribute('required');
+                }
+            });
+
+            // Cleanup when switching away from specific layouts
+            if (!isTeam) {
+                if (typeof clearTeamBuilder === 'function') {
+                    clearTeamBuilder();
+                }
+            }
+            if (!isList) {
+                if (typeof clearListBuilder === 'function') {
+                    clearListBuilder();
+                }
+            }
+            if (!isTestimonial) {
+                if (typeof clearTestimonialBuilder === 'function') {
+                    clearTestimonialBuilder();
+                }
+            }
+            if (!isTestimonial) {
+                // Clear testimonial builder (will be implemented later)
+                const testimonialList = document.getElementById('testimonialList');
+                const testimonialsData = document.getElementById('testimonialsData');
+                if (testimonialList) testimonialList.innerHTML = '';
+                if (testimonialsData) testimonialsData.value = '[]';
+            }
+        });
+    }
+
+    // List builder elements
+    const addListItemBtn = document.getElementById('addListItemBtn');
+    const listItemsList = document.getElementById('listItemsList');
+    const listItemsData = document.getElementById('listItemsData');
+    const listDescription = document.getElementById('listDescription');
+    const listType = document.getElementById('listType');
+
+    // Initialize list items array
+    let listItems = [];
+
+    /**
+     * Create a list item form with text input and remove button
+     * @returns {HTMLElement} The created list item element
+     */
+    function createListItemForm() {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'list-item-form';
+        itemDiv.style.cssText = 'border:1px solid #ddd; padding:10px; margin:5px 0; border-radius:5px; background:#f9f9f9; display:flex; align-items:center; gap:10px;';
+
+        itemDiv.innerHTML = `
+            <input type="text" class="list-item-text form-control"
+                   placeholder="Enter list item text..."
+                   style="flex:1;" required>
+            <button type="button" class="remove-list-item"
+                    style="background:#dc3545; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">
+                🗑️ Remove
+            </button>
+        `;
+
+        // Add remove functionality
+        itemDiv.querySelector('.remove-list-item').addEventListener('click', () => {
+            if (confirm('Remove this list item?')) {
+                itemDiv.remove();
+                updateListData();
+            }
+        });
+
+        // Update data when text changes
+        itemDiv.querySelector('.list-item-text').addEventListener('input', updateListData);
+        itemDiv.querySelector('.list-item-text').addEventListener('change', updateListData);
+
+        return itemDiv;
+    }
+
+    /**
+     * Add a new list item form
+     */
+    function addListItem() {
+        const itemForm = createListItemForm();
+        listItemsList.appendChild(itemForm);
+        updateListData();
+
+        // Focus on the new input
+        const textInput = itemForm.querySelector('.list-item-text');
+        if (textInput) {
+            setTimeout(() => textInput.focus(), 100);
+        }
+
+        console.log('[Admin Dashboard] Added new list item form');
+    }
+
+    /**
+     * Update list data JSON from current form state
+     */
+    function updateListData() {
+        listItems = []; // Reset
+
+        // Collect data from all list item forms
+        const forms = listItemsList.querySelectorAll('.list-item-form');
+        forms.forEach(form => {
+            const text = form.querySelector('.list-item-text').value.trim();
+            if (text) {
+                listItems.push(text);
+            }
+        });
+
+        // Build complete list data structure
+        const listData = {
+            items: listItems,
+            listType: listType ? listType.value || 'unordered' : 'unordered',
+            description: listDescription ? listDescription.value.trim() : ''
+        };
+
+        // Update hidden field
+        if (listItemsData) {
+            listItemsData.value = JSON.stringify(listData);
+        }
+
+        console.log('[Admin Dashboard] List data updated:', listData);
+    }
+
+    /**
+     * Populate list builder with existing data (for editing)
+     * @param {Object} existingListData - List data object with items, listType, description
+     */
+    function populateListBuilder(existingListData) {
+        if (!existingListData) return;
+
+        // Clear existing items
+        listItemsList.innerHTML = '';
+        listItems = [];
+
+        // Populate description and type
+        if (listDescription) {
+            listDescription.value = existingListData.description || '';
+        }
+        if (listType) {
+            listType.value = existingListData.listType || 'unordered';
+        }
+
+        // Create forms for each existing item
+        if (existingListData.items && Array.isArray(existingListData.items)) {
+            existingListData.items.forEach(item => {
+                const itemForm = createListItemForm();
+                itemForm.querySelector('.list-item-text').value = item;
+                listItemsList.appendChild(itemForm);
+            });
+        }
+
+        // Sync the populated data
+        updateListData();
+
+        console.log('[Admin Dashboard] List builder populated with', existingListData.items?.length || 0, 'items');
+    }
+
+    /**
+     * Clear list builder (for form reset)
+     */
+    function clearListBuilder() {
+        listItemsList.innerHTML = '';
+        listItems = [];
+        if (listDescription) listDescription.value = '';
+        if (listType) listType.value = 'unordered';
+        if (listItemsData) listItemsData.value = JSON.stringify({ items: [], listType: 'unordered', description: '' });
+        console.log('[Admin Dashboard] List builder cleared');
+    }
+
+    // Wire up the add list item button
+    if (addListItemBtn) {
+        addListItemBtn.addEventListener('click', addListItem);
+    }
+
+    // Wire up list description and type change handlers
+    if (listDescription) {
+        listDescription.addEventListener('input', updateListData);
+        listDescription.addEventListener('change', updateListData);
+    }
+    if (listType) {
+        listType.addEventListener('change', updateListData);
+    }
+
+    // Testimonial builder elements
+    const addTestimonialBtn = document.getElementById('addTestimonialBtn');
+    const testimonialList = document.getElementById('testimonialList');
+    const testimonialsData = document.getElementById('testimonialsData');
+
+    // Initialize testimonials array
+    let testimonials = [];
+
+    /**
+     * Create a testimonial form with quote, author, role, company, and rating fields
+     * @returns {HTMLElement} The created testimonial element
+     */
+    function createTestimonialForm() {
+        const testimonialDiv = document.createElement('div');
+        testimonialDiv.className = 'testimonial-form';
+        testimonialDiv.style.cssText = 'border:1px solid #ddd; padding:15px; margin:10px 0; border-radius:5px; background:#f9f9f9;';
+
+        const testimonialIndex = testimonials.length;
+        testimonialDiv.innerHTML = `
+            <h4 style="margin-top: 0; color: #4a90e2;">Testimonial ${testimonialIndex + 1}</h4>
+
+            <label>Quote:
+                <textarea class="testimonial-quote" rows="3"
+                          placeholder="Enter testimonial quote..."
+                          style="width: 100%; margin-bottom: 10px;" required></textarea>
+            </label>
+
+            <label>Author:
+                <input type="text" class="testimonial-author"
+                       placeholder="Author name"
+                       style="width: 100%; margin-bottom: 10px;" required>
+            </label>
+
+            <label>Role (optional):
+                <input type="text" class="testimonial-role"
+                       placeholder="e.g., Parent, Student"
+                       style="width: 100%; margin-bottom: 10px;">
+            </label>
+
+            <label>Company/Location (optional):
+                <input type="text" class="testimonial-company"
+                       placeholder="e.g., Edinburgh, Glasgow"
+                       style="width: 100%; margin-bottom: 10px;">
+            </label>
+
+            <label>Rating (optional):
+                <select class="testimonial-rating"
+                        style="width: 100%; margin-bottom: 10px;">
+                    <option value="">No rating</option>
+                    <option value="5">⭐⭐⭐⭐⭐ (5 stars)</option>
+                    <option value="4">⭐⭐⭐⭐ (4 stars)</option>
+                    <option value="3">⭐⭐⭐ (3 stars)</option>
+                    <option value="2">⭐⭐ (2 stars)</option>
+                    <option value="1">⭐ (1 star)</option>
+                </select>
+            </label>
+
+            <button type="button" class="remove-testimonial"
+                    style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; float: right;">
+                🗑️ Remove Testimonial
+            </button>
+            <div style="clear: both;"></div>
+        `;
+
+        // Add event listeners for real-time updates
+        const inputs = testimonialDiv.querySelectorAll('textarea, input, select');
+        inputs.forEach(input => {
+            input.addEventListener('input', updateTestimonialData);
+            input.addEventListener('change', updateTestimonialData);
+        });
+
+        // Add remove functionality
+        testimonialDiv.querySelector('.remove-testimonial').addEventListener('click', () => {
+            if (confirm('Are you sure you want to remove this testimonial?')) {
+                testimonialDiv.remove();
+                updateTestimonialData();
+            }
+        });
+
+        return testimonialDiv;
+    }
+
+    /**
+     * Add a new testimonial form
+     */
+    function addTestimonial() {
+        const testimonialForm = createTestimonialForm();
+        testimonialList.appendChild(testimonialForm);
+
+        // Add placeholder to testimonials array
+        testimonials.push({
+            quote: '',
+            author: '',
+            role: '',
+            company: '',
+            rating: ''
+        });
+
+        updateTestimonialData();
+
+        // Scroll to the new testimonial and focus on quote field
+        testimonialForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const quoteField = testimonialForm.querySelector('.testimonial-quote');
+        if (quoteField) {
+            setTimeout(() => quoteField.focus(), 100);
+        }
+
+        console.log('[Admin Dashboard] Added new testimonial form');
+    }
+
+    /**
+     * Update testimonial data JSON from current form state
+     */
+    function updateTestimonialData() {
+        testimonials = []; // Reset
+
+        // Collect data from all testimonial forms
+        testimonialList.querySelectorAll('.testimonial-form').forEach(div => {
+            const quote = div.querySelector('.testimonial-quote')?.value.trim() || '';
+            const author = div.querySelector('.testimonial-author')?.value.trim() || '';
+            const role = div.querySelector('.testimonial-role')?.value.trim() || '';
+            const company = div.querySelector('.testimonial-company')?.value.trim() || '';
+            const rating = div.querySelector('.testimonial-rating')?.value || '';
+
+            // Only include testimonials with both quote and author
+            if (quote && author) {
+                testimonials.push({ quote, author, role, company, rating });
+            }
+        });
+
+        // Update hidden field
+        if (testimonialsData) {
+            testimonialsData.value = JSON.stringify(testimonials);
+        }
+
+        console.log('[Admin Dashboard] Testimonial data updated:', testimonials);
+    }
+
+    /**
+     * Populate testimonial builder with existing data (for editing)
+     * @param {Array} existingTestimonials - Array of testimonial objects
+     */
+    function populateTestimonialBuilder(existingTestimonials) {
+        if (!existingTestimonials || !Array.isArray(existingTestimonials)) return;
+
+        // Clear existing testimonials
+        testimonialList.innerHTML = '';
+        testimonials = [];
+
+        // Create forms for each existing testimonial
+        existingTestimonials.forEach(testimonial => {
+            const testimonialForm = createTestimonialForm();
+
+            // Pre-fill fields from the section data
+            testimonialForm.querySelector('.testimonial-quote').value = testimonial.quote || '';
+            testimonialForm.querySelector('.testimonial-author').value = testimonial.author || '';
+            testimonialForm.querySelector('.testimonial-role').value = testimonial.role || '';
+            testimonialForm.querySelector('.testimonial-company').value = testimonial.company || '';
+            testimonialForm.querySelector('.testimonial-rating').value = testimonial.rating || '';
+
+            testimonialList.appendChild(testimonialForm);
+        });
+
+        // If no testimonials exist, add one empty form
+        if (existingTestimonials.length === 0) {
+            addTestimonial();
+        }
+
+        // Sync the populated data
+        updateTestimonialData();
+
+        console.log('[Admin Dashboard] Testimonial builder populated with', existingTestimonials.length, 'testimonials');
+    }
+
+    /**
+     * Clear testimonial builder (for form reset)
+     */
+    function clearTestimonialBuilder() {
+        testimonialList.innerHTML = '';
+        testimonials = [];
+        if (testimonialsData) {
+            testimonialsData.value = '[]';
+        }
+        console.log('[Admin Dashboard] Testimonial builder cleared');
+    }
+
+    // Wire up the add testimonial button
+    if (addTestimonialBtn) {
+        addTestimonialBtn.addEventListener('click', addTestimonial);
+    }
+
+    // Rolling Banner Special Handling
+    initRollingBannerHandling();
+
+    console.log('[Admin Dashboard] Advanced section builders initialized');
+}
+
+/**
+ * Initialize rolling banner special handling
+ */
+function initRollingBannerHandling() {
+    const pageSelect = document.getElementById('pageSelect');
+    const sectionForm = document.getElementById('sectionForm');
+    const metaControls = document.getElementById('metaControls');
+    const rollingBannerFields = document.getElementById('rollingBannerFields');
+    const standardOnlyFields = document.getElementById('standardOnlyFields');
+
+    if (!pageSelect || !sectionForm) {
+        console.log('[Admin Dashboard] Rolling banner elements not found, skipping init');
+        return;
+    }
+
+    /**
+     * Toggle fields and validation based on rolling banner selection
+     */
+    function toggleRollingBannerFields() {
+        const isRollingBanner = pageSelect.value === 'rolling-banner';
+
+        console.log('[Admin Dashboard] Toggle rolling banner fields:', isRollingBanner);
+
+        // Show/hide field blocks
+        if (metaControls) {
+            metaControls.style.display = isRollingBanner ? 'none' : 'block';
+        }
+        if (rollingBannerFields) {
+            rollingBannerFields.style.display = isRollingBanner ? 'block' : 'none';
+        }
+        if (standardOnlyFields) {
+            standardOnlyFields.style.display = isRollingBanner ? 'none' : 'block';
+        }
+
+        // Handle form validation
+        const headingInput = sectionForm.querySelector('input[name="heading"]');
+        const standardTextarea = sectionForm.querySelector('#standardOnlyFields textarea[name="text"]');
+        const rollingTextarea = sectionForm.querySelector('textarea[name="rollingText"]');
+
+        if (isRollingBanner) {
+            // Disable HTML5 validation for rolling banner to prevent conflicts
+            sectionForm.setAttribute('novalidate', '');
+
+            // Remove required attributes from standard fields
+            if (headingInput) headingInput.removeAttribute('required');
+            if (standardTextarea) standardTextarea.removeAttribute('required');
+
+            // Set rolling text as required
+            if (rollingTextarea) rollingTextarea.setAttribute('required', '');
+
+        } else {
+            // Re-enable HTML5 validation for regular sections
+            sectionForm.removeAttribute('novalidate');
+
+            // Set standard fields as required
+            if (headingInput) headingInput.setAttribute('required', '');
+
+            // Standard textarea only required for standard layout
+            if (standardTextarea) {
+                const sectionLayout = document.getElementById('sectionLayout');
+                if (sectionLayout && sectionLayout.value === 'standard') {
+                    standardTextarea.setAttribute('required', '');
+                } else {
+                    standardTextarea.removeAttribute('required');
+                }
+            }
+
+            // Remove required from rolling text
+            if (rollingTextarea) rollingTextarea.removeAttribute('required');
+        }
+
+        // Hide move page controls for rolling banner
+        const movePageRow = document.getElementById('movePageRow');
+        if (movePageRow) {
+            movePageRow.style.display = isRollingBanner ? 'none' : 'block';
+        }
+
+        // Update view page link
+        const viewPageLink = document.getElementById('viewPageLink');
+        if (viewPageLink) {
+            if (isRollingBanner) {
+                viewPageLink.style.display = 'none';
+            } else {
+                viewPageLink.style.display = 'inline-block';
+                viewPageLink.href = pageSelect.value === 'index' ? '/' : `/${pageSelect.value}.html`;
+            }
+        }
+    }
+
+    /**
+     * Refresh rolling banner content immediately after updates
+     */
+    async function refreshRollingBanner() {
+        try {
+            const response = await fetch('/api/sections?page=rolling-banner');
+            if (!response.ok) throw new Error('Failed to fetch rolling banner content');
+
+            const sections = await response.json();
+            const tutorBanner = document.getElementById('tutorBanner');
+
+            if (tutorBanner && sections && sections.length > 0) {
+                const text = sections.map(s => s.text).join(' | ');
+                tutorBanner.textContent = text;
+                console.log('[Admin Dashboard] Rolling banner refreshed with', sections.length, 'items');
+            }
+        } catch (error) {
+            console.error('[Admin Dashboard] Failed to refresh rolling banner:', error);
+        }
+    }
+
+    // Wire up page selection change handler
+    if (pageSelect) {
+        pageSelect.addEventListener('change', toggleRollingBannerFields);
+
+        // Initialize on page load
+        toggleRollingBannerFields();
+    }
+
+    // Export refresh function for use after form submissions
+    window.refreshRollingBanner = refreshRollingBanner;
+
+    console.log('[Admin Dashboard] Rolling banner special handling initialized');
+}
+
+/**
+ * Initialize video management system
+ */
+function initVideoManagement() {
+    const browseVideosBtn = document.getElementById('browseVideosBtn');
+    const videoBrowser = document.getElementById('videoBrowser');
+    const videoLoadingMsg = document.getElementById('videoLoadingMsg');
+    const videoCategories = document.getElementById('videoCategories');
+    const staticVideosList = document.getElementById('staticVideosList');
+    const blobVideosList = document.getElementById('blobVideosList');
+    const googleCloudVideosList = document.getElementById('googleCloudVideosList');
+    const noVideosMsg = document.getElementById('noVideosMsg');
+    const videoUrlInput = document.getElementById('videoUrl');
+
+    if (!browseVideosBtn || !videoBrowser) {
+        console.log('[Admin Dashboard] Video management elements not found, skipping init');
+        return;
+    }
+
+    let availableVideos = {
+        staticVideos: [],
+        blobVideos: [],
+        googleCloudVideos: []
+    };
+
+    /**
+     * Toggle video browser visibility and load videos
+     */
+    browseVideosBtn.addEventListener('click', async () => {
+        if (videoBrowser.style.display === 'none' || !videoBrowser.style.display) {
+            await loadAvailableVideos();
+            videoBrowser.style.display = 'block';
+            browseVideosBtn.textContent = '📹 Hide Video Browser';
+        } else {
+            videoBrowser.style.display = 'none';
+            browseVideosBtn.textContent = '📹 Browse Available Videos';
+        }
+    });
+
+    /**
+     * Load available videos from the API
+     */
+    async function loadAvailableVideos() {
+        try {
+            if (videoLoadingMsg) videoLoadingMsg.style.display = 'block';
+            if (videoCategories) videoCategories.style.display = 'none';
+            if (noVideosMsg) noVideosMsg.style.display = 'none';
+
+            const response = await fetch('/api/video-sections?operation=list-videos');
+            if (!response.ok) {
+                throw new Error(`Failed to load videos: ${response.status}`);
+            }
+
+            availableVideos = await response.json();
+            displayAvailableVideos();
+
+        } catch (error) {
+            console.error('[Admin Dashboard] Error loading videos:', error);
+            if (videoLoadingMsg) {
+                videoLoadingMsg.innerHTML = `<span style="color: red;">Error loading videos: ${error.message}</span>`;
+            }
+        }
+    }
+
+    /**
+     * Display available videos in categorized sections
+     */
+    function displayAvailableVideos() {
+        if (videoLoadingMsg) videoLoadingMsg.style.display = 'none';
+
+        // Ensure we have all video arrays
+        availableVideos.staticVideos = availableVideos.staticVideos || [];
+        availableVideos.blobVideos = availableVideos.blobVideos || [];
+        availableVideos.googleCloudVideos = availableVideos.googleCloudVideos || [];
+
+        const totalVideos = availableVideos.staticVideos.length +
+                           availableVideos.blobVideos.length +
+                           availableVideos.googleCloudVideos.length;
+
+        if (totalVideos === 0) {
+            if (noVideosMsg) noVideosMsg.style.display = 'block';
+            return;
+        }
+
+        if (videoCategories) videoCategories.style.display = 'block';
+
+        // Display static videos
+        if (availableVideos.staticVideos.length > 0) {
+            const staticSection = document.getElementById('staticVideosSection');
+            if (staticSection) staticSection.style.display = 'block';
+            if (staticVideosList) {
+                staticVideosList.innerHTML = '';
+                availableVideos.staticVideos.forEach(video => {
+                    const videoItem = createVideoItem(video);
+                    staticVideosList.appendChild(videoItem);
+                });
+            }
+        } else {
+            const staticSection = document.getElementById('staticVideosSection');
+            if (staticSection) staticSection.style.display = 'none';
+        }
+
+        // Display blob videos
+        if (availableVideos.blobVideos.length > 0) {
+            const blobSection = document.getElementById('blobVideosSection');
+            if (blobSection) blobSection.style.display = 'block';
+            if (blobVideosList) {
+                blobVideosList.innerHTML = '';
+                availableVideos.blobVideos.forEach(video => {
+                    const videoItem = createVideoItem(video);
+                    blobVideosList.appendChild(videoItem);
+                });
+            }
+        } else {
+            const blobSection = document.getElementById('blobVideosSection');
+            if (blobSection) blobSection.style.display = 'none';
+        }
+
+        // Display Google Cloud videos or show permissions message
+        const googleCloudSection = document.getElementById('googleCloudVideosSection');
+        if (availableVideos.googleCloudVideos.length > 0) {
+            if (googleCloudSection) googleCloudSection.style.display = 'block';
+            if (googleCloudVideosList) {
+                googleCloudVideosList.innerHTML = '';
+                availableVideos.googleCloudVideos.forEach(video => {
+                    const videoItem = createVideoItem(video);
+                    googleCloudVideosList.appendChild(videoItem);
+                });
+            }
+        } else {
+            // Show helpful message about Google Cloud permissions
+            if (googleCloudVideosList) {
+                googleCloudVideosList.innerHTML = `
+                    <div style="padding: 1rem; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; color: #856404; text-align: center; margin: 0.5rem 0;">
+                        <h5 style="margin: 0 0 0.5rem 0; color: #856404;">🔒 Google Cloud Videos Not Listed</h5>
+                        <p style="margin: 0; font-size: 0.9em;">
+                            Videos uploaded to Google Cloud cannot be listed due to service account permissions.<br>
+                            <strong>Solution:</strong> Add "Storage Object Viewer" role to your service account in Google Cloud Console.
+                        </p>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.8em; opacity: 0.8;">
+                            You can still upload large videos - they'll be stored in Google Cloud and work on your website.
+                        </p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    /**
+     * Create a video item element for the browser
+     * @param {Object} video - Video object with url, name, size, type, etc.
+     * @returns {HTMLElement} The created video item element
+     */
+    function createVideoItem(video) {
+        const item = document.createElement('div');
+        item.className = 'video-item';
+        item.style.cssText = 'border: 2px solid transparent; border-radius: 8px; padding: 0.5rem; cursor: pointer; transition: all 0.2s ease; background: white;';
+
+        // Format file size and date
+        const sizeText = video.size ? formatFileSize(video.size) : '';
+        const dateText = video.lastModified ? new Date(video.lastModified).toLocaleDateString() : '';
+
+        // Handle different video types for thumbnail generation
+        let videoPreviewHTML;
+        if (video.type === 'google-cloud') {
+            // Google Cloud videos - use placeholder with fallback
+            const placeholderId = `placeholder-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            videoPreviewHTML = `
+                <div class="video-thumbnail-container" style="position: relative; height: 120px;">
+                    <video preload="metadata" muted crossorigin="anonymous"
+                           style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
+                           onloadedmetadata="this.style.display='block'; this.nextElementSibling.style.display='none';"
+                           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <source src="${video.url}" type="video/${getVideoType(video.name)}">
+                    </video>
+                    <div id="${placeholderId}" class="video-placeholder google-cloud-placeholder"
+                         style="position: absolute; top: 0; left: 0; width: 100%; height: 120px;
+                                background: linear-gradient(135deg, #ff6b35, #f7931e); display: flex;
+                                flex-direction: column; align-items: center; justify-content: center;
+                                color: white; border-radius: 8px;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">☁️</div>
+                        <div style="font-size: 0.9rem; font-weight: 500;">Google Cloud Video</div>
+                        <div style="font-size: 0.7rem; opacity: 0.9; margin-top: 0.25rem; text-align: center; padding: 0 0.5rem;">
+                            ${video.name.length > 20 ? video.name.substring(0, 20) + '...' : video.name}
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Static and blob videos - use standard video element for thumbnails
+            videoPreviewHTML = `
+                <video preload="metadata" muted crossorigin="anonymous"
+                       style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;">
+                    <source src="${video.url}" type="video/${getVideoType(video.name)}">
+                    <div style="height: 120px; background: #f0f0f0; display: flex; align-items: center;
+                                justify-content: center; color: #666; border-radius: 8px;">
+                        📹 Video Preview
+                    </div>
+                </video>
+            `;
+        }
+
+        item.innerHTML = `
+            ${videoPreviewHTML}
+            <div class="video-item-name" style="font-weight: 500; margin: 0.5rem 0 0.25rem 0; font-size: 0.9rem; line-height: 1.2;">${video.name}</div>
+            <div class="video-item-info" style="font-size: 0.8rem; color: #666; margin-bottom: 0.5rem;">
+                ${sizeText}${sizeText && dateText ? ' • ' : ''}${dateText}
+            </div>
+            <span class="video-type-badge video-type-${video.type === 'google-cloud' ? 'googleCloud' : video.type}"
+                  style="display: inline-block; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 500;
+                         background: ${video.type === 'static' ? '#e3f2fd' : video.type === 'google-cloud' ? '#fff3e0' : '#e8f5e8'};
+                         color: ${video.type === 'static' ? '#1976d2' : video.type === 'google-cloud' ? '#f57c00' : '#388e3c'};">
+                ${video.type === 'static' ? '🏠 Static' : video.type === 'google-cloud' ? '☁️ Google Cloud' : '📦 Blob'}
+            </span>
+        `;
+
+        // Add hover effects
+        item.addEventListener('mouseenter', () => {
+            item.style.borderColor = '#4a90e2';
+            item.style.backgroundColor = '#f8f9fa';
+        });
+
+        item.addEventListener('mouseleave', () => {
+            if (!item.classList.contains('selected')) {
+                item.style.borderColor = 'transparent';
+                item.style.backgroundColor = 'white';
+            }
+        });
+
+        // Add click handler for video selection
+        item.addEventListener('click', () => {
+            // Remove selection from other items
+            document.querySelectorAll('.video-item').forEach(i => {
+                i.classList.remove('selected');
+                i.style.borderColor = 'transparent';
+                i.style.backgroundColor = 'white';
+            });
+
+            // Select this item
+            item.classList.add('selected');
+            item.style.borderColor = '#28a745';
+            item.style.backgroundColor = '#f8fff9';
+
+            // Set video URL
+            if (videoUrlInput) {
+                videoUrlInput.value = video.url;
+            }
+
+            // Auto-populate heading if empty
+            const sectionForm = document.getElementById('sectionForm');
+            if (sectionForm) {
+                const headingInput = sectionForm.querySelector('[name="heading"]');
+                if (headingInput && !headingInput.value.trim()) {
+                    // Use video filename without extension as default heading
+                    const videoName = video.name.replace(/\.[^/.]+$/, "");
+                    headingInput.value = videoName;
+                }
+            }
+
+            // Hide the browser after selection
+            videoBrowser.style.display = 'none';
+            browseVideosBtn.textContent = '📹 Browse Available Videos';
+
+            console.log('[Admin Dashboard] Video selected:', video.name);
+        });
+
+        return item;
+    }
+
+    /**
+     * Get video MIME type from filename
+     * @param {string} filename - Video filename
+     * @returns {string} Video MIME type
+     */
+    function getVideoType(filename) {
+        const ext = filename.split('.').pop().toLowerCase();
+        return ext === 'webm' ? 'webm' : ext === 'ogg' ? 'ogg' : 'mp4';
+    }
+
+    /**
+     * Format file size in human readable format
+     * @param {number} bytes - File size in bytes
+     * @returns {string} Formatted file size
+     */
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    console.log('[Admin Dashboard] Video management initialized');
+}
+
+/**
+ * Initialize URL parameter handling for deep linking
+ */
+function initURLParameterHandling() {
+    const params = new URLSearchParams(location.search);
+    const slugParam = params.get('slug');
+    const editSectionParam = params.get('editSection');
+    const addAfterParam = params.get('addAfter');
+    const editPageParam = params.get('editPage');
+
+    console.log('[Admin Dashboard] URL parameters:', { slugParam, editSectionParam, addAfterParam, editPageParam });
+
+    // Handle slug parameter - preselect page
+    if (slugParam) {
+        const pageSelect = document.getElementById('pageSelect');
+        if (pageSelect && PAGES && PAGES.includes(slugParam)) {
+            pageSelect.value = slugParam;
+            pageSelect.dispatchEvent(new Event('change'));
+            console.log('[Admin Dashboard] Page preselected from URL:', slugParam);
+        }
+    }
+
+    // Update view page link styling when coming from visual editor
+    const viewPageLink = document.getElementById('viewPageLink');
+    if (viewPageLink && (editSectionParam || addAfterParam || editPageParam)) {
+        viewPageLink.textContent = '↩ Return to Page';
+        viewPageLink.style.background = '#e3f2fd';
+        viewPageLink.style.padding = '6px 12px';
+        viewPageLink.style.borderRadius = '4px';
+        viewPageLink.style.border = '1px solid #2196f3';
+        viewPageLink.style.textDecoration = 'none';
+        viewPageLink.style.color = '#1976d2';
+        viewPageLink.style.fontWeight = '500';
+    }
+
+    /**
+     * Handle auto-edit section functionality
+     */
+    function handleAutoEditSection() {
+        if (!editSectionParam) return;
+
+        console.log('[Admin Dashboard] Auto-editing section:', editSectionParam);
+
+        // Wait for sections to be loaded, then find and edit the section
+        setTimeout(() => {
+            const editBtn = document.querySelector(`button.edit-section[data-id="${editSectionParam}"]`);
+            if (editBtn) {
+                editBtn.click();
+                console.log('[Admin Dashboard] Auto-clicked edit button for section:', editSectionParam);
+            } else {
+                console.warn('[Admin Dashboard] Section not found for auto-edit:', editSectionParam);
+                // Try to find section in current sections array
+                if (typeof currentSections !== 'undefined' && currentSections) {
+                    const section = currentSections.find(s => s._id === editSectionParam);
+                    if (section) {
+                        // Manually trigger edit mode
+                        if (typeof populateSectionForm === 'function') {
+                            populateSectionForm(section);
+                        }
+                    }
+                }
+            }
+        }, 500); // Give time for sections to load
+    }
+
+    /**
+     * Handle auto-add-after functionality
+     */
+    function handleAutoAddAfter() {
+        if (!addAfterParam) return;
+
+        console.log('[Admin Dashboard] Pre-configuring new section after:', addAfterParam);
+
+        // Wait for sections to be loaded, then configure position
+        setTimeout(() => {
+            if (typeof currentSections !== 'undefined' && currentSections) {
+                const afterSection = currentSections.find(s => s._id === addAfterParam);
+                if (afterSection) {
+                    // Set the position based on the after section's position
+                    const positionSelect = document.querySelector('[name="position"]');
+                    if (positionSelect && afterSection.position) {
+                        positionSelect.value = afterSection.position;
+                    }
+
+                    // Focus on the heading field to start adding
+                    setTimeout(() => {
+                        const headingField = document.querySelector('[name="heading"]');
+                        if (headingField) {
+                            headingField.focus();
+                            headingField.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }, 100);
+
+                    console.log('[Admin Dashboard] New section configured to be added after:', afterSection.heading);
+                } else {
+                    console.warn('[Admin Dashboard] After section not found:', addAfterParam);
+                }
+            }
+        }, 500);
+    }
+
+    /**
+     * Handle auto-edit page functionality
+     */
+    function handleAutoEditPage() {
+        if (!editPageParam) return;
+
+        console.log('[Admin Dashboard] Auto-editing page:', editPageParam);
+
+        // Switch to pages tab and edit the specified page
+        setTimeout(() => {
+            // Switch to pages tab
+            const pagesTab = document.querySelector('.tab-button[data-tab="pages"]');
+            if (pagesTab) {
+                pagesTab.click();
+            }
+
+            // Wait a bit more for pages to load, then find and edit the page
+            setTimeout(() => {
+                const editBtn = document.querySelector(`button.edit-page[data-id="${editPageParam}"]`);
+                if (editBtn) {
+                    editBtn.click();
+                    console.log('[Admin Dashboard] Auto-clicked edit button for page:', editPageParam);
+                } else {
+                    console.warn('[Admin Dashboard] Page not found for auto-edit:', editPageParam);
+                    // Scroll to page form as fallback
+                    const pageForm = document.getElementById('pageForm');
+                    if (pageForm) {
+                        pageForm.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            }, 300);
+        }, 200);
+    }
+
+    // Execute URL parameter handlers after a delay to ensure everything is loaded
+    setTimeout(() => {
+        handleAutoEditSection();
+        handleAutoAddAfter();
+        handleAutoEditPage();
+    }, 1000);
+
+    console.log('[Admin Dashboard] URL parameter handling initialized');
+}
+
+/**
  * Utility function to show loading state
  * @param {HTMLElement} element - Element to show loading state on
  * @param {boolean} isLoading - Whether to show or hide loading state
@@ -1359,6 +2793,7 @@ if (typeof module !== 'undefined' && module.exports) {
         initSectionManagement,
         initTutorManagement,
         initPageManagement,
+        initAdvancedSectionBuilders,
         setLoadingState,
         validateFormData
     };
@@ -1369,6 +2804,7 @@ if (typeof module !== 'undefined' && module.exports) {
         initSectionManagement,
         initTutorManagement,
         initPageManagement,
+        initAdvancedSectionBuilders,
         setLoadingState,
         validateFormData
     };

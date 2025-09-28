@@ -158,6 +158,8 @@
     <Content Include="public\js\video-player.js">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\js\visual-editor-bootstrap.js" />
+    <Content Include="public\js\visual-editor-v2.js" />
     <Content Include="public\js\visual-editor.js" />
     <Content Include="public\page-template.html" />
     <Content Include="public\page.html" />

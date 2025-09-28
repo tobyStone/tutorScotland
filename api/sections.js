@@ -164,7 +164,7 @@ module.exports = async (req, res) => {
     applyComprehensiveSecurityHeaders(res, 'api');
 
     // Phase 2: Apply CSRF protection for state-changing operations
-    if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(req.method)) {
+    if (['POST', 'DELETE', 'PATCH'].includes(req.method)) {
         try {
             await new Promise((resolve, reject) => {
                 csrfProtection(req, res, (err) => {
@@ -189,7 +189,7 @@ module.exports = async (req, res) => {
         let isAuthenticated = false;
         let userPayload = null;
 
-        if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
+        if (['POST', 'DELETE'].includes(req.method)) {
             const { verify } = require('./protected');
             const [ok, payload] = verify(req, res);
             if (!ok) {

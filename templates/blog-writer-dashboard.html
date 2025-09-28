@@ -12,8 +12,7 @@
     <link rel="stylesheet" href="/css/animation-module.css">
     <link rel="stylesheet" href="/header-banner.css">
     <link rel="stylesheet" href="/css/nav.css">
-    <link rel="stylesheet" href="/css/admin.css">
-    <link rel="stylesheet" href="/css/media-queries.css">
+    <link rel="stylesheet" href="/css/blog-writer-dashboard.css">
     <script src="/responsive-helper.js" defer></script>
     <script src="/js/html-sanitizer.js" defer></script>
 </head>
@@ -35,60 +34,184 @@
 
     <!-- ─────────────── MAIN CONTENT ─────────────── -->
     <main id="blog-writer-dashboard">
-        <div class="admin-form-container">
-            <h2 data-ve-block-id="8eee3405-0831-4242-b51f-c00b65269345">Blog Management</h2>
-            
-            <!-- Blog Form -->
-            <form id="blogForm" enctype="multipart/form-data" autocomplete="off">
-                <input type="hidden" id="blogId" name="blogId">
-                
-                <label>Title:
-                    <input type="text" id="blogTitle" name="title" required maxlength="200" placeholder="Enter blog title">
-                </label>
-                
-                <label>Content:
-                    <textarea id="blogContent" name="content" rows="15" required placeholder="Write your blog content here..."></textarea>
-                </label>
-                
-                <label>Author:
-                    <input type="text" id="blogAuthor" name="author" required maxlength="100" placeholder="Author name">
-                </label>
-                
-                <label>Tags (comma-separated):
-                    <input type="text" id="blogTags" name="tags" placeholder="education, tutoring, scotland">
-                </label>
-                
-                <label>Meta Description:
-                    <textarea id="blogMetaDescription" name="metaDescription" rows="3" maxlength="160" placeholder="Brief description for search engines (max 160 characters)"></textarea>
-                </label>
-                
-                <label>Featured Image:
-                    <input type="file" id="blogImage" name="image" accept="image/*">
-                </label>
-                
-                <div id="currentImagePreview" style="margin-top: 10px; display: none;">
-                    <p>Current Image:</p>
-                    <img src="" alt="Current Image" style="max-width: 200px; max-height: 200px; border-radius: 4px;">
-                    <label style="display: inline-flex; align-items: center; margin-left: 15px;">
-                        <input type="checkbox" name="removeImage" value="true" style="width: auto; margin-right: 5px;"> Remove Image
-                    </label>
-                </div>
-                
+        <!-- Tab Navigation -->
+        <div class="blog-tabs">
+            <button id="createTabBtn" class="tab-btn active">Create Blog</button>
+            <button id="manageTabBtn" class="tab-btn">Manage Blogs</button>
+        </div>
+
+        <!-- Create Blog Section -->
+        <section id="newBlogSection" class="tab-content active">
+            <h2 id="formHeading" data-ve-block-id="3abe36c0-caac-4c55-a567-31ba5ca6d3fe">Create a New Blog Post</h2>
+
+            <form id="blogForm" class="enhanced-blog-form">
+                <!-- Basic Information Section -->
+                <fieldset class="form-section">
+                    <legend>Basic Information</legend>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="titleField">Title *</label>
+                            <input id="titleField" class="wide-input" name="title" required placeholder="Enter your blog post title">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label for="authorField">Author *</label>
+                            <input id="authorField" class="wide-input" name="author" value="Tutors Alliance Scotland" required placeholder="Author name">
+                        </div>
+                        <div class="form-group half-width">
+                            <label for="slugField">URL Slug *</label>
+                            <input id="slugField" class="wide-input" name="slug" required placeholder="url-friendly-title">
+                            <small>Auto-generated from title, or customize manually</small>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Content Section -->
+                <fieldset class="form-section">
+                    <legend>Content</legend>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="excerptField">Excerpt * <span class="char-counter">0/200 characters</span></label>
+                            <textarea id="excerptField" class="wide-input" name="excerpt" rows="3" maxlength="200" required placeholder="Brief summary of the blog post (shown in previews)"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="contentField">Content *</label>
+                            <textarea id="contentField" class="wide-input" name="content" rows="15" required placeholder="Write your blog content here..."></textarea>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- SEO & Metadata Section -->
+                <fieldset class="form-section">
+                    <legend>SEO & Metadata</legend>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="metaDescriptionField">Meta Description <span class="char-counter">0/160 characters</span></label>
+                            <textarea id="metaDescriptionField" class="wide-input" name="metaDescription" rows="2" maxlength="160" placeholder="Description for search engines (auto-generated from excerpt if left empty)"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group half-width">
+                            <label for="focusKeywordField">Focus Keyword</label>
+                            <input id="focusKeywordField" class="wide-input" name="focusKeyword" placeholder="Main SEO keyword">
+                        </div>
+                        <div class="form-group half-width">
+                            <label for="tagsField">Tags</label>
+                            <input id="tagsField" class="wide-input" name="tags" placeholder="education, tutoring, scotland">
+                            <small>Comma-separated tags for categorization</small>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Publishing Options Section -->
+                <fieldset class="form-section">
+                    <legend>Publishing Options</legend>
+                    <div class="form-row">
+                        <div class="form-group third-width">
+                            <label for="categoryField">Category *</label>
+                            <select id="categoryField" class="wide-input" name="category" required>
+                                <option value="general">General (Parent & Tutor)</option>
+                                <option value="parent">Parent</option>
+                                <option value="tutor">Tutor</option>
+                            </select>
+                        </div>
+                        <div class="form-group third-width">
+                            <label for="statusField">Status</label>
+                            <select id="statusField" class="wide-input" name="status">
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                        </div>
+                        <div class="form-group third-width">
+                            <label for="publishDateField">Publish Date</label>
+                            <input id="publishDateField" class="wide-input" name="publishDate" type="datetime-local">
+                            <small>Leave empty for current date/time</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label for="featuredField">
+                                <input id="featuredField" type="checkbox" name="featured"> Featured Post
+                            </label>
+                            <small>Featured posts appear prominently on the blog page</small>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Image Section -->
+                <fieldset class="form-section">
+                    <legend>Featured Image</legend>
+                    <div class="form-row">
+                        <div class="form-group full-width">
+                            <label for="imageField">Featured Image</label>
+                            <input id="imageField" class="wide-input" name="image" type="file" accept="image/*">
+                            <small>Recommended size: 1200x630px for optimal social media sharing</small>
+                        </div>
+                    </div>
+
+                    <div id="currentImagePreview" style="margin-top: 10px; display: none;">
+                        <p>Current Image:</p>
+                        <img src="" alt="Current Image" style="max-width: 300px; max-height: 200px; border-radius: 4px;">
+                        <label style="display: inline-flex; align-items: center; margin-left: 15px;">
+                            <input id="removeImageCheckbox" type="checkbox" name="removeImage" value="true" style="width: auto; margin-right: 5px;"> Remove Image
+                        </label>
+                    </div>
+                </fieldset>
+
+                <!-- Form Actions -->
                 <div class="form-actions">
-                    <button type="submit" id="saveBlogBtn" class="btn-primary">Save Blog</button>
-                    <button type="button" id="publishBlogBtn" class="btn-success">Publish</button>
-                    <button type="button" id="cancelBlogBtn" class="btn-secondary">Cancel</button>
+                    <button type="submit" id="submitBtn" class="btn-primary">Create Blog</button>
+                    <button type="button" id="cancelEditBtn" class="btn-secondary" style="display: none;">Cancel Edit</button>
                 </div>
             </form>
-        </div>
-        
-        <!-- Blog List -->
-        <div class="admin-form-container">
-            <h3>Existing Blogs</h3>
-            <div id="blogList">
-                <!-- Blog list will be populated here -->
+        </section>
+
+        <!-- Manage Blogs Section -->
+        <section id="manageBlogSection" class="tab-content">
+            <h2 data-ve-block-id="6a6d76c0-4eaf-41cc-a1c1-9da7e14a3de2">Manage Existing Blog Posts</h2>
+
+            <div class="blog-filter">
+                <label for="blogCategoryFilter">Filter by category:</label>
+                <select id="blogCategoryFilter">
+                    <option value="all">All Categories</option>
+                    <option value="general">General</option>
+                    <option value="parent">Parent</option>
+                    <option value="tutor">Tutor</option>
+                </select>
+
+                <button id="refreshBlogsBtn" class="btn-secondary">🔄 Refresh</button>
+                <button id="migrateBlogsBtn" class="btn-warning">🔄 Migrate Blogs</button>
             </div>
-        </div>
+
+            <div class="table-container">
+                <table id="blogListTable" class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="blogListBody">
+                        <tr>
+                            <td colspan="5" class="loading-message">Click "Manage Blogs" to load blog posts...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Hidden JSON-LD for SEO -->
+        <script type="application/ld+json" id="blogMicrodata"></script>
     </main>
 
     <!-- Scripts -->
@@ -97,7 +220,6 @@
     <script src="/js/rolling-banner.js" defer></script>
     <!-- Google Analytics -->
     <script src="/js/google-analytics.js" defer></script>
-    <script src="/js/dynamic-sections.js"></script>
-    <script src="/js/blogWriter.js"></script>
+    <script type="module" src="/js/blog-writer-dashboard.js" defer></script>
 </body>
 </html>
