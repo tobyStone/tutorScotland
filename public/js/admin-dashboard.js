@@ -246,6 +246,10 @@ function initSectionManagement() {
             // Hide standard fields for rolling banner
             if (standardFields) standardFields.style.display = 'none';
 
+            // Hide move page controls for rolling banner (matching historical commit)
+            const movePageRow = document.getElementById('movePageRow');
+            if (movePageRow) movePageRow.style.display = 'none';
+
             // Set form to novalidate to prevent HTML5 validation conflicts
             sectionForm.setAttribute('novalidate', '');
 
@@ -269,6 +273,9 @@ function initSectionManagement() {
 
             // Show standard fields for regular sections
             if (standardFields) standardFields.style.display = 'block';
+
+            // Show move page controls for regular sections (hidden by default in resetSectionForm)
+            // Note: movePageRow visibility is managed by edit mode in populateSectionForm
 
             // Remove novalidate to enable HTML5 validation
             sectionForm.removeAttribute('novalidate');
@@ -489,15 +496,31 @@ function initSectionManagement() {
                     return;
                 }
 
+                // 🐛 DEBUG: Log rolling banner form data (matching historical commit)
+                console.log('Rolling banner form data:');
+                console.log('- rollingText:', rollingText);
+                console.log('- editId:', sectionId);
+                console.log('- All form data before processing:');
+                for (const [key, value] of formData.entries()) {
+                    console.log(`  ${key}:`, value);
+                }
+
                 // For rolling banner, convert rollingText to text field and clean up form data
                 formData.set('text', rollingText);
                 formData.set('page', 'rolling-banner');
+                formData.set('heading', 'Rolling News'); // Set dummy heading as required by API
 
                 // Remove fields we don't want for banner sections
                 ['layout', 'showInNav', 'navCategory', 'imagePath',
                  'buttonLabel', 'buttonUrl', 'position', 'team', 'rollingText'].forEach(key => {
                     formData.delete(key);
                 });
+
+                // 🐛 DEBUG: Log final form data being sent (matching historical commit)
+                console.log('Final rolling banner form data being sent:');
+                for (const [key, value] of formData.entries()) {
+                    console.log(`  ${key}:`, value);
+                }
 
                 console.log('[Admin Dashboard] Processing rolling banner section');
             }
@@ -849,7 +872,7 @@ function initSectionManagement() {
         }
 
         // Show move page option (except for rolling banner)
-        if (movePageRow && movePageSelect && section.layout !== 'rolling-banner') {
+        if (movePageRow && movePageSelect && section.page !== 'rolling-banner') {
             movePageRow.style.display = 'block';
             movePageSelect.value = section.page || '';
         }
