@@ -114,7 +114,9 @@ module.exports = async (req, res) => {
 
         // 🔒 SECURITY FIX: Add authentication for write operations and sensitive read operations
         const writeOperations = ['set-order', 'remove-from-order', 'override', 'backup'];
-        const sensitiveReadOperations = ['debug-sections', 'overrides', 'list-images', 'get-order']; // Operations that expose sensitive data
+        const sensitiveReadOperations = ['debug-sections', 'list-images']; // Operations that expose sensitive data
+        // Note: 'get-order' removed - section ordering should be public for all visitors
+        // Note: 'overrides' removed - content overrides should be public for all visitors to see edited content
         const isWriteOperation = ['POST', 'PUT', 'DELETE'].includes(method) || writeOperations.includes(operation);
         const isSensitiveReadOperation = sensitiveReadOperations.includes(operation);
 
