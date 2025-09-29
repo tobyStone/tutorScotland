@@ -20,18 +20,35 @@ const Section = require('../models/Section');
 const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
 const { csrfProtection } = require('../utils/csrf-protection');
 
-// Convert formidable's callback to a promise
+// Convert formidable's callback to a promise with better error handling
 const parseForm = (req) => {
     return new Promise((resolve, reject) => {
+        console.log('Starting video form parsing with headers:', req.headers['content-type']);
+
+        // Optimize formidable settings for test environment
+        const isTestEnv = process.env.NODE_ENV === 'test';
         const form = formidable({
             keepExtensions: true,
             multiples: false,
-            maxFileSize: 50 * 1024 * 1024 // 50MB limit
+            maxFileSize: 50 * 1024 * 1024, // 50MB limit
+            maxFields: isTestEnv ? 10 : 20, // Fewer fields in test for speed
+            maxFieldsSize: isTestEnv ? 1024 * 1024 : 2 * 1024 * 1024, // Smaller in test
+            allowEmptyFiles: true, // Allow forms without files
+            minFileSize: 0 // Allow empty files
         });
 
+        // Add timeout to prevent hanging requests
+        // Use shorter timeout in test environment for faster feedback
+        const timeoutMs = process.env.NODE_ENV === 'test' ? 10000 : 30000;
+        const timeout = setTimeout(() => {
+            reject(new Error('Video form parsing timeout'));
+        }, timeoutMs);
+
         form.parse(req, (err, fields, files) => {
+            clearTimeout(timeout);
+
             if (err) {
-                console.error('Form parsing error:', err);
+                console.error('Video form parsing error:', err);
                 return reject(err);
             }
 
@@ -113,7 +130,7 @@ module.exports = async (req, res) => {
             }
         }
 
-        const { operation } = req.query;
+        const { operation } = req.query || {};
 
         switch (method) {
             case 'GET':
