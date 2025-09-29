@@ -100,12 +100,16 @@ class UniversalSectionOrdering {
                 }
             });
 
+            console.log(`🔍 Section order API response status: ${response.status}`);
+
             if (!response.ok) {
-                console.log(`⚠️ No section order found for page ${this.currentPage} (${response.status})`);
+                const errorText = await response.text();
+                console.log(`⚠️ No section order found for page ${this.currentPage} (${response.status}): ${errorText}`);
                 return;
             }
 
             const data = await response.json();
+            console.log(`🔍 Section order API response data:`, data);
             const order = data.order || [];
 
             if (order.length === 0) {
@@ -145,16 +149,31 @@ class UniversalSectionOrdering {
         order.forEach((sectionId, index) => {
             const section = lookup.get(sectionId);
             if (section) {
+                console.log(`🔄 Moving section ${sectionId} to position ${index}`);
+
                 // Move section to the correct position
                 if (index === 0) {
+                    // First section - insert at the very beginning
                     parent.insertBefore(section, parent.firstChild);
+                    console.log(`🔄 Moved ${sectionId} to first position`);
                 } else {
+                    // Find the correct position by looking for the previous section
                     const previousSectionId = order[index - 1];
                     const previousSection = lookup.get(previousSectionId);
-                    if (previousSection && previousSection.nextSibling) {
-                        parent.insertBefore(section, previousSection.nextSibling);
+
+                    if (previousSection) {
+                        // Insert after the previous section
+                        if (previousSection.nextSibling) {
+                            parent.insertBefore(section, previousSection.nextSibling);
+                            console.log(`🔄 Moved ${sectionId} after ${previousSectionId}`);
+                        } else {
+                            // Previous section is the last element, append after it
+                            parent.appendChild(section);
+                            console.log(`🔄 Moved ${sectionId} to end (after ${previousSectionId})`);
+                        }
                     } else {
-                        parent.appendChild(section);
+                        console.log(`⚠️ Previous section ${previousSectionId} not found, skipping ${sectionId}`);
+                        return; // Skip this section if we can't find where to place it
                     }
                 }
                 reorderedCount++;
@@ -165,7 +184,34 @@ class UniversalSectionOrdering {
 
         if (reorderedCount > 0) {
             console.log(`✅ Successfully reordered ${reorderedCount} sections`);
-            
+
+            // Debug: Check final positions multiple times to catch any interference
+            setTimeout(() => {
+                const finalSections = Array.from(parent.querySelectorAll('[data-ve-section-id]'));
+                console.log('🔍 Final section order after 100ms:', finalSections.map(s => s.dataset.veSectionId));
+
+                // Check if hero is in the right position
+                const heroSection = parent.querySelector('[data-ve-section-id="hero"]');
+                if (heroSection) {
+                    const heroIndex = Array.from(parent.children).indexOf(heroSection);
+                    console.log(`🔍 Hero section is at position ${heroIndex} (should be 0)`);
+                }
+            }, 100);
+
+            setTimeout(() => {
+                const finalSections = Array.from(parent.querySelectorAll('[data-ve-section-id]'));
+                console.log('🔍 Final section order after 1000ms:', finalSections.map(s => s.dataset.veSectionId));
+
+                const heroSection = parent.querySelector('[data-ve-section-id="hero"]');
+                if (heroSection) {
+                    const heroIndex = Array.from(parent.children).indexOf(heroSection);
+                    console.log(`🔍 Hero section is at position ${heroIndex} after 1000ms`);
+                    if (heroIndex !== 0) {
+                        console.log('❌ PROBLEM: Hero section moved after our reordering!');
+                    }
+                }
+            }, 1000);
+
             // Dispatch event to notify other systems
             document.dispatchEvent(new CustomEvent('universal-section-ordering-applied', {
                 detail: { page: this.currentPage, order, reorderedCount }
