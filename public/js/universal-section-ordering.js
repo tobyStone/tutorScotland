@@ -144,40 +144,71 @@ class UniversalSectionOrdering {
         }
 
         // Create a lookup map of all sections with data-ve-section-id
-        const sections = Array.from(parent.querySelectorAll('[data-ve-section-id]'));
-        const lookup = new Map(sections.map(sec => [sec.dataset.veSectionId, sec]));
+        const allSections = Array.from(parent.querySelectorAll('[data-ve-section-id]'));
+        const lookup = new Map(allSections.map(sec => [sec.dataset.veSectionId, sec]));
 
-        console.log(`🔄 Found ${sections.length} sections with IDs:`, Array.from(lookup.keys()));
+        console.log(`🔄 Found ${allSections.length} sections with IDs:`, Array.from(lookup.keys()));
 
         // Get pinned sections for current page
         const pinnedForPage = this.pinnedSections[this.currentPage] || [];
         console.log(`📌 Pinned sections for ${this.currentPage}:`, pinnedForPage);
 
-        // Filter out pinned sections from reordering
-        const reorderableSections = order.filter(sectionId => !pinnedForPage.includes(sectionId));
-        console.log(`🔄 Reorderable sections:`, reorderableSections);
+        // Create a lookup map ONLY for reorderable sections (exclude pinned)
+        const reorderableLookup = new Map();
+        allSections.forEach(sec => {
+            const sectionId = sec.dataset.veSectionId;
+            if (!pinnedForPage.includes(sectionId)) {
+                reorderableLookup.set(sectionId, sec);
+            }
+        });
+
+        console.log(`🔄 Reorderable sections found:`, Array.from(reorderableLookup.keys()));
+        console.log(`📌 Pinned sections (will not be moved):`, pinnedForPage);
 
         let reorderedCount = 0;
         
-        // Apply the order by moving sections (skip pinned sections)
-        reorderableSections.forEach((sectionId, reorderableIndex) => {
-            const section = lookup.get(sectionId);
-            if (section) {
-                // Find the original position in the full order array
-                const originalIndex = order.indexOf(sectionId);
-                console.log(`🔄 Moving section ${sectionId} (reorderable index ${reorderableIndex}, original index ${originalIndex})`);
+        // Apply the order by moving ONLY reorderable sections
+        order.forEach((sectionId, index) => {
+            // Skip pinned sections completely - don't touch them at all
+            if (pinnedForPage.includes(sectionId)) {
+                console.log(`📌 Skipping pinned section: ${sectionId}`);
+                return;
+            }
 
-                // Find the correct position by looking for the previous section in the FULL order
-                if (originalIndex === 0) {
-                    // First section in full order - insert at the very beginning
-                    parent.insertBefore(section, parent.firstChild);
-                    console.log(`🔄 Moved ${sectionId} to first position`);
+            const section = reorderableLookup.get(sectionId);
+            if (section) {
+                console.log(`🔄 Moving reorderable section ${sectionId} to position ${index}`);
+
+                // Find the correct position by looking for the previous section in the order
+                if (index === 0) {
+                    // First section in order - but check if there are pinned sections that should come first
+                    const firstPinnedSection = pinnedForPage.length > 0 ? lookup.get(pinnedForPage[0]) : null;
+                    if (firstPinnedSection) {
+                        // Insert after the first pinned section
+                        if (firstPinnedSection.nextSibling) {
+                            parent.insertBefore(section, firstPinnedSection.nextSibling);
+                            console.log(`🔄 Moved ${sectionId} after first pinned section`);
+                        } else {
+                            parent.appendChild(section);
+                            console.log(`🔄 Moved ${sectionId} to end (after pinned section)`);
+                        }
+                    } else {
+                        // No pinned sections, insert at beginning
+                        parent.insertBefore(section, parent.firstChild);
+                        console.log(`🔄 Moved ${sectionId} to first position`);
+                    }
                 } else {
-                    // Find the previous section in the full order (may be pinned or reorderable)
+                    // Find the previous section in the order (skip pinned ones)
                     let previousSection = null;
-                    for (let i = originalIndex - 1; i >= 0; i--) {
+                    for (let i = index - 1; i >= 0; i--) {
                         const prevSectionId = order[i];
-                        previousSection = lookup.get(prevSectionId);
+                        if (pinnedForPage.includes(prevSectionId)) {
+                            // Previous section is pinned, use it as reference
+                            previousSection = lookup.get(prevSectionId);
+                        } else {
+                            // Previous section is reorderable, use it as reference
+                            previousSection = reorderableLookup.get(prevSectionId);
+                        }
                         if (previousSection) {
                             break; // Found a valid previous section
                         }
@@ -200,7 +231,7 @@ class UniversalSectionOrdering {
                 }
                 reorderedCount++;
             } else {
-                console.log(`⚠️ Section not found: ${sectionId}`);
+                console.log(`⚠️ Reorderable section not found: ${sectionId}`);
             }
         });
 
@@ -212,11 +243,21 @@ class UniversalSectionOrdering {
                 const finalSections = Array.from(parent.querySelectorAll('[data-ve-section-id]'));
                 console.log('🔍 Final section order after 100ms:', finalSections.map(s => s.dataset.veSectionId));
 
-                // Check if hero is in the right position
+                // Check positions of pinned sections
+                pinnedForPage.forEach(pinnedId => {
+                    const pinnedSection = parent.querySelector(`[data-ve-section-id="${pinnedId}"]`);
+                    if (pinnedSection) {
+                        const pinnedIndex = Array.from(parent.children).indexOf(pinnedSection);
+                        console.log(`📌 Pinned section "${pinnedId}" is at position ${pinnedIndex}`);
+                    }
+                });
+
+                // Check if hero is in the right position (should be after pinned sections)
                 const heroSection = parent.querySelector('[data-ve-section-id="hero"]');
                 if (heroSection) {
                     const heroIndex = Array.from(parent.children).indexOf(heroSection);
-                    console.log(`🔍 Hero section is at position ${heroIndex} (should be 0)`);
+                    const expectedHeroPosition = pinnedForPage.length; // Hero should be after pinned sections
+                    console.log(`🔍 Hero section is at position ${heroIndex} (should be ${expectedHeroPosition})`);
                 }
             }, 100);
 
@@ -224,11 +265,24 @@ class UniversalSectionOrdering {
                 const finalSections = Array.from(parent.querySelectorAll('[data-ve-section-id]'));
                 console.log('🔍 Final section order after 1000ms:', finalSections.map(s => s.dataset.veSectionId));
 
+                // Check positions of pinned sections after longer delay
+                pinnedForPage.forEach(pinnedId => {
+                    const pinnedSection = parent.querySelector(`[data-ve-section-id="${pinnedId}"]`);
+                    if (pinnedSection) {
+                        const pinnedIndex = Array.from(parent.children).indexOf(pinnedSection);
+                        console.log(`📌 Pinned section "${pinnedId}" is at position ${pinnedIndex} after 1000ms`);
+                        if (pinnedId === 'landing' && pinnedIndex !== 0) {
+                            console.log('❌ PROBLEM: Landing section moved from position 0!');
+                        }
+                    }
+                });
+
                 const heroSection = parent.querySelector('[data-ve-section-id="hero"]');
                 if (heroSection) {
                     const heroIndex = Array.from(parent.children).indexOf(heroSection);
-                    console.log(`🔍 Hero section is at position ${heroIndex} after 1000ms`);
-                    if (heroIndex !== 0) {
+                    const expectedHeroPosition = pinnedForPage.length; // Hero should be after pinned sections
+                    console.log(`🔍 Hero section is at position ${heroIndex} after 1000ms (should be ${expectedHeroPosition})`);
+                    if (heroIndex !== expectedHeroPosition) {
                         console.log('❌ PROBLEM: Hero section moved after our reordering!');
                     }
                 }
