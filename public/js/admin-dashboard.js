@@ -1076,7 +1076,8 @@ function initTutorManagement() {
                     uploadFormData.append('folder', 'tutors');
                     const uploadResponse = await fetch('/api/upload-image', {
                         method: 'POST',
-                        body: uploadFormData
+                        body: uploadFormData,
+                        credentials: 'include' // ✅ SECURITY FIX: Include cookies for JWT authentication
                     });
                     if (!uploadResponse.ok) throw new Error('Image upload failed');
                     const uploadResult = await uploadResponse.json();
@@ -1466,7 +1467,8 @@ function initPageManagement() {
                         uploadFormData.append('folder', 'pages');
                         const uploadResponse = await fetch('/api/upload-image', {
                             method: 'POST',
-                            body: uploadFormData
+                            body: uploadFormData,
+                            credentials: 'include' // ✅ SECURITY FIX: Include cookies for JWT authentication
                         });
                         if (!uploadResponse.ok) throw new Error('Image upload failed');
                         const uploadResult = await uploadResponse.json();
@@ -1755,7 +1757,8 @@ function initAdvancedSectionBuilders() {
                             uploadFormData.append('folder', 'team');
                             const uploadResponse = await fetch('/api/upload-image', {
                                 method: 'POST',
-                                body: uploadFormData
+                                body: uploadFormData,
+                                credentials: 'include' // ✅ SECURITY FIX: Include cookies for JWT authentication
                             });
                             if (!uploadResponse.ok) throw new Error('Image upload failed');
                             const uploadResult = await uploadResponse.json();

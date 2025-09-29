@@ -40,6 +40,7 @@ export async function uploadLargeVideo(file, onProgress, onComplete, onError) {
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include', // ✅ SECURITY FIX: Include cookies for JWT authentication
             body: JSON.stringify({
                 filename: file.name,
                 contentType: normalizedContentType,
@@ -160,6 +161,7 @@ async function uploadViaServer(file, onProgress, onComplete, onError) {
         });
 
         xhr.open('POST', '/api/upload-image');
+        xhr.withCredentials = true; // ✅ SECURITY FIX: Include cookies for JWT authentication
         xhr.send(formData);
 
     } catch (error) {

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Debug Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .debug-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload API Debug Tool</h1>
+    
+    <div class="debug-section">
+        <h2>1. API Status Check</h2>
+        <button onclick="checkApiStatus()">Check API Status</button>
+        <div id="apiStatus"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>2. Test File Upload</h2>
+        <input type="file" id="testFile" accept="image/*">
+        <button onclick="testUpload()">Test Upload</button>
+        <div id="uploadResult"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>3. Environment Info</h2>
+        <div id="envInfo">
+            <p><strong>User Agent:</strong> <span id="userAgent"></span></p>
+            <p><strong>Current URL:</strong> <span id="currentUrl"></span></p>
+            <p><strong>Timestamp:</strong> <span id="timestamp"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize environment info
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+        document.getElementById('currentUrl').textContent = window.location.href;
+        document.getElementById('timestamp').textContent = new Date().toISOString();
+
+        async function checkApiStatus() {
+            const statusDiv = document.getElementById('apiStatus');
+            statusDiv.innerHTML = '<p class="info">Checking API status...</p>';
+            
+            try {
+                const response = await fetch('/api/upload-image', {
+                    method: 'GET'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.innerHTML = `
+                        <p class="success">✅ API is running</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    statusDiv.innerHTML = `
+                        <p class="error">❌ API returned error: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <p class="error">❌ Failed to connect to API</p>
+                    <pre>Error: ${error.message}</pre>
+                `;
+            }
+        }
+
+        async function testUpload() {
+            const fileInput = document.getElementById('testFile');
+            const resultDiv = document.getElementById('uploadResult');
+            
+            if (!fileInput.files[0]) {
+                resultDiv.innerHTML = '<p class="error">Please select a file first</p>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            resultDiv.innerHTML = `<p class="info">Uploading ${file.name} (${file.size} bytes)...</p>`;
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const response = await fetch('/api/upload-image', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <p class="success">✅ Upload successful</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                        ${data.url ? `<p><img src="${data.url}" style="max-width: 200px; max-height: 200px;"></p>` : ''}
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <p class="error">❌ Upload failed: ${response.status}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <p class="error">❌ Upload error</p>
+                    <pre>Error: ${error.message}</pre>
+                `;
+            }
+        }
+
+        // Auto-check API status on page load
+        window.addEventListener('load', checkApiStatus);
+    </script>
+</body>
+</html>

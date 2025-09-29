@@ -228,8 +228,28 @@ module.exports = async (req, res) => {
     // Phase 2: Apply comprehensive security headers
     applyComprehensiveSecurityHeaders(res, 'api');
 
+    if (req.method === 'GET') {
+        // Diagnostic endpoint for debugging
+        return res.status(200).json({
+            message: 'Upload API is running',
+            maxFileSize: MAX_UPLOAD,
+            maxLargeVideoSize: MAX_LARGE_VIDEO_UPLOAD,
+            supportedTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm', 'video/quicktime'],
+            version: '2.0.0',
+            environment: {
+                nodeVersion: process.version,
+                platform: process.platform,
+                vercelRegion: process.env.VERCEL_REGION || 'unknown',
+                runtime: process.env.AWS_EXECUTION_ENV || 'local',
+                memoryUsage: process.memoryUsage()
+            },
+            activeUploads: activeUploads.size,
+            timestamp: new Date().toISOString()
+        });
+    }
+
     if (req.method !== 'POST') {
-        res.setHeader('Allow', ['POST']);
+        res.setHeader('Allow', ['POST', 'GET']);
         return res.status(405).end('Method Not Allowed');
     }
 
@@ -438,10 +458,23 @@ async function handleFileUpload(req, res, payload) {
             }
         });
 
+        console.log('📝 Starting file parsing with formidable...');
         const [fields, files] = await new Promise((resolve, reject) => {
             form.parse(req, (err, fields, files) => {
-                if (err) reject(err);
-                else resolve([fields, files]);
+                if (err) {
+                    console.error('❌ Formidable parsing failed:', err);
+                    console.error('❌ Error details:', {
+                        name: err.name,
+                        code: err.code,
+                        message: err.message,
+                        stack: err.stack
+                    });
+                    reject(err);
+                } else {
+                    console.log('✅ File parsing completed successfully');
+                    console.log('📊 Parsed files:', Object.keys(files));
+                    resolve([fields, files]);
+                }
             });
         });
 
@@ -721,11 +754,19 @@ async function handleFileUpload(req, res, payload) {
         }
 
         // ✅ IMPROVED: More robust Sharp initialization with strict error handling (for images only)
-        const img = sharp(buffer, {
-            failOnError: true,  // Changed to true to catch corruption early
-            sequentialRead: true,  // Ensure complete buffer read
-            limitInputPixels: MAX_DIMENSIONS * MAX_DIMENSIONS * 4  // Prevent memory issues
-        });
+        let img;
+        try {
+            console.log('🔧 Initializing Sharp for image processing...');
+            img = sharp(buffer, {
+                failOnError: false,  // Changed to false to be more lenient in serverless
+                sequentialRead: true,  // Ensure complete buffer read
+                limitInputPixels: MAX_DIMENSIONS * MAX_DIMENSIONS * 4  // Prevent memory issues
+            });
+            console.log('✅ Sharp initialized successfully');
+        } catch (sharpInitError) {
+            console.error('❌ Sharp initialization failed:', sharpInitError);
+            throw new Error(`Image processing library failed to initialize: ${sharpInitError.message}`);
+        }
 
         /* -------------------------------------------------------------
             2️⃣  Metadata check (images only)
@@ -993,6 +1034,27 @@ async function handleFileUpload(req, res, payload) {
     } catch (error) {
         console.error('[upload-image] Unexpected error:', error);
         console.error('[upload-image] Error stack:', error.stack);
+        console.error('[upload-image] Error name:', error.name);
+        console.error('[upload-image] Error code:', error.code);
+
+        // Enhanced error logging for debugging
+        if (uploadedFile) {
+            console.error('[upload-image] File details:', {
+                originalFilename: uploadedFile.originalFilename,
+                size: uploadedFile.size,
+                mimetype: uploadedFile.mimetype,
+                filepath: uploadedFile.filepath
+            });
+        }
+
+        // Log environment info for debugging
+        console.error('[upload-image] Environment info:', {
+            nodeVersion: process.version,
+            platform: process.platform,
+            memoryUsage: process.memoryUsage(),
+            vercelRegion: process.env.VERCEL_REGION,
+            runtime: process.env.AWS_EXECUTION_ENV || 'unknown'
+        });
 
         // ✅ CLEANUP: Remove from active uploads on error
         activeUploads.delete(uploadId);
@@ -1005,9 +1067,20 @@ async function handleFileUpload(req, res, payload) {
             });
         }
 
+        // Return more detailed error information for debugging
         return res.status(500).json({
             message: 'Upload failed unexpectedly',
-            error: error.message
+            error: error.message,
+            errorName: error.name,
+            errorCode: error.code,
+            timestamp: new Date().toISOString(),
+            // Include some debugging info (but not sensitive data)
+            debug: {
+                hasFile: !!uploadedFile,
+                fileSize: uploadedFile?.size,
+                mimetype: uploadedFile?.mimetype,
+                nodeVersion: process.version
+            }
         });
     }
 }

@@ -74,6 +74,7 @@ export async function uploadImage(file, folder = 'content-images') {
             const r = await fetch('/api/upload-image', {
                 method: 'POST',
                 body: fd,
+                credentials: 'include', // ✅ SECURITY FIX: Include cookies for JWT authentication
                 // ✅ Add timeout to prevent hanging requests
                 signal: AbortSignal.timeout(60000) // 60 second timeout
             });
