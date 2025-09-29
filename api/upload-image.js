@@ -1016,10 +1016,17 @@ async function handleFileUpload(req, res, payload) {
         let verificationPending = false;
 
         try {
-            console.log(`📤 Uploading main image...`);
+            console.log(`📤 Uploading main image to Vercel Blob...`);
+            console.log(`📊 Upload details: key=${mainKey}, size=${buffer.length}, contentType=${uploadedFile.mimetype}`);
+
+            // Check if BLOB_READ_WRITE_TOKEN is available
+            if (!process.env.BLOB_READ_WRITE_TOKEN) {
+                throw new Error('BLOB_READ_WRITE_TOKEN environment variable is not set');
+            }
+
             const uploadResult = await put(mainKey, buffer, putOpts);
             url = uploadResult.url;
-            console.log(`✅ Main image uploaded: ${url}`);
+            console.log(`✅ Main image uploaded successfully: ${url}`);
 
             // ✅ SEPARATE VERIFICATION: Poll HEAD endpoint with delays
             console.log('🔍 Starting verification polling...');
@@ -1067,8 +1074,22 @@ async function handleFileUpload(req, res, payload) {
             }
 
         } catch (uploadError) {
-            console.error('❌ Main image upload failed:', uploadError.message);
-            throw new Error(`Main image upload failed: ${uploadError.message}`);
+            console.error('❌ Main image upload to Vercel Blob failed:', uploadError);
+            console.error('❌ Upload error details:', {
+                message: uploadError.message,
+                code: uploadError.code,
+                name: uploadError.name,
+                stack: uploadError.stack
+            });
+
+            // Provide more specific error messages
+            if (uploadError.message?.includes('BLOB_READ_WRITE_TOKEN')) {
+                throw new Error('Blob storage not configured - missing BLOB_READ_WRITE_TOKEN');
+            } else if (uploadError.message?.includes('network') || uploadError.message?.includes('fetch')) {
+                throw new Error('Network error during blob upload - please try again');
+            } else {
+                throw new Error(`Blob storage upload failed: ${uploadError.message}`);
+            }
         }
 
         // Upload thumbnail with same decoupled verification (if thumbnail was generated)

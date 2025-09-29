@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Debug Test</title>
+</head>
+<body>
+    <h1>Upload Debug Test</h1>
+    
+    <form id="testForm">
+        <input type="file" id="testFile" accept="image/*" required>
+        <button type="submit">Test Upload</button>
+    </form>
+    
+    <div id="results"></div>
+    
+    <script>
+        document.getElementById('testForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('testFile');
+            const resultsDiv = document.getElementById('results');
+            
+            if (!fileInput.files[0]) {
+                resultsDiv.innerHTML = '<p style="color: red;">Please select a file</p>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            console.log('Testing upload with file:', file.name, file.size, file.type);
+            
+            // Test the same upload method as admin-dashboard.js fallback
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', 'pages');
+            
+            try {
+                resultsDiv.innerHTML = '<p>Uploading...</p>';
+                
+                const response = await fetch('/api/upload-image', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                if (response.ok) {
+                    const result = JSON.parse(responseText);
+                    resultsDiv.innerHTML = `
+                        <p style="color: green;">Upload successful!</p>
+                        <p>URL: ${result.url}</p>
+                        <p>Size: ${result.width}x${result.height}</p>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <p style="color: red;">Upload failed!</p>
+                        <p>Status: ${response.status}</p>
+                        <p>Response: ${responseText}</p>
+                    `;
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                resultsDiv.innerHTML = `
+                    <p style="color: red;">Upload error: ${error.message}</p>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

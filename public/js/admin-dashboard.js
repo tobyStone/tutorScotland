@@ -18,17 +18,25 @@
 
 // Import upload helper for image uploads
 let uploadImage;
-try {
-    // Try to import the upload helper
-    import('/js/upload-helper.js').then(module => {
+let uploadHelperLoaded = false;
+
+// Load upload helper
+async function loadUploadHelper() {
+    try {
+        const module = await import('/js/upload-helper.js');
         uploadImage = module.uploadImage;
-        console.log('[Admin Dashboard] Upload helper loaded');
-    }).catch(err => {
+        uploadHelperLoaded = true;
+        console.log('[Admin Dashboard] Upload helper loaded successfully');
+        return true;
+    } catch (err) {
         console.warn('[Admin Dashboard] Upload helper not available:', err);
-    });
-} catch (err) {
-    console.warn('[Admin Dashboard] Could not load upload helper:', err);
+        uploadHelperLoaded = false;
+        return false;
+    }
 }
+
+// Initialize upload helper
+loadUploadHelper();
 
 // Wait for DOM and required modules to be ready
 document.addEventListener('DOMContentLoaded', function() {
@@ -1456,25 +1464,44 @@ function initPageManagement() {
                 }
 
                 try {
-                    // Use upload helper if available
-                    if (typeof uploadImage === 'function') {
-                        const imageUrl = await uploadImage(imageFile, 'pages');
-                        formData.set('imagePath', imageUrl);
+                    let imageUrl;
+
+                    // Try to use upload helper first, with fallback
+                    if (uploadHelperLoaded && typeof uploadImage === 'function') {
+                        console.log('[Page Creation] Using upload helper for image upload');
+                        imageUrl = await uploadImage(imageFile, 'pages');
                     } else {
-                        // Fallback upload method
+                        console.log('[Page Creation] Using fallback upload method');
+                        // Fallback upload method with improved error handling
                         const uploadFormData = new FormData();
                         uploadFormData.append('file', imageFile);
                         uploadFormData.append('folder', 'pages');
+
                         const uploadResponse = await fetch('/api/upload-image', {
                             method: 'POST',
                             body: uploadFormData,
                             credentials: 'include' // ✅ SECURITY FIX: Include cookies for JWT authentication
                         });
-                        if (!uploadResponse.ok) throw new Error('Image upload failed');
+
+                        if (!uploadResponse.ok) {
+                            const errorText = await uploadResponse.text();
+                            console.error('Upload failed:', uploadResponse.status, errorText);
+                            throw new Error(`Image upload failed: ${uploadResponse.status} - ${errorText}`);
+                        }
+
                         const uploadResult = await uploadResponse.json();
-                        formData.set('imagePath', uploadResult.url);
+                        imageUrl = uploadResult.url;
                     }
+
+                    if (imageUrl) {
+                        formData.set('imagePath', imageUrl);
+                        console.log('[Page Creation] Image uploaded successfully:', imageUrl);
+                    } else {
+                        throw new Error('Upload succeeded but no URL returned');
+                    }
+
                 } catch (uploadError) {
+                    console.error('[Page Creation] Image upload error:', uploadError);
                     alert('Image upload failed: ' + uploadError.message);
                     return;
                 }
