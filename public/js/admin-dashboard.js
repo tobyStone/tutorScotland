@@ -653,6 +653,19 @@ function initSectionManagement() {
                 apiUrl = '/api/sections';
             }
 
+            // Handle targetPage field conversion (matching original admin.html logic)
+            if (isEditing) {
+                // When editing, check if we have a targetPage field (from move section dropdown)
+                const moveVal = formData.get('targetPage')?.trim();
+                if (moveVal) {
+                    // For rolling-banner sections, ignore moveVal and always use 'rolling-banner'
+                    const newPage = isRollingBanner ? 'rolling-banner' : moveVal;
+                    formData.set('page', newPage);
+                    formData.delete('targetPage'); // Remove targetPage after converting to page
+                    console.log(`[Admin Dashboard] Moving section to page: ${newPage}`);
+                }
+            }
+
             // Add editId for updates (original API design)
             if (isEditing) {
                 formData.append('editId', sectionId);
