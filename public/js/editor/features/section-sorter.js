@@ -28,6 +28,12 @@ export class SectionSorter {
         this.sortable = null;
         this.sectionOrder = [];
         this.sections = [];
+
+        // Define sections that should never be moved (pinned to their positions)
+        this.pinnedSections = {
+            'index': ['landing'], // Landing section must always be first on index page
+            // Add other pages and their pinned sections as needed
+        };
     }
 
     async init() {
@@ -38,6 +44,23 @@ export class SectionSorter {
         } catch (e) {
             console.error('Failed to load section order', e);
         }
+    }
+
+    /**
+     * Get pinned sections for the current page
+     * @returns {Array} Array of pinned section IDs
+     */
+    getPinnedSections() {
+        return this.pinnedSections[editorState.currentPage] || [];
+    }
+
+    /**
+     * Check if a section is pinned (cannot be moved)
+     * @param {string} sectionId - Section ID to check
+     * @returns {boolean} True if section is pinned
+     */
+    isPinned(sectionId) {
+        return this.getPinnedSections().includes(sectionId);
     }
 
     applyOrder() {
@@ -51,7 +74,25 @@ export class SectionSorter {
     }
 
     activate() {
-        this.sections = Array.from(document.querySelectorAll('main > [data-ve-section-id]'));
+        const allSections = Array.from(document.querySelectorAll('main > [data-ve-section-id]'));
+        const pinnedSections = this.getPinnedSections();
+
+        // Add visual indicators for pinned sections
+        allSections.forEach(sec => {
+            const sectionId = sec.dataset.veSectionId;
+            if (pinnedSections.includes(sectionId)) {
+                sec.classList.add('ve-pinned-section');
+                console.log(`📌 Section "${sectionId}" is pinned and cannot be reordered`);
+            }
+        });
+
+        // Filter out pinned sections - they cannot be reordered
+        this.sections = allSections.filter(sec => {
+            const sectionId = sec.dataset.veSectionId;
+            return !pinnedSections.includes(sectionId);
+        });
+
+        console.log(`🔄 Activating drag-and-drop for ${this.sections.length} reorderable sections`);
         this.sections.forEach(sec => sec.classList.add('ve-reorderable'));
         this.addHandles();
         this.enableDrag();
@@ -61,6 +102,12 @@ export class SectionSorter {
         if (this.sortable) { this.sortable.destroy(); this.sortable = null; }
         document.querySelectorAll('.ve-drag-handle').forEach(h => h.remove());
         this.sections.forEach(sec => sec.classList.remove('ve-reorderable'));
+
+        // Clean up pinned section styling
+        document.querySelectorAll('.ve-pinned-section').forEach(sec => {
+            sec.classList.remove('ve-pinned-section');
+        });
+
         this.sections = [];
     }
 

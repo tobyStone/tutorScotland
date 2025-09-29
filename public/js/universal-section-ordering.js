@@ -13,6 +13,12 @@ class UniversalSectionOrdering {
     constructor() {
         this.currentPage = this.getCurrentPageSlug();
         this.isInitialized = false;
+
+        // Define sections that should never be moved (pinned to their positions)
+        this.pinnedSections = {
+            'index': ['landing'], // Landing section must always be first on index page
+            // Add other pages and their pinned sections as needed
+        };
     }
 
     /**
@@ -143,36 +149,52 @@ class UniversalSectionOrdering {
 
         console.log(`🔄 Found ${sections.length} sections with IDs:`, Array.from(lookup.keys()));
 
+        // Get pinned sections for current page
+        const pinnedForPage = this.pinnedSections[this.currentPage] || [];
+        console.log(`📌 Pinned sections for ${this.currentPage}:`, pinnedForPage);
+
+        // Filter out pinned sections from reordering
+        const reorderableSections = order.filter(sectionId => !pinnedForPage.includes(sectionId));
+        console.log(`🔄 Reorderable sections:`, reorderableSections);
+
         let reorderedCount = 0;
         
-        // Apply the order by moving sections
-        order.forEach((sectionId, index) => {
+        // Apply the order by moving sections (skip pinned sections)
+        reorderableSections.forEach((sectionId, reorderableIndex) => {
             const section = lookup.get(sectionId);
             if (section) {
-                console.log(`🔄 Moving section ${sectionId} to position ${index}`);
+                // Find the original position in the full order array
+                const originalIndex = order.indexOf(sectionId);
+                console.log(`🔄 Moving section ${sectionId} (reorderable index ${reorderableIndex}, original index ${originalIndex})`);
 
-                // Move section to the correct position
-                if (index === 0) {
-                    // First section - insert at the very beginning
+                // Find the correct position by looking for the previous section in the FULL order
+                if (originalIndex === 0) {
+                    // First section in full order - insert at the very beginning
                     parent.insertBefore(section, parent.firstChild);
                     console.log(`🔄 Moved ${sectionId} to first position`);
                 } else {
-                    // Find the correct position by looking for the previous section
-                    const previousSectionId = order[index - 1];
-                    const previousSection = lookup.get(previousSectionId);
+                    // Find the previous section in the full order (may be pinned or reorderable)
+                    let previousSection = null;
+                    for (let i = originalIndex - 1; i >= 0; i--) {
+                        const prevSectionId = order[i];
+                        previousSection = lookup.get(prevSectionId);
+                        if (previousSection) {
+                            break; // Found a valid previous section
+                        }
+                    }
 
                     if (previousSection) {
                         // Insert after the previous section
                         if (previousSection.nextSibling) {
                             parent.insertBefore(section, previousSection.nextSibling);
-                            console.log(`🔄 Moved ${sectionId} after ${previousSectionId}`);
+                            console.log(`🔄 Moved ${sectionId} after previous section`);
                         } else {
                             // Previous section is the last element, append after it
                             parent.appendChild(section);
-                            console.log(`🔄 Moved ${sectionId} to end (after ${previousSectionId})`);
+                            console.log(`🔄 Moved ${sectionId} to end (after previous section)`);
                         }
                     } else {
-                        console.log(`⚠️ Previous section ${previousSectionId} not found, skipping ${sectionId}`);
+                        console.log(`⚠️ No valid previous section found, skipping ${sectionId}`);
                         return; // Skip this section if we can't find where to place it
                     }
                 }

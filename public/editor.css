@@ -856,6 +856,26 @@ body.ve-edit-active #editor-modal[style*="display: block"] {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+/* Pinned section styles */
+.ve-pinned-section {
+    position: relative;
+}
+
+.ve-pinned-section::before {
+    content: "📌 PINNED";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff6b6b;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 1000;
+    opacity: 0.9;
+}
+
 .sortable-ghost {
     opacity: 0.5;
     background: #f0f8ff;
