@@ -33,7 +33,7 @@ try {
 // Wait for DOM and required modules to be ready
 document.addEventListener('DOMContentLoaded', function() {
     console.log('[Admin Dashboard] Initializing...');
-    
+
     // Initialize all dashboard functionality
     initTabSwitching();
     initPageDropdowns();
@@ -43,6 +43,21 @@ document.addEventListener('DOMContentLoaded', function() {
     initAdvancedSectionBuilders();
     initVideoManagement();
     initURLParameterHandling();
+
+    // Add debugging function to window for manual testing
+    window.debugTeamSections = function() {
+        console.log('[Debug] All sections:', allSections);
+        const teamSections = allSections.filter(s => s.layout === 'team');
+        console.log('[Debug] Team sections:', teamSections);
+        teamSections.forEach(section => {
+            console.log(`[Debug] Section ${section._id}:`, {
+                heading: section.heading,
+                team: section.team,
+                teamType: typeof section.team,
+                teamIsArray: Array.isArray(section.team)
+            });
+        });
+    };
 
     console.log('[Admin Dashboard] Initialization complete');
 });
@@ -194,6 +209,11 @@ function initSectionManagement() {
         const buttonUrl = sectionForm.querySelector('[name="buttonUrl"]');
         if (buttonLabel) buttonLabel.value = '';
         if (buttonUrl) buttonUrl.value = '';
+
+        // Reset advanced builders
+        if (typeof window.clearTeamBuilder === 'function') {
+            window.clearTeamBuilder();
+        }
 
         console.log('[Admin Dashboard] Section form reset to create mode');
     }
@@ -355,6 +375,21 @@ function initSectionManagement() {
 
             if (sectionsResponse.ok) {
                 sections = await sectionsResponse.json();
+                console.log('[Admin Dashboard] Loaded sections from API:', sections);
+                // Log team sections specifically
+                const teamSections = sections.filter(s => s.layout === 'team');
+                if (teamSections.length > 0) {
+                    console.log('[Admin Dashboard] Team sections found:', teamSections);
+                    teamSections.forEach((section, index) => {
+                        console.log(`[Admin Dashboard] Team section ${index + 1} data:`, {
+                            id: section._id,
+                            heading: section.heading,
+                            layout: section.layout,
+                            team: section.team,
+                            teamLength: section.team ? section.team.length : 'undefined'
+                        });
+                    });
+                }
             }
 
             if (videoSectionsResponse.ok) {
@@ -727,6 +762,18 @@ function initSectionManagement() {
                     return;
                 }
 
+                console.log('[Admin Dashboard] Editing section:', section);
+                if (section.layout === 'team') {
+                    console.log('[Admin Dashboard] Team section data for editing:', {
+                        id: section._id,
+                        heading: section.heading,
+                        layout: section.layout,
+                        team: section.team,
+                        teamIsArray: Array.isArray(section.team),
+                        teamLength: section.team ? section.team.length : 'undefined'
+                    });
+                }
+
                 // Populate form for editing
                 populateSectionForm(section);
                 sectionForm.scrollIntoView({ behavior: 'smooth' });
@@ -795,6 +842,8 @@ function initSectionManagement() {
             const layoutField = sectionForm.querySelector('[name="layout"]');
             if (layoutField) {
                 layoutField.value = section.layout || 'standard';
+                // Trigger layout change to show/hide appropriate fields
+                layoutField.dispatchEvent(new Event('change'));
             }
 
             // Clear rolling text field for regular sections
@@ -803,11 +852,31 @@ function initSectionManagement() {
 
             // Handle layout-specific data population
             if (section.layout === 'team' && section.team) {
-                // Populate team builder with existing team data
-                if (typeof populateTeamBuilder === 'function') {
-                    populateTeamBuilder(section.team);
+                // Ensure team builder is visible first
+                const teamBuilder = document.getElementById('teamBuilder');
+                if (teamBuilder) {
+                    teamBuilder.style.display = 'block';
                 }
-                console.log('[Admin Dashboard] Populated team builder with', section.team.length, 'members');
+
+                // Add a small delay to ensure DOM elements are ready
+                setTimeout(() => {
+                    // Populate team builder with existing team data
+                    if (typeof populateTeamBuilder === 'function') {
+                        console.log('[Admin Dashboard] About to populate team builder with data:', section.team);
+                        populateTeamBuilder(section.team);
+                        console.log('[Admin Dashboard] Team builder populated with', section.team.length, 'members');
+                    } else {
+                        console.error('[Admin Dashboard] populateTeamBuilder function not found');
+                        // Fallback: try to populate manually if function is not available
+                        const teamMemberList = document.getElementById('teamMemberList');
+                        const teamData = document.getElementById('teamData');
+                        if (teamMemberList && teamData && section.team) {
+                            console.log('[Admin Dashboard] Using fallback team population method');
+                            // Store the team data for manual population
+                            teamData.value = JSON.stringify(section.team);
+                        }
+                    }
+                }, 100);
             } else if (section.layout === 'list' && section.text) {
                 // Populate list builder with existing list data
                 try {
@@ -1795,8 +1864,18 @@ function initAdvancedSectionBuilders() {
      * Populate team builder with existing data (for editing)
      * @param {Array} existingTeam - Array of team member objects
      */
-    function populateTeamBuilder(existingTeam) {
-        if (!existingTeam || !Array.isArray(existingTeam)) return;
+    window.populateTeamBuilder = function(existingTeam) {
+        console.log('[Admin Dashboard] populateTeamBuilder called with:', existingTeam);
+
+        if (!existingTeam || !Array.isArray(existingTeam)) {
+            console.warn('[Admin Dashboard] Invalid team data provided to populateTeamBuilder:', existingTeam);
+            return;
+        }
+
+        if (!teamMemberList) {
+            console.error('[Admin Dashboard] teamMemberList element not found');
+            return;
+        }
 
         // Clear existing cards
         teamMemberList.innerHTML = '';
@@ -1804,12 +1883,20 @@ function initAdvancedSectionBuilders() {
 
         // Create cards for each existing team member
         existingTeam.forEach((member, index) => {
+            console.log(`[Admin Dashboard] Creating card for team member ${index + 1}:`, member);
+
             const card = createTeamMemberCard(index);
 
             // Pre-fill fields from the section data
-            card.querySelector('.member-nameRole').value = member.name || '';
-            card.querySelector('.member-bio').value = member.bio || '';
-            card.querySelector('.member-quote').value = member.quote || '';
+            const nameField = card.querySelector('.member-nameRole');
+            const bioField = card.querySelector('.member-bio');
+            const quoteField = card.querySelector('.member-quote');
+
+            if (nameField) nameField.value = member.name || '';
+            if (bioField) bioField.value = member.bio || '';
+            if (quoteField) quoteField.value = member.quote || '';
+
+            console.log(`[Admin Dashboard] Populated fields for member ${index + 1}: name="${member.name}", bio="${member.bio}", quote="${member.quote}"`);
 
             // Handle existing image
             if (member.image) {
@@ -1820,8 +1907,11 @@ function initAdvancedSectionBuilders() {
                 const previewDiv = card.querySelector('.image-preview');
                 const previewImg = previewDiv.querySelector('img');
 
-                previewImg.src = member.image;
-                previewDiv.style.display = 'block';
+                if (previewImg) {
+                    previewImg.src = member.image;
+                    previewDiv.style.display = 'block';
+                    console.log(`[Admin Dashboard] Set image for member ${index + 1}:`, member.image);
+                }
             }
 
             teamMemberList.appendChild(card);
@@ -1836,7 +1926,7 @@ function initAdvancedSectionBuilders() {
     /**
      * Clear team builder (for form reset)
      */
-    function clearTeamBuilder() {
+    window.clearTeamBuilder = function() {
         teamMemberList.innerHTML = '';
         teamMembers = [];
         if (teamData) {

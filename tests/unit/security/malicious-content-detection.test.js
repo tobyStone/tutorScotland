@@ -62,11 +62,44 @@ function detectMaliciousContent(buffer) {
         }
     }
 
-    // Check for SQL injection patterns in file content
-    const sqlPatterns = ['union select', 'drop table', 'insert into', '-- ', '/*'];
+    // Check for SQL injection patterns in file content (improved to reduce false positives)
+    const sqlPatterns = ['union select', 'drop table', 'insert into'];
     for (const pattern of sqlPatterns) {
         if (bufferText.includes(pattern)) {
             return { name: 'SQL Injection Pattern', description: `Detected: ${pattern}` };
+        }
+    }
+
+    // Check for SQL comment patterns with context awareness
+    if (bufferText.includes('-- ') && bufferText.match(/\b(select|insert|update|delete|drop)\b/i)) {
+        return { name: 'SQL Injection Pattern', description: 'Detected: SQL comment with query keywords' };
+    }
+
+    // For /* patterns, be more intelligent about detection
+    if (bufferText.includes('/*')) {
+        // Check if this appears to be a legitimate image file by looking for image signatures
+        const hasImageSignature = DANGEROUS_SIGNATURES.some(sig => {
+            if (sig.name.includes('Image') || sig.name.includes('JPEG') || sig.name.includes('PNG')) {
+                return false; // Don't flag image files
+            }
+            return false;
+        });
+
+        // Check for common image file headers to avoid false positives
+        const imageHeaders = [
+            [0xFF, 0xD8, 0xFF], // JPEG
+            [0x89, 0x50, 0x4E, 0x47], // PNG
+            [0x47, 0x49, 0x46], // GIF
+            [0x52, 0x49, 0x46, 0x46] // WEBP/RIFF
+        ];
+
+        const isLikelyImage = imageHeaders.some(header => {
+            return header.every((byte, index) => checkBuffer[index] === byte);
+        });
+
+        // Only flag /* if it appears with SQL keywords AND it's not a likely image file
+        if (!isLikelyImage && bufferText.match(/\b(select|insert|update|delete|drop|union)\b/i)) {
+            return { name: 'SQL Injection Pattern', description: 'Detected: SQL comment block with query keywords' };
         }
     }
 
@@ -202,8 +235,32 @@ describe('Malicious Content Detection (Unit Tests)', () => {
     it('should allow legitimate text content', () => {
       const textBuffer = Buffer.from('This is just normal text content without any malicious patterns');
       const result = detectMaliciousContent(textBuffer);
-      
+
       expect(result).toBeNull(); // Should be safe
+    });
+
+    it('should allow JPEG files with /* patterns in binary data', () => {
+      // JPEG file with /* bytes in the binary data (common in compressed images)
+      const jpegWithSlashStar = Buffer.from([
+        0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, // JPEG header
+        0x2F, 0x2A, // /* in binary data
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05 // more binary data
+      ]);
+      const result = detectMaliciousContent(jpegWithSlashStar);
+
+      expect(result).toBeNull(); // Should not be flagged as malicious
+    });
+
+    it('should allow PNG files with /* patterns in binary data', () => {
+      // PNG file with /* bytes in the binary data
+      const pngWithSlashStar = Buffer.from([
+        0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG header
+        0x2F, 0x2A, // /* in binary data
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05 // more binary data
+      ]);
+      const result = detectMaliciousContent(pngWithSlashStar);
+
+      expect(result).toBeNull(); // Should not be flagged as malicious
     });
   });
 });
