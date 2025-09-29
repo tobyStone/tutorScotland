@@ -22,16 +22,19 @@ const SECRET = process.env.JWT_SECRET;
 
 /* Small helper keeps everything in one file, so auth.js can disappear */
 function verify(req, res) {
-    console.log('Verifying token from cookies...');
+    console.log('🔍 Verifying token from cookies...');
+    console.log('🔍 Request URL:', req.url);
+    console.log('🔍 Request method:', req.method);
+    console.log('🔍 Cookie header:', req.headers.cookie);
 
     // Check if cookies exist
     if (!req.cookies) {
-        console.log('No cookies object found in request');
+        console.log('⚠️ No cookies object found in request');
 
         // Try to manually parse cookies from header
         const cookieHeader = req.headers.cookie;
         if (!cookieHeader) {
-            console.log('No cookie header found');
+            console.log('❌ No cookie header found');
             return [false, "No cookies found in request"];
         }
 
@@ -45,15 +48,21 @@ function verify(req, res) {
         });
 
         req.cookies = cookies;
-        console.log('Manually parsed cookies:', cookies);
+        console.log('🔧 Manually parsed cookies:', Object.keys(cookies));
+        console.log('🔧 Token present in parsed cookies:', !!cookies.token);
+    } else {
+        console.log('✅ Cookies object found:', Object.keys(req.cookies));
+        console.log('🔧 Token present in cookies object:', !!req.cookies.token);
     }
 
     // Get token from cookies
     const token = req.cookies.token;
     if (!token) {
-        console.log('No token found in cookies:', req.cookies);
+        console.log('❌ No token found in cookies. Available cookies:', Object.keys(req.cookies));
         return [false, "No authentication token found"];
     }
+
+    console.log('✅ Token found, length:', token.length);
 
     // ✅ SECURITY FIX: Check if JWT_SECRET is set and strong
     if (!SECRET) {

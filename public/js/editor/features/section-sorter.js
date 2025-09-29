@@ -90,11 +90,23 @@ export class SectionSorter {
 
     async persistOrder() {
         const order = Array.from(document.querySelectorAll('main > .ve-reorderable')).map(el => el.dataset.veSectionId);
+        console.log('🔄 Persisting section order:', {
+            page: editorState.currentPage,
+            order: order,
+            orderLength: order.length
+        });
+
         try {
+            console.log('🔄 Calling apiService.setSectionOrder...');
             await apiService.setSectionOrder(editorState.currentPage, order);
             this.sectionOrder = order;
+            console.log('✅ Section order saved successfully');
         } catch (e) {
-            console.error('Failed to save order', e);
+            console.error('❌ Failed to save section order:', e);
+            console.error('❌ Error details:', {
+                message: e.message,
+                stack: e.stack
+            });
         }
     }
 }

@@ -364,11 +364,23 @@ module.exports = async (req, res) => {
         const serializedCookie = serialize('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',  // CSRF protection - prevents cross-site requests
+            sameSite: 'lax',     // CSRF protection - less restrictive than 'strict' for better compatibility
             maxAge: 3 * 60 * 60, // 3 hours in seconds
             path: '/'            // cookie valid on entire site
         });
         res.setHeader('Set-Cookie', serializedCookie);
+
+        // Debug: Log cookie setting
+        console.log('🍪 Setting authentication cookie:', {
+            tokenLength: token.length,
+            cookieOptions: {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 3 * 60 * 60,
+                path: '/'
+            }
+        });
 
         // If admin => /admin.html, else if tutor => /tutorszone.html
         let redirectUrl = '/tutorszone.html';

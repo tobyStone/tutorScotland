@@ -199,14 +199,31 @@ class ApiService {
     }
 
     async setSectionOrder(pageKey, order) {
+        console.log('🌐 API: Setting section order:', {
+            pageKey,
+            order,
+            url: `${API_ROOT}?operation=set-order`
+        });
+
         const r = await fetch(`${API_ROOT}?operation=set-order`, {
             method: 'POST',
             credentials: 'include', // ✅ SECURITY FIX: Include cookies for authentication
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ targetPage: pageKey, order })
         });
-        if (!r.ok) throw new Error('Failed to set order');
-        return r.json();
+
+        console.log('🌐 API: Response status:', r.status);
+        console.log('🌐 API: Response ok:', r.ok);
+
+        if (!r.ok) {
+            const errorText = await r.text();
+            console.error('🌐 API: Error response:', errorText);
+            throw new Error(`Failed to set order: ${r.status} ${errorText}`);
+        }
+
+        const result = await r.json();
+        console.log('🌐 API: Success response:', result);
+        return result;
     }
 }
 
