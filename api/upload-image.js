@@ -481,6 +481,7 @@ async function handleFileUpload(req, res, payload) {
         const fileObj = (files.file || files.image);
         uploadedFile = Array.isArray(fileObj) ? fileObj[0] : fileObj;
         if (!uploadedFile) {
+            activeUploads.delete(uploadId);
             return res.status(400).json({ message: 'No file provided' });
         }
 
@@ -490,6 +491,7 @@ async function handleFileUpload(req, res, payload) {
         // CHECK 1: Was the file truncated by Formidable for being too large?
         if (uploadedFile.truncated) {
             console.error(`Upload truncated: File exceeded ${MAX_UPLOAD} bytes.`);
+            activeUploads.delete(uploadId);
             return res.status(413).json({
                 message: `File is too large. The limit is ${MAX_UPLOAD / 1024 / 1024}MB.`
             });
@@ -500,6 +502,7 @@ async function handleFileUpload(req, res, payload) {
         const stats = await fsPromises.stat(uploadedFile.filepath);
         if (stats.size !== uploadedFile.size) {
             console.error(`Upload size mismatch: on-disk(${stats.size}) vs expected(${uploadedFile.size}).`);
+            activeUploads.delete(uploadId);
             return res.status(500).json({
                 message: 'Incomplete upload due to a server issue. Please try again.'
             });
@@ -518,6 +521,7 @@ async function handleFileUpload(req, res, payload) {
         const isVideo = ALLOWED_VIDEO_MIME.includes(mime.toLowerCase());
 
         if (!isImage && !isVideo) {
+            activeUploads.delete(uploadId);
             return res.status(415).json({
                 message: 'Unsupported file type. Please use JPG, PNG, WebP, GIF for images or MP4, WebM, OGG for videos.'
             });
@@ -538,6 +542,7 @@ async function handleFileUpload(req, res, payload) {
         if (uploadedFile.size > maxSize) {
             const maxSizeMB = Math.round(maxSize / (1024 * 1024));
             const storageType = forceGoogleCloud ? 'Google Cloud Storage' : (isVideo ? 'videos' : 'images');
+            activeUploads.delete(uploadId);
             return res.status(413).json({
                 message: `File too large. Maximum size is ${maxSizeMB}MB for ${storageType}.`
             });
@@ -576,6 +581,7 @@ async function handleFileUpload(req, res, payload) {
             fs.unlink(uploadedFile.filepath, (err) => {
                 if (err) console.error('Error deleting incomplete temp file:', err);
             });
+            activeUploads.delete(uploadId);
             return res.status(500).json({
                 message: 'File read error. Please try uploading again.'
             });
@@ -670,22 +676,65 @@ async function handleFileUpload(req, res, payload) {
 
                     const publicUrl = `https://storage.googleapis.com/${GOOGLE_CLOUD_BUCKET}/${gcFilename}`;
 
-                    // Verify the upload
-                    const verifyResponse = await fetch(publicUrl, { method: 'HEAD' });
-                    if (!verifyResponse.ok) {
-                        throw new Error(`Google Cloud upload verification failed: ${verifyResponse.status}`);
+                    console.log(`✅ Large video uploaded to Google Cloud Storage: ${publicUrl}`);
+
+                    // ✅ SEPARATE VERIFICATION: Poll HEAD endpoint for Google Cloud
+                    console.log('🔍 Starting Google Cloud verification polling...');
+                    let gcVerificationPending = false;
+                    let gcVerificationAttempts = 0;
+                    const maxGcVerificationAttempts = 5;
+
+                    while (gcVerificationAttempts < maxGcVerificationAttempts) {
+                        try {
+                            gcVerificationAttempts++;
+
+                            // Add delay before verification (except first attempt)
+                            if (gcVerificationAttempts > 1) {
+                                const delay = 1000 + (gcVerificationAttempts * 500); // Longer delays for Google Cloud
+                                await new Promise(resolve => setTimeout(resolve, delay));
+                            }
+
+                            console.log(`🔍 GC verification attempt ${gcVerificationAttempts}/${maxGcVerificationAttempts}...`);
+                            const verifyResponse = await fetch(publicUrl, { method: 'HEAD' });
+
+                            if (verifyResponse.ok) {
+                                console.log(`✅ Google Cloud video verified successfully`);
+                                break; // Verification successful
+                            } else {
+                                console.warn(`⚠️ GC verification failed with status: ${verifyResponse.status}`);
+                            }
+
+                            // If this was the last attempt, mark as pending
+                            if (gcVerificationAttempts >= maxGcVerificationAttempts) {
+                                console.warn('⚠️ Google Cloud verification polling exhausted - marking as pending');
+                                gcVerificationPending = true;
+                            }
+
+                        } catch (verifyError) {
+                            console.warn(`⚠️ GC verification attempt ${gcVerificationAttempts} error:`, verifyError.message);
+                            if (gcVerificationAttempts >= maxGcVerificationAttempts) {
+                                console.warn('⚠️ All GC verification attempts failed - marking as pending');
+                                gcVerificationPending = true;
+                            }
+                        }
                     }
 
-                    console.log(`✅ Large video uploaded successfully to Google Cloud Storage`);
-
-                    return res.status(200).json({
+                    const gcResponse = {
                         message: 'Large video uploaded successfully to Google Cloud Storage',
                         url: publicUrl,
                         filename: gcFilename,
                         size: uploadedFile.size,
                         type: uploadedFile.mimetype,
                         storage: 'google-cloud'
-                    });
+                    };
+
+                    // Add verification status if pending
+                    if (gcVerificationPending) {
+                        gcResponse.verificationPending = true;
+                        console.log('⚠️ Returning Google Cloud response with verification pending flag');
+                    }
+
+                    return res.status(200).json(gcResponse);
 
                 } catch (gcError) {
                     console.error('Google Cloud upload failed:', gcError);
@@ -712,33 +761,75 @@ async function handleFileUpload(req, res, payload) {
             try {
                 console.log(`📤 Uploading video to Vercel Blob storage: ${videoKey}`);
                 const uploadResult = await put(videoKey, buffer, putOpts);
+                console.log('✅ Video uploaded to Vercel Blob:', uploadResult.url);
 
-                // Verify the upload
-                const verifyResponse = await fetch(uploadResult.url, { method: 'HEAD' });
-                if (!verifyResponse.ok) {
-                    throw new Error(`Video upload verification failed: ${verifyResponse.status}`);
+                // ✅ SEPARATE VERIFICATION: Poll HEAD endpoint for video
+                console.log('🔍 Starting video verification polling...');
+                let videoVerificationPending = false;
+                let videoVerificationAttempts = 0;
+                const maxVideoVerificationAttempts = 5;
+
+                while (videoVerificationAttempts < maxVideoVerificationAttempts) {
+                    try {
+                        videoVerificationAttempts++;
+
+                        // Add delay before verification (except first attempt)
+                        if (videoVerificationAttempts > 1) {
+                            const delay = 500 + (videoVerificationAttempts * 200);
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                        }
+
+                        console.log(`🔍 Video verification attempt ${videoVerificationAttempts}/${maxVideoVerificationAttempts}...`);
+                        const verifyResponse = await fetch(uploadResult.url, { method: 'HEAD' });
+
+                        if (verifyResponse.ok) {
+                            const uploadedSize = parseInt(verifyResponse.headers.get('content-length') || '0');
+                            if (uploadedSize === buffer.length) {
+                                console.log(`✅ Video verified: ${uploadedSize} bytes`);
+                                break; // Verification successful
+                            } else {
+                                console.warn(`⚠️ Video size mismatch: uploaded ${uploadedSize} vs expected ${buffer.length}`);
+                            }
+                        } else {
+                            console.warn(`⚠️ Video verification failed with status: ${verifyResponse.status}`);
+                        }
+
+                        // If this was the last attempt, mark as pending
+                        if (videoVerificationAttempts >= maxVideoVerificationAttempts) {
+                            console.warn('⚠️ Video verification polling exhausted - marking as pending');
+                            videoVerificationPending = true;
+                        }
+
+                    } catch (verifyError) {
+                        console.warn(`⚠️ Video verification attempt ${videoVerificationAttempts} error:`, verifyError.message);
+                        if (videoVerificationAttempts >= maxVideoVerificationAttempts) {
+                            console.warn('⚠️ All video verification attempts failed - marking as pending');
+                            videoVerificationPending = true;
+                        }
+                    }
                 }
-
-                const uploadedSize = parseInt(verifyResponse.headers.get('content-length') || '0');
-                if (uploadedSize !== buffer.length) {
-                    throw new Error(`Video size mismatch: uploaded ${uploadedSize} vs expected ${buffer.length}`);
-                }
-
-                console.log('✅ Video uploaded successfully:', uploadResult.url);
 
                 // Clean up temp file
                 fs.unlink(uploadedFile.filepath, (err) => {
                     if (err) console.error('Error deleting temp file:', err);
                 });
 
-                return res.status(200).json({
+                const videoResponse = {
                     message: 'Video uploaded successfully',
                     url: uploadResult.url,
                     filename: filename,
                     size: uploadedFile.size,
                     type: 'video',
                     folder: videoFolder
-                });
+                };
+
+                // Add verification status if pending
+                if (videoVerificationPending) {
+                    videoResponse.verificationPending = true;
+                    console.log('⚠️ Returning video response with verification pending flag');
+                }
+
+                return res.status(200).json(videoResponse);
 
             } catch (error) {
                 console.error('Video upload error:', error);
@@ -780,6 +871,7 @@ async function handleFileUpload(req, res, payload) {
             fs.unlink(uploadedFile.filepath, (err) => {
                 if (err) console.error('Error deleting corrupt temp file:', err);
             });
+            activeUploads.delete(uploadId);
             return res.status(400).json({
                 message: 'Unable to process image – it may be corrupt or not a valid image file.'
             });
@@ -788,6 +880,7 @@ async function handleFileUpload(req, res, payload) {
         // ─── NEW: Verify Sharp-detected format ──────────────────────────────
         if (!metadata.format || !ALLOWED_SHARP_FORMATS.includes(metadata.format)) {
              fs.unlink(uploadedFile.filepath, ()=>{}); // cleanup
+             activeUploads.delete(uploadId);
              return res.status(415).json({
                 message: `File appears to be a ${metadata.format || 'unknown type'}, not an allowed image.`
              });
@@ -798,6 +891,7 @@ async function handleFileUpload(req, res, payload) {
         // ✅ NEW: Additional validation to detect corrupted/incomplete images
         if (!metadata.width || !metadata.height || metadata.width < 1 || metadata.height < 1) {
             fs.unlink(uploadedFile.filepath, ()=>{}); // cleanup
+            activeUploads.delete(uploadId);
             return res.status(400).json({
                 message: 'Image appears to be corrupted or has invalid dimensions.'
             });
@@ -811,6 +905,7 @@ async function handleFileUpload(req, res, payload) {
         if (buffer.length < minFileSize) {
             console.warn(`File too small: ${buffer.length} bytes for ${metadata.width}x${metadata.height} image`);
             fs.unlink(uploadedFile.filepath, ()=>{}); // cleanup
+            activeUploads.delete(uploadId);
             return res.status(400).json({
                 message: 'Image file appears to be corrupted or incomplete. Please try uploading again.'
             });
@@ -820,6 +915,7 @@ async function handleFileUpload(req, res, payload) {
         // ──────────────────────────────────────────────────────────────────
 
         if (metadata.width > MAX_DIMENSIONS || metadata.height > MAX_DIMENSIONS) {
+            activeUploads.delete(uploadId);
             return res.status(400).json({
                 message: `Image dimensions too large. Max ${MAX_DIMENSIONS}px each side.`
             });
@@ -912,79 +1008,123 @@ async function handleFileUpload(req, res, payload) {
         const mainKey = `${folder}/${filename}`;
         const thumbKey = `${folder}/thumbnails/${filename}`;
 
-        // ✅ RACE CONDITION FIX: Sequential uploads with verification
-        console.log('🔄 Starting sequential blob uploads...');
+        // ✅ DECOUPLED UPLOAD: Upload once, then verify separately
+        console.log('🔄 Starting blob upload...');
 
-        // Upload main image first with retry logic
+        // Upload main image (single attempt)
         let url, thumbnailUrl;
-        let uploadAttempts = 0;
-        const maxRetries = 3;
+        let verificationPending = false;
 
-        while (uploadAttempts < maxRetries) {
-            try {
-                uploadAttempts++;
-                console.log(`📤 Uploading main image (attempt ${uploadAttempts}/${maxRetries})...`);
+        try {
+            console.log(`📤 Uploading main image...`);
+            const uploadResult = await put(mainKey, buffer, putOpts);
+            url = uploadResult.url;
+            console.log(`✅ Main image uploaded: ${url}`);
 
-                const uploadResult = await put(mainKey, buffer, putOpts);
-                url = uploadResult.url;
+            // ✅ SEPARATE VERIFICATION: Poll HEAD endpoint with delays
+            console.log('🔍 Starting verification polling...');
+            let verificationAttempts = 0;
+            const maxVerificationAttempts = 5;
 
-                // ✅ VERIFICATION: Immediately verify the uploaded image is complete
-                const verifyResponse = await fetch(url, { method: 'HEAD' });
-                if (!verifyResponse.ok) {
-                    throw new Error(`Upload verification failed: ${verifyResponse.status}`);
+            while (verificationAttempts < maxVerificationAttempts) {
+                try {
+                    verificationAttempts++;
+
+                    // Add delay before verification (except first attempt)
+                    if (verificationAttempts > 1) {
+                        const delay = 500 + (verificationAttempts * 200); // 700ms, 900ms, 1100ms, 1300ms
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    }
+
+                    console.log(`🔍 Verification attempt ${verificationAttempts}/${maxVerificationAttempts}...`);
+                    const verifyResponse = await fetch(url, { method: 'HEAD' });
+
+                    if (verifyResponse.ok) {
+                        const uploadedSize = parseInt(verifyResponse.headers.get('content-length') || '0');
+                        if (uploadedSize === buffer.length) {
+                            console.log(`✅ Main image verified: ${uploadedSize} bytes`);
+                            break; // Verification successful
+                        } else {
+                            console.warn(`⚠️ Size mismatch in verification: uploaded ${uploadedSize} vs expected ${buffer.length}`);
+                        }
+                    } else {
+                        console.warn(`⚠️ Verification failed with status: ${verifyResponse.status}`);
+                    }
+
+                    // If this was the last attempt, mark as pending
+                    if (verificationAttempts >= maxVerificationAttempts) {
+                        console.warn('⚠️ Verification polling exhausted - marking as pending');
+                        verificationPending = true;
+                    }
+
+                } catch (verifyError) {
+                    console.warn(`⚠️ Verification attempt ${verificationAttempts} error:`, verifyError.message);
+                    if (verificationAttempts >= maxVerificationAttempts) {
+                        console.warn('⚠️ All verification attempts failed - marking as pending');
+                        verificationPending = true;
+                    }
                 }
-
-                const uploadedSize = parseInt(verifyResponse.headers.get('content-length') || '0');
-                if (uploadedSize !== buffer.length) {
-                    throw new Error(`Size mismatch: uploaded ${uploadedSize} vs expected ${buffer.length}`);
-                }
-
-                console.log(`✅ Main image verified: ${uploadedSize} bytes`);
-                break; // Success, exit retry loop
-
-            } catch (uploadError) {
-                console.warn(`⚠️ Main upload attempt ${uploadAttempts} failed:`, uploadError.message);
-                if (uploadAttempts >= maxRetries) {
-                    throw new Error(`Main image upload failed after ${maxRetries} attempts: ${uploadError.message}`);
-                }
-                // Wait before retry with exponential backoff
-                await new Promise(resolve => setTimeout(resolve, 1000 * uploadAttempts));
             }
+
+        } catch (uploadError) {
+            console.error('❌ Main image upload failed:', uploadError.message);
+            throw new Error(`Main image upload failed: ${uploadError.message}`);
         }
 
-        // Upload thumbnail with same verification (if thumbnail was generated)
+        // Upload thumbnail with same decoupled verification (if thumbnail was generated)
         if (thumbnailBuffer && thumbnailBuffer.length > 0) {
-            uploadAttempts = 0;
-            while (uploadAttempts < maxRetries) {
-                try {
-                    uploadAttempts++;
-                    console.log(`📤 Uploading thumbnail (attempt ${uploadAttempts}/${maxRetries})...`);
-
-                    const thumbResult = await put(thumbKey, thumbnailBuffer, putOpts);
+            try {
+                console.log(`📤 Uploading thumbnail...`);
+                const thumbResult = await put(thumbKey, thumbnailBuffer, putOpts);
                 thumbnailUrl = thumbResult.url;
+                console.log(`✅ Thumbnail uploaded: ${thumbnailUrl}`);
 
-                // ✅ VERIFICATION: Verify thumbnail upload
-                const verifyThumbResponse = await fetch(thumbnailUrl, { method: 'HEAD' });
-                if (!verifyThumbResponse.ok) {
-                    throw new Error(`Thumbnail verification failed: ${verifyThumbResponse.status}`);
+                // ✅ SEPARATE VERIFICATION: Poll thumbnail HEAD endpoint
+                console.log('🔍 Starting thumbnail verification polling...');
+                let thumbVerificationAttempts = 0;
+                const maxThumbVerificationAttempts = 5;
+
+                while (thumbVerificationAttempts < maxThumbVerificationAttempts) {
+                    try {
+                        thumbVerificationAttempts++;
+
+                        // Add delay before verification (except first attempt)
+                        if (thumbVerificationAttempts > 1) {
+                            const delay = 500 + (thumbVerificationAttempts * 200);
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                        }
+
+                        console.log(`🔍 Thumbnail verification attempt ${thumbVerificationAttempts}/${maxThumbVerificationAttempts}...`);
+                        const verifyThumbResponse = await fetch(thumbnailUrl, { method: 'HEAD' });
+
+                        if (verifyThumbResponse.ok) {
+                            const thumbUploadedSize = parseInt(verifyThumbResponse.headers.get('content-length') || '0');
+                            if (thumbUploadedSize === thumbnailBuffer.length) {
+                                console.log(`✅ Thumbnail verified: ${thumbUploadedSize} bytes`);
+                                break; // Verification successful
+                            } else {
+                                console.warn(`⚠️ Thumbnail size mismatch: uploaded ${thumbUploadedSize} vs expected ${thumbnailBuffer.length}`);
+                            }
+                        } else {
+                            console.warn(`⚠️ Thumbnail verification failed with status: ${verifyThumbResponse.status}`);
+                        }
+
+                        // If this was the last attempt, log warning but continue
+                        if (thumbVerificationAttempts >= maxThumbVerificationAttempts) {
+                            console.warn('⚠️ Thumbnail verification polling exhausted - continuing with main image URL');
+                        }
+
+                    } catch (verifyError) {
+                        console.warn(`⚠️ Thumbnail verification attempt ${thumbVerificationAttempts} error:`, verifyError.message);
+                        if (thumbVerificationAttempts >= maxThumbVerificationAttempts) {
+                            console.warn('⚠️ All thumbnail verification attempts failed - continuing with main image URL');
+                        }
+                    }
                 }
-
-                const thumbUploadedSize = parseInt(verifyThumbResponse.headers.get('content-length') || '0');
-                if (thumbUploadedSize !== thumbnailBuffer.length) {
-                    throw new Error(`Thumbnail size mismatch: uploaded ${thumbUploadedSize} vs expected ${thumbnailBuffer.length}`);
-                }
-
-                console.log(`✅ Thumbnail verified: ${thumbUploadedSize} bytes`);
-                break; // Success, exit retry loop
 
             } catch (thumbError) {
-                console.warn(`⚠️ Thumbnail upload attempt ${uploadAttempts} failed:`, thumbError.message);
-                if (uploadAttempts >= maxRetries) {
-                    throw new Error(`Thumbnail upload failed after ${maxRetries} attempts: ${thumbError.message}`);
-                }
-                // Wait before retry
-                await new Promise(resolve => setTimeout(resolve, 1000 * uploadAttempts));
-            }
+                console.warn('⚠️ Thumbnail upload failed, using main image URL:', thumbError.message);
+                thumbnailUrl = url; // Fallback to main image URL
             }
         } else {
             console.log('⚠️ Skipping thumbnail upload - thumbnail generation failed');
@@ -1022,14 +1162,22 @@ async function handleFileUpload(req, res, payload) {
             console.error('Security logging error:', logError);
         }
 
-        return res.status(200).json({
+        const response = {
             url,
             thumb: thumbnailUrl,
             width: metadata.width,
             height: metadata.height,
             type: uploadedFile.mimetype,
             hash: fileHash.substring(0, 16) // Return truncated hash for reference
-        });
+        };
+
+        // Add verification status if pending
+        if (verificationPending) {
+            response.verificationPending = true;
+            console.log('⚠️ Returning response with verification pending flag');
+        }
+
+        return res.status(200).json(response);
 
     } catch (error) {
         console.error('[upload-image] Unexpected error:', error);

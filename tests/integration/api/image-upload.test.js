@@ -776,3 +776,124 @@ describe('File Upload API Integration (Real API Testing)', () => {
       expect(response.body.message).toContain('Image dimensions too large');
     });
   });
+
+  describe('Verification Pending Functionality', () => {
+    beforeEach(() => {
+      // Reset all mocks
+      vi.clearAllMocks();
+
+      // Set up default successful mocks
+      mockPut.mockResolvedValue({ url: 'https://blob.vercel-storage.com/test-image.jpg' });
+      mockSharp.metadata.mockResolvedValue({
+        width: 800,
+        height: 600,
+        format: 'jpeg',
+        size: testImageBuffer.length
+      });
+      mockSharp.resize.mockReturnThis();
+      mockSharp.jpeg.mockReturnThis();
+      mockSharp.toBuffer.mockResolvedValue(Buffer.from('thumbnail-data'));
+    });
+
+    it('should return verificationPending flag when HEAD requests fail', async () => {
+      // Mock successful upload but failing HEAD verification
+      mockPut.mockResolvedValue({ url: 'https://blob.vercel-storage.com/test-image.jpg' });
+
+      // Mock fetch to always fail HEAD requests (simulating verification failure)
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: false,
+        status: 404,
+        headers: new Map()
+      });
+
+      const response = await request(app)
+        .post('/')
+        .set('Cookie', `token=${authToken}`)
+        .attach('file', testImageBuffer, 'test-image.jpg')
+        .expect(200); // Should still return 200 with URL
+
+      // Should return the URL despite verification failure
+      expect(response.body).toHaveProperty('url');
+      expect(response.body.url).toBe('https://blob.vercel-storage.com/test-image.jpg');
+
+      // Should include verification pending flag
+      expect(response.body).toHaveProperty('verificationPending', true);
+
+      // Should still include other expected fields
+      expect(response.body).toHaveProperty('width', 800);
+      expect(response.body).toHaveProperty('height', 600);
+      expect(response.body).toHaveProperty('type', 'image/jpeg');
+    });
+
+    it('should not include verificationPending flag when verification succeeds', async () => {
+      // Mock successful upload and successful HEAD verification
+      mockPut.mockResolvedValue({ url: 'https://blob.vercel-storage.com/test-image.jpg' });
+
+      // Mock fetch to succeed on HEAD requests
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        headers: new Map([['content-length', testImageBuffer.length.toString()]])
+      });
+
+      const response = await request(app)
+        .post('/')
+        .set('Cookie', `token=${authToken}`)
+        .attach('file', testImageBuffer, 'test-image.jpg')
+        .expect(200);
+
+      // Should return the URL
+      expect(response.body).toHaveProperty('url');
+      expect(response.body.url).toBe('https://blob.vercel-storage.com/test-image.jpg');
+
+      // Should NOT include verification pending flag
+      expect(response.body).not.toHaveProperty('verificationPending');
+    });
+
+    it('should handle size mismatch in verification gracefully', async () => {
+      // Mock successful upload but size mismatch in verification
+      mockPut.mockResolvedValue({ url: 'https://blob.vercel-storage.com/test-image.jpg' });
+
+      // Mock fetch to return wrong size
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        headers: new Map([['content-length', '999999']]) // Wrong size
+      });
+
+      const response = await request(app)
+        .post('/')
+        .set('Cookie', `token=${authToken}`)
+        .attach('file', testImageBuffer, 'test-image.jpg')
+        .expect(200); // Should still return 200
+
+      // Should return the URL despite size mismatch
+      expect(response.body).toHaveProperty('url');
+      expect(response.body.url).toBe('https://blob.vercel-storage.com/test-image.jpg');
+
+      // Should include verification pending flag due to size mismatch
+      expect(response.body).toHaveProperty('verificationPending', true);
+    });
+
+    it('should handle network errors during verification gracefully', async () => {
+      // Mock successful upload but network error during verification
+      mockPut.mockResolvedValue({ url: 'https://blob.vercel-storage.com/test-image.jpg' });
+
+      // Mock fetch to throw network error
+      global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
+
+      const response = await request(app)
+        .post('/')
+        .set('Cookie', `token=${authToken}`)
+        .attach('file', testImageBuffer, 'test-image.jpg')
+        .expect(200); // Should still return 200
+
+      // Should return the URL despite network error
+      expect(response.body).toHaveProperty('url');
+      expect(response.body.url).toBe('https://blob.vercel-storage.com/test-image.jpg');
+
+      // Should include verification pending flag due to network error
+      expect(response.body).toHaveProperty('verificationPending', true);
+    });
+  });
+});
