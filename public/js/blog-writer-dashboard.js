@@ -324,7 +324,10 @@ async function loadBlogs(category = 'all') {
 
     try {
         const response = await fetch('/api/blog-writer', {
-            credentials: 'include' // Include cookies for authentication
+            credentials: 'include', // Include cookies for authentication
+            headers: {
+                'Accept': 'application/json' // Explicitly request JSON
+            }
         });
 
         if (!response.ok) {

@@ -219,36 +219,45 @@ module.exports = async (req, res) => {
 
     // 🔒 SECURITY: Handle GET requests for HTML serving with authentication
     if (req.method === 'GET') {
-        try {
-            // Extract JWT from cookies
-            const token = req.cookies?.token;
+        // Check if this is a request for HTML (browser page load) vs JSON (AJAX)
+        const acceptHeader = req.headers.accept || '';
+        const secFetchDest = req.headers['sec-fetch-dest'] || '';
 
-            if (!token) {
-                console.log('No token found, redirecting to login');
+        // Serve HTML only for browser page loads, not AJAX requests
+        if (acceptHeader.includes('text/html') || secFetchDest === 'document') {
+            try {
+                // Extract JWT from cookies
+                const token = req.cookies?.token;
+
+                if (!token) {
+                    console.log('No token found, redirecting to login');
+                    res.writeHead(302, { 'Location': '/login.html?role=blogwriter' });
+                    return res.end();
+                }
+
+                // Verify JWT and check role
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                if (decoded.role !== 'blogwriter') {
+                    console.log('Invalid role for blog writer access:', decoded.role);
+                    res.writeHead(302, { 'Location': '/login.html?role=blogwriter' });
+                    return res.end();
+                }
+
+                // Serve the authenticated blog writer dashboard
+                const templatePath = path.join(process.cwd(), 'templates', 'blog-writer-dashboard.html');
+                const html = fs.readFileSync(templatePath, 'utf8');
+
+                res.setHeader('Content-Type', 'text/html');
+                return res.status(200).send(html);
+
+            } catch (error) {
+                console.error('Authentication error:', error);
                 res.writeHead(302, { 'Location': '/login.html?role=blogwriter' });
                 return res.end();
             }
-
-            // Verify JWT and check role
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            if (decoded.role !== 'blogwriter') {
-                console.log('Invalid role for blog writer access:', decoded.role);
-                res.writeHead(302, { 'Location': '/login.html?role=blogwriter' });
-                return res.end();
-            }
-
-            // Serve the authenticated blog writer dashboard
-            const templatePath = path.join(process.cwd(), 'templates', 'blog-writer-dashboard.html');
-            const html = fs.readFileSync(templatePath, 'utf8');
-
-            res.setHeader('Content-Type', 'text/html');
-            return res.status(200).send(html);
-
-        } catch (error) {
-            console.error('Authentication error:', error);
-            res.writeHead(302, { 'Location': '/login.html?role=blogwriter' });
-            return res.end();
         }
+
+        // For AJAX requests (JSON), fall through to the authentication and JSON logic below
     }
 
     // ✅ CRITICAL SECURITY FIX: CSRF protection for state-changing operations
