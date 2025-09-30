@@ -1164,3 +1164,41 @@ body.ve-edit-active .dyn-edit-overlay {
     border-radius: 4px;
     font-size: 12px;
 }
+
+/* ===================================================================
+   DISABLE ANIMATIONS DURING EDIT MODE
+   =================================================================== */
+
+/**
+ * Disable fade-in animations when visual editor is active
+ *
+ * @description Prevents fade-in-section animations from interfering with
+ *              visual editor positioning and causing elements to jump
+ * @usage Applied when body has ve-edit-active class
+ * @fix Resolves CTA banner and other sections jumping during editing
+ */
+
+body.ve-edit-active .fade-in-section {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    transition: none !important;
+    animation: none !important;
+}
+
+body.ve-edit-active .fade-in-section.is-visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+/* Also disable any transform-based animations on CTA banner during edit mode */
+body.ve-edit-active .cta-banner {
+    transform: none !important;
+}
+
+/* Disable staggered animation delays during edit mode */
+body.ve-edit-active .fade-in-section:nth-child(2),
+body.ve-edit-active .fade-in-section:nth-child(3),
+body.ve-edit-active .fade-in-section:nth-child(4),
+body.ve-edit-active .fade-in-section:nth-child(5) {
+    transition-delay: 0s !important;
+}

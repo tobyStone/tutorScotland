@@ -449,7 +449,7 @@ export class OverrideEngine {
         if (tagName === 'a') return 'link';
         // ✅ FIXED: All text-based elements should be treated as 'text', not 'html'
         // This includes headings, paragraphs, divs with text content, etc.
-        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div', 'span'].includes(tagName)) return 'text';
+        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div', 'span', 'li'].includes(tagName)) return 'text';
 
         // ✅ FIXED: For any other element, default to 'text' to avoid HTML content type issues
         // The 'html' content type was causing infinite loops and persistence issues

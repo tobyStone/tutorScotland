@@ -18,13 +18,21 @@ const TRUSTED_ORIGINS = [
     'https://www.tutor-scotland.vercel.app',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    // ✅ TEMPORARY: Add common development domains
+    'http://localhost:8080',
+    'http://localhost:5000',
+    'http://localhost:4000',
+    'http://127.0.0.1:8080',
+    'http://127.0.0.1:5000',
+    'http://127.0.0.1:4000',
     // Add production domain when available
 ];
 
 // Development environment detection
 const isDevelopment = process.env.NODE_ENV === 'development' ||
                      process.env.VERCEL_ENV === 'development' ||
-                     !process.env.NODE_ENV;
+                     !process.env.NODE_ENV ||
+                     process.env.NODE_ENV === 'local';
 
 // Test environment detection - bypass CSRF for automated tests
 const isTestEnvironment = process.env.NODE_ENV === 'test' ||
@@ -98,6 +106,10 @@ function csrfProtection(req, res, next) {
             console.log(`🧪 CSRF protection bypassed for test environment (${method} ${req.url})`);
             return next();
         }
+
+        // ✅ TEMPORARY DEBUG BYPASS: Uncomment the next 3 lines to temporarily disable CSRF for debugging
+        // console.log(`🚨 TEMPORARY: CSRF protection bypassed for debugging (${method} ${req.url})`);
+        // return next();
         
         const origin = extractOrigin(req);
         const userAgent = req.headers?.['user-agent'] || 'unknown';
@@ -113,6 +125,20 @@ function csrfProtection(req, res, next) {
             timestamp: new Date().toISOString()
         });
         
+        // ✅ TEMPORARY DEBUG: Log detailed CSRF validation info
+        console.log('🔍 CSRF Debug Info:', {
+            method,
+            origin,
+            trustedOrigins: TRUSTED_ORIGINS,
+            isDevelopment,
+            isTrusted: isTrustedOrigin(origin),
+            headers: {
+                origin: req.headers?.origin,
+                referer: req.headers?.referer,
+                host: req.headers?.host
+            }
+        });
+
         // Validate origin
         if (!isTrustedOrigin(origin)) {
             // Log security violation
@@ -127,7 +153,15 @@ function csrfProtection(req, res, next) {
                 message: `Untrusted origin attempted ${method} request`,
                 timestamp: new Date().toISOString()
             });
-            
+
+            console.error('❌ CSRF BLOCKED:', {
+                method,
+                origin,
+                trustedOrigins: TRUSTED_ORIGINS,
+                isDevelopment,
+                url: req.url
+            });
+
             return res.status(403).json({
                 error: 'Forbidden',
                 message: 'Invalid request origin',

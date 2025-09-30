@@ -121,9 +121,26 @@ module.exports = async (req, res) => {
         const isSensitiveReadOperation = sensitiveReadOperations.includes(operation);
 
         if (isWriteOperation || isSensitiveReadOperation) {
+            // ✅ TEMPORARY DEBUG: Log authentication attempt
+            console.log('🔍 Content Manager Auth Debug:', {
+                operation,
+                method,
+                isWriteOperation,
+                isSensitiveReadOperation,
+                cookies: req.headers?.cookie ? 'present' : 'missing',
+                userAgent: req.headers?.['user-agent']?.substring(0, 50)
+            });
+
             const { verify } = require('./protected');
             const [ok, payload] = verify(req, res);
+
+            console.log('🔍 Auth Verification Result:', {
+                ok,
+                payload: payload ? { id: payload.id, role: payload.role, email: payload.email } : null
+            });
+
             if (!ok) {
+                console.error('❌ Authentication failed for content management');
                 SecurityLogger.unauthorizedAccess('content-manager', req);
                 return res.status(401).json({
                     message: 'Authentication required for content management',
@@ -133,12 +150,16 @@ module.exports = async (req, res) => {
 
             // Require admin role for content management and sensitive operations
             if (payload.role !== 'admin') {
+                console.error('❌ Insufficient permissions:', { role: payload.role, required: 'admin' });
                 SecurityLogger.unauthorizedAccess('content-manager', req, { userId: payload.id, role: payload.role });
                 return res.status(403).json({
                     message: 'Admin access required for content management',
                     error: 'INSUFFICIENT_PERMISSIONS'
                 });
             }
+
+            console.log('✅ Authentication successful for admin:', payload.email);
+        }
 
             // Log successful admin content management access
             SecurityLogger.adminAction(`content-manager-${operation}`, { userId: payload.id, role: payload.role }, req);
@@ -295,7 +316,7 @@ async function handleCreateOverride(req, res) {
             // CRITICAL: We DO NOT include originalContent here to make it immutable.
             const updateData = {
                 text,
-                image: image || href, // Use href for links, image for images
+                image: contentType === 'link' ? href : image, // ✅ FIX: Store href in image field for links, image for images
                 isButton,
                 isHTML, // For HTML formatted text content
                 buttonLabel, // Add button fields
@@ -334,7 +355,7 @@ async function handleCreateOverride(req, res) {
         if (doc) {
             console.log('[handleOverride] De-duplication: Found existing doc, updating it.');
             doc.text = text ?? doc.text;
-            doc.image = (image || href) ?? doc.image;
+            doc.image = (contentType === 'link' ? href : image) ?? doc.image;
             doc.isButton = isButton ?? doc.isButton;
             doc.isHTML = isHTML ?? doc.isHTML;
             doc.buttonLabel = buttonLabel ?? doc.buttonLabel;
@@ -352,7 +373,7 @@ async function handleCreateOverride(req, res) {
             targetSelector,
             contentType,
             text,
-            image: image || href,
+            image: contentType === 'link' ? href : image, // ✅ FIX: Store href in image field for links, image for images
             isButton,
             isHTML, // For HTML formatted text content
             buttonLabel, // Add button fields
