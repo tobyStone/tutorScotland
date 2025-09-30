@@ -763,7 +763,7 @@ module.exports = async (req, res) => {
                         </div>
                         <div class="static-footer-right">
                             <div class="website-url">
-                                <p>www.tutorsalliancescotland.org.uk</p>
+                                <p>www.tutorsalliancescotland.co.uk</p>
                             </div>
                         </div>
                     </div>
