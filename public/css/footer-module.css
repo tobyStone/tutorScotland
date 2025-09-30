@@ -14,24 +14,7 @@
     margin-top: 2.5rem;
 }
 
-/* Site footer with fade-in effect */
-.site-footer {
-    position: fixed;
-    width: 100%;
-    background: rgba(0, 27, 68, 0.9); /* Semi-transparent dark blue */
-    color: white;
-    padding: 15px 0;
-    text-align: center;
-    z-index: 10000; /* Highest z-index - above shield (9999) and banner (9998) */
-    opacity: 0; /* Start hidden */
-    transform: translateY(20px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-}
 
-.site-footer.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
 
 .footer-icons {
     display: flex;
@@ -161,11 +144,12 @@
     padding: 12px 0;
     position: fixed;
     bottom: 0;
-    left: -50px;
-    right: -50px;
+    left: 0;
+    right: 0;
     z-index: 10000; /* Highest z-index - above shield (9999) and banner (9998) */
     opacity: 0;
     transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
 }
 
 .site-footer.is-visible {

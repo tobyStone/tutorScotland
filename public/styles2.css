@@ -789,11 +789,61 @@ body[data-page="tutorszone"] #imageBanner {
         font-size: 0.98rem;
     }
 
+/**
+ * Training Grid System
+ *
+ * @description Card-based grid layout for training and certification options
+ * @usage Used in Tutor Zone dashboard for displaying training programs
+ * @components
+ *   - .training-grid: Flex container for training cards
+ *   - .training-card: Individual training program cards
+ * @responsive
+ *   - Desktop: 3 cards in a row with gap
+ *   - ≤900px: Stacked layout (column direction)
+ * @styling Matches testimonial card styling for consistency
+ */
 
+/* Training grid container */
+.training-grid {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
 
+/* Training cards */
+.training-card {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 2px 12px rgba(200,162,200,0.10);
+    padding: 1.5rem 1.2rem;
+    max-width: 320px;
+    min-width: 220px;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
+.training-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 18px rgba(200,162,200,0.15);
+}
 
+.training-card h3 {
+    color: #0057B7;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
 
+.training-card p {
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+    color: #555;
+}
 
 .business-insurance {
     display: flex;
@@ -929,7 +979,16 @@ body[data-page="tutorszone"] #imageBanner {
         align-items: stretch;
     }
 
+    .training-grid {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+    }
 
+    .training-card {
+        max-width: 100%;
+        min-width: auto;
+    }
 
     /* Responsive static footer */
     .static-footer-container {
@@ -2242,6 +2301,8 @@ header {
     width: auto;
     display: block;
     flex-shrink: 0;
+    border-radius: 1.5rem;
+    overflow: hidden;
 }
 .parent-img-list-left,
 .tutor-img-list-left,
