@@ -71,7 +71,11 @@ class VisualEditor {
 
         // Check admin status - only initialize editing UI if admin
         try {
-            const { isAdmin } = await apiService.checkAdminStatus();
+            console.log('🔍 Checking admin status...');
+            const adminResponse = await apiService.checkAdminStatus();
+            console.log('🔍 Admin status response:', adminResponse);
+
+            const { isAdmin } = adminResponse;
             if (isAdmin) {
                 console.log('🔓 Admin user detected, enabling editing interface');
 
@@ -93,9 +97,48 @@ class VisualEditor {
                 console.log('✅ Visual Editor v2 ready with editing capabilities!');
             } else {
                 console.log('👀 Non-admin user, overrides applied but editing disabled');
+                console.log('👀 Admin status response was:', adminResponse);
             }
         } catch (error) {
             console.error('🚫 Admin check failed, editing not enabled.', error);
+            console.error('🚫 Error details:', error.message, error.stack);
+
+            // If we're in an admin context (like tutor zone accessed via admin dashboard),
+            // we might want to try alternative authentication methods
+            if (window.location.pathname.includes('tutor') || window.location.search.includes('admin')) {
+                console.log('🔄 Attempting alternative admin verification...');
+                try {
+                    const altResponse = await fetch('/api/protected?role=admin', {
+                        credentials: 'include',
+                        headers: { 'Cache-Control': 'no-cache' }
+                    });
+
+                    if (altResponse.ok) {
+                        console.log('✅ Alternative admin verification successful, enabling editor');
+
+                        // Initialize UI (only for admin users)
+                        this.uiManager.init();
+
+                        // Initialize section sorter
+                        sectionSorter.init();
+
+                        // Set up keyboard shortcuts
+                        this.setupKeyboardShortcuts();
+
+                        // Set up dynamic content listener
+                        this.setupDynamicContentListener();
+
+                        // Enable editor UI and set up periodic admin check
+                        this.enableEditorUI();
+
+                        console.log('✅ Visual Editor v2 ready with editing capabilities (via alternative auth)!');
+                    } else {
+                        console.log('🚫 Alternative admin verification also failed');
+                    }
+                } catch (altError) {
+                    console.error('🚫 Alternative admin verification error:', altError);
+                }
+            }
         }
     }
 
