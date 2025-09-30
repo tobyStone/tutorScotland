@@ -159,7 +159,6 @@ module.exports = async (req, res) => {
             }
 
             console.log('✅ Authentication successful for admin:', payload.email);
-        }
 
             // Log successful admin content management access
             SecurityLogger.adminAction(`content-manager-${operation}`, { userId: payload.id, role: payload.role }, req);
