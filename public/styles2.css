@@ -109,12 +109,31 @@ body {
 }
 
     .two-col-content img {
-        max-width: 325px; /* Increased by 25% from 260px */
+        max-width: 450px; /* Increased from 325px to better fill available space */
         border-radius: 1rem;
+        object-fit: cover; /* Ensure proper image scaling */
+    }
+
+    /* Specific styling for training section image */
+    .two-col-content[data-ve-section-id="training-certification"] img {
+        max-width: 500px; /* Even larger for the training section */
+        width: 100%; /* Fill the available column space */
+        height: auto;
+        margin-left: auto; /* Push image to the right within its column */
+        display: block;
     }
 
     .two-col-content > div {
         flex: 1 1 50%;
+    }
+
+    /* Give image column more space in training section using attribute selector */
+    .two-col-content[data-ve-section-id="training-certification"] > div:last-child {
+        flex: 1 1 55%; /* Image column gets more space */
+    }
+
+    .two-col-content[data-ve-section-id="training-certification"] > div:first-child {
+        flex: 1 1 45%; /* Content column gets less space */
     }
 
 .confidence-block {
