@@ -170,6 +170,100 @@
         </div>
     </footer>
 
+    <!-- Visual Editor Templates -->
+    <template id="ve-editor-modal-template">
+        <div id="editor-modal" class="ve-modal-container">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modal-title">Edit Content</h3>
+                    <button id="close-modal" class="close-btn" aria-label="Close modal">×</button>
+                </div>
+                <div class="modal-body">
+                    <form id="content-form" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="content-type">Content Type:</label>
+                            <select id="content-type" class="form-control" disabled>
+                                <option value="text">Text</option>
+                                <option value="html">HTML</option>
+                                <option value="image">Image</option>
+                                <option value="link">Link</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="text-group">
+                            <label for="content-text">Text Content:</label>
+                            <textarea id="content-text" class="form-control" rows="4" placeholder="Enter your text content..."></textarea>
+                            <div class="text-button-management">
+                                <h4>Button Management</h4>
+                                <div id="existing-buttons" class="existing-buttons-list"></div>
+                                <div class="add-button-form">
+                                    <h5>Add New Button</h5>
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="new-button-text">Button Text:</label>
+                                            <input type="text" id="new-button-text" class="form-control" placeholder="Button text">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="new-button-url">Button URL:</label>
+                                            <input type="text" id="new-button-url" class="form-control" placeholder="https://example.com">
+                                        </div>
+                                    </div>
+                                    <button type="button" id="add-button" class="btn btn-secondary">Add Button</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" id="html-group" style="display: none;">
+                            <label for="content-html">HTML Content:</label>
+                            <textarea id="content-html" class="form-control" rows="6" placeholder="Enter your HTML content..."></textarea>
+                        </div>
+                        <div class="form-group" id="image-group" style="display: none;">
+                            <label for="content-image">Image URL:</label>
+                            <input type="text" id="content-image" class="form-control" placeholder="Enter image URL or browse...">
+                            <button type="button" id="browse-images" class="btn btn-secondary">Browse Images</button>
+                            <div id="image-browser" class="image-browser" style="display: none;"></div>
+                            <div class="image-preview">
+                                <img id="image-preview" src="" alt="Preview" style="display: none; max-width: 200px; margin-top: 10px;">
+                            </div>
+                        </div>
+                        <div class="form-group" id="link-group" style="display: none;">
+                            <label for="link-text">Link Text:</label>
+                            <input type="text" id="link-text" class="form-control" placeholder="Enter link text">
+                            <label for="link-url">Link URL:</label>
+                            <input type="text" id="link-url" class="form-control" placeholder="Enter link URL">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="save-btn" class="btn btn-primary">Save Changes</button>
+                    <button id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="ve-image-browser-template">
+        <div class="image-browser-header">
+            <h4>Browse Images</h4>
+            <button type="button" id="close-browser" class="close-btn" aria-label="Close image browser">×</button>
+        </div>
+        <div class="image-browser-content">
+            <div class="image-browser-toolbar">
+                <input type="text" id="image-search" placeholder="Search images..." class="form-control">
+                <select id="image-sort" class="form-control">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="name">Name</option>
+                </select>
+            </div>
+            <div id="image-grid" class="image-grid">
+                <div class="loading-spinner"></div>
+            </div>
+            <div id="image-pagination" class="image-pagination">
+                <!-- Pagination will be inserted here -->
+            </div>
+        </div>
+    </template>
+
     <!-- Scripts -->
     <script src="/js/nav-loader.js" defer></script>
     <script src="/js/dynamic-nav.js" defer></script>
