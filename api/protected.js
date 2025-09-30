@@ -109,9 +109,15 @@ const handler = async (req, res) => {
 
     console.log(`User authenticated with payload:`, payloadOrMsg);
 
-    // Check if user has the required role
+    // Check if user has the required role or higher privileges
     const userRole = (payloadOrMsg.role || '').toLowerCase();
-    if (userRole !== requiredRole) {
+
+    // 🔒 SECURITY: Admin privilege escalation - admins can access tutor content for editing
+    // but tutors cannot access admin content
+    const hasAccess = (userRole === requiredRole) ||
+                     (userRole === 'admin' && requiredRole === 'tutor');
+
+    if (!hasAccess) {
         console.log(`Access denied: User role is ${userRole}, required role is ${requiredRole}`);
         if (serveHtml) {
             // Redirect to login for HTML requests
