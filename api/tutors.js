@@ -758,7 +758,7 @@ module.exports = async (req, res) => {
                                 <p>ALL RIGHTS RESERVED © Tutors Alliance Scotland 2025</p>
                             </div>
                             <div class="static-footer-credits">
-                                <p>Website by <a href="#" target="_blank">Tutors Alliance Scotland</a></p>
+                                <p>Website by <a href="#" target="_blank">Toby Stone</a></p>
                             </div>
                         </div>
                         <div class="static-footer-right">
