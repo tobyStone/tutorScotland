@@ -1847,6 +1847,17 @@ header {
     border-bottom-right-radius: 2rem !important;
 }
 
+/* Simplified team section without background image - Samsung viewport fix */
+.team-section {
+    max-width: 1080px;
+    margin: 2rem auto;
+    padding: 2.5rem 2rem;
+    border-radius: 1.5rem;
+    background: #fff;
+    box-shadow: 0 2px 18px rgba(0,87,183,0.05);
+    text-align: center;
+}
+
 /* Fix the container overflow issue that clips rounded corners */
 .dynamic-section-container:has(.strive-team-card),
 .dynamic-section-container .strive-team-card {
@@ -3120,6 +3131,13 @@ header {
         width: 100%;
         max-width: 320px; /* keeps the desktop look           */
         margin: 0 auto 20px; /* nice centred column              */
+    }
+
+    /* Simplified team section responsive adjustments */
+    .team-section {
+        margin: 1rem auto;
+        padding: 1.5rem 1rem;
+        max-width: 95vw;
     }
 
   /* 🎯 Center static testimonials in restricted viewports */

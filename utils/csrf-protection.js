@@ -16,6 +16,8 @@ const { SecurityLogger } = require('./security-logger');
 const TRUSTED_ORIGINS = [
     'https://tutor-scotland.vercel.app',
     'https://www.tutor-scotland.vercel.app',
+    'https://tutorsalliancescotland.co.uk',
+    'https://www.tutorsalliancescotland.co.uk',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     // ✅ TEMPORARY: Add common development domains

@@ -135,6 +135,13 @@
         right: auto !important;
         transform: none !important; /* Override any transforms */
     }
+
+    /* Simplified team section for Samsung viewport fix */
+    .team-section {
+        max-width: 92vw !important;
+        margin: 1rem auto !important;
+        padding: 1.5rem 1rem !important;
+    }
 }
 
 @media (max-width: 480px) {
