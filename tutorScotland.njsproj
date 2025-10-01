@@ -232,9 +232,12 @@
     <Content Include="tests\smoke\visual-regression.test.js" />
     <Content Include="tests\TESTING_STRATEGY.md" />
     <Content Include="tests\unit\models\User.test.js" />
+    <Content Include="utils\csrf-protection.js" />
     <Content Include="utils\error-handler.js" />
+    <Content Include="utils\input-validation.js" />
     <Content Include="utils\security-headers.js" />
     <Content Include="utils\security-logger.js" />
+    <Content Include="utils\sentry-integration.js" />
     <Content Include="utils\view-security-logs.js" />
     <Content Include="vercel.json">
       <SubType>Code</SubType>

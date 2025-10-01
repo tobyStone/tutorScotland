@@ -889,6 +889,18 @@ async function handleFileUpload(req, res, payload) {
 
         console.log(`✅ Image validated: ${metadata.width}x${metadata.height} ${metadata.format}`);
 
+        // ✅ FIX: Create format mapping for thumbnail generation to preserve transparency
+        const formatMap = {
+            'jpeg': { ext: 'jpg', mime: 'image/jpeg', options: { quality: 95, progressive: true, mozjpeg: true } },
+            'jpg': { ext: 'jpg', mime: 'image/jpeg', options: { quality: 95, progressive: true, mozjpeg: true } },
+            'png': { ext: 'png', mime: 'image/png', options: { quality: 95, progressive: false } },
+            'webp': { ext: 'webp', mime: 'image/webp', options: { quality: 95, progressive: false } },
+            'gif': { ext: 'gif', mime: 'image/gif', options: { quality: 95, progressive: false } }
+        };
+
+        const thumbFormat = formatMap[metadata.format.toLowerCase()] || formatMap['jpeg']; // Default to JPEG if unknown
+        console.log(`📸 Thumbnail format: ${thumbFormat.ext} (${thumbFormat.mime})`);
+
         // ✅ NEW: Additional validation to detect corrupted/incomplete images
         if (!metadata.width || !metadata.height || metadata.width < 1 || metadata.height < 1) {
             fs.unlink(uploadedFile.filepath, ()=>{}); // cleanup
@@ -966,11 +978,7 @@ async function handleFileUpload(req, res, payload) {
                     kernel: 'lanczos3',  // High-quality resampling
                     withoutEnlargement: false  // Allow enlargement for small images
                 })
-                .jpeg({
-                    quality: 95,
-                    progressive: true,  // Better for web display
-                    mozjpeg: true  // Use mozjpeg encoder if available
-                })
+                .toFormat(metadata.format, thumbFormat.options)
                 .toBuffer();
 
             // ✅ RELAXED: Ensure thumbnail was created successfully
@@ -988,9 +996,11 @@ async function handleFileUpload(req, res, payload) {
             try {
                 // Fallback to simpler thumbnail generation with more lenient settings
                 const fallbackImg = sharp(buffer, { failOnError: false, limitInputPixels: false });
+                // Use simpler options for fallback (remove progressive/mozjpeg which might cause issues)
+                const fallbackOptions = { ...thumbFormat.options, progressive: false, mozjpeg: false };
                 thumbnailBuffer = await fallbackImg
                     .resize(240, 240, { fit: 'cover', position: 'center' })
-                    .jpeg({ quality: 90 })
+                    .toFormat(metadata.format, fallbackOptions)
                     .toBuffer();
 
                 if (!thumbnailBuffer || thumbnailBuffer.length === 0) {
@@ -1008,12 +1018,12 @@ async function handleFileUpload(req, res, payload) {
         const putOpts = { access: 'public', contentType: uploadedFile.mimetype, overwrite: true };
         const mainKey = `${folder}/${filename}`;
 
-        // ✅ FIX: Thumbnail is always JPEG-encoded, so use .jpg extension and image/jpeg MIME type
+        // ✅ FIX: Use original format for thumbnails to preserve transparency
         const fileExtension = path.extname(filename);
         const baseName = path.basename(filename, fileExtension);
-        const thumbFilename = `${baseName}.jpg`; // Always .jpg for thumbnails
+        const thumbFilename = `${baseName}.${thumbFormat.ext}`; // Use original format extension
         const thumbKey = `${folder}/thumbnails/${thumbFilename}`;
-        const thumbPutOpts = { access: 'public', contentType: 'image/jpeg', overwrite: true };
+        const thumbPutOpts = { access: 'public', contentType: thumbFormat.mime, overwrite: true };
 
         // ✅ DECOUPLED UPLOAD: Upload once, then verify separately
         console.log('🔄 Starting blob upload...');
