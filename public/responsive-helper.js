@@ -255,31 +255,54 @@
         let hasScrolledDown = false;
         let footerDelayTimeout = null;
 
-        const io = new IntersectionObserver((entries) => {
-            entries.forEach(({ isIntersecting, target }) => {
-                if (isIntersecting) {
-                    // Special handling for footer - don't fade in immediately
-                    if (target.classList.contains('site-footer')) {
-                        // Only fade in footer if user has scrolled down and after delay
-                        if (hasScrolledDown && !footerDelayTimeout) {
-                            footerDelayTimeout = setTimeout(() => {
-                                target.classList.add("is-visible");
-                                io.unobserve(target);
-                            }, 1000); // 1 second delay
-                        }
-                        return;
-                    }
-
-                    // Normal fade-in for all other elements
-                    target.classList.add("is-visible");
-                    io.unobserve(target);
-                }
+        // Helper function to immediately reveal all fade-in content (Samsung fallback)
+        const revealAllFadeContent = () => {
+            console.log('🔧 Samsung viewport fix: Revealing all fade-in content immediately');
+            document.querySelectorAll(".fade-in-section,.fade-in-on-scroll").forEach(el => {
+                el.classList.add("is-visible");
             });
-        }, {
-            /* Use gentler trigger for sections */
-            threshold: 0.15,
-            rootMargin: "0px 0px -10% 0px"
-        });
+        };
+
+        // Check if IntersectionObserver is available
+        if (!window.IntersectionObserver) {
+            console.warn('⚠️ IntersectionObserver not available - revealing all fade-in content immediately');
+            revealAllFadeContent();
+            return;
+        }
+
+        let io;
+        try {
+            io = new IntersectionObserver((entries) => {
+                entries.forEach(({ isIntersecting, target }) => {
+                    if (isIntersecting) {
+                        // Special handling for footer - don't fade in immediately
+                        if (target.classList.contains('site-footer')) {
+                            // Only fade in footer if user has scrolled down and after delay
+                            if (hasScrolledDown && !footerDelayTimeout) {
+                                footerDelayTimeout = setTimeout(() => {
+                                    target.classList.add("is-visible");
+                                    io.unobserve(target);
+                                }, 1000); // 1 second delay
+                            }
+                            return;
+                        }
+
+                        // Normal fade-in for all other elements
+                        target.classList.add("is-visible");
+                        io.unobserve(target);
+                    }
+                });
+            }, {
+                /* Use gentler trigger for sections */
+                threshold: 0.15,
+                rootMargin: "0px 0px -10% 0px"
+            });
+        } catch (error) {
+            console.error('❌ IntersectionObserver failed to initialize:', error);
+            console.log('🔧 Samsung viewport fix: Falling back to immediate reveal');
+            revealAllFadeContent();
+            return;
+        }
 
         // Track scroll events to detect when user scrolls down
         let lastScrollY = window.scrollY;
@@ -297,7 +320,7 @@
                     if (isFooterVisible) {
                         footerDelayTimeout = setTimeout(() => {
                             footer.classList.add("is-visible");
-                            io.unobserve(footer);
+                            if (io) io.unobserve(footer);
                         }, 1000);
                     }
                 }
@@ -311,6 +334,7 @@
         window.addEventListener('scroll', handleScroll, { passive: true });
 
         const observeAll = () => {
+            if (!io) return; // Skip if observer failed to initialize
             document.querySelectorAll(".fade-in-section,.fade-in-on-scroll").forEach(el => {
                 // Only observe elements that are NOT the footer with the main observer
                 if (!el.classList.contains('site-footer')) {
@@ -328,7 +352,12 @@
                     mutation.addedNodes.forEach(node => {
                          // Only observe elements that are NOT the footer with the main observer
                         if (node.nodeType === 1 && (node.classList.contains('fade-in-section') || node.classList.contains('fade-in-on-scroll')) && !node.classList.contains('site-footer')) {
-                            io.observe(node);
+                            if (io) {
+                                io.observe(node);
+                            } else {
+                                // If observer failed, immediately reveal the content
+                                node.classList.add("is-visible");
+                            }
                         }
 
                         // Apply Samsung fix to newly added team member sections

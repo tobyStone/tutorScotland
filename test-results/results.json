@@ -1,0 +1,2114 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\playwright.config.js",
+    "rootDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 2
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results/junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Mobile Chrome",
+        "name": "Mobile Chrome",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Mobile Safari",
+        "name": "Mobile Safari",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Samsung Galaxy",
+        "name": "Samsung Galaxy",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "iPhone Portrait",
+        "name": "iPhone Portrait",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "Samsung Portrait",
+        "name": "Samsung Portrait",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "C:/Users/tobys/source/repos/tutorScotland/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 2
+        },
+        "id": "iPad",
+        "name": "iPad",
+        "testDir": "C:/Users/tobys/source/repos/tutorScotland/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/e2e/**/*.spec.js",
+          "**/smoke/**/*.test.js"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.54.1",
+    "workers": 2,
+    "webServer": {
+      "command": "npm run start",
+      "url": "http://localhost:3000",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "e2e\\hardware-specific.spec.js",
+      "file": "e2e/hardware-specific.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Hardware-Specific Rendering Tests",
+          "file": "e2e/hardware-specific.spec.js",
+          "line": 8,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Samsung Portrait Viewport Issues",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 10,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "images should display correctly in Samsung portrait mode",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 0,
+                          "parallelIndex": 0,
+                          "status": "timedOut",
+                          "duration": 41576,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js",
+                                "column": 18,
+                                "line": 15
+                              },
+                              "message": "Error: page.goto: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"load\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 13 |\u001b[39m       test\u001b[33m.\u001b[39mskip(browserName \u001b[33m===\u001b[39m \u001b[32m'webkit'\u001b[39m \u001b[33m&&\u001b[39m process\u001b[33m.\u001b[39mplatform \u001b[33m===\u001b[39m \u001b[32m'darwin'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'iOS Safari has different viewport behavior'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 14 |\u001b[39m       \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 15 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 16 |\u001b[39m       \n \u001b[90m 17 |\u001b[39m       \u001b[90m// Set Samsung Galaxy S9+ portrait viewport\u001b[39m\n \u001b[90m 18 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39msetViewportSize({ width\u001b[33m:\u001b[39m \u001b[35m320\u001b[39m\u001b[33m,\u001b[39m height\u001b[33m:\u001b[39m \u001b[35m658\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js:15:18\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-10-01T11:15:45.607Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-72993-ly-in-Samsung-portrait-mode-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-72993-ly-in-Samsung-portrait-mode-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-72993-ly-in-Samsung-portrait-mode-chromium\\error-context.md"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-9dc826559c62e27c43da",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 11,
+                  "column": 9
+                },
+                {
+                  "title": "nested HTML images render correctly in Samsung portrait",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 1,
+                          "parallelIndex": 1,
+                          "status": "timedOut",
+                          "duration": 40070,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js",
+                                "column": 29,
+                                "line": 82
+                              },
+                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('div img, section img, article img').first()\nExpected: visible\nReceived: hidden\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('div img, section img, article img').first()\u001b[22m\n\u001b[2m    7 × locator resolved to <img id=\"imageShield\" class=\"main-shield\" alt=\"Large TAS Shield\" src=\"/images/centralShield.png\" data-ve-block-id=\"d2163d6b-8a53-4262-824e-5ade6019f412\"/>\u001b[22m\n\u001b[2m      - unexpected value \"hidden\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 80 |\u001b[39m           \n \u001b[90m 81 |\u001b[39m           \u001b[90m// Ensure parent isn't clipping the image\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 82 |\u001b[39m           \u001b[36mawait\u001b[39m expect(img)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 83 |\u001b[39m           \n \u001b[90m 84 |\u001b[39m           \u001b[90m// Check image positioning\u001b[39m\n \u001b[90m 85 |\u001b[39m           \u001b[36mconst\u001b[39m boundingBox \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m img\u001b[33m.\u001b[39mboundingBox()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js:82:29\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-10-01T11:15:45.604Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-f062d-rrectly-in-Samsung-portrait-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-f062d-rrectly-in-Samsung-portrait-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-f062d-rrectly-in-Samsung-portrait-chromium\\error-context.md"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-0de16da5265208d380b4",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 58,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly on Samsung portrait",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 2,
+                          "parallelIndex": 0,
+                          "status": "timedOut",
+                          "duration": 45761,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js",
+                                "column": 18,
+                                "line": 98
+                              },
+                              "message": "Error: page.waitForLoadState: Test timeout of 30000ms exceeded.\n\n\u001b[0m \u001b[90m  96 |\u001b[39m\n \u001b[90m  97 |\u001b[39m       \u001b[90m// Wait for page to load and responsive helper to apply fixes\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  98 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m'networkidle'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  99 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m1000\u001b[39m)\u001b[33m;\u001b[39m \u001b[90m// Allow time for Samsung fix to apply\u001b[39m\n \u001b[90m 100 |\u001b[39m\n \u001b[90m 101 |\u001b[39m       \u001b[90m// Check team members container\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js:98:18\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-10-01T11:17:36.676Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-150cc-rrectly-on-Samsung-portrait-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-150cc-rrectly-on-Samsung-portrait-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-150cc-rrectly-on-Samsung-portrait-chromium\\error-context.md"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-7bd66fd47f87c56f061c",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "images should display correctly in Samsung portrait mode",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-153cccfe51fefdd1288d",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 11,
+                  "column": 9
+                },
+                {
+                  "title": "nested HTML images render correctly in Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-e6a39bff6c330727e05d",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 58,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly on Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-13436ad8f40ed80832b2",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "images should display correctly in Samsung portrait mode",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-9d45dd8ea9df29fdf301",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 11,
+                  "column": 9
+                },
+                {
+                  "title": "nested HTML images render correctly in Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-4345e7cd362b375c02d1",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 58,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly on Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-943ee12e564dbeef796a",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "images should display correctly in Samsung portrait mode",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-5a5205eb68911616f858",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 11,
+                  "column": 9
+                },
+                {
+                  "title": "nested HTML images render correctly in Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-c81621a11c9a4ae26f45",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 58,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly on Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-84bf08577f932f0a0bc4",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "images should display correctly in Samsung portrait mode",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-adbfffff2ca6497dd74f",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 11,
+                  "column": 9
+                },
+                {
+                  "title": "nested HTML images render correctly in Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-9d4e2a45abdf0064d205",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 58,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly on Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-c06153cd02179c39b3ef",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "images should display correctly in Samsung portrait mode",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-b3082cd61cfb25269a4e",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 11,
+                  "column": 9
+                },
+                {
+                  "title": "nested HTML images render correctly in Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-cfcd333d638e8813649d",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 58,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly on Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-2ca722cb99911efabc5b",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "images should display correctly in Samsung portrait mode",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-94428422e439f48a812e",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 11,
+                  "column": 9
+                },
+                {
+                  "title": "nested HTML images render correctly in Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-8770306ede13b54e6074",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 58,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly on Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-5becadff4246d4de98c3",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "images should display correctly in Samsung portrait mode",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-0978caf43aa31a4cae72",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 11,
+                  "column": 9
+                },
+                {
+                  "title": "nested HTML images render correctly in Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-63d16f41278d7c40fb77",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 58,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly on Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-a632675be558fdeefda5",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "images should display correctly in Samsung portrait mode",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-06437bef81ce8eb49979",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 11,
+                  "column": 9
+                },
+                {
+                  "title": "nested HTML images render correctly in Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-ab1d6b23e4163ae39313",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 58,
+                  "column": 9
+                },
+                {
+                  "title": "team member sections display correctly on Samsung portrait",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-0d0d448da80087ec379a",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 93,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "iOS Safari Viewport Issues",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 155,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "viewport height units work correctly on iOS",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [
+                        {
+                          "type": "skip",
+                          "description": "iOS-specific test",
+                          "location": {
+                            "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js",
+                            "line": 157,
+                            "column": 12
+                          }
+                        }
+                      ],
+                      "expectedStatus": "skipped",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 1,
+                          "status": "skipped",
+                          "duration": 1928,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-10-01T11:17:36.674Z",
+                          "annotations": [
+                            {
+                              "type": "skip",
+                              "description": "iOS-specific test",
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js",
+                                "line": 157,
+                                "column": 12
+                              }
+                            }
+                          ],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-fca2c9ee9b1c290e7620",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 156,
+                  "column": 9
+                },
+                {
+                  "title": "viewport height units work correctly on iOS",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-8eb9a8cf295e3a810f49",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 156,
+                  "column": 9
+                },
+                {
+                  "title": "viewport height units work correctly on iOS",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-70a679b1bdb61b82d404",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 156,
+                  "column": 9
+                },
+                {
+                  "title": "viewport height units work correctly on iOS",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-d9b08f4981b7b1ff0627",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 156,
+                  "column": 9
+                },
+                {
+                  "title": "viewport height units work correctly on iOS",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-f50d2c3ace877a2688a3",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 156,
+                  "column": 9
+                },
+                {
+                  "title": "viewport height units work correctly on iOS",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-ade2224e5211feb95214",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 156,
+                  "column": 9
+                },
+                {
+                  "title": "viewport height units work correctly on iOS",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-5b27a2a53d53252fd535",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 156,
+                  "column": 9
+                },
+                {
+                  "title": "viewport height units work correctly on iOS",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-67cf5e0ed0c49df8ade7",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 156,
+                  "column": 9
+                },
+                {
+                  "title": "viewport height units work correctly on iOS",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-5200c71117f6e7c5ef09",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 156,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "High-DPI Display Issues",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 181,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "images scale correctly on high-DPI displays",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 3,
+                          "parallelIndex": 1,
+                          "status": "timedOut",
+                          "duration": 43817,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-10-01T11:17:39.873Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-c73fd-rectly-on-high-DPI-displays-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-c73fd-rectly-on-high-DPI-displays-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-c73fd-rectly-on-high-DPI-displays-chromium\\error-context.md"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-55d9f18c6726f03f6535",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 182,
+                  "column": 9
+                },
+                {
+                  "title": "images scale correctly on high-DPI displays",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-68e4d40468fababbfaae",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 182,
+                  "column": 9
+                },
+                {
+                  "title": "images scale correctly on high-DPI displays",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-1e5e89253cc41fb2e189",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 182,
+                  "column": 9
+                },
+                {
+                  "title": "images scale correctly on high-DPI displays",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-2d1c426724d9b122d862",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 182,
+                  "column": 9
+                },
+                {
+                  "title": "images scale correctly on high-DPI displays",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-5ebdb5a936cb518f9954",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 182,
+                  "column": 9
+                },
+                {
+                  "title": "images scale correctly on high-DPI displays",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-b7a7b59374d6d38d16fa",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 182,
+                  "column": 9
+                },
+                {
+                  "title": "images scale correctly on high-DPI displays",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-db79d74e29aa8725f6f3",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 182,
+                  "column": 9
+                },
+                {
+                  "title": "images scale correctly on high-DPI displays",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-b43564b8c8980639a5a3",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 182,
+                  "column": 9
+                },
+                {
+                  "title": "images scale correctly on high-DPI displays",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-67b3d29de7a79027d368",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 182,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Touch vs Mouse Interaction",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 217,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "touch events work correctly on mobile devices",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-aac9bf854bfcdc634968",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 218,
+                  "column": 9
+                },
+                {
+                  "title": "touch events work correctly on mobile devices",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-90f10e94ec4f362e58c5",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 218,
+                  "column": 9
+                },
+                {
+                  "title": "touch events work correctly on mobile devices",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-0adea156327c8322fb39",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 218,
+                  "column": 9
+                },
+                {
+                  "title": "touch events work correctly on mobile devices",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-41e42e68b6fa3483fa44",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 218,
+                  "column": 9
+                },
+                {
+                  "title": "touch events work correctly on mobile devices",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-a49d8b54c6905e982f67",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 218,
+                  "column": 9
+                },
+                {
+                  "title": "touch events work correctly on mobile devices",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-7e20c446305830955f62",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 218,
+                  "column": 9
+                },
+                {
+                  "title": "touch events work correctly on mobile devices",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-a2cd468b8df785f85853",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 218,
+                  "column": 9
+                },
+                {
+                  "title": "touch events work correctly on mobile devices",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-bc08e92c58a7d580728b",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 218,
+                  "column": 9
+                },
+                {
+                  "title": "touch events work correctly on mobile devices",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-0802f2d7c9d274cf499b",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 218,
+                  "column": 9
+                }
+              ]
+            },
+            {
+              "title": "Browser-Specific CSS Support",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 245,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "CSS Grid works across all browsers",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-64431cf371fe0e214a8d",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 246,
+                  "column": 9
+                },
+                {
+                  "title": "CSS Grid works across all browsers",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-bcabab68689720243ca9",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 246,
+                  "column": 9
+                },
+                {
+                  "title": "CSS Grid works across all browsers",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-601a7669453491472e6d",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 246,
+                  "column": 9
+                },
+                {
+                  "title": "CSS Grid works across all browsers",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-caf4937eb964b979200b",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 246,
+                  "column": 9
+                },
+                {
+                  "title": "CSS Grid works across all browsers",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-8cb84506576fc89055df",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 246,
+                  "column": 9
+                },
+                {
+                  "title": "CSS Grid works across all browsers",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-c20f1e3a1beaed27c547",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 246,
+                  "column": 9
+                },
+                {
+                  "title": "CSS Grid works across all browsers",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-e20cfa3d9328d81553cb",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 246,
+                  "column": 9
+                },
+                {
+                  "title": "CSS Grid works across all browsers",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-1568fa54a12f1429631b",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 246,
+                  "column": 9
+                },
+                {
+                  "title": "CSS Grid works across all browsers",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-8bc4aea70b4635af0a28",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 246,
+                  "column": 9
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Visual Regression - Hardware Specific",
+          "file": "e2e/hardware-specific.spec.js",
+          "line": 277,
+          "column": 6,
+          "specs": [
+            {
+              "title": "homepage renders consistently across devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-90dc9dbcd5e6af1a569c",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 278,
+              "column": 7
+            },
+            {
+              "title": "admin panel renders correctly on tablets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-27065247921a881b0723",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 289,
+              "column": 7
+            },
+            {
+              "title": "homepage renders consistently across devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-c05358f02552d614e233",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 278,
+              "column": 7
+            },
+            {
+              "title": "admin panel renders correctly on tablets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "firefox",
+                  "projectName": "firefox",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-fd53ac5a29ed07dc41fb",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 289,
+              "column": 7
+            },
+            {
+              "title": "homepage renders consistently across devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-1ea8fb5fc767636ec138",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 278,
+              "column": 7
+            },
+            {
+              "title": "admin panel renders correctly on tablets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "webkit",
+                  "projectName": "webkit",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-aa85e7d2cb0a40b69c81",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 289,
+              "column": 7
+            },
+            {
+              "title": "homepage renders consistently across devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-4945dd58d3ce837f4172",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 278,
+              "column": 7
+            },
+            {
+              "title": "admin panel renders correctly on tablets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Chrome",
+                  "projectName": "Mobile Chrome",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-db90d4d5be3eeb274070",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 289,
+              "column": 7
+            },
+            {
+              "title": "homepage renders consistently across devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-2d73d5ca916018a7b9fd",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 278,
+              "column": 7
+            },
+            {
+              "title": "admin panel renders correctly on tablets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Mobile Safari",
+                  "projectName": "Mobile Safari",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-debc3179f729ba4d01f8",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 289,
+              "column": 7
+            },
+            {
+              "title": "homepage renders consistently across devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Samsung Galaxy",
+                  "projectName": "Samsung Galaxy",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-e7b50cdcbb7cc90d9757",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 278,
+              "column": 7
+            },
+            {
+              "title": "admin panel renders correctly on tablets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Samsung Galaxy",
+                  "projectName": "Samsung Galaxy",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-37d031ffdd922b2ab832",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 289,
+              "column": 7
+            },
+            {
+              "title": "homepage renders consistently across devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPhone Portrait",
+                  "projectName": "iPhone Portrait",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-224d90041bba574bedb6",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 278,
+              "column": 7
+            },
+            {
+              "title": "admin panel renders correctly on tablets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPhone Portrait",
+                  "projectName": "iPhone Portrait",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-290df5bdf299791fb240",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 289,
+              "column": 7
+            },
+            {
+              "title": "homepage renders consistently across devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Samsung Portrait",
+                  "projectName": "Samsung Portrait",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-f8528d2a2d0d60322da2",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 278,
+              "column": 7
+            },
+            {
+              "title": "admin panel renders correctly on tablets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "Samsung Portrait",
+                  "projectName": "Samsung Portrait",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-b3ff04b015e843c57d9c",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 289,
+              "column": 7
+            },
+            {
+              "title": "homepage renders consistently across devices",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPad",
+                  "projectName": "iPad",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-bf38b9fb6f476fd85431",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 278,
+              "column": 7
+            },
+            {
+              "title": "admin panel renders correctly on tablets",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "iPad",
+                  "projectName": "iPad",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "69249b7248a747ecc3e4-71ffbeb000abcfbe47c7",
+              "file": "e2e/hardware-specific.spec.js",
+              "line": 289,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-10-01T11:15:29.887Z",
+    "duration": 225241.339,
+    "expected": 0,
+    "skipped": 77,
+    "unexpected": 4,
+    "flaky": 0
+  }
+}

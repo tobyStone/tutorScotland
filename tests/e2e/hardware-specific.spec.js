@@ -150,6 +150,94 @@ test.describe('Hardware-Specific Rendering Tests', () => {
         }
       }
     });
+
+    test('fade-in sections are visible when IntersectionObserver fails on Samsung', async ({ page }) => {
+      await page.goto('/about-us.html');
+      await page.setViewportSize({ width: 320, height: 658 });
+
+      // Simulate IntersectionObserver failure by disabling it
+      await page.addInitScript(() => {
+        // Mock IntersectionObserver to throw an error during construction
+        window.IntersectionObserver = function() {
+          throw new Error('IntersectionObserver not supported');
+        };
+      });
+
+      // Wait for page to load and responsive helper to apply fallback
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(1500); // Allow time for fallback to apply
+
+      // Check that team section is visible (should have is-visible class)
+      const teamSection = page.locator('#team.team-section');
+      if (await teamSection.count() > 0) {
+        await expect(teamSection).toBeVisible();
+
+        // Verify the section has the is-visible class (fallback applied)
+        const hasVisibleClass = await teamSection.evaluate(el =>
+          el.classList.contains('is-visible')
+        );
+        expect(hasVisibleClass).toBe(true);
+
+        // Check opacity is 1 (not 0 which would indicate fade-in failure)
+        const opacity = await teamSection.evaluate(el =>
+          window.getComputedStyle(el).opacity
+        );
+        expect(parseFloat(opacity)).toBe(1);
+      }
+
+      // Check other fade-in sections are also visible
+      const fadeInSections = page.locator('.fade-in-section, .fade-in-on-scroll');
+      const sectionCount = await fadeInSections.count();
+
+      for (let i = 0; i < sectionCount; i++) {
+        const section = fadeInSections.nth(i);
+
+        // Each section should be visible
+        await expect(section).toBeVisible();
+
+        // Each section should have is-visible class
+        const hasVisibleClass = await section.evaluate(el =>
+          el.classList.contains('is-visible')
+        );
+        expect(hasVisibleClass).toBe(true);
+
+        // Each section should have opacity 1
+        const opacity = await section.evaluate(el =>
+          window.getComputedStyle(el).opacity
+        );
+        expect(parseFloat(opacity)).toBe(1);
+      }
+    });
+
+    test('fade-in sections work normally when IntersectionObserver is available', async ({ page }) => {
+      await page.goto('/about-us.html');
+      await page.setViewportSize({ width: 320, height: 658 });
+
+      // Wait for page to load
+      await page.waitForLoadState('networkidle');
+
+      // Check that IntersectionObserver is available and working
+      const observerAvailable = await page.evaluate(() => {
+        return typeof window.IntersectionObserver !== 'undefined';
+      });
+      expect(observerAvailable).toBe(true);
+
+      // Scroll to team section to trigger intersection
+      const teamSection = page.locator('#team.team-section');
+      if (await teamSection.count() > 0) {
+        await teamSection.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(1000); // Allow time for intersection to trigger
+
+        // Section should become visible
+        await expect(teamSection).toBeVisible();
+
+        // Should have is-visible class after intersection
+        const hasVisibleClass = await teamSection.evaluate(el =>
+          el.classList.contains('is-visible')
+        );
+        expect(hasVisibleClass).toBe(true);
+      }
+    });
   });
 
   test.describe('iOS Safari Viewport Issues', () => {
