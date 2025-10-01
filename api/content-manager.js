@@ -540,8 +540,14 @@ async function handleListImages(req, res) {
         const existingThumbs = new Set(thumbBlobs.map(b => b.pathname));
 
         const images = paginatedFiles.map(blob => {
-            const thumbPath = blob.pathname.replace(`${prefix}`, `${prefix}thumbnails/`);
-            const thumb = blob.url.replace(`${prefix}`, `${prefix}thumbnails/`);
+            // ✅ FIX: Thumbnails are now stored as .jpg files, so change extension
+            const originalFilename = blob.pathname.split('/').pop();
+            const fileExtension = originalFilename.lastIndexOf('.') > -1 ? originalFilename.substring(originalFilename.lastIndexOf('.')) : '';
+            const baseName = fileExtension ? originalFilename.substring(0, originalFilename.lastIndexOf('.')) : originalFilename;
+            const thumbFilename = `${baseName}.jpg`; // Thumbnails are always .jpg now
+
+            const thumbPath = blob.pathname.replace(`${prefix}`, `${prefix}thumbnails/`).replace(originalFilename, thumbFilename);
+            const thumb = blob.url.replace(`${prefix}`, `${prefix}thumbnails/`).replace(originalFilename, thumbFilename);
             const hasThumb = existingThumbs.has(thumbPath);
 
             return {

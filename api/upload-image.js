@@ -19,6 +19,7 @@
 const { put } = require('@vercel/blob');
 const { formidable } = require('formidable');
 const fs = require('fs');
+const path = require('path');
 const { lookup } = require('mime-types');
 const { SecurityLogger } = require('../utils/security-logger');
 const { csrfProtection } = require('../utils/csrf-protection');
@@ -1006,7 +1007,13 @@ async function handleFileUpload(req, res, payload) {
 
         const putOpts = { access: 'public', contentType: uploadedFile.mimetype, overwrite: true };
         const mainKey = `${folder}/${filename}`;
-        const thumbKey = `${folder}/thumbnails/${filename}`;
+
+        // ✅ FIX: Thumbnail is always JPEG-encoded, so use .jpg extension and image/jpeg MIME type
+        const fileExtension = path.extname(filename);
+        const baseName = path.basename(filename, fileExtension);
+        const thumbFilename = `${baseName}.jpg`; // Always .jpg for thumbnails
+        const thumbKey = `${folder}/thumbnails/${thumbFilename}`;
+        const thumbPutOpts = { access: 'public', contentType: 'image/jpeg', overwrite: true };
 
         // ✅ DECOUPLED UPLOAD: Upload once, then verify separately
         console.log('🔄 Starting blob upload...');
@@ -1096,7 +1103,7 @@ async function handleFileUpload(req, res, payload) {
         if (thumbnailBuffer && thumbnailBuffer.length > 0) {
             try {
                 console.log(`📤 Uploading thumbnail...`);
-                const thumbResult = await put(thumbKey, thumbnailBuffer, putOpts);
+                const thumbResult = await put(thumbKey, thumbnailBuffer, thumbPutOpts);
                 thumbnailUrl = thumbResult.url;
                 console.log(`✅ Thumbnail uploaded: ${thumbnailUrl}`);
 
