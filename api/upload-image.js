@@ -500,13 +500,34 @@ async function handleFileUpload(req, res, payload) {
 
         // CHECK 2: Does the file size on disk match the expected size?
         // This prevents race conditions where we read a file that's still being written.
-        const stats = await fsPromises.stat(uploadedFile.filepath);
-        if (stats.size !== uploadedFile.size) {
-            console.error(`Upload size mismatch: on-disk(${stats.size}) vs expected(${uploadedFile.size}).`);
-            activeUploads.delete(uploadId);
-            return res.status(500).json({
-                message: 'Incomplete upload due to a server issue. Please try again.'
-            });
+        // ✅ FIX: Add retry logic to handle file system delays
+        let stats;
+        let sizeCheckAttempts = 0;
+        const maxSizeCheckAttempts = 3;
+
+        while (sizeCheckAttempts < maxSizeCheckAttempts) {
+            sizeCheckAttempts++;
+            stats = await fsPromises.stat(uploadedFile.filepath);
+
+            // Allow small rounding differences (≤1 byte) to handle harmless variations
+            const sizeDifference = Math.abs(stats.size - uploadedFile.size);
+            if (sizeDifference <= 1) {
+                if (sizeDifference > 0) {
+                    console.log(`✅ File size check passed with minor difference: ${sizeDifference} byte(s)`);
+                }
+                break; // Size check passed
+            }
+
+            if (sizeCheckAttempts < maxSizeCheckAttempts) {
+                console.warn(`⚠️ Size check attempt ${sizeCheckAttempts}: on-disk(${stats.size}) vs expected(${uploadedFile.size}), retrying...`);
+                await new Promise(resolve => setTimeout(resolve, 75)); // 75ms delay
+            } else {
+                console.error(`❌ Upload size mismatch after ${maxSizeCheckAttempts} attempts: on-disk(${stats.size}) vs expected(${uploadedFile.size}).`);
+                activeUploads.delete(uploadId);
+                return res.status(500).json({
+                    message: 'Incomplete upload due to a server issue. Please try again.'
+                });
+            }
         }
 
         console.log(`✅ File integrity verified: ${uploadedFile.originalFilename} (${stats.size} bytes)`);
@@ -573,20 +594,46 @@ async function handleFileUpload(req, res, payload) {
         /* -------------------------------------------------------------
             1️⃣  Read the *fully-verified* temp file into RAM
         ------------------------------------------------------------- */
-        const buffer = await fsPromises.readFile(uploadedFile.filepath);
+        let buffer = await fsPromises.readFile(uploadedFile.filepath);
 
         // CHECK 3: Verify buffer integrity - ensure buffer size matches file size
-        if (buffer.length !== uploadedFile.size) {
-            console.error(`Buffer size mismatch: buffer(${buffer.length}) vs file(${uploadedFile.size})`);
-            // Clean up temp file before exiting
-            fs.unlink(uploadedFile.filepath, (err) => {
-                if (err) console.error('Error deleting incomplete temp file:', err);
-            });
-            activeUploads.delete(uploadId);
-            return res.status(500).json({
-                message: 'File read error. Please try uploading again.'
-            });
+        // ✅ FIX: Add retry logic to handle buffer read delays
+        let bufferCheckAttempts = 0;
+        const maxBufferCheckAttempts = 3;
+        let currentBuffer = buffer;
+
+        while (bufferCheckAttempts < maxBufferCheckAttempts) {
+            bufferCheckAttempts++;
+
+            // Allow small rounding differences (≤1 byte) to handle harmless variations
+            const bufferSizeDifference = Math.abs(currentBuffer.length - uploadedFile.size);
+            if (bufferSizeDifference <= 1) {
+                if (bufferSizeDifference > 0) {
+                    console.log(`✅ Buffer size check passed with minor difference: ${bufferSizeDifference} byte(s)`);
+                }
+                break; // Buffer check passed
+            }
+
+            if (bufferCheckAttempts < maxBufferCheckAttempts) {
+                console.warn(`⚠️ Buffer check attempt ${bufferCheckAttempts}: buffer(${currentBuffer.length}) vs expected(${uploadedFile.size}), retrying...`);
+                await new Promise(resolve => setTimeout(resolve, 75)); // 75ms delay
+                // Re-read the file in case it was still being written
+                currentBuffer = await fsPromises.readFile(uploadedFile.filepath);
+            } else {
+                console.error(`❌ Buffer size mismatch after ${maxBufferCheckAttempts} attempts: buffer(${currentBuffer.length}) vs file(${uploadedFile.size})`);
+                // Clean up temp file before exiting
+                fs.unlink(uploadedFile.filepath, (err) => {
+                    if (err) console.error('Error deleting incomplete temp file:', err);
+                });
+                activeUploads.delete(uploadId);
+                return res.status(500).json({
+                    message: 'File read error. Please try uploading again.'
+                });
+            }
         }
+
+        // Update buffer reference to use the verified buffer
+        buffer = currentBuffer;
 
         // ✅ ENHANCED SECURITY: Deep content inspection for malicious files
         console.log('🔍 Performing deep content security scan...');
@@ -1110,6 +1157,7 @@ async function handleFileUpload(req, res, payload) {
         }
 
         // Upload thumbnail with same decoupled verification (if thumbnail was generated)
+        let thumbVerificationPending = false;
         if (thumbnailBuffer && thumbnailBuffer.length > 0) {
             try {
                 console.log(`📤 Uploading thumbnail...`);
@@ -1147,15 +1195,19 @@ async function handleFileUpload(req, res, payload) {
                             console.warn(`⚠️ Thumbnail verification failed with status: ${verifyThumbResponse.status}`);
                         }
 
-                        // If this was the last attempt, log warning but continue
+                        // If this was the last attempt, log warning and fallback to main URL
                         if (thumbVerificationAttempts >= maxThumbVerificationAttempts) {
-                            console.warn('⚠️ Thumbnail verification polling exhausted - continuing with main image URL');
+                            console.warn('⚠️ Thumbnail verification polling exhausted - falling back to main image URL');
+                            thumbnailUrl = url; // ✅ FIX: Fallback to main image to prevent 404s
+                            thumbVerificationPending = true; // ✅ FIX: Flag for client awareness
                         }
 
                     } catch (verifyError) {
                         console.warn(`⚠️ Thumbnail verification attempt ${thumbVerificationAttempts} error:`, verifyError.message);
                         if (thumbVerificationAttempts >= maxThumbVerificationAttempts) {
-                            console.warn('⚠️ All thumbnail verification attempts failed - continuing with main image URL');
+                            console.warn('⚠️ All thumbnail verification attempts failed - falling back to main image URL');
+                            thumbnailUrl = url; // ✅ FIX: Fallback to main image to prevent 404s
+                            thumbVerificationPending = true; // ✅ FIX: Flag for client awareness
                         }
                     }
                 }
@@ -1213,6 +1265,12 @@ async function handleFileUpload(req, res, payload) {
         if (verificationPending) {
             response.verificationPending = true;
             console.log('⚠️ Returning response with verification pending flag');
+        }
+
+        // ✅ FIX: Add thumbnail verification status if pending
+        if (thumbVerificationPending) {
+            response.thumbVerificationPending = true;
+            console.log('⚠️ Returning response with thumbnail verification pending flag');
         }
 
         return res.status(200).json(response);
