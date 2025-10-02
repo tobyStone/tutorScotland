@@ -2977,8 +2977,9 @@ header {
 /* ======================================================================
    SAMSUNG PHONE NESTED ELEMENT FIX - Aggressive CSS rules for Samsung devices
    Targets Samsung phones that have issues with nested flexbox layouts
+   Updated to cover real Samsung device widths (e.g., 412px CSS width)
    ====================================================================== */
-@media (max-width: 400px) and (orientation: portrait) {
+@media (max-width: 599px) and (orientation: portrait) {
     /* Force team members container to use block layout instead of flex */
     .team-members,
     .team-members[style*="display: flex"] {
@@ -3018,7 +3019,7 @@ header {
 }
 
 /* Even more aggressive rules for very narrow Samsung screens */
-@media (max-width: 360px) and (orientation: portrait) {
+@media (max-width: 450px) and (orientation: portrait) {
     .team-members,
     .team-members[style*="display: flex"] {
         display: block !important;

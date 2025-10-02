@@ -111,8 +111,9 @@
      * Applies aggressive styling fixes for Samsung devices that have issues with nested flexbox
      */
     function applySamsungTeamMemberFix(width, height, isPortrait) {
-        // Only apply on very narrow portrait screens (Samsung phone range)
-        if (!isPortrait || width > 400) return;
+        // Apply on portrait screens under 600px (matches restricted viewport range)
+        // This covers Samsung devices at 412px CSS width and similar
+        if (!isPortrait || width >= 600) return;
 
         const teamMembersContainers = document.querySelectorAll('.team-members');
 
@@ -254,6 +255,7 @@
     function initFadeObserver() {
         let hasScrolledDown = false;
         let footerDelayTimeout = null;
+        let observerAvailable = false;
 
         // Helper function to immediately reveal all fade-in content (Samsung fallback)
         const revealAllFadeContent = () => {
@@ -263,45 +265,52 @@
             });
         };
 
-        // Check if IntersectionObserver is available
-        if (!window.IntersectionObserver) {
+        let io;
+
+        // Try to set up IntersectionObserver
+        if (window.IntersectionObserver) {
+            try {
+                io = new IntersectionObserver((entries) => {
+                    entries.forEach(({ isIntersecting, target }) => {
+                        if (isIntersecting) {
+                            // Special handling for footer - don't fade in immediately
+                            if (target.classList.contains('site-footer')) {
+                                // Only fade in footer if user has scrolled down and after delay
+                                if (hasScrolledDown && !footerDelayTimeout) {
+                                    footerDelayTimeout = setTimeout(() => {
+                                        target.classList.add("is-visible");
+                                        io.unobserve(target);
+                                    }, 1000); // 1 second delay
+                                }
+                                return;
+                            }
+
+                            // Normal fade-in for all other elements
+                            target.classList.add("is-visible");
+                            io.unobserve(target);
+                        }
+                    });
+                }, {
+                    /* Use gentler trigger for sections */
+                    threshold: 0.15,
+                    rootMargin: "0px 0px -10% 0px"
+                });
+                observerAvailable = true;
+            } catch (error) {
+                console.error('❌ IntersectionObserver failed to initialize:', error);
+                console.log('🔧 Samsung viewport fix: Falling back to immediate reveal');
+                io = null;
+                observerAvailable = false;
+            }
+        } else {
             console.warn('⚠️ IntersectionObserver not available - revealing all fade-in content immediately');
-            revealAllFadeContent();
-            return;
+            io = null;
+            observerAvailable = false;
         }
 
-        let io;
-        try {
-            io = new IntersectionObserver((entries) => {
-                entries.forEach(({ isIntersecting, target }) => {
-                    if (isIntersecting) {
-                        // Special handling for footer - don't fade in immediately
-                        if (target.classList.contains('site-footer')) {
-                            // Only fade in footer if user has scrolled down and after delay
-                            if (hasScrolledDown && !footerDelayTimeout) {
-                                footerDelayTimeout = setTimeout(() => {
-                                    target.classList.add("is-visible");
-                                    io.unobserve(target);
-                                }, 1000); // 1 second delay
-                            }
-                            return;
-                        }
-
-                        // Normal fade-in for all other elements
-                        target.classList.add("is-visible");
-                        io.unobserve(target);
-                    }
-                });
-            }, {
-                /* Use gentler trigger for sections */
-                threshold: 0.15,
-                rootMargin: "0px 0px -10% 0px"
-            });
-        } catch (error) {
-            console.error('❌ IntersectionObserver failed to initialize:', error);
-            console.log('🔧 Samsung viewport fix: Falling back to immediate reveal');
+        // If observer is not available, reveal all existing content immediately
+        if (!observerAvailable) {
             revealAllFadeContent();
-            return;
         }
 
         // Track scroll events to detect when user scrolls down
