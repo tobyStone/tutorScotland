@@ -1071,13 +1071,12 @@ function initTutorManagement() {
         tutorForm.contact.value = tutor.contact || '';
         tutorForm.description.value = tutor.description || '';
 
-        const regionsSel = document.getElementById('regionsSelect');
+        // Handle checkbox-based regions selection
+        const regionsCheckboxes = document.querySelectorAll('input[name="regions"]');
         const regions = (tutor.regions || []);
-        if (regionsSel) {
-            Array.from(regionsSel.options).forEach(opt => {
-                opt.selected = regions.includes(opt.value);
-            });
-        }
+        regionsCheckboxes.forEach(checkbox => {
+            checkbox.checked = regions.includes(checkbox.value);
+        });
 
         // Show current image if exists
         if (tutor.imagePath) {
@@ -1154,7 +1153,7 @@ function initTutorManagement() {
             badges: csv(fd.get('badges')),
             contact: fd.get('contact').trim(),
             description: fd.get('description').trim(),
-            regions: Array.from(document.getElementById('regionsSelect').selectedOptions).map(opt => opt.value),
+            regions: Array.from(document.querySelectorAll('input[name="regions"]:checked')).map(cb => cb.value),
             imagePath: uploadedImagePath,
             removeImage: removeImageCheckbox ? removeImageCheckbox.checked : false
         };

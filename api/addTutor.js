@@ -42,6 +42,13 @@ const REGION_SYNONYMS = (() => {
   // Extra common variants
   map.set(toKey('on line'), 'Online');
   map.set(toKey('on-line'), 'Online');
+
+  // Admin UI form variants that need mapping to canonical labels
+  map.set(toKey('angus & dundee'), 'Dundee & Angus');
+  map.set(toKey('borders'), 'Scottish Borders');
+  map.set(toKey('glasgow & west central'), 'Glasgow & West');
+  map.set(toKey('stirling & clackmannanshire'), 'Stirling & Falkirk');
+
   return map;
 })();
 
