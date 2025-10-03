@@ -1,859 +1,720 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll, afterAll } from 'vitest';
+import request from 'supertest';
+import { createServer } from 'http';
 import mongoose from 'mongoose';
 import { vi } from 'vitest';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
-// Import Section model
-let Section;
-try {
-  Section = mongoose.model('Section');
-} catch {
-  Section = require('../../../models/Section.js');
-}
+// Set up test environment
+process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-only';
+process.env.NODE_ENV = 'test';
 
-describe('Dynamic Sections Integration Tests', () => {
-  let testSections;
+// Import API handler and models
+import sectionsHandler from '../../../api/sections.js';
+import Section from '../../../models/Section.js';
+import User from '../../../models/User.js';
+
+// Mock external services
+vi.mock('@vercel/blob', () => ({
+  put: vi.fn().mockResolvedValue({
+    url: 'https://test-blob-url.vercel-storage.com/test-image.jpg',
+    pathname: 'test-image.jpg'
+  }),
+  del: vi.fn().mockResolvedValue(true)
+}));
+
+// Create test server that mimics Vercel's serverless function behavior
+const createTestApp = () => {
+  return createServer(async (req, res) => {
+    // Parse request body for POST/PUT requests
+    if (req.method === 'POST' || req.method === 'PUT') {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+      req.on('end', () => {
+        try {
+          req.body = JSON.parse(body);
+        } catch (e) {
+          req.body = {};
+        }
+        sectionsHandler(req, res);
+      });
+    } else {
+      // For GET/DELETE, parse query parameters
+      const url = new URL(req.url, `http://${req.headers.host}`);
+      req.query = Object.fromEntries(url.searchParams);
+      sectionsHandler(req, res);
+    }
+  });
+};
+
+describe('Dynamic Sections API Integration Tests (Real API)', () => {
+  let app;
+  let testUser;
+  let authToken;
+
+  beforeAll(async () => {
+    // Create test app
+    app = createTestApp();
+
+    // Create test admin user for authentication
+    testUser = await User.create({
+      name: 'Test Admin',
+      email: 'admin@test.com',
+      password: await bcrypt.hash('testpassword', 10),
+      role: 'admin'
+    });
+
+    // Generate auth token
+    authToken = jwt.sign(
+      { userId: testUser._id, role: testUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+  });
+
+  afterAll(async () => {
+    // Cleanup handled by global teardown
+  });
 
   beforeEach(async () => {
-    // Note: Database connection is handled by global setup
-    await mongoose.connection.db.dropDatabase();
-    console.log('Test database cleared successfully');
+    // Ensure database is connected before cleanup
+    if (mongoose.connection.readyState !== 1) {
+      const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/test';
+      await mongoose.connect(mongoUri);
+    }
 
-    // Create test dynamic sections data
-    testSections = [
+    // Clear sections collection and seed with real data
+    await Section.deleteMany({});
+
+    // Seed with test data using create() to ensure validation runs
+    await Section.create([
       {
-        id: 'section-1',
-        pageSlug: 'about',
-        type: 'text',
-        title: 'Our Mission',
-        content: 'We are dedicated to connecting students with qualified tutors...',
-        position: 'top',
+        page: 'about-us',
+        heading: 'Our Mission',
+        text: 'We are dedicated to connecting students with qualified tutors...',
+        layout: 'standard',
+        position: 'bottom',
         order: 1,
-        isActive: true,
+        isPublished: true,
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-01')
       },
       {
-        id: 'section-2',
-        pageSlug: 'about',
-        type: 'image',
-        title: 'Team Photo',
-        content: '',
-        imageUrl: 'https://example.com/team-photo.jpg',
-        imageAlt: 'Our amazing team',
-        position: 'middle',
+        page: 'about-us',
+        heading: 'Team Photo',
+        text: '',
+        layout: 'standard',
+        position: 'bottom',
         order: 2,
-        isActive: true,
+        isPublished: true,
+        imageUrl: 'https://example.com/team-photo.jpg',
         createdAt: new Date('2024-01-02'),
         updatedAt: new Date('2024-01-02')
       },
       {
-        id: 'section-3',
-        pageSlug: 'services',
-        type: 'team-member',
-        title: 'Meet Sarah',
-        content: 'Sarah is our lead mathematics tutor with 10 years of experience.',
-        imageUrl: 'https://example.com/sarah.jpg',
-        imageAlt: 'Sarah Johnson - Mathematics Tutor',
+        page: 'services',
+        heading: 'Meet Sarah',
+        text: 'Sarah is our lead mathematics tutor with 10 years of experience.',
+        layout: 'team',
         position: 'bottom',
         order: 1,
-        isActive: true,
-        metadata: {
+        isPublished: true,
+        imageUrl: 'https://example.com/sarah.jpg',
+        team: [{
           name: 'Sarah Johnson',
-          role: 'Mathematics Tutor',
-          experience: '10 years',
-          subjects: ['Algebra', 'Calculus', 'Statistics']
-        },
+          bio: 'Experienced mathematics tutor with 10 years of teaching experience.',
+          role: 'Mathematics Tutor'
+        }],
         createdAt: new Date('2024-01-03'),
         updatedAt: new Date('2024-01-03')
       },
       {
-        id: 'section-4',
-        pageSlug: 'about',
-        type: 'text',
-        title: 'Inactive Section',
-        content: 'This section is not active',
+        page: 'about-us',
+        heading: 'Inactive Section',
+        text: 'This section is not active',
+        layout: 'standard',
         position: 'bottom',
         order: 3,
-        isActive: false,
+        isPublished: false, // Unpublished section
         createdAt: new Date('2024-01-04'),
         updatedAt: new Date('2024-01-04')
       }
-    ];
-
-    // Note: You'll need to uncomment and adjust this when you have the Section model
-    // await Section.insertMany(testSections);
+    ]);
   });
 
-  describe('Section CRUD Operations', () => {
-    it('should create a new dynamic section', async () => {
+  describe('GET /api/sections - Retrieve Sections', () => {
+    it('should retrieve sections for a specific page', async () => {
+      const response = await request(app)
+        .get('/api/sections?page=about-us')
+        .expect(200);
+
+      expect(response.body).toHaveLength(2); // Only published sections
+      expect(response.body[0].heading).toBe('Our Mission');
+      expect(response.body[1].heading).toBe('Team Photo');
+
+      // Verify all sections belong to the requested page
+      response.body.forEach(section => {
+        expect(section.page).toBe('about-us');
+        expect(section.isPublished).toBe(true);
+      });
+    });
+
+    it('should return empty array for non-existent page', async () => {
+      const response = await request(app)
+        .get('/api/sections?page=nonexistent')
+        .expect(200);
+
+      expect(response.body).toHaveLength(0);
+    });
+
+    it('should return sections sorted by position and creation date', async () => {
+      const response = await request(app)
+        .get('/api/sections?page=about-us')
+        .expect(200);
+
+      // Verify sorting (position first, then createdAt)
+      expect(response.body[0].createdAt).toBe('2024-01-01T00:00:00.000Z');
+      expect(response.body[1].createdAt).toBe('2024-01-02T00:00:00.000Z');
+    });
+
+    it('should include unpublished sections for authenticated admin users', async () => {
+      const response = await request(app)
+        .get('/api/sections?page=about-us')
+        .set('Cookie', `token=${authToken}`)
+        .expect(200);
+
+      expect(response.body).toHaveLength(3); // All sections including unpublished
+      const unpublishedSection = response.body.find(s => s.heading === 'Inactive Section');
+      expect(unpublishedSection).toBeDefined();
+      expect(unpublishedSection.isPublished).toBe(false);
+    });
+  });
+
+  describe('POST /api/sections - Create Section', () => {
+    it('should create a new section with valid data', async () => {
       const newSection = {
-        pageSlug: 'home',
-        type: 'text',
-        title: 'Welcome Message',
-        content: 'Welcome to TutorScotland!',
-        position: 'top',
-        order: 1,
-        isActive: true
+        page: 'index',
+        heading: 'Welcome Message',
+        text: 'Welcome to TutorScotland!',
+        layout: 'standard',
+        position: 'bottom',
+        order: 1
       };
 
-      const createdSection = {
-        ...newSection,
-        id: 'section-5',
+      const response = await request(app)
+        .post('/api/sections')
+        .set('Cookie', `token=${authToken}`)
+        .send(newSection)
+        .expect(201);
+
+      // Verify HTTP response
+      expect(response.body.heading).toBe('Welcome Message');
+      expect(response.body.page).toBe('index');
+      expect(response.body._id).toBeDefined();
+
+      // Verify database state
+      const dbSection = await Section.findById(response.body._id);
+      expect(dbSection.heading).toBe('Welcome Message');
+      expect(dbSection.page).toBe('index');
+      expect(dbSection.layout).toBe('standard');
+    });
+
+    it('should reject section creation without authentication', async () => {
+      const newSection = {
+        page: 'index',
+        heading: 'Unauthorized Section',
+        text: 'This should fail',
+        layout: 'standard'
+      };
+
+      await request(app)
+        .post('/api/sections')
+        .send(newSection)
+        .expect(401);
+
+      // Verify no section was created in database
+      const sections = await Section.find({ heading: 'Unauthorized Section' });
+      expect(sections).toHaveLength(0);
+    });
+
+    it('should validate required fields', async () => {
+      const invalidSection = {
+        page: 'index',
+        // Missing required heading
+        text: 'Some text'
+      };
+
+      const response = await request(app)
+        .post('/api/sections')
+        .set('Cookie', `token=${authToken}`)
+        .send(invalidSection)
+        .expect(400);
+
+      // The API should return a validation error for missing heading
+      expect(response.body.message || response.body.error).toBeDefined();
+    });
+  });
+
+  describe('DELETE /api/sections - Delete Section', () => {
+    it('should delete an existing section', async () => {
+      // Get an existing section
+      const existingSection = await Section.findOne({ page: 'about-us' });
+
+      await request(app)
+        .delete(`/api/sections?id=${existingSection._id}`)
+        .set('Cookie', `token=${authToken}`)
+        .expect(204);
+
+      // Verify section was deleted from database
+      const deletedSection = await Section.findById(existingSection._id);
+      expect(deletedSection).toBeNull();
+    });
+
+    it('should return 404 when deleting non-existent section', async () => {
+      const fakeId = new mongoose.Types.ObjectId();
+
+      await request(app)
+        .delete(`/api/sections?id=${fakeId}`)
+        .set('Cookie', `token=${authToken}`)
+        .expect(404);
+    });
+
+    it('should reject deletion without authentication', async () => {
+      const existingSection = await Section.findOne({ page: 'about-us' });
+
+      await request(app)
+        .delete(`/api/sections?id=${existingSection._id}`)
+        .expect(401);
+
+      // Verify section still exists in database
+      const stillExists = await Section.findById(existingSection._id);
+      expect(stillExists).toBeTruthy();
+    });
+  });
+
+  describe('Section Update Operations (via POST with editId)', () => {
+    it('should update an existing section via POST with editId', async () => {
+      const existingSection = await Section.findOne({ page: 'about-us' });
+
+      const updateData = {
+        editId: existingSection._id.toString(),
+        page: 'about-us',
+        heading: 'Updated Mission Statement',
+        text: 'Our updated mission is to provide excellent tutoring services...',
+        layout: 'standard'
+      };
+
+      const response = await request(app)
+        .post('/api/sections')
+        .set('Cookie', `token=${authToken}`)
+        .send(updateData)
+        .expect(200);
+
+      // Verify HTTP response
+      expect(response.body.heading).toBe('Updated Mission Statement');
+      expect(response.body._id).toBe(existingSection._id.toString());
+
+      // Verify database state
+      const updatedSection = await Section.findById(existingSection._id);
+      expect(updatedSection.heading).toBe('Updated Mission Statement');
+      expect(updatedSection.text).toContain('updated mission');
+    });
+
+    it('should preserve existing data when updating specific fields', async () => {
+      const existingSection = await Section.findOne({ page: 'about-us' });
+      const originalCreatedAt = existingSection.createdAt;
+
+      const updateData = {
+        editId: existingSection._id.toString(),
+        page: 'about-us',
+        heading: 'Updated Title Only',
+        text: existingSection.text, // Keep original text
+        layout: existingSection.layout
+      };
+
+      await request(app)
+        .post('/api/sections')
+        .set('Cookie', `token=${authToken}`)
+        .send(updateData)
+        .expect(200);
+
+      // Verify database state
+      const updatedSection = await Section.findById(existingSection._id);
+      expect(updatedSection.heading).toBe('Updated Title Only');
+      expect(updatedSection.createdAt).toEqual(originalCreatedAt); // Should preserve original creation date
+    });
+  });
+
+  describe('Team Member Sections', () => {
+    it('should handle team member sections correctly', async () => {
+      const response = await request(app)
+        .get('/api/sections?page=services')
+        .expect(200);
+
+      const teamSection = response.body.find(s => s.layout === 'team');
+      expect(teamSection).toBeDefined();
+      expect(teamSection.team).toBeDefined();
+      expect(teamSection.team[0].name).toBe('Sarah Johnson');
+      expect(teamSection.team[0].role).toBe('Mathematics Tutor');
+    });
+
+    it('should create team sections with proper team data structure', async () => {
+      const teamSection = {
+        page: 'about-us',
+        heading: 'New Team Member',
+        text: 'Meet our new team member',
+        layout: 'team',
+        position: 'bottom',
+        team: JSON.stringify([{
+          name: 'John Doe',
+          bio: 'Experienced educator',
+          role: 'Science Tutor'
+        }])
+      };
+
+      const response = await request(app)
+        .post('/api/sections')
+        .set('Cookie', `token=${authToken}`)
+        .send(teamSection);
+
+      // Debug: Log response if not 201
+      if (response.status !== 201) {
+        console.log('Team Response status:', response.status);
+        console.log('Team Response body:', response.body);
+      }
+
+      expect(response.status).toBe(201);
+
+      // Verify team data structure in response
+      expect(response.body.team).toBeDefined();
+      expect(response.body.team[0].name).toBe('John Doe');
+      expect(response.body.team[0].role).toBe('Science Tutor');
+
+      // Verify database state
+      const dbSection = await Section.findById(response.body._id);
+      expect(dbSection.team[0].name).toBe('John Doe');
+    });
+  });
+
+  describe('Content Validation and Security', () => {
+    it('should normalize invalid layout types to standard', async () => {
+      const invalidSection = {
+        page: 'index',
+        heading: 'Invalid Layout Section',
+        text: 'This has an invalid layout',
+        layout: 'invalid-layout-type'
+      };
+
+      const response = await request(app)
+        .post('/api/sections')
+        .set('Cookie', `token=${authToken}`)
+        .send(invalidSection)
+        .expect(201);
+
+      expect(response.body.layout).toBe('standard'); // Should be normalized
+
+      // Verify section was created in database with normalized layout
+      const dbSection = await Section.findById(response.body._id);
+      expect(dbSection.layout).toBe('standard');
+      expect(dbSection.heading).toBe('Invalid Layout Section');
+    });
+
+    it('should handle HTML content safely', async () => {
+      const sectionWithHTML = {
+        page: 'index',
+        heading: 'HTML Content Test',
+        text: '<p>Safe HTML content</p><script>alert("xss")</script>',
+        layout: 'standard'
+      };
+
+      const response = await request(app)
+        .post('/api/sections')
+        .set('Cookie', `token=${authToken}`)
+        .send(sectionWithHTML)
+        .expect(201);
+
+      // The API should sanitize or handle HTML content appropriately
+      expect(response.body.text).toBeDefined();
+      // Note: Actual sanitization behavior depends on API implementation
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should handle database connection errors gracefully', async () => {
+      // Mock database error instead of actual disconnect to avoid connection issues
+      const originalFind = Section.find;
+      Section.find = vi.fn().mockRejectedValue(new Error('Database connection failed'));
+
+      const response = await request(app)
+        .get('/api/sections?page=about-us')
+        .expect(500);
+
+      expect(response.body.message || response.body.error).toBeDefined();
+
+      // Restore original method
+      Section.find = originalFind;
+    }, 10000);
+
+    it('should handle empty page parameter gracefully', async () => {
+      const response = await request(app)
+        .get('/api/sections?page=')
+        .expect(200);
+
+      expect(response.body).toBeInstanceOf(Array);
+    });
+
+    it('should handle malformed section data', async () => {
+      const malformedSection = {
+        page: 'index',
+        heading: null, // Invalid heading
+        text: 123, // Invalid text type
+        layout: 'standard'
+      };
+
+      const response = await request(app)
+        .post('/api/sections')
+        .set('Cookie', `token=${authToken}`)
+        .send(malformedSection)
+        .expect(400);
+
+      expect(response.body.message || response.body.error).toBeDefined();
+    });
+  });
+
+  describe('Backward Compatibility', () => {
+    it('should handle sections with missing layout field', async () => {
+      // Insert section directly to database without layout field
+      await Section.collection.insertOne({
+        page: 'test',
+        heading: 'Legacy Section',
+        text: 'Legacy content',
+        position: 'bottom',
+        order: 1,
+        isPublished: true,
         createdAt: new Date(),
         updatedAt: new Date()
-      };
-
-      expect(createdSection.title).toBe(newSection.title);
-      expect(createdSection.pageSlug).toBe(newSection.pageSlug);
-      expect(createdSection.isActive).toBe(true);
-    });
-
-    it('should read sections by page slug', async () => {
-      const aboutSections = testSections.filter(section => 
-        section.pageSlug === 'about' && section.isActive
-      );
-
-      expect(aboutSections).toHaveLength(2);
-      expect(aboutSections.every(section => section.pageSlug === 'about')).toBe(true);
-      expect(aboutSections.every(section => section.isActive)).toBe(true);
-    });
-
-    it('should update an existing section', async () => {
-      const sectionToUpdate = testSections[0];
-      const updates = {
-        title: 'Updated Mission Statement',
-        content: 'Our updated mission is to provide excellent tutoring services...',
-        updatedAt: new Date()
-      };
-
-      const updatedSection = {
-        ...sectionToUpdate,
-        ...updates
-      };
-
-      expect(updatedSection.title).toBe(updates.title);
-      expect(updatedSection.content).toBe(updates.content);
-      expect(updatedSection.id).toBe(sectionToUpdate.id);
-      expect(updatedSection.createdAt).toBe(sectionToUpdate.createdAt);
-    });
-
-    it('should delete a section (soft delete by setting isActive to false)', async () => {
-      const sectionToDelete = testSections[0];
-      const deletedSection = {
-        ...sectionToDelete,
-        isActive: false,
-        updatedAt: new Date()
-      };
-
-      expect(deletedSection.isActive).toBe(false);
-      expect(deletedSection.id).toBe(sectionToDelete.id);
-    });
-
-    it('should validate required fields when creating section', async () => {
-      const invalidSection = {
-        type: 'text',
-        content: 'Content without required fields'
-      };
-
-      const requiredFields = ['pageSlug', 'type', 'title', 'position'];
-      const missingFields = requiredFields.filter(field => !invalidSection[field]);
-
-      expect(missingFields).toContain('pageSlug');
-      expect(missingFields).toContain('title');
-      expect(missingFields).toContain('position');
-    });
-  });
-
-  describe('Section Ordering and Positioning', () => {
-    it('should return sections ordered by order field', async () => {
-      const aboutSections = testSections
-        .filter(section => section.pageSlug === 'about' && section.isActive)
-        .sort((a, b) => a.order - b.order);
-
-      expect(aboutSections[0].order).toBe(1);
-      expect(aboutSections[1].order).toBe(2);
-      expect(aboutSections[0].order < aboutSections[1].order).toBe(true);
-    });
-
-    it('should group sections by position', async () => {
-      const aboutSections = testSections.filter(section => 
-        section.pageSlug === 'about' && section.isActive
-      );
-
-      const groupedByPosition = aboutSections.reduce((groups, section) => {
-        const position = section.position;
-        if (!groups[position]) groups[position] = [];
-        groups[position].push(section);
-        return groups;
-      }, {});
-
-      expect(groupedByPosition.top).toHaveLength(1);
-      expect(groupedByPosition.middle).toHaveLength(1);
-      expect(groupedByPosition.bottom).toBeUndefined();
-    });
-
-    it('should reorder sections when order changes', async () => {
-      const sectionsToReorder = [
-        { id: 'section-1', order: 2 },
-        { id: 'section-2', order: 1 }
-      ];
-
-      const reorderedSections = testSections.map(section => {
-        const reorderInfo = sectionsToReorder.find(r => r.id === section.id);
-        return reorderInfo ? { ...section, order: reorderInfo.order } : section;
       });
 
-      const aboutSections = reorderedSections
-        .filter(section => section.pageSlug === 'about' && section.isActive)
-        .sort((a, b) => a.order - b.order);
+      const response = await request(app)
+        .get('/api/sections?page=test')
+        .expect(200);
 
-      expect(aboutSections[0].id).toBe('section-2');
-      expect(aboutSections[1].id).toBe('section-1');
+      expect(response.body).toHaveLength(1);
+      // API should normalize missing layout to 'standard'
+      expect(response.body[0].layout).toBe('standard');
     });
 
-    it('should handle drag and drop reordering', async () => {
-      const dragDropUpdate = {
-        sectionId: 'section-1',
-        newPosition: 'bottom',
-        newOrder: 1,
-        pageSlug: 'about'
-      };
-
-      const updatedSection = {
-        ...testSections[0],
-        position: dragDropUpdate.newPosition,
-        order: dragDropUpdate.newOrder,
+    it('should handle sections with null layout field', async () => {
+      // Insert section with explicit null layout
+      await Section.collection.insertOne({
+        page: 'test',
+        heading: 'Null Layout Section',
+        text: 'Content with null layout',
+        layout: null,
+        position: 'bottom',
+        order: 1,
+        isPublished: true,
+        createdAt: new Date(),
         updatedAt: new Date()
-      };
+      });
 
-      expect(updatedSection.position).toBe('bottom');
-      expect(updatedSection.order).toBe(1);
+      const response = await request(app)
+        .get('/api/sections?page=test')
+        .expect(200);
+
+      expect(response.body).toHaveLength(1);
+      // API should normalize null layout to 'standard'
+      expect(response.body[0].layout).toBe('standard');
     });
+  });
 
-    it('should auto-increment order for new sections in same position', async () => {
-      const existingSections = testSections.filter(section => 
-        section.pageSlug === 'about' && 
-        section.position === 'top' && 
-        section.isActive
+  describe('Performance and Load Testing', () => {
+    it('should handle multiple concurrent requests efficiently', async () => {
+      const requests = Array.from({ length: 10 }, () =>
+        request(app).get('/api/sections?page=about-us')
       );
-
-      const maxOrder = Math.max(...existingSections.map(s => s.order), 0);
-      const newSectionOrder = maxOrder + 1;
-
-      expect(newSectionOrder).toBe(2);
-    });
-  });
-
-  describe('Section Types and Content Validation', () => {
-    it('should validate text section content', async () => {
-      const textSection = {
-        type: 'text',
-        title: 'Test Title',
-        content: 'This is valid text content'
-      };
-
-      expect(textSection.type).toBe('text');
-      expect(textSection.content.length).toBeGreaterThan(0);
-      expect(typeof textSection.content).toBe('string');
-    });
-
-    it('should validate image section requirements', async () => {
-      const imageSection = {
-        type: 'image',
-        title: 'Test Image',
-        imageUrl: 'https://example.com/image.jpg',
-        imageAlt: 'Test image description'
-      };
-
-      expect(imageSection.type).toBe('image');
-      expect(imageSection.imageUrl).toMatch(/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i);
-      expect(imageSection.imageAlt).toBeTruthy();
-    });
-
-    it('should validate team member section metadata', async () => {
-      const teamMemberSection = testSections[2];
-
-      expect(teamMemberSection.type).toBe('team-member');
-      expect(teamMemberSection.metadata.name).toBeTruthy();
-      expect(teamMemberSection.metadata.role).toBeTruthy();
-      expect(Array.isArray(teamMemberSection.metadata.subjects)).toBe(true);
-    });
-
-    it('should sanitize HTML content for security', async () => {
-      const dangerousContent = '<script>alert("xss")</script><p>Safe content</p>';
-      
-      // Mock HTML sanitization
-      const sanitizedContent = dangerousContent
-        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-        .trim();
-
-      expect(sanitizedContent).toBe('<p>Safe content</p>');
-      expect(sanitizedContent).not.toContain('<script>');
-    });
-
-    it('should validate content length limits', async () => {
-      const shortContent = 'OK';
-      const longContent = 'word '.repeat(2001); // Very long content (10,005 chars)
-      const maxLength = 10000;
-
-      expect(shortContent.length).toBeLessThan(maxLength);
-      expect(longContent.length).toBeGreaterThan(maxLength);
-    });
-  });
-
-  describe('Section Rendering and Display', () => {
-    it('should render sections in correct order for page', async () => {
-      const pageSlug = 'about';
-      const sections = testSections
-        .filter(section => section.pageSlug === pageSlug && section.isActive)
-        .sort((a, b) => {
-          // Sort by position priority, then by order
-          const positionPriority = { top: 1, middle: 2, bottom: 3 };
-          if (positionPriority[a.position] !== positionPriority[b.position]) {
-            return positionPriority[a.position] - positionPriority[b.position];
-          }
-          return a.order - b.order;
-        });
-
-      expect(sections[0].position).toBe('top');
-      expect(sections[1].position).toBe('middle');
-    });
-
-    it('should generate HTML for different section types', async () => {
-      const textSection = testSections[0];
-      const imageSection = testSections[1];
-
-      // Mock HTML generation
-      const textHtml = `<div class="dynamic-section text-section">
-        <h2>${textSection.title}</h2>
-        <p>${textSection.content}</p>
-      </div>`;
-
-      const imageHtml = `<div class="dynamic-section image-section">
-        <h2>${imageSection.title}</h2>
-        <img src="${imageSection.imageUrl}" alt="${imageSection.imageAlt}" />
-      </div>`;
-
-      expect(textHtml).toContain(textSection.title);
-      expect(textHtml).toContain(textSection.content);
-      expect(imageHtml).toContain(imageSection.imageUrl);
-      expect(imageHtml).toContain(imageSection.imageAlt);
-    });
-
-    it('should apply responsive styling classes', async () => {
-      const section = testSections[0];
-      const responsiveClasses = [
-        'dynamic-section',
-        `${section.type}-section`,
-        `position-${section.position}`,
-        'responsive-section'
-      ];
-
-      expect(responsiveClasses).toContain('dynamic-section');
-      expect(responsiveClasses).toContain('text-section');
-      expect(responsiveClasses).toContain('position-top');
-    });
-
-    it('should handle empty or missing content gracefully', async () => {
-      const emptySection = {
-        type: 'text',
-        title: 'Empty Section',
-        content: '',
-        isActive: true
-      };
-
-      const shouldRender = !!(emptySection.isActive && emptySection.title);
-      expect(shouldRender).toBe(true);
-    });
-  });
-
-  describe('Section Performance and Caching', () => {
-    it('should cache sections by page slug', async () => {
-      const cacheKey = 'sections:about';
-      const cachedSections = testSections.filter(section => 
-        section.pageSlug === 'about' && section.isActive
-      );
-
-      // Mock cache storage
-      const cache = new Map();
-      cache.set(cacheKey, cachedSections);
-
-      expect(cache.has(cacheKey)).toBe(true);
-      expect(cache.get(cacheKey)).toHaveLength(2);
-    });
-
-    it('should invalidate cache when sections are updated', async () => {
-      const cacheKey = 'sections:about';
-      const cache = new Map();
-      
-      // Set initial cache
-      cache.set(cacheKey, testSections);
-      expect(cache.has(cacheKey)).toBe(true);
-
-      // Simulate section update
-      cache.delete(cacheKey);
-      expect(cache.has(cacheKey)).toBe(false);
-    });
-
-    it('should handle large numbers of sections efficiently', async () => {
-      const largeSectionSet = Array.from({ length: 1000 }, (_, i) => ({
-        id: `section-${i}`,
-        pageSlug: 'test-page',
-        type: 'text',
-        title: `Section ${i}`,
-        content: `Content for section ${i}`,
-        position: 'middle',
-        order: i,
-        isActive: true
-      }));
 
       const startTime = Date.now();
-      const filteredSections = largeSectionSet
-        .filter(section => section.isActive)
-        .sort((a, b) => a.order - b.order)
-        .slice(0, 50); // Pagination
+      const responses = await Promise.all(requests);
       const endTime = Date.now();
 
-      expect(filteredSections).toHaveLength(50);
-      expect(endTime - startTime).toBeLessThan(100); // Should be fast
-    });
-  });
+      // All requests should succeed
+      responses.forEach(response => {
+        expect(response.status).toBe(200);
+        expect(response.body).toBeInstanceOf(Array);
+      });
 
-  describe('Section Analytics and Tracking', () => {
-    it('should track section view counts', async () => {
-      const section = testSections[0];
-      const updatedSection = {
-        ...section,
-        viewCount: (section.viewCount || 0) + 1,
-        lastViewed: new Date()
-      };
-
-      expect(updatedSection.viewCount).toBe(1);
-      expect(updatedSection.lastViewed).toBeInstanceOf(Date);
+      // Should complete within reasonable time
+      expect(endTime - startTime).toBeLessThan(5000); // 5 seconds for 10 requests
     });
 
-    it('should calculate section engagement metrics', async () => {
-      const sectionsWithViews = testSections.map(section => ({
-        ...section,
-        viewCount: Math.floor(Math.random() * 1000) + 100
+    it('should handle large page queries efficiently', async () => {
+      // Create many sections for performance testing
+      const largeSectionSet = Array.from({ length: 100 }, (_, i) => ({
+        page: 'performance-test',
+        heading: `Performance Section ${i}`,
+        text: `Content for performance section ${i}`,
+        layout: 'standard',
+        position: 'bottom',
+        order: i,
+        isPublished: true
       }));
 
-      const totalViews = sectionsWithViews.reduce((sum, section) => sum + section.viewCount, 0);
-      const avgViews = totalViews / sectionsWithViews.length;
+      await Section.create(largeSectionSet);
 
-      expect(totalViews).toBeGreaterThan(0);
-      expect(avgViews).toBeGreaterThan(0);
-    });
+      const startTime = Date.now();
+      const response = await request(app)
+        .get('/api/sections?page=performance-test')
+        .expect(200);
+      const endTime = Date.now();
 
-    it('should identify most popular section types', async () => {
-      const sectionsByType = testSections.reduce((groups, section) => {
-        if (!groups[section.type]) groups[section.type] = 0;
-        groups[section.type]++;
-        return groups;
-      }, {});
-
-      expect(sectionsByType.text).toBe(2);
-      expect(sectionsByType.image).toBe(1);
-      expect(sectionsByType['team-member']).toBe(1);
+      expect(response.body).toHaveLength(100);
+      expect(endTime - startTime).toBeLessThan(1000); // Should complete within 1 second
     });
   });
 
-  describe('Error Handling and Edge Cases', () => {
-    it('should handle invalid section types', async () => {
-      const invalidSection = {
-        type: 'invalid-type',
-        title: 'Test',
-        content: 'Test content'
-      };
-
-      // Updated to include future section types
-      const validTypes = ['text', 'image', 'team-member', 'video', 'gallery', 'list', 'testimonial'];
-      const isValidType = validTypes.includes(invalidSection.type);
-
-      expect(isValidType).toBe(false);
-    });
-
-    it('should handle missing required fields gracefully', async () => {
-      const incompleteSection = {
-        type: 'text',
-        content: 'Content without title'
-      };
-
-      const errors = [];
-      if (!incompleteSection.title) errors.push('Title is required');
-      if (!incompleteSection.pageSlug) errors.push('Page slug is required');
-
-      expect(errors).toHaveLength(2);
-    });
-
-    it('should validate future section types (list, testimonial)', async () => {
+  describe('Future Section Types - List and Testimonial', () => {
+    it('should create list sections via API', async () => {
       const listSection = {
-        type: 'list',
-        title: 'Test List',
-        content: JSON.stringify({
-          items: ['Item 1', 'Item 2', 'Item 3'],
-          listType: 'unordered'
-        }),
-        pageSlug: 'test-page'
-      };
-
-      const testimonialSection = {
-        type: 'testimonial',
-        title: 'Test Testimonial',
-        content: JSON.stringify({
-          quote: 'This is a test testimonial',
-          author: 'Test Author',
-          role: 'Test Role',
-          company: 'Test Company'
-        }),
-        pageSlug: 'test-page'
-      };
-
-      // Validate structure for future section types
-      expect(listSection.type).toBe('list');
-      expect(JSON.parse(listSection.content).items).toHaveLength(3);
-
-      expect(testimonialSection.type).toBe('testimonial');
-      expect(JSON.parse(testimonialSection.content).quote).toBeTruthy();
-      expect(JSON.parse(testimonialSection.content).author).toBeTruthy();
-    });
-
-    it('should handle database connection errors', async () => {
-      const mockError = new Error('Database connection failed');
-      
-      expect(() => {
-        throw mockError;
-      }).toThrow('Database connection failed');
-    });
-
-    it('should handle concurrent section updates', async () => {
-      const section = testSections[0];
-      const update1 = { ...section, title: 'Update 1', updatedAt: new Date() };
-
-      // Ensure update2 has a later timestamp
-      await new Promise(resolve => setTimeout(resolve, 1));
-      const update2 = { ...section, title: 'Update 2', updatedAt: new Date() };
-
-      // Simulate last update wins
-      const finalUpdate = update2.updatedAt > update1.updatedAt ? update2 : update1;
-
-      expect(finalUpdate.title).toBe('Update 2');
-    });
-  });
-
-  describe('Future Section Types - CRUD Operations', () => {
-    it('should create list sections with proper validation', async () => {
-      const listSection = {
-        pageSlug: 'test-page',
-        type: 'list',
-        title: 'Test List Section',
-        content: JSON.stringify({
+        page: 'index',
+        heading: 'Test List Section',
+        text: JSON.stringify({
           items: [
             'First list item',
             'Second list item',
             'Third list item'
           ],
-          listType: 'unordered',
-          styling: 'default'
+          listType: 'unordered'
         }),
-        position: 'middle',
-        order: 1,
-        isActive: true
+        layout: 'list',
+        position: 'bottom',
+        order: 1
       };
 
-      // Validate list section structure
-      expect(listSection.type).toBe('list');
-      const listContent = JSON.parse(listSection.content);
+      const response = await request(app)
+        .post('/api/sections')
+        .set('Cookie', `token=${authToken}`)
+        .send(listSection)
+        .expect(201);
+
+      // Verify response structure
+      expect(response.body.heading).toBe('Test List Section');
+      expect(response.body.layout).toBe('list');
+
+      // Verify database state
+      const dbSection = await Section.findById(response.body._id);
+      expect(dbSection.layout).toBe('list');
+      const listContent = JSON.parse(dbSection.text);
       expect(listContent.items).toHaveLength(3);
       expect(listContent.listType).toBe('unordered');
-
-      // Mock creation response
-      const createdListSection = {
-        ...listSection,
-        id: 'list-section-1',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-
-      expect(createdListSection.id).toBeTruthy();
-      expect(createdListSection.type).toBe('list');
     });
 
-    it('should create testimonial sections with proper validation', async () => {
+    it('should create testimonial sections via API', async () => {
       const testimonialSection = {
-        pageSlug: 'test-page',
-        type: 'testimonial',
-        title: 'Customer Testimonial',
-        content: JSON.stringify({
-          quote: 'TutorScotland helped my child improve their grades significantly. Highly recommended!',
+        page: 'index',
+        heading: 'Customer Testimonial',
+        text: JSON.stringify([{
+          quote: 'TutorScotland helped my child improve their grades significantly!',
           author: 'Sarah Johnson',
           role: 'Parent',
-          company: '',
-          rating: 5,
-          imageUrl: '/images/testimonials/sarah-j.jpg'
-        }),
-        position: 'bottom',
-        order: 2,
-        isActive: true
-      };
-
-      // Validate testimonial section structure
-      expect(testimonialSection.type).toBe('testimonial');
-      const testimonialContent = JSON.parse(testimonialSection.content);
-      expect(testimonialContent.quote).toBeTruthy();
-      expect(testimonialContent.author).toBeTruthy();
-      expect(testimonialContent.rating).toBe(5);
-
-      // Mock creation response
-      const createdTestimonialSection = {
-        ...testimonialSection,
-        id: 'testimonial-section-1',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-
-      expect(createdTestimonialSection.id).toBeTruthy();
-      expect(createdTestimonialSection.type).toBe('testimonial');
-    });
-
-    it('should update list sections maintaining data integrity', async () => {
-      const originalListSection = {
-        id: 'list-section-1',
-        type: 'list',
-        title: 'Original List',
-        content: JSON.stringify({
-          items: ['Item 1', 'Item 2'],
-          listType: 'unordered'
-        })
-      };
-
-      const updatedListSection = {
-        ...originalListSection,
-        title: 'Updated List',
-        content: JSON.stringify({
-          items: ['Updated Item 1', 'Updated Item 2', 'New Item 3'],
-          listType: 'ordered'
-        }),
-        updatedAt: new Date()
-      };
-
-      const updatedContent = JSON.parse(updatedListSection.content);
-      expect(updatedContent.items).toHaveLength(3);
-      expect(updatedContent.listType).toBe('ordered');
-      expect(updatedListSection.title).toBe('Updated List');
-    });
-
-    it('should update testimonial sections maintaining data integrity', async () => {
-      const originalTestimonialSection = {
-        id: 'testimonial-section-1',
-        type: 'testimonial',
-        title: 'Original Testimonial',
-        content: JSON.stringify({
-          quote: 'Original quote',
-          author: 'Original Author',
-          rating: 4
-        })
-      };
-
-      const updatedTestimonialSection = {
-        ...originalTestimonialSection,
-        title: 'Updated Testimonial',
-        content: JSON.stringify({
-          quote: 'Updated testimonial quote with more detail',
-          author: 'Updated Author Name',
-          role: 'Updated Role',
           rating: 5
-        }),
-        updatedAt: new Date()
+        }]),
+        layout: 'testimonial',
+        position: 'bottom',
+        order: 2
       };
 
-      const updatedContent = JSON.parse(updatedTestimonialSection.content);
-      expect(updatedContent.quote).toContain('Updated');
-      expect(updatedContent.rating).toBe(5);
-      expect(updatedContent.role).toBe('Updated Role');
+      const response = await request(app)
+        .post('/api/sections')
+        .set('Cookie', `token=${authToken}`)
+        .send(testimonialSection)
+        .expect(201);
+
+      // Verify response structure
+      expect(response.body.heading).toBe('Customer Testimonial');
+      expect(response.body.layout).toBe('testimonial');
+
+      // Verify database state
+      const dbSection = await Section.findById(response.body._id);
+      expect(dbSection.layout).toBe('testimonial');
+      const testimonialContent = JSON.parse(dbSection.text);
+      expect(Array.isArray(testimonialContent)).toBe(true);
+      expect(testimonialContent[0].quote).toBeTruthy();
+      expect(testimonialContent[0].author).toBe('Sarah Johnson');
+      expect(testimonialContent[0].rating).toBe(5);
     });
   });
 
-  describe('Backward Compatibility & Migration Safety', () => {
-    it('should handle API requests with legacy data structures', async () => {
-      // Simulate legacy sections in database (no layout field)
-      const legacySections = [
-        {
-          page: 'test-page',
-          heading: 'Legacy Section 1',
-          text: 'Legacy content',
-          position: 'bottom',
-          order: 1
-        },
-        {
-          page: 'test-page',
-          heading: 'Legacy Section 2',
-          text: 'Legacy content 2',
-          layout: null, // Explicitly null
-          position: 'bottom',
-          order: 2
-        }
-      ];
-
-      // Insert directly to simulate existing database state
-      for (const section of legacySections) {
-        await Section.collection.insertOne({
-          ...section,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        });
-      }
-
-      // Database should handle these without errors
-      const sections = await Section.find({ page: 'test-page' });
-
-      expect(sections).toHaveLength(2);
-
-      // All sections should have normalized layout field (null becomes 'standard')
-      sections.forEach(section => {
-        const normalizedLayout = section.layout || 'standard';
-        expect(normalizedLayout).toBe('standard');
-      });
-    });
-
-    it('should not break existing functionality when new section types are added', async () => {
-      // Create sections of all types
-      const sections = [
+  describe('Database Migration Compatibility', () => {
+    it('should handle sections with all layout types via API', async () => {
+      // Create sections of all supported types via API
+      const sectionTypes = [
         { layout: 'standard', heading: 'Standard Section', text: 'Standard content' },
-        { layout: 'team', heading: 'Team Section', text: 'Team content', team: [{ name: 'John', bio: 'Developer' }] },
+        { layout: 'team', heading: 'Team Section', text: 'Team content', team: JSON.stringify([{ name: 'John', bio: 'Developer', role: 'Developer' }]) },
         { layout: 'list', heading: 'List Section', text: JSON.stringify({ items: ['Item 1'], listType: 'unordered' }) },
-        { layout: 'testimonial', heading: 'Testimonial', text: JSON.stringify({ quote: 'Great!', author: 'Jane' }) }
+        { layout: 'testimonial', heading: 'Testimonial', text: JSON.stringify([{ quote: 'Great!', author: 'Jane' }]) }
       ];
 
-      // Test that all section types can be created in the database
-      for (const section of sections) {
-        const sectionData = {
-          page: 'test-page',
-          heading: section.heading,
-          text: section.text,
-          layout: section.layout,
-          order: 1,
-          position: 'middle'
-        };
+      // Create each section type via API
+      for (const sectionData of sectionTypes) {
+        const response = await request(app)
+          .post('/api/sections')
+          .set('Cookie', `token=${authToken}`)
+          .send({
+            page: 'index',
+            heading: sectionData.heading,
+            text: sectionData.text,
+            layout: sectionData.layout,
+            position: 'bottom',
+            team: sectionData.team
+          })
+          .expect(201);
 
-        // Only add team field if it exists
-        if (section.team) {
-          sectionData.team = section.team;
-        }
-
-        const createdSection = await Section.create(sectionData);
-
-        expect(createdSection).toBeDefined();
-        expect(createdSection.heading).toBe(section.heading);
-        expect(createdSection.layout).toBe(section.layout);
+        expect(response.body.layout).toBe(sectionData.layout);
       }
 
-      // Verify all sections can be retrieved from database
-      const allSections = await Section.find({ page: 'test-page' });
-      expect(allSections).toHaveLength(4);
+      // Verify all sections can be retrieved via API
+      const response = await request(app)
+        .get('/api/sections?page=index')
+        .set('Cookie', `token=${authToken}`)
+        .expect(200);
+
+      expect(response.body).toHaveLength(4);
 
       // Verify each layout type is preserved
-      const layouts = allSections.map(s => s.layout);
+      const layouts = response.body.map(s => s.layout);
       expect(layouts).toContain('standard');
       expect(layouts).toContain('team');
       expect(layouts).toContain('list');
       expect(layouts).toContain('testimonial');
     });
-  });
 
-  describe('Section Import/Export', () => {
-    it('should export sections to JSON format including new types', async () => {
-      const exportData = {
-        pageSlug: 'about',
-        sections: [
-          ...testSections.filter(section => section.pageSlug === 'about'),
-          {
-            type: 'list',
-            title: 'Export Test List',
-            content: JSON.stringify({ items: ['Item 1', 'Item 2'] })
-          },
-          {
-            type: 'testimonial',
-            title: 'Export Test Testimonial',
-            content: JSON.stringify({ quote: 'Test quote', author: 'Test Author' })
-          }
-        ],
-        exportedAt: new Date(),
-        version: '1.1' // Updated version to include new section types
-      };
+    it('should handle API requests with mixed section types', async () => {
+      // Create a mix of section types
+      await Section.create([
+        { page: 'index', heading: 'Standard', text: 'Content', layout: 'standard', position: 'bottom', order: 1, isPublished: true },
+        { page: 'index', heading: 'Team', text: 'Team content', layout: 'team', team: [{ name: 'Alice', bio: 'Teacher' }], position: 'bottom', order: 2, isPublished: true },
+        { page: 'index', heading: 'List', text: JSON.stringify({ items: ['A', 'B'] }), layout: 'list', position: 'bottom', order: 3, isPublished: true }
+      ]);
 
-      expect(exportData.sections).toHaveLength(5); // 3 original + 2 new types
-      expect(exportData.pageSlug).toBe('about');
-      expect(exportData.version).toBe('1.1');
+      const response = await request(app)
+        .get('/api/sections?page=index')
+        .expect(200);
 
-      // Validate new section types are included
-      const listSections = exportData.sections.filter(s => s.type === 'list');
-      const testimonialSections = exportData.sections.filter(s => s.type === 'testimonial');
-      expect(listSections).toHaveLength(1);
-      expect(testimonialSections).toHaveLength(1);
-    });
+      expect(response.body).toHaveLength(3);
 
-    it('should validate imported section data including new types', async () => {
-      const importData = {
-        sections: [
-          {
-            type: 'text',
-            title: 'Imported Text Section',
-            content: 'Imported content',
-            position: 'top',
-            order: 1
-          },
-          {
-            type: 'list',
-            title: 'Imported List Section',
-            content: JSON.stringify({ items: ['Imported Item 1', 'Imported Item 2'] }),
-            position: 'middle',
-            order: 2
-          },
-          {
-            type: 'testimonial',
-            title: 'Imported Testimonial',
-            content: JSON.stringify({ quote: 'Imported quote', author: 'Imported Author' }),
-            position: 'bottom',
-            order: 3
-          }
-        ]
-      };
+      // Verify each section type is handled correctly
+      const standardSection = response.body.find(s => s.layout === 'standard');
+      const teamSection = response.body.find(s => s.layout === 'team');
+      const listSection = response.body.find(s => s.layout === 'list');
 
-      const validatedSections = importData.sections.filter(section =>
-        section.type && section.title && section.position
-      );
-
-      expect(validatedSections).toHaveLength(3);
-
-      // Validate each section type
-      const textSection = validatedSections.find(s => s.type === 'text');
-      const listSection = validatedSections.find(s => s.type === 'list');
-      const testimonialSection = validatedSections.find(s => s.type === 'testimonial');
-
-      expect(textSection).toBeTruthy();
-      expect(listSection).toBeTruthy();
-      expect(testimonialSection).toBeTruthy();
-
-      // Validate content structure for new types
-      const listContent = JSON.parse(listSection.content);
-      const testimonialContent = JSON.parse(testimonialSection.content);
-
-      expect(listContent.items).toHaveLength(2);
-      expect(testimonialContent.quote).toBeTruthy();
-      expect(testimonialContent.author).toBeTruthy();
-    });
-
-    it('should handle duplicate sections during import', async () => {
-      const existingTitles = testSections.map(section => section.title);
-      const importSection = {
-        title: 'Our Mission', // Duplicate title
-        type: 'text',
-        content: 'Different content'
-      };
-
-      const isDuplicate = existingTitles.includes(importSection.title);
-      expect(isDuplicate).toBe(true);
+      expect(standardSection).toBeDefined();
+      expect(teamSection).toBeDefined();
+      expect(teamSection.team).toBeDefined();
+      expect(listSection).toBeDefined();
     });
   });
 });

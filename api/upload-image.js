@@ -24,6 +24,7 @@ const { lookup } = require('mime-types');
 const { SecurityLogger } = require('../utils/security-logger');
 const { csrfProtection } = require('../utils/csrf-protection');
 const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
+const jwt = require('jsonwebtoken');
 
 // Google Cloud Storage for large video uploads (using tech team's recommended approach)
 let storage;
@@ -230,23 +231,28 @@ module.exports = async (req, res) => {
     applyComprehensiveSecurityHeaders(res, 'api');
 
     if (req.method === 'GET') {
-        // Diagnostic endpoint for debugging
-        return res.status(200).json({
-            message: 'Upload API is running',
-            maxFileSize: MAX_UPLOAD,
-            maxLargeVideoSize: MAX_LARGE_VIDEO_UPLOAD,
-            supportedTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm', 'video/quicktime'],
-            version: '2.0.0',
-            environment: {
-                nodeVersion: process.version,
-                platform: process.platform,
-                vercelRegion: process.env.VERCEL_REGION || 'unknown',
-                runtime: process.env.AWS_EXECUTION_ENV || 'local',
-                memoryUsage: process.memoryUsage()
-            },
-            activeUploads: activeUploads.size,
-            timestamp: new Date().toISOString()
-        });
+        // 🔒 SECURITY: Restrict diagnostic endpoint to authenticated admins only
+        try {
+            const token = req.cookies?.token;
+            if (!token) {
+                return res.status(401).json({ message: 'Authentication required' });
+            }
+
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            if (decoded.role !== 'admin') {
+                return res.status(403).json({ message: 'Admin access required' });
+            }
+
+            // Minimal diagnostic info for authenticated admins only
+            return res.status(200).json({
+                message: 'Upload API is running',
+                status: 'healthy',
+                version: '2.0.0',
+                timestamp: new Date().toISOString()
+            });
+        } catch (error) {
+            return res.status(401).json({ message: 'Invalid authentication' });
+        }
     }
 
     if (req.method !== 'POST') {

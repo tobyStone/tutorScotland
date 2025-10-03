@@ -16,17 +16,17 @@ const mongoose = require('mongoose');
 
 // Define team member sub-schema
 const teamMemberSchema = new mongoose.Schema({
-    name: { 
-        type: String, 
-        required: true 
+    name: {
+        type: String,
+        required: true
     },
-    bio: { 
-        type: String, 
-        required: true 
+    bio: {
+        type: String,
+        required: true
     },
-    quote: { 
-        type: String, 
-        default: '' 
+    quote: {
+        type: String,
+        default: ''
     },
     image: String
 }, { _id: false });

@@ -573,18 +573,26 @@ module.exports = async (req, res) => {
                 // Validate and sanitize text content based on layout
                 let sanitizedText = '';
                 if (['team', 'list', 'testimonial'].includes(layout)) {
-                    // Special layouts have JSON text content - validate structure but allow HTML in content
+                    // Special layouts have JSON text content - bypass HTML encoding for JSON
                     if (text) {
-                        const textValidation = validateText(text, {
-                            required: false,
-                            maxLength: 50000, // Larger limit for JSON content
-                            allowHTML: true, // Allow HTML in JSON content but will be sanitized later
-                            fieldName: 'text'
-                        });
-                        if (!textValidation.valid) {
-                            return res.status(400).json({ message: textValidation.error });
+                        // For JSON content, only validate length and basic structure, no HTML encoding
+                        if (typeof text !== 'string') {
+                            return res.status(400).json({ message: 'Text content must be a string' });
                         }
-                        sanitizedText = textValidation.sanitized;
+
+                        const trimmedText = text.trim();
+                        if (trimmedText.length > 50000) {
+                            return res.status(400).json({ message: 'Text content is too long (max 50000 characters)' });
+                        }
+
+                        // Validate JSON structure without modifying the content
+                        try {
+                            JSON.parse(trimmedText);
+                        } catch (e) {
+                            return res.status(400).json({ message: 'Invalid JSON format in text content: ' + e.message });
+                        }
+
+                        sanitizedText = trimmedText; // Use original JSON without HTML encoding
                     }
                 } else {
                     // Standard layout - validate text content
