@@ -98,15 +98,48 @@ function validateBlogData(blogData) {
     }
 
     if (blogData.tags) {
-        const tagsValidation = validateText(blogData.tags, {
-            maxLength: 200,
-            fieldName: 'tags'
-        });
-        if (!tagsValidation.valid) {
-            errors.push(tagsValidation.error);
+        // Handle both string and array formats for tags
+        let tagsToProcess = blogData.tags;
+        let normalizedTags = [];
+
+        if (Array.isArray(tagsToProcess)) {
+            // If it's already an array, validate each tag
+            for (const tag of tagsToProcess) {
+                if (tag && typeof tag === 'string') {
+                    const tagValidation = validateText(tag.trim(), {
+                        maxLength: 50,
+                        fieldName: 'tag'
+                    });
+                    if (!tagValidation.valid) {
+                        errors.push(tagValidation.error);
+                    } else if (tagValidation.sanitized) {
+                        normalizedTags.push(tagValidation.sanitized);
+                    }
+                }
+            }
+        } else if (typeof tagsToProcess === 'string') {
+            // If it's a string, split by comma and validate each tag
+            const tagArray = tagsToProcess.split(',').map(tag => tag.trim()).filter(tag => tag);
+            for (const tag of tagArray) {
+                const tagValidation = validateText(tag, {
+                    maxLength: 50,
+                    fieldName: 'tag'
+                });
+                if (!tagValidation.valid) {
+                    errors.push(tagValidation.error);
+                } else if (tagValidation.sanitized) {
+                    normalizedTags.push(tagValidation.sanitized);
+                }
+            }
         } else {
-            sanitized.tags = tagsValidation.sanitized;
+            errors.push('tags must be a string or array');
         }
+
+        // Store normalized array, defaulting to empty array
+        sanitized.tags = normalizedTags;
+    } else {
+        // Default to empty array when no tags provided
+        sanitized.tags = [];
     }
 
     if (blogData.imagePath) {

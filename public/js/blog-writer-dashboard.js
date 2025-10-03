@@ -12,7 +12,7 @@ let allBlogs = [];
 let createTabBtn, manageTabBtn, newBlogSection, manageBlogSection;
 let blogForm, formHeading, submitBtn, cancelEditBtn, currentImagePreview, removeImageCheckbox;
 let titleField, authorField, slugField, categoryField, statusField, excerptField;
-let metaDescriptionField, focusKeywordField, tagsField, featuredField, publishDateField;
+let metaDescriptionField, focusKeywordField, tagsField, publishDateField;
 let contentField, imageField, blogMicrodata;
 
 /**
@@ -63,7 +63,7 @@ function initDOMElements() {
     metaDescriptionField = document.getElementById('metaDescriptionField');
     focusKeywordField = document.getElementById('focusKeywordField');
     tagsField = document.getElementById('tagsField');
-    featuredField = document.getElementById('featuredField');
+
     publishDateField = document.getElementById('publishDateField');
     contentField = document.getElementById('contentField');
     imageField = document.getElementById('imageField');
@@ -258,7 +258,6 @@ function populateBlogForm(blog) {
     }
 
     // Publishing Options
-    featuredField.checked = blog.featured === true;
     statusField.value = blog.status || 'published';
 
     // Update character counters after populating fields
@@ -461,7 +460,7 @@ async function handleFormSubmission(e) {
     const metaDescription = metaDescriptionField.value.trim();
     const focusKeyword = focusKeywordField.value.trim();
     const tags = tagsField.value.trim();
-    const featured = featuredField.checked;
+
     const publishDate = publishDateField.value;
     const content = contentField.value.trim();
 
@@ -497,7 +496,6 @@ async function handleFormSubmission(e) {
         metaDescription,
         focusKeyword,
         tags: tags ? tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [],
-        featured,
         publishDate,
         content,
         imagePath: uploadedImagePath || '',
