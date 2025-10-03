@@ -361,9 +361,13 @@ class VisualEditor {
 
     async handleRestore() {
         console.log('🔄 Restoring original content');
-        const { selector } = editorState.activeEditor;
-        const result = await overrideEngine.restore(selector);
-        this.uiManager.showNotification(result.success ? 'Restored!' : 'Restore failed', result.success ? 'success' : 'error');
+        const result = await overrideEngine.restore();
+
+        // ✅ IDEMPOTENT FIX: Use improved messaging from the restore result
+        const message = result?.message || (result?.success ? 'Restored!' : 'Restore failed');
+        const type = result?.success ? 'success' : 'error';
+
+        this.uiManager.showNotification(message, type);
         if (result.success) editorState.setActiveEditor(null);
     }
 
@@ -431,7 +435,12 @@ class VisualEditor {
 
     async handleRestore() {
         const result = await overrideEngine.restore();
-        this.uiManager.showNotification(result?.success ? 'Restored' : 'Failed', result?.success ? 'success' : 'error');
+
+        // ✅ IDEMPOTENT FIX: Use improved messaging from the restore result
+        const message = result?.message || (result?.success ? 'Restored' : 'Failed');
+        const type = result?.success ? 'success' : 'error';
+
+        this.uiManager.showNotification(message, type);
         editorState.setActiveEditor(null);
         if (result?.reload) location.reload();
     }

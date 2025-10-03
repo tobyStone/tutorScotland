@@ -477,11 +477,20 @@ async function handleDeleteOverride(req, res) {
 
         const deleted = await Section.findByIdAndDelete(id);
         if (!deleted) {
-            return res.status(404).json({ message: 'Override not found' });
+            // ✅ IDEMPOTENT FIX: Return success for already-deleted overrides
+            console.log('Override not found (already deleted):', id);
+            return res.status(200).json({
+                message: 'Override already deleted or not found',
+                alreadyDeleted: true
+            });
         }
 
         console.log('Successfully deleted override:', deleted.targetSelector);
-        return res.status(204).end();
+        return res.status(200).json({
+            message: 'Override deleted successfully',
+            deleted: true,
+            targetSelector: deleted.targetSelector
+        });
     } catch (error) {
         console.error('Delete Override Error:', error);
         return res.status(500).json({ message: 'Error deleting override' });

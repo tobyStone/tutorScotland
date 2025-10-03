@@ -558,16 +558,26 @@ export class OverrideEngine {
         const ov = this.findOverrideForElement(element);
         if (ov && ov._id) {
             try {
-                await apiService.deleteOverride(ov._id);
+                const result = await apiService.deleteOverride(ov._id);
+
+                // ✅ IDEMPOTENT FIX: Always clean up local state and restore content
                 this.overrides.delete(ov.targetSelector);
-                return { success: true, reload: true };
+                this.restoreElementContent(element, type, original);
+
+                // Return success with appropriate message
+                return {
+                    success: true,
+                    reload: true,
+                    message: result.alreadyDeleted ? 'Already restored' : 'Restored successfully'
+                };
             } catch (e) {
                 console.error('Restore failed', e);
-                return { success: false };
+                return { success: false, message: 'Restore failed' };
             }
         } else {
+            // No override exists, just restore element content
             this.restoreElementContent(element, type, original);
-            return { success: true, reload: false };
+            return { success: true, reload: false, message: 'Restored to original' };
         }
     }
 

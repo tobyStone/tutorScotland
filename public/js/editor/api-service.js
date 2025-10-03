@@ -57,8 +57,28 @@ class ApiService {
             method: 'DELETE',
             credentials: 'include' // ✅ SECURITY FIX: Include cookies for authentication
         });
-        if (!r.ok) throw new Error('Failed to delete override');
-        return true;
+
+        // ✅ IDEMPOTENT FIX: Handle both success and "already deleted" cases
+        if (r.ok) {
+            const result = await r.json();
+            return {
+                success: true,
+                alreadyDeleted: result.alreadyDeleted || false,
+                message: result.message
+            };
+        }
+
+        // Only throw for actual server errors, not 404s
+        if (r.status === 404) {
+            // Treat 404 as successful no-op for idempotency
+            return {
+                success: true,
+                alreadyDeleted: true,
+                message: 'Override already deleted'
+            };
+        }
+
+        throw new Error(`Failed to delete override: ${r.status} ${r.statusText}`);
     }
 
     async loadImages({ page, search, sort }) {
