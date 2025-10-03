@@ -397,6 +397,34 @@ describe('Dynamic Sections API Integration Tests (Real API)', () => {
       const dbSection = await Section.findById(response.body._id);
       expect(dbSection.team[0].name).toBe('John Doe');
     });
+
+    it('should accept placeholder text from admin dashboard', async () => {
+      // Test the exact scenario from admin dashboard where text is "Team members section"
+      const response = await request(app)
+        .post('/api/sections')
+        .set('Cookie', `token=${authToken}`)
+        .send({
+          page: 'index',
+          heading: 'Our Team',
+          text: 'Team members section', // This is what admin dashboard sends
+          layout: 'team',
+          position: 'bottom',
+          team: JSON.stringify([
+            {
+              name: 'Jane Smith',
+              bio: 'English Tutor',
+              quote: 'Words have power!'
+            }
+          ])
+        })
+        .expect(201);
+
+      expect(response.body.layout).toBe('team');
+      expect(response.body.text).toBe('Team members section');
+      expect(response.body.team).toHaveLength(1);
+      expect(response.body.team[0].name).toBe('Jane Smith');
+      expect(response.body.team[0].bio).toBe('English Tutor');
+    });
   });
 
   describe('Content Validation and Security', () => {

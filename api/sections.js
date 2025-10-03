@@ -572,8 +572,23 @@ module.exports = async (req, res) => {
 
                 // Validate and sanitize text content based on layout
                 let sanitizedText = '';
-                if (['team', 'list', 'testimonial'].includes(layout)) {
-                    // Special layouts have JSON text content - bypass HTML encoding for JSON
+                if (layout === 'team') {
+                    // Team sections use placeholder text and store data in the 'team' field
+                    // Allow empty string or placeholder text like "Team members section"
+                    if (text) {
+                        if (typeof text !== 'string') {
+                            return res.status(400).json({ message: 'Text content must be a string' });
+                        }
+                        const trimmedText = text.trim();
+                        if (trimmedText.length > 500) { // Reasonable limit for placeholder text
+                            return res.status(400).json({ message: 'Text content is too long for team sections (max 500 characters)' });
+                        }
+                        sanitizedText = trimmedText;
+                    } else {
+                        sanitizedText = ''; // Default to empty string for team sections
+                    }
+                } else if (['list', 'testimonial'].includes(layout)) {
+                    // List and testimonial layouts have JSON text content - bypass HTML encoding for JSON
                     if (text) {
                         // For JSON content, only validate length and basic structure, no HTML encoding
                         if (typeof text !== 'string') {
