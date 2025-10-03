@@ -278,6 +278,19 @@ function initSectionManagement() {
             // Hide standard fields for rolling banner
             if (standardFields) standardFields.style.display = 'none';
 
+            // Hide all layout-specific builder fields for rolling banner
+            const teamBuilder = document.getElementById('teamBuilder');
+            const listBuilder = document.getElementById('listBuilder');
+            const testimonialBuilder = document.getElementById('testimonialBuilder');
+            const videoBuilder = document.getElementById('videoBuilder');
+            const standardOnlyFields = document.getElementById('standardOnlyFields');
+
+            if (teamBuilder) teamBuilder.style.display = 'none';
+            if (listBuilder) listBuilder.style.display = 'none';
+            if (testimonialBuilder) testimonialBuilder.style.display = 'none';
+            if (videoBuilder) videoBuilder.style.display = 'none';
+            if (standardOnlyFields) standardOnlyFields.style.display = 'none';
+
             // Hide move page controls for rolling banner (matching historical commit)
             const movePageRow = document.getElementById('movePageRow');
             if (movePageRow) movePageRow.style.display = 'none';
