@@ -10,8 +10,38 @@ import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import { createServer } from 'http';
 import createVercelCompatibleResponse from '../../utils/createVercelCompatibleResponse.js';
-import * as csrfModule from '../../../utils/csrf-protection.js';
-import * as securityModule from '../../../utils/security-headers.js';
+
+// ✅ CRITICAL FIX: Use vi.hoisted to ensure mocks are set up before any imports
+const { mockCsrfProtection, mockApplySecurityHeaders } = vi.hoisted(() => {
+  const mockCsrfProtection = vi.fn((req, res, next) => {
+    // Always call the mock - don't bypass for test environment
+    console.log(`🔧 Mock CSRF protection called for ${req.method} ${req.url}`);
+    next();
+  });
+  const mockApplySecurityHeaders = vi.fn((req, res, next) => {
+    console.log(`🔧 Mock security headers called for ${req.method} ${req.url}`);
+    next();
+  });
+  return { mockCsrfProtection, mockApplySecurityHeaders };
+});
+
+// Mock CommonJS modules (the handler uses require())
+vi.mock('../../../utils/csrf-protection.js', () => ({
+  csrfProtection: mockCsrfProtection
+}));
+
+vi.mock('../../../utils/security-headers.js', () => ({
+  applyComprehensiveSecurityHeaders: mockApplySecurityHeaders
+}));
+
+// Also mock the CommonJS require path
+vi.mock('../../../utils/csrf-protection', () => ({
+  csrfProtection: mockCsrfProtection
+}));
+
+vi.mock('../../../utils/security-headers', () => ({
+  applyComprehensiveSecurityHeaders: mockApplySecurityHeaders
+}));
 
 // Note: We focus on functional testing rather than mocking implementation details
 // The security functions are tested by verifying their actual effects (headers, behavior)
@@ -20,8 +50,6 @@ describe('Video Sections API Security Integration Tests', () => {
   let mongoServer;
   let app;
   let adminToken;
-  let mockCsrfProtection;
-  let mockApplySecurityHeaders;
   let videoSectionsHandler;
 
   beforeAll(async () => {
@@ -36,11 +64,7 @@ describe('Video Sections API Security Integration Tests', () => {
     await mongoose.connect(mongoUri);
     console.log('Test database connected successfully');
 
-    // Set up spies for security functions BEFORE importing handler
-    mockCsrfProtection = vi.spyOn(csrfModule, 'csrfProtection');
-    mockApplySecurityHeaders = vi.spyOn(securityModule, 'applyComprehensiveSecurityHeaders');
-
-    // Import handler AFTER setting up spies
+    // Import handler AFTER mocks are set up
     const videoSectionsModule = await import('../../../api/video-sections.js');
     videoSectionsHandler = videoSectionsModule.default;
 
@@ -64,6 +88,11 @@ describe('Video Sections API Security Integration Tests', () => {
   afterAll(async () => {
     await mongoose.connection.close();
     await mongoServer.stop();
+
+    // Restore test environment
+    process.env.NODE_ENV = 'test';
+    process.env.VITEST = 'true';
+
     console.log('Test database torn down successfully');
   });
 
@@ -71,9 +100,18 @@ describe('Video Sections API Security Integration Tests', () => {
     // Clear database before each test
     await mongoose.connection.db.dropDatabase();
 
-    // Reset spies between tests
+    // Reset mocks between tests and restore default pass-through behavior
     mockCsrfProtection.mockClear();
     mockApplySecurityHeaders.mockClear();
+
+    // Restore default pass-through implementations
+    mockCsrfProtection.mockImplementation((req, res, next) => next());
+    mockApplySecurityHeaders.mockImplementation((req, res, next) => next());
+
+    // Temporarily disable test environment bypass for security tests
+    process.env.NODE_ENV = 'production';
+    delete process.env.VITEST;
+    delete process.env.CI;
   });
 
   describe('Security Headers', () => {
