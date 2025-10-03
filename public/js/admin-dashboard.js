@@ -498,7 +498,9 @@ function initSectionManagement() {
                 imageCell.style.fontStyle = 'italic';
                 imageCell.style.color = '#999';
             } else {
-                imageCell.textContent = section.imagePath ? '✅' : '❌';
+                // Check both image and imagePath fields for backward compatibility
+                const hasImage = section.image || section.imagePath;
+                imageCell.textContent = hasImage ? '✅' : '❌';
             }
             row.appendChild(imageCell);
 
@@ -589,10 +591,17 @@ function initSectionManagement() {
             // Handle different layout types with special processing
             if (!isRollingBanner) {
                 if (layout === 'team') {
+                    // Check if any team member images are still uploading
+                    const uploadingElements = document.querySelectorAll('.team-member-form[data-uploading="true"]');
+                    if (uploadingElements.length > 0) {
+                        alert('Please wait for team member image uploads to complete before saving.');
+                        return;
+                    }
+
                     // Ensure team data is current
                     const teamDataElement = document.getElementById('teamData');
                     if (teamDataElement) {
-                        // Trigger update to make sure data is current
+                        // Trigger update to make sure data is current and capture latest image URLs
                         if (typeof updateTeamData === 'function') {
                             updateTeamData();
                         }
@@ -611,6 +620,7 @@ function initSectionManagement() {
                         formData.delete('image');
 
                         console.log('[Admin Dashboard] Processing team section with', JSON.parse(teamDataValue).length, 'members');
+                        console.log('[Admin Dashboard] Team data being submitted:', teamDataValue);
                     }
                 } else if (layout === 'list') {
                     // Ensure list data is current
@@ -969,10 +979,11 @@ function initSectionManagement() {
         if (buttonUrlField) buttonUrlField.value = section.buttonUrl || '';
 
         // Show current image if exists
-        if (section.imagePath && currentImagePreview) {
+        const imageUrl = section.image || section.imagePath; // Check both fields for backward compatibility
+        if (imageUrl && currentImagePreview) {
             currentImagePreview.style.display = 'block';
             const img = currentImagePreview.querySelector('img');
-            if (img) img.src = section.imagePath;
+            if (img) img.src = imageUrl;
         }
 
         // Show remove button option if button exists
@@ -1908,6 +1919,9 @@ function initAdvancedSectionBuilders() {
 
         console.log('[Admin Dashboard] Team data updated:', teamMembers);
     }
+
+    // Expose updateTeamData globally for form submission handler
+    window.updateTeamData = updateTeamData;
 
     /**
      * Populate team builder with existing data (for editing)
