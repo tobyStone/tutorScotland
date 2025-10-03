@@ -76,7 +76,7 @@ describe('Pre-Authentication Exposure Security', () => {
             expect(blogWriterHtml).not.toContain('blogForm');
             expect(blogWriterHtml).not.toContain('blogTitle');
             expect(blogWriterHtml).not.toContain('blogContent');
-            expect(blogWriterHtml).not.toContain('Blog Management');
+            expect(blogWriterHtml).not.toContain('Manage Blogs');
             expect(blogWriterHtml).not.toContain('Existing Blogs');
         });
 
@@ -170,7 +170,7 @@ describe('Pre-Authentication Exposure Security', () => {
             expect(blogWriterHtml).not.toContain('blogForm');
             expect(blogWriterHtml).not.toContain('blogTitle');
             expect(blogWriterHtml).not.toContain('blogContent');
-            expect(blogWriterHtml).not.toContain('Blog Management');
+            expect(blogWriterHtml).not.toContain('Manage Blogs');
             expect(blogWriterHtml).not.toContain('Existing Blogs');
         });
 
@@ -216,7 +216,7 @@ describe('Pre-Authentication Exposure Security', () => {
             if (blogTemplateExists) {
                 const blogTemplate = await fs.readFile(blogTemplatePath, 'utf8');
                 expect(blogTemplate).toContain('blog-writer-dashboard');
-                expect(blogTemplate).toContain('Blog Management');
+                expect(blogTemplate).toContain('Manage Blogs'); // Updated to match current template
             }
 
             if (tutorTemplateExists) {

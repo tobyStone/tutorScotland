@@ -10,9 +10,8 @@ import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import { createServer } from 'http';
 import createVercelCompatibleResponse from '../../utils/createVercelCompatibleResponse.js';
-import videoSectionsHandler from '../../../api/video-sections.js';
-import { csrfProtection } from '../../../utils/csrf-protection.js';
-import { applyComprehensiveSecurityHeaders } from '../../../utils/security-headers.js';
+import * as csrfModule from '../../../utils/csrf-protection.js';
+import * as securityModule from '../../../utils/security-headers.js';
 
 // Note: We focus on functional testing rather than mocking implementation details
 // The security functions are tested by verifying their actual effects (headers, behavior)
@@ -23,6 +22,7 @@ describe('Video Sections API Security Integration Tests', () => {
   let adminToken;
   let mockCsrfProtection;
   let mockApplySecurityHeaders;
+  let videoSectionsHandler;
 
   beforeAll(async () => {
     // Start in-memory MongoDB
@@ -36,9 +36,13 @@ describe('Video Sections API Security Integration Tests', () => {
     await mongoose.connect(mongoUri);
     console.log('Test database connected successfully');
 
-    // Set up spies for security functions
-    mockCsrfProtection = vi.spyOn({ csrfProtection }, 'csrfProtection');
-    mockApplySecurityHeaders = vi.spyOn({ applyComprehensiveSecurityHeaders }, 'applyComprehensiveSecurityHeaders');
+    // Set up spies for security functions BEFORE importing handler
+    mockCsrfProtection = vi.spyOn(csrfModule, 'csrfProtection');
+    mockApplySecurityHeaders = vi.spyOn(securityModule, 'applyComprehensiveSecurityHeaders');
+
+    // Import handler AFTER setting up spies
+    const videoSectionsModule = await import('../../../api/video-sections.js');
+    videoSectionsHandler = videoSectionsModule.default;
 
     // Create HTTP server with video-sections handler
     app = createServer((req, res) => {
@@ -66,6 +70,10 @@ describe('Video Sections API Security Integration Tests', () => {
   beforeEach(async () => {
     // Clear database before each test
     await mongoose.connection.db.dropDatabase();
+
+    // Reset spies between tests
+    mockCsrfProtection.mockClear();
+    mockApplySecurityHeaders.mockClear();
   });
 
   describe('Security Headers', () => {

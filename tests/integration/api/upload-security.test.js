@@ -16,10 +16,14 @@ process.env.NODE_ENV = 'test';
 // Import API handler
 import uploadHandler from '../../../api/upload-image.js';
 import { createServer } from 'http';
+import createVercelCompatibleResponse from '../../utils/createVercelCompatibleResponse.js';
 
 // Create test server that mimics Vercel's serverless function behavior
 const createTestApp = () => {
   return createServer((req, res) => {
+    // ✅ CRITICAL FIX: Add Vercel-style response helpers
+    createVercelCompatibleResponse(res);
+
     // Parse cookies from Cookie header
     const cookieHeader = req.headers.cookie;
     req.cookies = {};
