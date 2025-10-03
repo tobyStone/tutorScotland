@@ -76,6 +76,14 @@ describe('Login Race Condition Security Tests', () => {
   });
 
   beforeEach(async () => {
+    // Recreate test user after global database cleanup
+    testUser = await User.create({
+      name: 'Test User',
+      email: 'racetest@security-test.com',
+      password: await bcrypt.hash('correctpassword', 10),
+      role: 'admin'
+    });
+
     // Wait between tests to avoid rate limiting interference
     await new Promise(resolve => setTimeout(resolve, 1000));
   });

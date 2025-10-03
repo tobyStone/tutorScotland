@@ -74,10 +74,10 @@ describe('Upload API Security Integration Tests', () => {
     });
 
     regularUser = await User.create({
-      name: 'Regular User', 
+      name: 'Regular User',
       email: 'user@test.com',
       password: await bcrypt.hash('testpassword', 10),
-      role: 'user'
+      role: 'parent'
     });
 
     // Generate tokens

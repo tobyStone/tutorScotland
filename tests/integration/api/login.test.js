@@ -387,7 +387,7 @@ describe('Login API Integration (ENABLED - Fixed for vitest 2.1)', () => {
 
       const cookieHeader = response.headers['set-cookie'][0];
       expect(cookieHeader).toContain('HttpOnly');
-      expect(cookieHeader).toContain('SameSite=Strict');
+      expect(cookieHeader).toContain('SameSite=Lax'); // Production uses Lax for better compatibility
       // Note: Secure flag only set in production environment
       if (process.env.NODE_ENV === 'production') {
         expect(cookieHeader).toContain('Secure');

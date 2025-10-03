@@ -806,6 +806,20 @@ module.exports = async (req, res) => {
                                 member.name = nameValidation.sanitized;
                                 member.bio = bioValidation.sanitized;
 
+                                // Validate role if present
+                                if (member.role) {
+                                    const roleValidation = validateText(member.role, {
+                                        required: false,
+                                        maxLength: 100,
+                                        allowHTML: false,
+                                        fieldName: 'team member role'
+                                    });
+                                    if (!roleValidation.valid) {
+                                        return res.status(400).json({ message: roleValidation.error });
+                                    }
+                                    member.role = roleValidation.sanitized;
+                                }
+
                                 // Validate quote if present
                                 if (member.quote) {
                                     const quoteValidation = validateText(member.quote, {

@@ -24,6 +24,10 @@ const teamMemberSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    role: {
+        type: String,
+        default: ''
+    },
     quote: {
         type: String,
         default: ''

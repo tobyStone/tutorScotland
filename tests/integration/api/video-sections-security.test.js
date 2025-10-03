@@ -11,6 +11,8 @@ import jwt from 'jsonwebtoken';
 import { createServer } from 'http';
 import createVercelCompatibleResponse from '../../utils/createVercelCompatibleResponse.js';
 import videoSectionsHandler from '../../../api/video-sections.js';
+import { csrfProtection } from '../../../utils/csrf-protection.js';
+import { applyComprehensiveSecurityHeaders } from '../../../utils/security-headers.js';
 
 // Note: We focus on functional testing rather than mocking implementation details
 // The security functions are tested by verifying their actual effects (headers, behavior)
@@ -19,6 +21,8 @@ describe('Video Sections API Security Integration Tests', () => {
   let mongoServer;
   let app;
   let adminToken;
+  let mockCsrfProtection;
+  let mockApplySecurityHeaders;
 
   beforeAll(async () => {
     // Start in-memory MongoDB
@@ -32,28 +36,17 @@ describe('Video Sections API Security Integration Tests', () => {
     await mongoose.connect(mongoUri);
     console.log('Test database connected successfully');
 
+    // Set up spies for security functions
+    mockCsrfProtection = vi.spyOn({ csrfProtection }, 'csrfProtection');
+    mockApplySecurityHeaders = vi.spyOn({ applyComprehensiveSecurityHeaders }, 'applyComprehensiveSecurityHeaders');
+
     // Create HTTP server with video-sections handler
     app = createServer((req, res) => {
       // ✅ SECURITY FIX: Use shared response helper with proper charset handling
       createVercelCompatibleResponse(res);
 
-      // Parse request body for POST/PUT/DELETE requests
-      if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
-        let body = '';
-        req.on('data', chunk => {
-          body += chunk.toString();
-        });
-        req.on('end', () => {
-          try {
-            req.body = JSON.parse(body);
-          } catch (e) {
-            req.body = {};
-          }
-          videoSectionsHandler(req, res);
-        });
-      } else {
-        videoSectionsHandler(req, res);
-      }
+      // Don't pre-parse body - let formidable handle multipart data
+      videoSectionsHandler(req, res);
     });
 
     // Generate admin JWT token for testing

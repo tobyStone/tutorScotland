@@ -321,9 +321,12 @@ module.exports = async (req, res) => {
         if (req.method === 'GET') {
             console.log('Processing GET request');
 
+            // Guard against missing req.query
+            const query = req.query ?? {};
+
             // Check if a specific blog ID is requested
-            if (req.query.id) {
-                const blogId = req.query.id;
+            if (query.id) {
+                const blogId = query.id;
                 console.log(`Fetching blog with ID: ${blogId}`);
 
                 try {
@@ -342,7 +345,7 @@ module.exports = async (req, res) => {
             }
 
             // Check if migration is requested
-            if (req.query.migrate === 'true') {
+            if (query.migrate === 'true') {
                 console.log('Running migration to add default values to existing blogs');
                 try {
                     const blogsToUpdate = await Blog.find({
@@ -425,12 +428,15 @@ module.exports = async (req, res) => {
         if (req.method === 'DELETE') {
             console.log('Processing DELETE request');
 
+            // Guard against missing req.query
+            const query = req.query ?? {};
+
             // Check if blog ID is provided
-            if (!req.query.id) {
+            if (!query.id) {
                 return res.status(400).json({ message: 'Blog ID is required for deletion' });
             }
 
-            const blogId = req.query.id;
+            const blogId = query.id;
             console.log(`Attempting to delete blog with ID: ${blogId}`);
 
             try {
