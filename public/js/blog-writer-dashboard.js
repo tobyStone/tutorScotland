@@ -7,6 +7,7 @@ import { uploadImage } from '/js/upload-helper.js';
 
 // Global variables
 let allBlogs = [];
+let handlersInitialized = false;
 
 // DOM element references
 let createTabBtn, manageTabBtn, newBlogSection, manageBlogSection;
@@ -140,13 +141,22 @@ function initSlugGeneration() {
  * Initialize form handlers
  */
 function initFormHandlers() {
+    // Prevent duplicate handler initialization
+    if (handlersInitialized) {
+        console.log('[Blog Writer] Form handlers already initialized, skipping');
+        return;
+    }
+
     // Cancel edit button
     cancelEditBtn.addEventListener('click', () => {
         resetBlogForm();
     });
-    
+
     // Form submission
     blogForm.addEventListener('submit', handleFormSubmission);
+
+    handlersInitialized = true;
+    console.log('[Blog Writer] Form handlers initialized');
 }
 
 /**
@@ -448,6 +458,12 @@ async function handleBlogListActions(e) {
 async function handleFormSubmission(e) {
     e.preventDefault();
 
+    // Prevent double submission
+    if (submitBtn.disabled) {
+        console.log('[Blog Writer] Form submission already in progress, ignoring duplicate request');
+        return;
+    }
+
     const isEditing = !!blogForm.dataset.editId;
     const blogId = blogForm.dataset.editId;
 
@@ -470,6 +486,11 @@ async function handleFormSubmission(e) {
         return;
     }
 
+    // Disable submit button and show loading state
+    submitBtn.disabled = true;
+    const originalButtonText = submitBtn.textContent;
+    submitBtn.textContent = isEditing ? 'Updating...' : 'Creating...';
+
     /* Handle image upload */
     let uploadedImagePath = '';
     if (imageField.files[0]) {
@@ -477,6 +498,9 @@ async function handleFormSubmission(e) {
             uploadedImagePath = await uploadImage(imageField.files[0], 'blog');
         }
         catch (err) {
+            // Re-enable submit button on error
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalButtonText;
             return alert('Upload failed: ' + err.message);
         }
     }
@@ -542,7 +566,12 @@ async function handleFormSubmission(e) {
         }
 
         const result = await response.json();
-        alert(`Blog ${isEditing ? 'updated' : 'created'} successfully!`);
+
+        if (result.duplicate) {
+            alert('Blog post already exists (duplicate submission prevented). Showing existing post.');
+        } else {
+            alert(`Blog ${isEditing ? 'updated' : 'created'} successfully!`);
+        }
 
         resetBlogForm();
         loadBlogs(document.getElementById('blogCategoryFilter').value); // Refresh list
@@ -551,6 +580,10 @@ async function handleFormSubmission(e) {
     } catch (error) {
         console.error('[Blog Writer] Submit error:', error);
         alert('Error: ' + error.message);
+    } finally {
+        // Always re-enable submit button and restore text
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalButtonText;
     }
 }
 

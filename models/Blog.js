@@ -99,4 +99,7 @@ const blogSchema = new mongoose.Schema({
     },
 });
 
+// Add compound index to prevent duplicate submissions
+blogSchema.index({ title: 1, author: 1, createdAt: 1 });
+
 module.exports = mongoose.models.Blog || mongoose.model('Blog', blogSchema);

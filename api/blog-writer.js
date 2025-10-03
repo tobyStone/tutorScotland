@@ -595,6 +595,23 @@ module.exports = async (req, res) => {
             categoryArray = ['parent', 'tutor'];
         }
 
+        // Check for recent duplicate submissions (within last 30 seconds)
+        const thirtySecondsAgo = new Date(Date.now() - 30000);
+        const recentDuplicate = await Blog.findOne({
+            title: title,
+            author: author || 'Tutors Alliance Scotland',
+            createdAt: { $gte: thirtySecondsAgo }
+        });
+
+        if (recentDuplicate) {
+            console.log('Duplicate blog submission detected, returning existing blog:', recentDuplicate._id);
+            return res.status(200).json({
+                message: "Blog post already exists (duplicate submission prevented)",
+                blog: recentDuplicate,
+                duplicate: true
+            });
+        }
+
         // Create new Blog post
         console.log('Creating new blog post with data:', {
             title,
