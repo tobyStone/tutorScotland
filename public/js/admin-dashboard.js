@@ -184,6 +184,7 @@ function initSectionManagement() {
     const showInNav = document.getElementById('showInNav');
     const navCatRow = document.getElementById('navCatRow');
     const sectionLayout = document.getElementById('sectionLayout');
+    const sectionPosition = document.getElementById('sectionPosition');
 
     // Store all sections for editing
     let allSections = [];
@@ -193,6 +194,9 @@ function initSectionManagement() {
         const currentPage = pageSelect.value; // Remember current page
         sectionForm.reset(); // Native reset (clears all fields including selects)
         pageSelect.value = currentPage; // Restore page selection
+
+        // Set default position to bottom
+        if (sectionPosition) sectionPosition.value = 'bottom';
 
         delete sectionForm.dataset.editId;
         sectionFormHeading.textContent = 'Add a Dynamic Section';
@@ -278,6 +282,12 @@ function initSectionManagement() {
             const movePageRow = document.getElementById('movePageRow');
             if (movePageRow) movePageRow.style.display = 'none';
 
+            // Hide position selector for rolling banner (they always go to rolling-banner page)
+            if (sectionPosition) {
+                sectionPosition.disabled = true;
+                sectionPosition.style.opacity = '0.5';
+            }
+
             // Set form to novalidate to prevent HTML5 validation conflicts
             sectionForm.setAttribute('novalidate', '');
 
@@ -304,6 +314,12 @@ function initSectionManagement() {
 
             // Show move page controls for regular sections (hidden by default in resetSectionForm)
             // Note: movePageRow visibility is managed by edit mode in populateSectionForm
+
+            // Re-enable position selector for regular sections
+            if (sectionPosition) {
+                sectionPosition.disabled = false;
+                sectionPosition.style.opacity = '1';
+            }
 
             // Remove novalidate to enable HTML5 validation
             sectionForm.removeAttribute('novalidate');
@@ -825,6 +841,9 @@ function initSectionManagement() {
 
         // Set basic fields
         if (pageSelect) pageSelect.value = section.page || '';
+
+        // Set position field (default to 'bottom' if not specified)
+        if (sectionPosition) sectionPosition.value = section.position || 'bottom';
 
         // Handle rolling-banner sections differently
         if (isRollingBanner) {

@@ -106,6 +106,18 @@
                             </select>
                         </label>
 
+                        <!-- ★ Section Position Selector -->
+                        <label>Section Position:
+                            <select id="sectionPosition" name="position">
+                                <option value="top">Top placeholder (#dynamicSectionsTop)</option>
+                                <option value="middle">Middle placeholder (#dynamicSectionsMiddle)</option>
+                                <option value="bottom" selected>Bottom placeholder (#dynamicSections)</option>
+                            </select>
+                        </label>
+                        <small style="display:block;margin-top:4px;color:#666;font-style:italic;">
+                            Choose which container on the page should receive this section. Most pages have all three placeholders available.
+                        </small>
+
                         <!-- ★ ONE shared heading field, outside the per-layout wrappers -->
                         <label id="mainHeadingLabel">Heading:<input name="heading" required></label>
 
