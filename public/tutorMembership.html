@@ -15,6 +15,25 @@
     <script src="/js/dynamic-nav.js" defer=""></script>
     <!-- Google Analytics -->
     <script src="/js/google-analytics.js" defer=""></script>
+    <style>
+        /* Responsive adjustments for tutor reps section */
+        @media (max-width: 900px) and (orientation: portrait) {
+            .two-col-content {
+                flex-direction: column-reverse !important;
+                align-items: center !important;
+                text-align: center !important;
+            }
+            .two-col-content > div {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            .two-col-content img {
+                margin: 0 auto 1.5rem auto !important;
+                display: block !important;
+                max-width: 300px !important;
+            }
+        }
+    </style>
 </head>
 <body data-page="tutorMembership" data-dyn-manual="true">
     <!-- Shared banner/header -->
@@ -386,31 +405,31 @@
                 <div class="tutor-reps-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px;">
                     <div class="tutor-rep-card" style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px;">
                         <h4 style="color: #0057B7; margin-bottom: 10px;" data-ve-block-id="abbie-heading">Abbie – Primary Tutor, Dundee</h4>
-                        <p data-ve-block-id="abbie-bio"><strong>Bio:</strong> Abbie has been a primary teacher for 8 years, most recently stepping into an Acting Principal Teacher role. She's also a mum of one and has been tutoring for several years. Based in Dundee, Abbie brings a wealth of school leadership and classroom experience to her role as a Tutor Rep.</p>
+                        <p data-ve-block-id="abbie-bio">Abbie has been a primary teacher for 8 years, most recently stepping into an Acting Principal Teacher role. She's also a mum of one and has been tutoring for several years. Based in Dundee, Abbie brings a wealth of school leadership and classroom experience to her role as a Tutor Rep.</p>
                         <p data-ve-block-id="abbie-quote" style="font-style: italic; color: #666;">"Being a Tutor Rep gives me the chance to make sure tutors' voices are heard and valued. I want to help shape a system that works for all learners — and the tutors supporting them."</p>
                     </div>
 
                     <div class="tutor-rep-card" style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px;">
                         <h4 style="color: #0057B7; margin-bottom: 10px;" data-ve-block-id="daniel-heading">Daniel – Mandarin & EAL Tutor, Inverness</h4>
-                        <p data-ve-block-id="daniel-bio"><strong>Bio:</strong> Daniel has been working as a private tutor since 2014, both in the UK and China. Now based in Inverness, he specialises in Mandarin Chinese (all exam boards), Study Skills and EAL. Daniel brings a global perspective and subject-specific expertise to the team.</p>
+                        <p data-ve-block-id="daniel-bio">Daniel has been working as a private tutor since 2014, both in the UK and China. Now based in Inverness, he specialises in Mandarin Chinese (all exam boards), Study Skills and EAL. Daniel brings a global perspective and subject-specific expertise to the team.</p>
                         <p data-ve-block-id="daniel-quote" style="font-style: italic; color: #666;">"I joined TAS as a Tutor Rep because I believe tutoring can play a powerful role in education, and I want to help raise the profile of our profession across Scotland."</p>
                     </div>
 
                     <div class="tutor-rep-card" style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px;">
                         <h4 style="color: #0057B7; margin-bottom: 10px;" data-ve-block-id="cat-heading">Cat – Primary Tutor, Renfrewshire</h4>
-                        <p data-ve-block-id="cat-bio"><strong>Bio:</strong> Cat is a primary tutor and mum of one from Renfrewshire, Glasgow. With nearly 13 years of classroom experience under her belt, she moved into full-time tutoring at the end of 2024. Cat is passionate about helping children thrive through 1:1 and small group support.</p>
+                        <p data-ve-block-id="cat-bio">Cat is a primary tutor and mum of one from Renfrewshire, Glasgow. With nearly 13 years of classroom experience under her belt, she moved into full-time tutoring at the end of 2024. Cat is passionate about helping children thrive through 1:1 and small group support.</p>
                         <p data-ve-block-id="cat-quote" style="font-style: italic; color: #666;">"Leaving the classroom and becoming a full-time tutor has been life-changing. I'm passionate about representing others on a similar journey and supporting the future of tutoring."</p>
                     </div>
 
                     <div class="tutor-rep-card" style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px;">
                         <h4 style="color: #0057B7; margin-bottom: 10px;" data-ve-block-id="leigha-heading">Leigha – ASN Primary Tutor, Aberdeenshire</h4>
-                        <p data-ve-block-id="leigha-bio"><strong>Bio:</strong> Leigha is an Additional Support Needs (ASN) teacher based in Aberdeenshire. A busy mum of two, she tutors primary pupils in maths and literacy. Leigha brings valuable insight into supporting diverse learners and the needs of families in rural areas.</p>
+                        <p data-ve-block-id="leigha-bio">Leigha is an Additional Support Needs (ASN) teacher based in Aberdeenshire. A busy mum of two, she tutors primary pupils in maths and literacy. Leigha brings valuable insight into supporting diverse learners and the needs of families in rural areas.</p>
                         <p data-ve-block-id="leigha-quote" style="font-style: italic; color: #666;">"As a Tutor Rep, I want to make sure ASN pupils and rural families are considered in the bigger picture. Every child deserves access to the right support, wherever they are."</p>
                     </div>
 
                     <div class="tutor-rep-card" style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px;">
                         <h4 style="color: #0057B7; margin-bottom: 10px;" data-ve-block-id="gemma-heading">Gemma – Primary Tutor, Edinburgh</h4>
-                        <p data-ve-block-id="gemma-bio"><strong>Bio:</strong> Gemma left the classroom in June 2024 after 20 years of teaching in Scottish primary schools to launch Gemma Coupar Tutoring, supporting primary-aged children in Edinburgh. She runs Homework Clubs, offers 1:1 tuition both in person and online, and has recently begun working with Home Educated children. A qualified TEFL teacher, Gemma brings a wealth of experience and a passion for high-quality, pupil-centred learning to her role as a TAS Tutor Rep.</p>
+                        <p data-ve-block-id="gemma-bio">Gemma left the classroom in June 2024 after 20 years of teaching in Scottish primary schools to launch Gemma Coupar Tutoring, supporting primary-aged children in Edinburgh. She runs Homework Clubs, offers 1:1 tuition both in person and online, and has recently begun working with Home Educated children. A qualified TEFL teacher, Gemma brings a wealth of experience and a passion for high-quality, pupil-centred learning to her role as a TAS Tutor Rep.</p>
                         <p data-ve-block-id="gemma-quote" style="font-style: italic; color: #666;">"I'm delighted to be a TAS Tutor Rep so your voice is heard at board meetings. I believe regulation is vital to ensure we provide a professional standard of tutoring, with full PVG checks and a strong understanding of the curriculum."</p>
                     </div>
 

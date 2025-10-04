@@ -1443,14 +1443,6 @@ function initPageManagement() {
                 editButton.dataset.id = page._id;
                 actionsCell.appendChild(editButton);
 
-                const toggleButton = document.createElement('button');
-                toggleButton.innerHTML = page.isPublished ? '📴' : '📢';
-                toggleButton.title = page.isPublished ? 'Unpublish Page' : 'Publish Page';
-                toggleButton.className = 'toggle-page';
-                toggleButton.dataset.id = page._id;
-                toggleButton.dataset.pub = page.isPublished.toString();
-                actionsCell.appendChild(toggleButton);
-
                 const deleteButton = document.createElement('button');
                 deleteButton.innerHTML = '🗑️';
                 deleteButton.title = 'Delete Page';
@@ -1603,39 +1595,6 @@ function initPageManagement() {
                 // Populate form for editing
                 populatePageForm(page);
                 pageForm.scrollIntoView({ behavior: 'smooth' });
-
-            } else if (button.classList.contains('toggle-page')) {
-                // Toggle publish status
-                const currentStatus = button.dataset.pub === 'true';
-                const newStatus = !currentStatus;
-
-                if (!confirm(`${newStatus ? 'Publish' : 'Unpublish'} this page?`)) {
-                    return;
-                }
-
-                try {
-                    const formData = new FormData();
-                    formData.append('editId', pageId);
-                    formData.append('isPublished', newStatus.toString());
-                    formData.append('isFullPage', 'true');
-
-                    const response = await fetch('/api/sections', {
-                        method: 'POST',
-                        body: formData,
-                        credentials: 'include'
-                    });
-
-                    if (response.ok) {
-                        alert(`Page ${newStatus ? 'published' : 'unpublished'} successfully!`);
-                        loadPages(); // Refresh the pages list
-                    } else {
-                        const error = await response.text();
-                        alert(`Failed to ${newStatus ? 'publish' : 'unpublish'} page: ${error}`);
-                    }
-                } catch (error) {
-                    console.error('[Admin Dashboard] Error toggling page status:', error);
-                    alert('An error occurred while updating the page status.');
-                }
 
             } else if (button.classList.contains('delete-page')) {
                 if (!confirm('Are you sure you want to delete this page? This action cannot be undone.')) {
