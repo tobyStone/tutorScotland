@@ -111,59 +111,13 @@
      * Applies aggressive styling fixes for Samsung devices that have issues with nested flexbox
      */
     function applySamsungTeamMemberFix(width, height, isPortrait) {
-        // Apply on portrait screens under 600px (matches restricted viewport range)
-        // This covers Samsung devices at 412px CSS width and similar
-        if (!isPortrait || width >= 600) return;
+        // Samsung team member fix is now handled entirely by CSS
+        // See @media (max-width: 599px) and (orientation: portrait) in styles2.css
+        // This eliminates the layout collapse that prevented IntersectionObserver from working
 
-        const teamMembersContainers = document.querySelectorAll('.team-members');
-
-        teamMembersContainers.forEach(container => {
-            // Force container to block layout
-            container.style.display = 'block';
-            container.style.flexWrap = 'nowrap';
-            container.style.justifyContent = 'initial';
-            container.style.gap = '0';
-
-            // Force each team member to block layout
-            const teamMembers = container.querySelectorAll('.team-member');
-            teamMembers.forEach(member => {
-                member.style.display = 'block';
-                member.style.flex = 'none';
-                member.style.width = '100%';
-                member.style.maxWidth = '100%';
-                member.style.margin = '0 0 20px 0';
-                member.style.boxSizing = 'border-box';
-
-                // Fix nested image containers
-                const flexContainers = member.querySelectorAll('div[style*="display: flex"]');
-                flexContainers.forEach(flexDiv => {
-                    flexDiv.style.display = 'block';
-                    flexDiv.style.textAlign = 'center';
-                    flexDiv.style.alignItems = 'initial';
-                    flexDiv.style.justifyContent = 'initial';
-                });
-
-                // Ensure images display properly
-                const images = member.querySelectorAll('img');
-                images.forEach(img => {
-                    img.style.display = 'block';
-                    img.style.margin = '0 auto';
-                    img.style.maxWidth = '150px';
-                    img.style.maxHeight = '150px';
-                });
-            });
-        });
-
-        // Log debug information for troubleshooting
-        if (width <= 360) {
-            console.log('Samsung team member fix applied for very narrow screen:', {
-                width,
-                height,
-                isPortrait,
-                teamContainers: teamMembersContainers.length,
-                userAgent: navigator.userAgent.includes('Samsung') ? 'Samsung detected' : 'Generic mobile'
-            });
-        }
+        // CSS now handles all Samsung viewport fixes - no JavaScript manipulation needed
+        // This function is kept for compatibility but does minimal work
+        console.log('🔧 Samsung team member fix handled by CSS for viewport:', width + 'x' + height);
     }
 
     function initResponsiveFeatures() {

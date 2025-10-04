@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samsung Team Section Fix Test</title>
+    <link rel="stylesheet" href="/public/styles2.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        .viewport-info {
+            background: #fff3e0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h1>🔧 Samsung Team Section Fix Test</h1>
+        <p><strong>Purpose:</strong> Test that team sections render correctly on Samsung devices without layout collapse.</p>
+        <div class="viewport-info">
+            <strong>Current Viewport:</strong> <span id="viewport-size"></span><br>
+            <strong>Orientation:</strong> <span id="orientation"></span><br>
+            <strong>CSS Media Query Active:</strong> <span id="media-query-status"></span>
+        </div>
+    </div>
+
+    <!-- Test the team section with our new CSS-based approach -->
+    <section id="team" class="team-section fade-in-section">
+        <h2>👥 Meet the TAS Team (Test)</h2>
+
+        <div class="team-members">
+            <div class="team-member">
+                <h3 style="color: #0057B7;">💛 Test Member 1</h3>
+                <div class="team-member-image">
+                    <img src="/images/karenSimpson.PNG" alt="Test Member 1" style="width: 150px; height: 150px; border-radius: 50%; background: #ddd;">
+                </div>
+                <p>This is a test team member to verify the Samsung viewport fix works correctly.</p>
+                <p style="font-style: italic; color: #0057B7;">"CSS-based fix should prevent layout collapse."</p>
+            </div>
+
+            <div class="team-member">
+                <h3 style="color: #0057B7;">💙 Test Member 2</h3>
+                <div class="team-member-image">
+                    <img src="/images/martineKelly.PNG" alt="Test Member 2" style="width: 150px; height: 150px; border-radius: 50%; background: #ddd;">
+                </div>
+                <p>Second test member to verify multiple cards render properly.</p>
+                <p style="font-style: italic; color: #0057B7;">"IntersectionObserver should see stable layout."</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Display viewport information
+        function updateViewportInfo() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const isPortrait = height > width;
+            
+            document.getElementById('viewport-size').textContent = `${width}x${height}`;
+            document.getElementById('orientation').textContent = isPortrait ? 'Portrait' : 'Landscape';
+            
+            // Check if Samsung media query is active
+            const mediaQuery = window.matchMedia('(max-width: 599px) and (orientation: portrait)');
+            document.getElementById('media-query-status').textContent = mediaQuery.matches ? 'YES - Samsung fix active' : 'NO - Normal layout';
+            
+            // Log team section dimensions
+            const teamSection = document.getElementById('team');
+            if (teamSection) {
+                const rect = teamSection.getBoundingClientRect();
+                console.log('Team section dimensions:', {
+                    width: rect.width,
+                    height: rect.height,
+                    visible: rect.height > 0,
+                    hasVisibleClass: teamSection.classList.contains('is-visible')
+                });
+            }
+        }
+
+        // Update on load and resize
+        window.addEventListener('load', updateViewportInfo);
+        window.addEventListener('resize', updateViewportInfo);
+        
+        // Simulate IntersectionObserver behavior
+        setTimeout(() => {
+            const teamSection = document.getElementById('team');
+            if (teamSection && !teamSection.classList.contains('is-visible')) {
+                teamSection.classList.add('is-visible');
+                console.log('✅ Team section made visible');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

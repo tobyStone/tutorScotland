@@ -241,7 +241,7 @@
                           "workerIndex": 0,
                           "parallelIndex": 0,
                           "status": "timedOut",
-                          "duration": 41576,
+                          "duration": 37839,
                           "error": {
                             "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
                             "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
@@ -262,7 +262,7 @@
                           "stdout": [],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-10-01T11:15:45.607Z",
+                          "startTime": "2025-10-04T19:11:01.170Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -307,7 +307,7 @@
                           "workerIndex": 1,
                           "parallelIndex": 1,
                           "status": "timedOut",
-                          "duration": 40070,
+                          "duration": 37723,
                           "error": {
                             "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
                             "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
@@ -319,16 +319,16 @@
                             {
                               "location": {
                                 "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js",
-                                "column": 29,
-                                "line": 82
+                                "column": 18,
+                                "line": 59
                               },
-                              "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('div img, section img, article img').first()\nExpected: visible\nReceived: hidden\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('div img, section img, article img').first()\u001b[22m\n\u001b[2m    7 × locator resolved to <img id=\"imageShield\" class=\"main-shield\" alt=\"Large TAS Shield\" src=\"/images/centralShield.png\" data-ve-block-id=\"d2163d6b-8a53-4262-824e-5ade6019f412\"/>\u001b[22m\n\u001b[2m      - unexpected value \"hidden\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 80 |\u001b[39m           \n \u001b[90m 81 |\u001b[39m           \u001b[90m// Ensure parent isn't clipping the image\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 82 |\u001b[39m           \u001b[36mawait\u001b[39m expect(img)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 83 |\u001b[39m           \n \u001b[90m 84 |\u001b[39m           \u001b[90m// Check image positioning\u001b[39m\n \u001b[90m 85 |\u001b[39m           \u001b[36mconst\u001b[39m boundingBox \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m img\u001b[33m.\u001b[39mboundingBox()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js:82:29\u001b[22m"
+                              "message": "Error: page.goto: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"load\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 57 |\u001b[39m     \n \u001b[90m 58 |\u001b[39m     test(\u001b[32m'nested HTML images render correctly in Samsung portrait'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 59 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 60 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39msetViewportSize({ width\u001b[33m:\u001b[39m \u001b[35m320\u001b[39m\u001b[33m,\u001b[39m height\u001b[33m:\u001b[39m \u001b[35m658\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 61 |\u001b[39m       \n \u001b[90m 62 |\u001b[39m       \u001b[90m// Look for nested images (images inside divs, sections, etc.)\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js:59:18\u001b[22m"
                             }
                           ],
                           "stdout": [],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-10-01T11:15:45.604Z",
+                          "startTime": "2025-10-04T19:11:01.253Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -370,10 +370,10 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 2,
-                          "parallelIndex": 0,
+                          "workerIndex": 3,
+                          "parallelIndex": 1,
                           "status": "timedOut",
-                          "duration": 45761,
+                          "duration": 44849,
                           "error": {
                             "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
                             "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
@@ -394,7 +394,7 @@
                           "stdout": [],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-10-01T11:17:36.676Z",
+                          "startTime": "2025-10-04T19:12:05.625Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -421,6 +421,138 @@
                   "id": "69249b7248a747ecc3e4-7bd66fd47f87c56f061c",
                   "file": "e2e/hardware-specific.spec.js",
                   "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections are visible when IntersectionObserver fails on Samsung",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 2,
+                          "parallelIndex": 0,
+                          "status": "timedOut",
+                          "duration": 45487,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js",
+                                "column": 18,
+                                "line": 167
+                              },
+                              "message": "Error: page.waitForLoadState: Test timeout of 30000ms exceeded.\n\n\u001b[0m \u001b[90m 165 |\u001b[39m\n \u001b[90m 166 |\u001b[39m       \u001b[90m// Wait for page to load and responsive helper to apply fallback\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 167 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m'networkidle'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 168 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForTimeout(\u001b[35m1500\u001b[39m)\u001b[33m;\u001b[39m \u001b[90m// Allow time for fallback to apply\u001b[39m\n \u001b[90m 169 |\u001b[39m\n \u001b[90m 170 |\u001b[39m       \u001b[90m// Check that team section is visible (should have is-visible class)\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js:167:18\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-10-04T19:12:05.446Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-ae86e-onObserver-fails-on-Samsung-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-ae86e-onObserver-fails-on-Samsung-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-ae86e-onObserver-fails-on-Samsung-chromium\\error-context.md"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-dcfc69781a27d041c3f9",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 154,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections work normally when IntersectionObserver is available",
+                  "ok": false,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 5,
+                          "parallelIndex": 0,
+                          "status": "timedOut",
+                          "duration": 53394,
+                          "error": {
+                            "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                            "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                          },
+                          "errors": [
+                            {
+                              "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js",
+                                "column": 18,
+                                "line": 217
+                              },
+                              "message": "Error: page.waitForLoadState: Test timeout of 30000ms exceeded.\n\n\u001b[0m \u001b[90m 215 |\u001b[39m\n \u001b[90m 216 |\u001b[39m       \u001b[90m// Wait for page to load\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 217 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForLoadState(\u001b[32m'networkidle'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 218 |\u001b[39m\n \u001b[90m 219 |\u001b[39m       \u001b[90m// Check that IntersectionObserver is available and working\u001b[39m\n \u001b[90m 220 |\u001b[39m       \u001b[36mconst\u001b[39m observerAvailable \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(() \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js:217:18\u001b[22m"
+                            }
+                          ],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-10-04T19:13:05.895Z",
+                          "annotations": [],
+                          "attachments": [
+                            {
+                              "name": "screenshot",
+                              "contentType": "image/png",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-10135-ectionObserver-is-available-chromium\\test-failed-1.png"
+                            },
+                            {
+                              "name": "video",
+                              "contentType": "video/webm",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-10135-ectionObserver-is-available-chromium\\video.webm"
+                            },
+                            {
+                              "name": "error-context",
+                              "contentType": "text/markdown",
+                              "path": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\test-results\\e2e-hardware-specific-Hard-10135-ectionObserver-is-available-chromium\\error-context.md"
+                            }
+                          ]
+                        }
+                      ],
+                      "status": "unexpected"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-bcd4378c5f54a8efd38a",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 212,
                   "column": 9
                 },
                 {
@@ -484,6 +616,46 @@
                   "column": 9
                 },
                 {
+                  "title": "fade-in sections are visible when IntersectionObserver fails on Samsung",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-351698f97b655d9f6e14",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 154,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections work normally when IntersectionObserver is available",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "firefox",
+                      "projectName": "firefox",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-a8a401016e650a843e1e",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 212,
+                  "column": 9
+                },
+                {
                   "title": "images should display correctly in Samsung portrait mode",
                   "ok": true,
                   "tags": [],
@@ -541,6 +713,46 @@
                   "id": "69249b7248a747ecc3e4-943ee12e564dbeef796a",
                   "file": "e2e/hardware-specific.spec.js",
                   "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections are visible when IntersectionObserver fails on Samsung",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-e0f8c4a694f7ad642d79",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 154,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections work normally when IntersectionObserver is available",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "webkit",
+                      "projectName": "webkit",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-8710380a6aff2c39ec82",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 212,
                   "column": 9
                 },
                 {
@@ -604,6 +816,46 @@
                   "column": 9
                 },
                 {
+                  "title": "fade-in sections are visible when IntersectionObserver fails on Samsung",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-9fc1dc6ea16e64d13cf7",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 154,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections work normally when IntersectionObserver is available",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Chrome",
+                      "projectName": "Mobile Chrome",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-fcd42d6a8ec29aa0f512",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 212,
+                  "column": 9
+                },
+                {
                   "title": "images should display correctly in Samsung portrait mode",
                   "ok": true,
                   "tags": [],
@@ -661,6 +913,46 @@
                   "id": "69249b7248a747ecc3e4-c06153cd02179c39b3ef",
                   "file": "e2e/hardware-specific.spec.js",
                   "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections are visible when IntersectionObserver fails on Samsung",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-74da63800ed14851c24c",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 154,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections work normally when IntersectionObserver is available",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Mobile Safari",
+                      "projectName": "Mobile Safari",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-1fb0f4aed50f429985ac",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 212,
                   "column": 9
                 },
                 {
@@ -724,6 +1016,46 @@
                   "column": 9
                 },
                 {
+                  "title": "fade-in sections are visible when IntersectionObserver fails on Samsung",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-cdb4c567c1c4f0271ebf",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 154,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections work normally when IntersectionObserver is available",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Galaxy",
+                      "projectName": "Samsung Galaxy",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-81c7c4b10e2a7b047586",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 212,
+                  "column": 9
+                },
+                {
                   "title": "images should display correctly in Samsung portrait mode",
                   "ok": true,
                   "tags": [],
@@ -781,6 +1113,46 @@
                   "id": "69249b7248a747ecc3e4-5becadff4246d4de98c3",
                   "file": "e2e/hardware-specific.spec.js",
                   "line": 93,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections are visible when IntersectionObserver fails on Samsung",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-48d1174d8c3073a33c43",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 154,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections work normally when IntersectionObserver is available",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPhone Portrait",
+                      "projectName": "iPhone Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-28e5f5f3a74bbfe29ee9",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 212,
                   "column": 9
                 },
                 {
@@ -844,6 +1216,46 @@
                   "column": 9
                 },
                 {
+                  "title": "fade-in sections are visible when IntersectionObserver fails on Samsung",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-90f37ae33dafd8bbed14",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 154,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections work normally when IntersectionObserver is available",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "Samsung Portrait",
+                      "projectName": "Samsung Portrait",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-5ffa6e138dbd5d4cf91e",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 212,
+                  "column": 9
+                },
+                {
                   "title": "images should display correctly in Samsung portrait mode",
                   "ok": true,
                   "tags": [],
@@ -902,13 +1314,53 @@
                   "file": "e2e/hardware-specific.spec.js",
                   "line": 93,
                   "column": 9
+                },
+                {
+                  "title": "fade-in sections are visible when IntersectionObserver fails on Samsung",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-46ae487b4fcd3220156c",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 154,
+                  "column": 9
+                },
+                {
+                  "title": "fade-in sections work normally when IntersectionObserver is available",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "iPad",
+                      "projectName": "iPad",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "69249b7248a747ecc3e4-2e52e6f59bf8b0a2f998",
+                  "file": "e2e/hardware-specific.spec.js",
+                  "line": 212,
+                  "column": 9
                 }
               ]
             },
             {
               "title": "iOS Safari Viewport Issues",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 155,
+              "line": 243,
               "column": 8,
               "specs": [
                 {
@@ -924,7 +1376,7 @@
                           "description": "iOS-specific test",
                           "location": {
                             "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js",
-                            "line": 157,
+                            "line": 245,
                             "column": 12
                           }
                         }
@@ -934,22 +1386,22 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 3,
+                          "workerIndex": 4,
                           "parallelIndex": 1,
                           "status": "skipped",
-                          "duration": 1928,
+                          "duration": 1219,
                           "errors": [],
                           "stdout": [],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-10-01T11:17:36.674Z",
+                          "startTime": "2025-10-04T19:13:05.895Z",
                           "annotations": [
                             {
                               "type": "skip",
                               "description": "iOS-specific test",
                               "location": {
                                 "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js",
-                                "line": 157,
+                                "line": 245,
                                 "column": 12
                               }
                             }
@@ -962,7 +1414,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-fca2c9ee9b1c290e7620",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 156,
+                  "line": 244,
                   "column": 9
                 },
                 {
@@ -982,7 +1434,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-8eb9a8cf295e3a810f49",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 156,
+                  "line": 244,
                   "column": 9
                 },
                 {
@@ -1002,7 +1454,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-70a679b1bdb61b82d404",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 156,
+                  "line": 244,
                   "column": 9
                 },
                 {
@@ -1022,7 +1474,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-d9b08f4981b7b1ff0627",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 156,
+                  "line": 244,
                   "column": 9
                 },
                 {
@@ -1042,7 +1494,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-f50d2c3ace877a2688a3",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 156,
+                  "line": 244,
                   "column": 9
                 },
                 {
@@ -1062,7 +1514,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-ade2224e5211feb95214",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 156,
+                  "line": 244,
                   "column": 9
                 },
                 {
@@ -1082,7 +1534,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-5b27a2a53d53252fd535",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 156,
+                  "line": 244,
                   "column": 9
                 },
                 {
@@ -1102,7 +1554,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-67cf5e0ed0c49df8ade7",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 156,
+                  "line": 244,
                   "column": 9
                 },
                 {
@@ -1122,7 +1574,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-5200c71117f6e7c5ef09",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 156,
+                  "line": 244,
                   "column": 9
                 }
               ]
@@ -1130,7 +1582,7 @@
             {
               "title": "High-DPI Display Issues",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 181,
+              "line": 269,
               "column": 8,
               "specs": [
                 {
@@ -1146,10 +1598,10 @@
                       "projectName": "chromium",
                       "results": [
                         {
-                          "workerIndex": 3,
+                          "workerIndex": 4,
                           "parallelIndex": 1,
                           "status": "timedOut",
-                          "duration": 43817,
+                          "duration": 51160,
                           "error": {
                             "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
                             "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
@@ -1157,12 +1609,20 @@
                           "errors": [
                             {
                               "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                            },
+                            {
+                              "location": {
+                                "file": "C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js",
+                                "column": 18,
+                                "line": 271
+                              },
+                              "message": "Error: page.goto: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/\", waiting until \"load\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 269 |\u001b[39m   test\u001b[33m.\u001b[39mdescribe(\u001b[32m'High-DPI Display Issues'\u001b[39m\u001b[33m,\u001b[39m () \u001b[33m=>\u001b[39m {\n \u001b[90m 270 |\u001b[39m     test(\u001b[32m'images scale correctly on high-DPI displays'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 271 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 272 |\u001b[39m       \n \u001b[90m 273 |\u001b[39m       \u001b[90m// Simulate high-DPI display\u001b[39m\n \u001b[90m 274 |\u001b[39m       \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39memulateMedia({ reducedMotion\u001b[33m:\u001b[39m \u001b[32m'reduce'\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\tobys\\source\\repos\\tutorScotland\\tests\\e2e\\hardware-specific.spec.js:271:18\u001b[22m"
                             }
                           ],
                           "stdout": [],
                           "stderr": [],
                           "retry": 0,
-                          "startTime": "2025-10-01T11:17:39.873Z",
+                          "startTime": "2025-10-04T19:13:07.619Z",
                           "annotations": [],
                           "attachments": [
                             {
@@ -1188,7 +1648,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-55d9f18c6726f03f6535",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 182,
+                  "line": 270,
                   "column": 9
                 },
                 {
@@ -1208,7 +1668,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-68e4d40468fababbfaae",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 182,
+                  "line": 270,
                   "column": 9
                 },
                 {
@@ -1228,7 +1688,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-1e5e89253cc41fb2e189",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 182,
+                  "line": 270,
                   "column": 9
                 },
                 {
@@ -1248,7 +1708,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-2d1c426724d9b122d862",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 182,
+                  "line": 270,
                   "column": 9
                 },
                 {
@@ -1268,7 +1728,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-5ebdb5a936cb518f9954",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 182,
+                  "line": 270,
                   "column": 9
                 },
                 {
@@ -1288,7 +1748,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-b7a7b59374d6d38d16fa",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 182,
+                  "line": 270,
                   "column": 9
                 },
                 {
@@ -1308,7 +1768,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-db79d74e29aa8725f6f3",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 182,
+                  "line": 270,
                   "column": 9
                 },
                 {
@@ -1328,7 +1788,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-b43564b8c8980639a5a3",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 182,
+                  "line": 270,
                   "column": 9
                 },
                 {
@@ -1348,7 +1808,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-67b3d29de7a79027d368",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 182,
+                  "line": 270,
                   "column": 9
                 }
               ]
@@ -1356,7 +1816,7 @@
             {
               "title": "Touch vs Mouse Interaction",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 217,
+              "line": 305,
               "column": 8,
               "specs": [
                 {
@@ -1376,7 +1836,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-aac9bf854bfcdc634968",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 218,
+                  "line": 306,
                   "column": 9
                 },
                 {
@@ -1396,7 +1856,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-90f10e94ec4f362e58c5",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 218,
+                  "line": 306,
                   "column": 9
                 },
                 {
@@ -1416,7 +1876,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-0adea156327c8322fb39",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 218,
+                  "line": 306,
                   "column": 9
                 },
                 {
@@ -1436,7 +1896,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-41e42e68b6fa3483fa44",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 218,
+                  "line": 306,
                   "column": 9
                 },
                 {
@@ -1456,7 +1916,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-a49d8b54c6905e982f67",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 218,
+                  "line": 306,
                   "column": 9
                 },
                 {
@@ -1476,7 +1936,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-7e20c446305830955f62",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 218,
+                  "line": 306,
                   "column": 9
                 },
                 {
@@ -1496,7 +1956,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-a2cd468b8df785f85853",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 218,
+                  "line": 306,
                   "column": 9
                 },
                 {
@@ -1516,7 +1976,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-bc08e92c58a7d580728b",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 218,
+                  "line": 306,
                   "column": 9
                 },
                 {
@@ -1536,7 +1996,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-0802f2d7c9d274cf499b",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 218,
+                  "line": 306,
                   "column": 9
                 }
               ]
@@ -1544,7 +2004,7 @@
             {
               "title": "Browser-Specific CSS Support",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 245,
+              "line": 333,
               "column": 8,
               "specs": [
                 {
@@ -1564,7 +2024,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-64431cf371fe0e214a8d",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 246,
+                  "line": 334,
                   "column": 9
                 },
                 {
@@ -1584,7 +2044,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-bcabab68689720243ca9",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 246,
+                  "line": 334,
                   "column": 9
                 },
                 {
@@ -1604,7 +2064,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-601a7669453491472e6d",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 246,
+                  "line": 334,
                   "column": 9
                 },
                 {
@@ -1624,7 +2084,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-caf4937eb964b979200b",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 246,
+                  "line": 334,
                   "column": 9
                 },
                 {
@@ -1644,7 +2104,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-8cb84506576fc89055df",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 246,
+                  "line": 334,
                   "column": 9
                 },
                 {
@@ -1664,7 +2124,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-c20f1e3a1beaed27c547",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 246,
+                  "line": 334,
                   "column": 9
                 },
                 {
@@ -1684,7 +2144,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-e20cfa3d9328d81553cb",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 246,
+                  "line": 334,
                   "column": 9
                 },
                 {
@@ -1704,7 +2164,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-1568fa54a12f1429631b",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 246,
+                  "line": 334,
                   "column": 9
                 },
                 {
@@ -1724,7 +2184,7 @@
                   ],
                   "id": "69249b7248a747ecc3e4-8bc4aea70b4635af0a28",
                   "file": "e2e/hardware-specific.spec.js",
-                  "line": 246,
+                  "line": 334,
                   "column": 9
                 }
               ]
@@ -1734,7 +2194,7 @@
         {
           "title": "Visual Regression - Hardware Specific",
           "file": "e2e/hardware-specific.spec.js",
-          "line": 277,
+          "line": 365,
           "column": 6,
           "specs": [
             {
@@ -1754,7 +2214,7 @@
               ],
               "id": "69249b7248a747ecc3e4-90dc9dbcd5e6af1a569c",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 278,
+              "line": 366,
               "column": 7
             },
             {
@@ -1774,7 +2234,7 @@
               ],
               "id": "69249b7248a747ecc3e4-27065247921a881b0723",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 289,
+              "line": 377,
               "column": 7
             },
             {
@@ -1794,7 +2254,7 @@
               ],
               "id": "69249b7248a747ecc3e4-c05358f02552d614e233",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 278,
+              "line": 366,
               "column": 7
             },
             {
@@ -1814,7 +2274,7 @@
               ],
               "id": "69249b7248a747ecc3e4-fd53ac5a29ed07dc41fb",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 289,
+              "line": 377,
               "column": 7
             },
             {
@@ -1834,7 +2294,7 @@
               ],
               "id": "69249b7248a747ecc3e4-1ea8fb5fc767636ec138",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 278,
+              "line": 366,
               "column": 7
             },
             {
@@ -1854,7 +2314,7 @@
               ],
               "id": "69249b7248a747ecc3e4-aa85e7d2cb0a40b69c81",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 289,
+              "line": 377,
               "column": 7
             },
             {
@@ -1874,7 +2334,7 @@
               ],
               "id": "69249b7248a747ecc3e4-4945dd58d3ce837f4172",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 278,
+              "line": 366,
               "column": 7
             },
             {
@@ -1894,7 +2354,7 @@
               ],
               "id": "69249b7248a747ecc3e4-db90d4d5be3eeb274070",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 289,
+              "line": 377,
               "column": 7
             },
             {
@@ -1914,7 +2374,7 @@
               ],
               "id": "69249b7248a747ecc3e4-2d73d5ca916018a7b9fd",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 278,
+              "line": 366,
               "column": 7
             },
             {
@@ -1934,7 +2394,7 @@
               ],
               "id": "69249b7248a747ecc3e4-debc3179f729ba4d01f8",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 289,
+              "line": 377,
               "column": 7
             },
             {
@@ -1954,7 +2414,7 @@
               ],
               "id": "69249b7248a747ecc3e4-e7b50cdcbb7cc90d9757",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 278,
+              "line": 366,
               "column": 7
             },
             {
@@ -1974,7 +2434,7 @@
               ],
               "id": "69249b7248a747ecc3e4-37d031ffdd922b2ab832",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 289,
+              "line": 377,
               "column": 7
             },
             {
@@ -1994,7 +2454,7 @@
               ],
               "id": "69249b7248a747ecc3e4-224d90041bba574bedb6",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 278,
+              "line": 366,
               "column": 7
             },
             {
@@ -2014,7 +2474,7 @@
               ],
               "id": "69249b7248a747ecc3e4-290df5bdf299791fb240",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 289,
+              "line": 377,
               "column": 7
             },
             {
@@ -2034,7 +2494,7 @@
               ],
               "id": "69249b7248a747ecc3e4-f8528d2a2d0d60322da2",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 278,
+              "line": 366,
               "column": 7
             },
             {
@@ -2054,7 +2514,7 @@
               ],
               "id": "69249b7248a747ecc3e4-b3ff04b015e843c57d9c",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 289,
+              "line": 377,
               "column": 7
             },
             {
@@ -2074,7 +2534,7 @@
               ],
               "id": "69249b7248a747ecc3e4-bf38b9fb6f476fd85431",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 278,
+              "line": 366,
               "column": 7
             },
             {
@@ -2094,7 +2554,7 @@
               ],
               "id": "69249b7248a747ecc3e4-71ffbeb000abcfbe47c7",
               "file": "e2e/hardware-specific.spec.js",
-              "line": 289,
+              "line": 377,
               "column": 7
             }
           ]
@@ -2104,11 +2564,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-10-01T11:15:29.887Z",
-    "duration": 225241.339,
+    "startTime": "2025-10-04T19:10:52.878Z",
+    "duration": 211496.95,
     "expected": 0,
-    "skipped": 77,
-    "unexpected": 4,
+    "skipped": 93,
+    "unexpected": 6,
     "flaky": 0
   }
 }

@@ -1858,6 +1858,37 @@ header {
     text-align: center;
 }
 
+/* Team members container - replaces inline flex styles */
+.team-members {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+/* Individual team member cards - replaces inline flex styles */
+.team-member {
+    flex: 1 1 300px;
+    background: #f8f9ff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,87,183,0.05);
+}
+
+/* Team member image containers */
+.team-member-image {
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Fix the container overflow issue that clips rounded corners */
 .dynamic-section-container:has(.strive-team-card),
 .dynamic-section-container .strive-team-card {
@@ -2980,28 +3011,26 @@ header {
    Updated to cover real Samsung device widths (e.g., 412px CSS width)
    ====================================================================== */
 @media (max-width: 599px) and (orientation: portrait) {
-    /* Force team members container to use block layout instead of flex */
-    .team-members,
-    .team-members[style*="display: flex"] {
+    /* Force team members container to stack vertically - prevents Samsung flex collapse */
+    .team-members {
         display: block !important;
         flex-wrap: nowrap !important;
         justify-content: initial !important;
         gap: 0 !important;
     }
 
-    /* Force each team member card to full width block layout */
-    .team-member,
-    .team-members .team-member,
-    .team-member[style*="flex:"] {
+    /* Force team member cards to full width - prevents Samsung flex collapse */
+    .team-member {
         display: block !important;
         flex: none !important;
         width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 0 20px 0 !important;
+        max-width: 320px !important; /* Keep desktop look but constrain width */
+        margin: 0 auto 20px auto !important; /* Center the cards */
         box-sizing: border-box !important;
     }
 
-    /* Fix nested image containers that cause Samsung display issues */
+    /* Fix image containers - replace flex with block to prevent Samsung issues */
+    .team-member-image,
     .team-member div[style*="display: flex"] {
         display: block !important;
         text-align: center !important;
@@ -3015,6 +3044,13 @@ header {
         margin: 0 auto !important;
         max-width: 150px !important;
         max-height: 150px !important;
+    }
+
+    /* Team section adjustments for narrow screens */
+    .team-section {
+        margin: 1rem auto !important;
+        padding: 1.5rem 1rem !important;
+        max-width: 95vw !important;
     }
 }
 

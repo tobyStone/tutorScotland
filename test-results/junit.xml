@@ -1,6 +1,6 @@
-<testsuites id="" name="" tests="81" failures="4" skipped="77" errors="0" time="225.241339">
-<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-01T11:15:42.653Z" hostname="chromium" tests="9" failures="4" skipped="5" time="173.152" errors="0">
-<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › images should display correctly in Samsung portrait mode" classname="e2e\hardware-specific.spec.js" time="41.576">
+<testsuites id="" name="" tests="99" failures="6" skipped="93" errors="0" time="211.49695">
+<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-04T19:10:59.391Z" hostname="chromium" tests="11" failures="6" skipped="5" time="271.671" errors="0">
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › images should display correctly in Samsung portrait mode" classname="e2e\hardware-specific.spec.js" time="37.839">
 <failure message="hardware-specific.spec.js:11:9 images should display correctly in Samsung portrait mode" type="FAILURE">
 <![CDATA[  [chromium] › e2e\hardware-specific.spec.js:11:9 › Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › images should display correctly in Samsung portrait mode 
 
@@ -41,32 +41,25 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › nested HTML images render correctly in Samsung portrait" classname="e2e\hardware-specific.spec.js" time="40.07">
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › nested HTML images render correctly in Samsung portrait" classname="e2e\hardware-specific.spec.js" time="37.723">
 <failure message="hardware-specific.spec.js:58:9 nested HTML images render correctly in Samsung portrait" type="FAILURE">
 <![CDATA[  [chromium] › e2e\hardware-specific.spec.js:58:9 › Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › nested HTML images render correctly in Samsung portrait 
 
     Test timeout of 30000ms exceeded.
 
-    Error: expect(locator).toBeVisible()
-
-    Locator: locator('div img, section img, article img').first()
-    Expected: visible
-    Received: hidden
+    Error: page.goto: Test timeout of 30000ms exceeded.
     Call log:
-      - Expect "toBeVisible" with timeout 10000ms
-      - waiting for locator('div img, section img, article img').first()
-        7 × locator resolved to <img id="imageShield" class="main-shield" alt="Large TAS Shield" src="/images/centralShield.png" data-ve-block-id="d2163d6b-8a53-4262-824e-5ade6019f412"/>
-          - unexpected value "hidden"
+      - navigating to "http://localhost:3000/", waiting until "load"
 
 
-      80 |           
-      81 |           // Ensure parent isn't clipping the image
-    > 82 |           await expect(img).toBeVisible();
-         |                             ^
-      83 |           
-      84 |           // Check image positioning
-      85 |           const boundingBox = await img.boundingBox();
-        at C:\Users\tobys\source\repos\tutorScotland\tests\e2e\hardware-specific.spec.js:82:29
+      57 |     
+      58 |     test('nested HTML images render correctly in Samsung portrait', async ({ page }) => {
+    > 59 |       await page.goto('/');
+         |                  ^
+      60 |       await page.setViewportSize({ width: 320, height: 658 });
+      61 |       
+      62 |       // Look for nested images (images inside divs, sections, etc.)
+        at C:\Users\tobys\source\repos\tutorScotland\tests\e2e\hardware-specific.spec.js:59:18
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\e2e-hardware-specific-Hard-f062d-rrectly-in-Samsung-portrait-chromium\test-failed-1.png
@@ -89,7 +82,7 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › team member sections display correctly on Samsung portrait" classname="e2e\hardware-specific.spec.js" time="45.761">
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › team member sections display correctly on Samsung portrait" classname="e2e\hardware-specific.spec.js" time="44.849">
 <failure message="hardware-specific.spec.js:93:9 team member sections display correctly on Samsung portrait" type="FAILURE">
 <![CDATA[  [chromium] › e2e\hardware-specific.spec.js:93:9 › Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › team member sections display correctly on Samsung portrait 
 
@@ -127,7 +120,83 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Hardware-Specific Rendering Tests › iOS Safari Viewport Issues › viewport height units work correctly on iOS" classname="e2e\hardware-specific.spec.js" time="1.928">
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections are visible when IntersectionObserver fails on Samsung" classname="e2e\hardware-specific.spec.js" time="45.487">
+<failure message="hardware-specific.spec.js:154:9 fade-in sections are visible when IntersectionObserver fails on Samsung" type="FAILURE">
+<![CDATA[  [chromium] › e2e\hardware-specific.spec.js:154:9 › Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections are visible when IntersectionObserver fails on Samsung 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      165 |
+      166 |       // Wait for page to load and responsive helper to apply fallback
+    > 167 |       await page.waitForLoadState('networkidle');
+          |                  ^
+      168 |       await page.waitForTimeout(1500); // Allow time for fallback to apply
+      169 |
+      170 |       // Check that team section is visible (should have is-visible class)
+        at C:\Users\tobys\source\repos\tutorScotland\tests\e2e\hardware-specific.spec.js:167:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\e2e-hardware-specific-Hard-ae86e-onObserver-fails-on-Samsung-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\e2e-hardware-specific-Hard-ae86e-onObserver-fails-on-Samsung-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\e2e-hardware-specific-Hard-ae86e-onObserver-fails-on-Samsung-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|e2e-hardware-specific-Hard-ae86e-onObserver-fails-on-Samsung-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|e2e-hardware-specific-Hard-ae86e-onObserver-fails-on-Samsung-chromium\video.webm]]
+
+[[ATTACHMENT|e2e-hardware-specific-Hard-ae86e-onObserver-fails-on-Samsung-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections work normally when IntersectionObserver is available" classname="e2e\hardware-specific.spec.js" time="53.394">
+<failure message="hardware-specific.spec.js:212:9 fade-in sections work normally when IntersectionObserver is available" type="FAILURE">
+<![CDATA[  [chromium] › e2e\hardware-specific.spec.js:212:9 › Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections work normally when IntersectionObserver is available 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForLoadState: Test timeout of 30000ms exceeded.
+
+      215 |
+      216 |       // Wait for page to load
+    > 217 |       await page.waitForLoadState('networkidle');
+          |                  ^
+      218 |
+      219 |       // Check that IntersectionObserver is available and working
+      220 |       const observerAvailable = await page.evaluate(() => {
+        at C:\Users\tobys\source\repos\tutorScotland\tests\e2e\hardware-specific.spec.js:217:18
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\e2e-hardware-specific-Hard-10135-ectionObserver-is-available-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\e2e-hardware-specific-Hard-10135-ectionObserver-is-available-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\e2e-hardware-specific-Hard-10135-ectionObserver-is-available-chromium\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|e2e-hardware-specific-Hard-10135-ectionObserver-is-available-chromium\test-failed-1.png]]
+
+[[ATTACHMENT|e2e-hardware-specific-Hard-10135-ectionObserver-is-available-chromium\video.webm]]
+
+[[ATTACHMENT|e2e-hardware-specific-Hard-10135-ectionObserver-is-available-chromium\error-context.md]]
+]]>
+</system-out>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › iOS Safari Viewport Issues › viewport height units work correctly on iOS" classname="e2e\hardware-specific.spec.js" time="1.219">
 <properties>
 <property name="skip" value="iOS-specific test">
 </property>
@@ -135,11 +204,25 @@
 <skipped>
 </skipped>
 </testcase>
-<testcase name="Hardware-Specific Rendering Tests › High-DPI Display Issues › images scale correctly on high-DPI displays" classname="e2e\hardware-specific.spec.js" time="43.817">
-<failure message="hardware-specific.spec.js:182:9 images scale correctly on high-DPI displays" type="FAILURE">
-<![CDATA[  [chromium] › e2e\hardware-specific.spec.js:182:9 › Hardware-Specific Rendering Tests › High-DPI Display Issues › images scale correctly on high-DPI displays 
+<testcase name="Hardware-Specific Rendering Tests › High-DPI Display Issues › images scale correctly on high-DPI displays" classname="e2e\hardware-specific.spec.js" time="51.16">
+<failure message="hardware-specific.spec.js:270:9 images scale correctly on high-DPI displays" type="FAILURE">
+<![CDATA[  [chromium] › e2e\hardware-specific.spec.js:270:9 › Hardware-Specific Rendering Tests › High-DPI Display Issues › images scale correctly on high-DPI displays 
 
     Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://localhost:3000/", waiting until "load"
+
+
+      269 |   test.describe('High-DPI Display Issues', () => {
+      270 |     test('images scale correctly on high-DPI displays', async ({ page }) => {
+    > 271 |       await page.goto('/');
+          |                  ^
+      272 |       
+      273 |       // Simulate high-DPI display
+      274 |       await page.emulateMedia({ reducedMotion: 'reduce' });
+        at C:\Users\tobys\source\repos\tutorScotland\tests\e2e\hardware-specific.spec.js:271:18
 
     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
     ..\test-results\e2e-hardware-specific-Hard-c73fd-rectly-on-high-DPI-displays-chromium\test-failed-1.png
@@ -179,7 +262,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-01T11:15:42.653Z" hostname="firefox" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-04T19:10:59.391Z" hostname="firefox" tests="11" failures="0" skipped="11" time="0" errors="0">
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › images should display correctly in Samsung portrait mode" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
@@ -189,6 +272,14 @@
 </skipped>
 </testcase>
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › team member sections display correctly on Samsung portrait" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections are visible when IntersectionObserver fails on Samsung" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections work normally when IntersectionObserver is available" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
 </testcase>
@@ -217,7 +308,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-01T11:15:42.653Z" hostname="webkit" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-04T19:10:59.391Z" hostname="webkit" tests="11" failures="0" skipped="11" time="0" errors="0">
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › images should display correctly in Samsung portrait mode" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
@@ -227,6 +318,14 @@
 </skipped>
 </testcase>
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › team member sections display correctly on Samsung portrait" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections are visible when IntersectionObserver fails on Samsung" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections work normally when IntersectionObserver is available" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
 </testcase>
@@ -255,7 +354,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-01T11:15:42.653Z" hostname="Mobile Chrome" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-04T19:10:59.391Z" hostname="Mobile Chrome" tests="11" failures="0" skipped="11" time="0" errors="0">
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › images should display correctly in Samsung portrait mode" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
@@ -265,6 +364,14 @@
 </skipped>
 </testcase>
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › team member sections display correctly on Samsung portrait" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections are visible when IntersectionObserver fails on Samsung" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections work normally when IntersectionObserver is available" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
 </testcase>
@@ -293,7 +400,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-01T11:15:42.653Z" hostname="Mobile Safari" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-04T19:10:59.391Z" hostname="Mobile Safari" tests="11" failures="0" skipped="11" time="0" errors="0">
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › images should display correctly in Samsung portrait mode" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
@@ -303,6 +410,14 @@
 </skipped>
 </testcase>
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › team member sections display correctly on Samsung portrait" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections are visible when IntersectionObserver fails on Samsung" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections work normally when IntersectionObserver is available" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
 </testcase>
@@ -331,7 +446,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-01T11:15:42.653Z" hostname="Samsung Galaxy" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-04T19:10:59.391Z" hostname="Samsung Galaxy" tests="11" failures="0" skipped="11" time="0" errors="0">
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › images should display correctly in Samsung portrait mode" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
@@ -341,6 +456,14 @@
 </skipped>
 </testcase>
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › team member sections display correctly on Samsung portrait" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections are visible when IntersectionObserver fails on Samsung" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections work normally when IntersectionObserver is available" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
 </testcase>
@@ -369,7 +492,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-01T11:15:42.653Z" hostname="iPhone Portrait" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-04T19:10:59.391Z" hostname="iPhone Portrait" tests="11" failures="0" skipped="11" time="0" errors="0">
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › images should display correctly in Samsung portrait mode" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
@@ -379,6 +502,14 @@
 </skipped>
 </testcase>
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › team member sections display correctly on Samsung portrait" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections are visible when IntersectionObserver fails on Samsung" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections work normally when IntersectionObserver is available" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
 </testcase>
@@ -407,7 +538,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-01T11:15:42.653Z" hostname="Samsung Portrait" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-04T19:10:59.391Z" hostname="Samsung Portrait" tests="11" failures="0" skipped="11" time="0" errors="0">
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › images should display correctly in Samsung portrait mode" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
@@ -417,6 +548,14 @@
 </skipped>
 </testcase>
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › team member sections display correctly on Samsung portrait" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections are visible when IntersectionObserver fails on Samsung" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections work normally when IntersectionObserver is available" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
 </testcase>
@@ -445,7 +584,7 @@
 </skipped>
 </testcase>
 </testsuite>
-<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-01T11:15:42.653Z" hostname="iPad" tests="9" failures="0" skipped="9" time="0" errors="0">
+<testsuite name="e2e\hardware-specific.spec.js" timestamp="2025-10-04T19:10:59.391Z" hostname="iPad" tests="11" failures="0" skipped="11" time="0" errors="0">
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › images should display correctly in Samsung portrait mode" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
@@ -455,6 +594,14 @@
 </skipped>
 </testcase>
 <testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › team member sections display correctly on Samsung portrait" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections are visible when IntersectionObserver fails on Samsung" classname="e2e\hardware-specific.spec.js" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Hardware-Specific Rendering Tests › Samsung Portrait Viewport Issues › fade-in sections work normally when IntersectionObserver is available" classname="e2e\hardware-specific.spec.js" time="0">
 <skipped>
 </skipped>
 </testcase>

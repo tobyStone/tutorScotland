@@ -6,9 +6,23 @@
   - link "Login":
     - /url: login.html?role=admin
 - navigation "Primary":
-  - button "☰ Toggle navigation"
+  - list:
+    - listitem:
+      - link "For Tutors ▾":
+        - /url: /tutorMembership.html
+    - listitem:
+      - link "For Parents ▾":
+        - /url: /parents.html
+    - listitem:
+      - link "About TAS ▾":
+        - /url: /about-us.html
+    - listitem:
+      - link "Contact Us":
+        - /url: /contact.html
 - text: Loading
 - main:
+  - img "Large TAS Shield"
+  - img "Banner Ribbon"
   - heading "Welcome to Tutors Alliance Scotland" [level=1]
   - link "Join as a Tutor":
     - /url: tutorMembership.html
@@ -23,6 +37,8 @@
     - /url: contact.html
   - img "Tutoring in action"
   - heading "👨‍👩‍👧‍👦 For Parents – Helping You Choose the Right Tutor With Confidence" [level=2]
+  - img "Question Mark Top"
+  - img "Question Mark Bottom"
   - img "Question Mark Top"
   - img "Question Mark Bottom"
   - paragraph: "We understand how overwhelming it can be to find a tutor you can trust. That's why we're creating a national standard so parents know what to look for and who to trust. Here's how we help:"
@@ -127,7 +143,7 @@
   - list:
     - listitem:
       - 'link "The TAS Way: Governance and Guidance"':
-        - /url: tutoring-standards.html
+        - /url: https://docs.google.com/document/d/1u42wW3CwAaJWcJLzVIrXJc3D4K2yxnqB/edit#heading=h.ln8i1sjqfeoq
     - listitem:
       - link "FAQ's":
         - /url: parents.html#faq
