@@ -368,22 +368,16 @@ body {
     position: absolute;
 }
 
-.tutor-directory-page .left-col {
-    isolation: isolate !important; /* Create new stacking context */
-}
-
 .tutor-directory-page #imageShield {
     top: 10% !important;
     left: 60% !important;
-    z-index: 1 !important; /* Behind banner but above content */
-    position: absolute !important; /* Break out of normal flow */
+    z-index: 9997 !important; /* High z-index to stay above all content */
 }
 
 .tutor-directory-page #imageBanner {
-    top: 12% !important; /* Closer to shield, not at bottom */
+    top: calc(12% + 1px) !important; /* Moved down 27px to appear below shield tip */
     left: 60% !important;
-    z-index: 2 !important; /* Highest z-index to appear on top of shield */
-    position: absolute !important; /* Break out of normal flow */
+    z-index: 9998 !important; /* Below shield but above content */
 }
 
 /* About page - positioned to right to avoid text overlap */
