@@ -371,13 +371,13 @@ body {
 .tutor-directory-page #imageShield {
     top: 10% !important;
     left: 60% !important;
-    z-index: 9999 !important; /* High z-index to stay above all content */
+    z-index: 9998 !important; /* Behind banner but above content */
 }
 
 .tutor-directory-page #imageBanner {
     top: 12% !important; /* Closer to shield, not at bottom */
     left: 60% !important;
-    z-index: 9998 !important; /* Second highest z-index, behind shield but above content */
+    z-index: 9999 !important; /* Highest z-index to appear on top of shield */
 }
 
 /* About page - positioned to right to avoid text overlap */
