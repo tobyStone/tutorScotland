@@ -3010,6 +3010,42 @@ header {
    Targets Samsung phones that have issues with nested flexbox layouts
    Updated to cover real Samsung device widths (e.g., 412px CSS width)
    ====================================================================== */
+/* Restricted viewport fallback - applies whenever body.restricted-viewport is present */
+body.restricted-viewport #team .team-members {
+    display: block !important;
+    flex-wrap: nowrap !important;
+    justify-content: initial !important;
+    gap: 0 !important;
+}
+
+body.restricted-viewport #team .team-member {
+    display: block !important;
+    flex: none !important;
+    width: 100% !important;
+    max-width: 320px !important; /* Keep desktop look but constrain width */
+    margin: 0 auto 20px auto !important; /* Center the cards */
+    box-sizing: border-box !important;
+}
+
+body.restricted-viewport #team .team-member-image {
+    display: block !important;
+    text-align: center !important;
+}
+
+body.restricted-viewport #team .team-member img {
+    display: block !important;
+    margin: 0 auto !important;
+    max-width: 150px !important;
+    max-height: 150px !important;
+}
+
+body.restricted-viewport #team .team-section {
+    margin: 1rem auto !important;
+    padding: 1.5rem 1rem !important;
+    max-width: 95vw !important;
+}
+
+/* Additional Samsung-specific media query fallback for devices that don't get restricted-viewport class */
 @media (max-width: 599px) and (orientation: portrait) {
     /* Force team members container to stack vertically - prevents Samsung flex collapse */
     .team-members {
@@ -3030,12 +3066,9 @@ header {
     }
 
     /* Fix image containers - replace flex with block to prevent Samsung issues */
-    .team-member-image,
-    .team-member div[style*="display: flex"] {
+    .team-member-image {
         display: block !important;
         text-align: center !important;
-        align-items: initial !important;
-        justify-content: initial !important;
     }
 
     /* Ensure images display properly */
@@ -3056,8 +3089,7 @@ header {
 
 /* Even more aggressive rules for very narrow Samsung screens */
 @media (max-width: 450px) and (orientation: portrait) {
-    .team-members,
-    .team-members[style*="display: flex"] {
+    .team-members {
         display: block !important;
         width: 100% !important;
         margin: 0 !important;
@@ -3157,18 +3189,7 @@ header {
   .strive-overlay-card{
       max-width:92vw;       /* same optical margin you already use */
   }
-    /* 💡 1. Drop the nested-flex that collapses - only for static team sections */
-    .team-members[style*="display: flex"] {
-        display: block !important; /* stack cards top-to-bottom        */
-    }
-
-    /* 💡 2. Let each card take the full line - only for static team sections */
-    .team-members[style*="display: flex"] .team-member {
-        flex: none !important; /* cancel 1 1 300px                 */
-        width: 100%;
-        max-width: 320px; /* keeps the desktop look           */
-        margin: 0 auto 20px; /* nice centred column              */
-    }
+    /* Note: Old inline style selectors removed - now handled by body.restricted-viewport rules above */
 
     /* Simplified team section responsive adjustments */
     .team-section {

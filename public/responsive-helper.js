@@ -103,21 +103,76 @@
         }
 
         // Samsung phone nested element fix - JavaScript fallback ---------------
-        applySamsungTeamMemberFix(w, h, isPortrait);
+        applySamsungTeamMemberFix(w, h);
     }
 
     /**
      * Samsung phone nested element fix - JavaScript fallback
      * Applies aggressive styling fixes for Samsung devices that have issues with nested flexbox
      */
-    function applySamsungTeamMemberFix(width, height, isPortrait) {
-        // Samsung team member fix is now handled entirely by CSS
-        // See @media (max-width: 599px) and (orientation: portrait) in styles2.css
-        // This eliminates the layout collapse that prevented IntersectionObserver from working
+    function applySamsungTeamMemberFix(width, height) {
+        // Primary fix is now handled by CSS (body.restricted-viewport rules)
+        // This provides a runtime fallback when CSS doesn't catch the device
 
-        // CSS now handles all Samsung viewport fixes - no JavaScript manipulation needed
-        // This function is kept for compatibility but does minimal work
-        console.log('🔧 Samsung team member fix handled by CSS for viewport:', width + 'x' + height);
+        const isRestrictedViewport = document.body.classList.contains('restricted-viewport');
+        const teamSection = document.getElementById('team');
+        const teamMembers = document.querySelector('#team .team-members');
+
+        if (!teamSection || !teamMembers) return;
+
+        // Check if team section has collapsed (height is 0 or very small)
+        const teamRect = teamSection.getBoundingClientRect();
+        const hasCollapsed = teamRect.height < 50; // Less than 50px indicates collapse
+
+        if (isRestrictedViewport && hasCollapsed) {
+            console.log('🔧 Runtime fallback: Team section collapsed, applying emergency fix');
+
+            // Force container to block layout
+            teamMembers.style.display = 'block';
+            teamMembers.style.flexWrap = 'nowrap';
+            teamMembers.style.justifyContent = 'initial';
+            teamMembers.style.gap = '0';
+
+            // Force each team member to block layout
+            const teamMemberCards = teamMembers.querySelectorAll('.team-member');
+            teamMemberCards.forEach(member => {
+                member.style.display = 'block';
+                member.style.flex = 'none';
+                member.style.width = '100%';
+                member.style.maxWidth = '320px';
+                member.style.margin = '0 auto 20px auto';
+                member.style.boxSizing = 'border-box';
+            });
+
+            // If section is still invisible, force it visible
+            if (!teamSection.classList.contains('is-visible')) {
+                teamSection.classList.add('is-visible');
+                console.log('🔧 Emergency: Forced team section visible');
+            }
+        } else if (!isRestrictedViewport) {
+            // Clear emergency inline styles when viewport widens
+            teamMembers.style.display = '';
+            teamMembers.style.flexWrap = '';
+            teamMembers.style.justifyContent = '';
+            teamMembers.style.gap = '';
+
+            const teamMemberCards = teamMembers.querySelectorAll('.team-member');
+            teamMemberCards.forEach(member => {
+                member.style.display = '';
+                member.style.flex = '';
+                member.style.width = '';
+                member.style.maxWidth = '';
+                member.style.margin = '';
+                member.style.boxSizing = '';
+            });
+        }
+
+        console.log('🔧 Samsung team member fix check:', {
+            viewport: width + 'x' + height,
+            isRestrictedViewport,
+            hasCollapsed,
+            teamHeight: teamRect.height
+        });
     }
 
     function initResponsiveFeatures() {
@@ -308,6 +363,18 @@
 
         observeAll();
 
+        // Check for collapsed team section after initial observation
+        setTimeout(() => {
+            const teamSection = document.getElementById('team');
+            if (teamSection && !teamSection.classList.contains('is-visible')) {
+                const teamRect = teamSection.getBoundingClientRect();
+                if (teamRect.height === 0) {
+                    console.log('🔧 Detected collapsed team section, applying emergency reveal');
+                    revealAllFadeContent();
+                }
+            }
+        }, 500); // Small delay to allow layout to settle
+
         // auto?observe nodes added later (dynamic sections)
         new MutationObserver(muts => {
             if (muts.some(m => m.addedNodes.length)) {
@@ -328,8 +395,7 @@
                             setTimeout(() => {
                                 const w = window.innerWidth;
                                 const h = window.innerHeight;
-                                const isPortrait = h > w;
-                                applySamsungTeamMemberFix(w, h, isPortrait);
+                                applySamsungTeamMemberFix(w, h);
                             }, 100); // Small delay to ensure DOM is ready
                         }
                     });
@@ -352,8 +418,7 @@
         setTimeout(() => {
             const w = window.innerWidth;
             const h = window.innerHeight;
-            const isPortrait = h > w;
-            applySamsungTeamMemberFix(w, h, isPortrait);
+            applySamsungTeamMemberFix(w, h);
         }, 500); // Delay to ensure all content is loaded
     });
 })();
