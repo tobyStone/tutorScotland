@@ -375,7 +375,7 @@ body {
 }
 
 .tutor-directory-page #imageBanner {
-    top: calc(12% + 27px) !important; /* Moved down 27px to appear below shield tip */
+    top: 12% !important; 
     left: 60% !important;
     z-index: 9998 !important; /* Below shield but above content */
 }
