@@ -1858,6 +1858,11 @@ header {
     text-align: center;
 }
 
+/* Team section styling */
+#team.team-section {
+    min-height: 200px;
+}
+
 /* Team members container - replaces inline flex styles */
 .team-members {
     display: flex;
@@ -3025,6 +3030,12 @@ body.restricted-viewport #team .team-member {
     max-width: 320px !important; /* Keep desktop look but constrain width */
     margin: 0 auto 20px auto !important; /* Center the cards */
     box-sizing: border-box !important;
+}
+
+/* Bypass fade animation for team section on restricted viewports to prevent Samsung invisibility */
+body.restricted-viewport #team.fade-in-section {
+    opacity: 1 !important;
+    transform: none !important;
 }
 
 body.restricted-viewport #team .team-member-image {

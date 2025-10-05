@@ -751,7 +751,7 @@ module.exports = async (req, res) => {
                                 <li><a href="/tutoring-standards.html">The TAS Way: Governance and Guidance</a></li>
                                 <li><a href="/parents.html#faq">FAQ's</a></li>
                                 <li><a href="/privacy-policy.html">Privacy Policy</a></li>
-                                <li><a href="/safeguarding-policy.html">Safeguarding Policy</a></li>
+
                                 <li><a href="/terms-and-conditions.html">Terms and Conditions</a></li>
                             </ul>
                             <div class="static-footer-copyright">

@@ -120,9 +120,9 @@
 
         if (!teamSection || !teamMembers) return;
 
-        // Check if team section has collapsed (height is 0 or very small)
-        const teamRect = teamSection.getBoundingClientRect();
-        const hasCollapsed = teamRect.height < 50; // Less than 50px indicates collapse
+        // Check if team members container has collapsed (the actual flex container that collapses)
+        const membersRect = teamMembers.getBoundingClientRect();
+        const hasCollapsed = membersRect.height < 10 || (teamMembers.offsetHeight === 0 && getComputedStyle(teamMembers).display === 'flex'); // Less than 50px indicates collapse
 
         if (isRestrictedViewport && hasCollapsed) {
             console.log('🔧 Runtime fallback: Team section collapsed, applying emergency fix');
@@ -144,12 +144,15 @@
                 member.style.boxSizing = 'border-box';
             });
 
-            // If section is still invisible, force it visible
-            if (!teamSection.classList.contains('is-visible')) {
-                teamSection.classList.add('is-visible');
-                console.log('🔧 Emergency: Forced team section visible');
-            }
-        } else if (!isRestrictedViewport) {
+        }
+
+        // Force visibility for restricted viewports (belt-and-braces safeguard)
+        if (isRestrictedViewport && !teamSection.classList.contains('is-visible')) {
+            teamSection.classList.add('is-visible');
+            console.log('🔧 Belt-and-braces: Forced team section visible on restricted viewport');
+        }
+
+        if (!isRestrictedViewport) {
             // Clear emergency inline styles when viewport widens
             teamMembers.style.display = '';
             teamMembers.style.flexWrap = '';
@@ -171,7 +174,8 @@
             viewport: width + 'x' + height,
             isRestrictedViewport,
             hasCollapsed,
-            teamHeight: teamRect.height
+            teamMembersHeight: membersRect.height,
+            teamMembersDisplay: getComputedStyle(teamMembers).display
         });
     }
 
@@ -366,10 +370,11 @@
         // Check for collapsed team section after initial observation
         setTimeout(() => {
             const teamSection = document.getElementById('team');
-            if (teamSection && !teamSection.classList.contains('is-visible')) {
-                const teamRect = teamSection.getBoundingClientRect();
-                if (teamRect.height === 0) {
-                    console.log('🔧 Detected collapsed team section, applying emergency reveal');
+            const teamMembers = document.querySelector('#team .team-members');
+            if (teamSection && teamMembers && !teamSection.classList.contains('is-visible')) {
+                const membersRect = teamMembers.getBoundingClientRect();
+                if (membersRect.height === 0 || (teamMembers.offsetHeight === 0 && getComputedStyle(teamMembers).display === 'flex')) {
+                    console.log('🔧 Detected collapsed team members container, applying emergency reveal');
                     revealAllFadeContent();
                 }
             }
