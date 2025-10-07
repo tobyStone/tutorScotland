@@ -1059,12 +1059,57 @@ function initTutorManagement() {
         cancelTutorEditBtn.style.display = 'none';
         currentTutorImagePreview.style.display = 'none';
         if (removeImageCheckbox) removeImageCheckbox.checked = false;
+
+        // Reset subject checkboxes and other text input
+        const subjectsCheckboxes = document.querySelectorAll('input[name="subjects"]');
+        const otherTextInput = document.getElementById('subject-other-text');
+
+        subjectsCheckboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+
+        if (otherTextInput) {
+            otherTextInput.value = '';
+            otherTextInput.disabled = true;
+        }
     }
 
     // Helper: Populate form for editing
     function populateTutorForm(tutor) {
         tutorForm.name.value = tutor.name || '';
-        tutorForm.subjects.value = (tutor.subjects || []).join(', ');
+
+        // Handle checkbox-based subjects selection
+        const subjectsCheckboxes = document.querySelectorAll('input[name="subjects"]');
+        const subjects = (tutor.subjects || []).map(s => s.toLowerCase().trim());
+        const otherTextInput = document.getElementById('subject-other-text');
+        const otherCheckbox = document.getElementById('subject-other-checkbox');
+
+        // Clear all checkboxes first
+        subjectsCheckboxes.forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        otherTextInput.value = '';
+        otherCheckbox.checked = false;
+
+        // Check matching subjects and collect any that don't match predefined options
+        const predefinedSubjects = ['mathematics', 'english', 'sciences', 'social studies', 'languages', 'technologies', 'expressive arts', 'health and wellbeing', 'religious and moral education'];
+        const otherSubjects = [];
+
+        subjects.forEach(subject => {
+            const matchingCheckbox = Array.from(subjectsCheckboxes).find(cb => cb.value.toLowerCase() === subject);
+            if (matchingCheckbox) {
+                matchingCheckbox.checked = true;
+            } else if (subject && !predefinedSubjects.includes(subject)) {
+                otherSubjects.push(subject);
+            }
+        });
+
+        // Handle "other" subjects
+        if (otherSubjects.length > 0) {
+            otherCheckbox.checked = true;
+            otherTextInput.value = otherSubjects.join(', ');
+        }
+
         // Convert __P__ back to £ for display in the form
         tutorForm.costRange.value = (tutor.costRange || '').replace(/__P__/g, '£');
         tutorForm.badges.value = (tutor.badges || []).join(', ');
@@ -1146,9 +1191,37 @@ function initTutorManagement() {
         let costRange = fd.get('costRange').trim();
         costRange = costRange.replace(/£/g, '__P__');
 
+        // Collect subjects from checkboxes
+        const selectedSubjects = [];
+        const subjectsCheckboxes = document.querySelectorAll('input[name="subjects"]:checked');
+        const otherTextInput = document.getElementById('subject-other-text');
+        const otherCheckbox = document.getElementById('subject-other-checkbox');
+
+        // Add selected predefined subjects
+        subjectsCheckboxes.forEach(checkbox => {
+            if (checkbox.value && checkbox !== otherCheckbox) {
+                selectedSubjects.push(checkbox.value.toLowerCase().trim());
+            }
+        });
+
+        // Add other subjects if specified
+        if (otherCheckbox.checked && otherTextInput.value.trim()) {
+            // Split by comma, trim, lowercase, and filter out empty strings
+            const otherSubjects = otherTextInput.value.split(',')
+                .map(s => s.trim().toLowerCase())
+                .filter(s => s.length > 0);
+            selectedSubjects.push(...otherSubjects);
+        }
+
+        // Validate that at least one subject is selected
+        if (selectedSubjects.length === 0) {
+            alert('Please select at least one subject.');
+            return;
+        }
+
         const payload = {
             name: fd.get('name').trim(),
-            subjects: csv(fd.get('subjects')),
+            subjects: selectedSubjects,
             costRange: costRange,
             badges: csv(fd.get('badges')),
             contact: fd.get('contact').trim(),
@@ -1197,6 +1270,32 @@ function initTutorManagement() {
             alert(`An error occurred: ${error.message}`);
         }
     });
+
+    // Handle "Other" subject checkbox behavior
+    const otherCheckbox = document.getElementById('subject-other-checkbox');
+    const otherTextInput = document.getElementById('subject-other-text');
+
+    if (otherCheckbox && otherTextInput) {
+        // Initially disable the text input if checkbox is not checked
+        otherTextInput.disabled = !otherCheckbox.checked;
+
+        otherCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                otherTextInput.disabled = false;
+                otherTextInput.focus();
+            } else {
+                otherTextInput.disabled = true;
+                otherTextInput.value = '';
+            }
+        });
+
+        // When text input has content, automatically check the checkbox
+        otherTextInput.addEventListener('input', function() {
+            if (this.value.trim() && !otherCheckbox.checked) {
+                otherCheckbox.checked = true;
+            }
+        });
+    }
 
     // Load and display tutors
     async function loadTutors() {

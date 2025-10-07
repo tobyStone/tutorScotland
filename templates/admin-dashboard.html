@@ -347,8 +347,51 @@
                         <input type="text" name="name" required>
                     </label>
 
-                    <label>Subjects (comma-separated):
-                        <input type="text" name="subjects" required>
+                    <label>Subjects:
+                        <div class="subjects-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9;">
+                            <div>
+                                <input type="checkbox" id="subject-mathematics" name="subjects" value="mathematics">
+                                <label for="subject-mathematics">Mathematics</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="subject-english" name="subjects" value="english">
+                                <label for="subject-english">English</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="subject-sciences" name="subjects" value="sciences">
+                                <label for="subject-sciences">Sciences</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="subject-social-studies" name="subjects" value="social studies">
+                                <label for="subject-social-studies">Social Studies</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="subject-languages" name="subjects" value="languages">
+                                <label for="subject-languages">Modern Languages</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="subject-technologies" name="subjects" value="technologies">
+                                <label for="subject-technologies">Technologies</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="subject-expressive-arts" name="subjects" value="expressive arts">
+                                <label for="subject-expressive-arts">Expressive Arts</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="subject-health-wellbeing" name="subjects" value="health and wellbeing">
+                                <label for="subject-health-wellbeing">Health & Wellbeing</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="subject-religious-moral" name="subjects" value="religious and moral education">
+                                <label for="subject-religious-moral">Religious & Moral Education</label>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <input type="checkbox" id="subject-other-checkbox" name="subjects" value="">
+                                <label for="subject-other-checkbox">Other:</label>
+                                <input type="text" id="subject-other-text" name="other-subject" placeholder="Enter other subject" style="margin-left: 10px; padding: 5px; border: 1px solid #ccc; border-radius: 3px; width: 200px;">
+                            </div>
+                        </div>
+                        <small style="color: #666; margin-top: 5px; display: block;">Select all subjects that apply. For 'Other', check the box and enter the subject name.</small>
                     </label>
 
                     <label>Cost Range:

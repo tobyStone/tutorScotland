@@ -90,9 +90,23 @@
                         <div style="width: 100%; text-align: center;">
                             <label for="subject" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333; text-align: center;">Subject</label>
                             <select name="subject" id="subject" style="width: 80%; max-width: 300px; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
+                                <option value="">Select a subject...</option>
                                 <option value="mathematics">Mathematics</option>
                                 <option value="english">English</option>
+                                <option value="sciences">Sciences</option>
+                                <option value="social studies">Social Studies</option>
+                                <option value="languages">Modern Languages</option>
+                                <option value="technologies">Technologies</option>
+                                <option value="expressive arts">Expressive Arts</option>
+                                <option value="health and wellbeing">Health & Wellbeing</option>
+                                <option value="religious and moral education">Religious & Moral Education</option>
+                                <option value="other">Other</option>
                             </select>
+                        </div>
+
+                        <div id="otherSubjectContainer" style="display: none; width: 100%; text-align: center;">
+                            <label for="otherSubject" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333; text-align: center;">Other Subject</label>
+                            <input type="text" name="otherSubject" id="otherSubject" placeholder="Enter subject name" style="width: 80%; max-width: 300px; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
                         </div>
 
                         <div style="width: 100%; text-align: center;">
@@ -146,6 +160,66 @@
             function goToLogin(role) {
                 window.location.href = `login.html?role=${encodeURIComponent(role)}`;
             }
+
+            // Handle subject selection and "Other" input
+            document.addEventListener('DOMContentLoaded', function() {
+                const subjectSelect = document.getElementById('subject');
+                const otherSubjectContainer = document.getElementById('otherSubjectContainer');
+                const otherSubjectInput = document.getElementById('otherSubject');
+                const tutorFinderForm = document.getElementById('tutorFinderForm');
+
+                // Show/hide other subject input based on selection
+                subjectSelect.addEventListener('change', function() {
+                    if (this.value === 'other') {
+                        otherSubjectContainer.style.display = 'block';
+                        otherSubjectInput.required = true;
+                        otherSubjectInput.focus();
+                    } else {
+                        otherSubjectContainer.style.display = 'none';
+                        otherSubjectInput.required = false;
+                        otherSubjectInput.value = '';
+                    }
+                });
+
+                // XSS protection and lowercase conversion for other subject input
+                otherSubjectInput.addEventListener('input', function() {
+                    // Remove potentially dangerous characters and convert to lowercase
+                    let value = this.value;
+                    // Remove HTML tags, script tags, and other potentially dangerous content
+                    value = value.replace(/<[^>]*>/g, ''); // Remove HTML tags
+                    value = value.replace(/javascript:/gi, ''); // Remove javascript: protocol
+                    value = value.replace(/on\w+\s*=/gi, ''); // Remove event handlers like onclick=
+                    value = value.replace(/[<>"'&]/g, ''); // Remove dangerous characters
+                    value = value.toLowerCase().trim(); // Convert to lowercase and trim
+
+                    // Update the input value if it was modified
+                    if (value !== this.value) {
+                        this.value = value;
+                    }
+                });
+
+                // Form submission handling
+                tutorFinderForm.addEventListener('submit', function(e) {
+                    const selectedSubject = subjectSelect.value;
+
+                    if (selectedSubject === 'other') {
+                        const otherValue = otherSubjectInput.value.trim().toLowerCase();
+                        if (!otherValue) {
+                            e.preventDefault();
+                            alert('Please enter a subject name.');
+                            otherSubjectInput.focus();
+                            return;
+                        }
+                        // Replace the subject value with the other subject value for submission
+                        subjectSelect.value = otherValue;
+                    } else if (!selectedSubject) {
+                        e.preventDefault();
+                        alert('Please select a subject.');
+                        subjectSelect.focus();
+                        return;
+                    }
+                });
+            });
         </script>
 
         <!-- 🔒 SECURITY: Load visual editor only for authenticated admins -->

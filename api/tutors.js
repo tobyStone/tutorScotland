@@ -210,15 +210,62 @@ module.exports = async (req, res) => {
         console.log("Received and validated query parameters:", { subject, mode, region, format });
 
         const subjectSynonyms = {
-            mathematics: 'math',
-            maths: 'math',   // NEW
-            math: 'math',   // self?map for completeness
-            english: 'english'
+            // Mathematics variations
+            mathematics: 'mathematics',
+            maths: 'mathematics',
+            math: 'mathematics',
+
+            // English variations
+            english: 'english',
+
+            // Sciences variations
+            sciences: 'sciences',
+            science: 'sciences',
+            biology: 'sciences',
+            chemistry: 'sciences',
+            physics: 'sciences',
+
+            // Social Studies variations
+            'social studies': 'social studies',
+            history: 'social studies',
+            geography: 'social studies',
+            modern: 'social studies',
+
+            // Languages variations
+            languages: 'languages',
+            'modern languages': 'languages',
+            french: 'languages',
+            spanish: 'languages',
+            german: 'languages',
+            gaelic: 'languages',
+
+            // Technologies variations
+            technologies: 'technologies',
+            technology: 'technologies',
+            computing: 'technologies',
+            ict: 'technologies',
+
+            // Expressive Arts variations
+            'expressive arts': 'expressive arts',
+            art: 'expressive arts',
+            music: 'expressive arts',
+            drama: 'expressive arts',
+
+            // Health and Wellbeing variations
+            'health and wellbeing': 'health and wellbeing',
+            'health & wellbeing': 'health and wellbeing',
+            pe: 'health and wellbeing',
+            'physical education': 'health and wellbeing',
+
+            // Religious and Moral Education variations
+            'religious and moral education': 'religious and moral education',
+            'religious & moral education': 'religious and moral education',
+            rme: 'religious and moral education'
         };
 
         if (subject) {
             const input = subject.toLowerCase().trim();
-            const synonym = subjectSynonyms[input] || input;   // fall back to itself
+            const synonym = subjectSynonyms[input] || input;   // fall back to itself for custom subjects
             query.subjects = { $regex: synonym, $options: 'i' };
         }
 

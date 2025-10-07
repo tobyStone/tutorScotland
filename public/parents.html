@@ -88,9 +88,23 @@
                         <div>
                             <label for="subject" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Subject</label>
                             <select name="subject" id="subject" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
+                                <option value="">Select a subject...</option>
                                 <option value="mathematics">Mathematics</option>
                                 <option value="english">English</option>
+                                <option value="sciences">Sciences</option>
+                                <option value="social studies">Social Studies</option>
+                                <option value="languages">Modern Languages</option>
+                                <option value="technologies">Technologies</option>
+                                <option value="expressive arts">Expressive Arts</option>
+                                <option value="health and wellbeing">Health & Wellbeing</option>
+                                <option value="religious and moral education">Religious & Moral Education</option>
+                                <option value="other">Other</option>
                             </select>
+                        </div>
+
+                        <div id="otherSubjectContainer" style="display: none;">
+                            <label for="otherSubject" style="display: block; margin-bottom: 0.5rem; font-weight: bold; color: #333;">Other Subject</label>
+                            <input type="text" name="otherSubject" id="otherSubject" placeholder="Enter subject name" style="width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1rem;">
                         </div>
 
                         <div>
@@ -368,12 +382,62 @@
             }
         });
 
+        // Handle subject selection and "Other" input
+        const subjectSelect = document.getElementById('subject');
+        const otherSubjectContainer = document.getElementById('otherSubjectContainer');
+        const otherSubjectInput = document.getElementById('otherSubject');
+
+        // Show/hide other subject input based on selection
+        subjectSelect.addEventListener('change', function() {
+            if (this.value === 'other') {
+                otherSubjectContainer.style.display = 'block';
+                otherSubjectInput.required = true;
+                otherSubjectInput.focus();
+            } else {
+                otherSubjectContainer.style.display = 'none';
+                otherSubjectInput.required = false;
+                otherSubjectInput.value = '';
+            }
+        });
+
+        // XSS protection and lowercase conversion for other subject input
+        otherSubjectInput.addEventListener('input', function() {
+            // Remove potentially dangerous characters and convert to lowercase
+            let value = this.value;
+            // Remove HTML tags, script tags, and other potentially dangerous content
+            value = value.replace(/<[^>]*>/g, ''); // Remove HTML tags
+            value = value.replace(/javascript:/gi, ''); // Remove javascript: protocol
+            value = value.replace(/on\w+\s*=/gi, ''); // Remove event handlers like onclick=
+            value = value.replace(/[<>"'&]/g, ''); // Remove dangerous characters
+            value = value.toLowerCase().trim(); // Convert to lowercase and trim
+
+            // Update the input value if it was modified
+            if (value !== this.value) {
+                this.value = value;
+            }
+        });
+
         // Handle form submission
         document.getElementById('tutorFinderForm').addEventListener('submit', function (event) {
             event.preventDefault();
-            const subject = document.getElementById('subject').value;
+            let subject = document.getElementById('subject').value;
             const mode = document.getElementById('mode').value;
             const region = document.getElementById('region') ? document.getElementById('region').value : '';
+
+            // Handle "other" subject selection
+            if (subject === 'other') {
+                const otherValue = otherSubjectInput.value.trim().toLowerCase();
+                if (!otherValue) {
+                    alert('Please enter a subject name.');
+                    otherSubjectInput.focus();
+                    return;
+                }
+                subject = otherValue;
+            } else if (!subject) {
+                alert('Please select a subject.');
+                subjectSelect.focus();
+                return;
+            }
 
             let queryParams = `?subject=${encodeURIComponent(subject)}&mode=${encodeURIComponent(mode)}`;
             if (mode === "in-person" && region.trim() !== "") {
