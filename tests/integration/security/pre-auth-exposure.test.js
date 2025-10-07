@@ -295,7 +295,7 @@ describe('Pre-Authentication Exposure Security', () => {
                 'public/parents.html',
                 'public/partnerships.html',
                 'public/publicConnect.html',
-                'public/tutorConnect.html',
+                // 'public/tutorConnect.html', // Now redirects to external MemberMojo
                 'public/tutorDirectory.html',
                 'public/tutorMembership.html'
             ];

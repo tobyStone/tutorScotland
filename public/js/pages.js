@@ -22,7 +22,7 @@ const PAGES = [
   'about-us',
   'contact',
   'parents',
-  'tutorConnect',
+  // 'tutorConnect', // Now redirects to external MemberMojo
   'tutorDirectory',
   'tutorMembership',
   'tutorszone',

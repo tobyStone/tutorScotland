@@ -7,7 +7,7 @@ test.describe('Navigation Tests', () => {
     // Test main nav links
     const navLinks = [
       { text: 'For Tutors', expectedUrl: '/tutorDirectory.html' },
-      { text: 'For Parents', expectedUrl: '/tutorConnect.html' },
+      { text: 'For Parents', expectedUrl: 'https://membermojo.co.uk/tas' },
       { text: 'About TAS', expectedUrl: '/about.html' },
       { text: 'Contact Us', expectedUrl: '/contact.html' }
     ];
@@ -45,7 +45,7 @@ test.describe('Navigation Tests', () => {
     const pagesToTest = [
       '/',
       '/tutorDirectory.html',
-      '/tutorConnect.html',
+      'https://membermojo.co.uk/tas',
       '/blog.html'
     ];
     

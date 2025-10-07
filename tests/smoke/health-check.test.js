@@ -36,7 +36,7 @@ describe('Deployment Health Checks', () => {
     const requiredPages = [
       'index.html',
       'tutorDirectory.html',
-      'tutorConnect.html',
+      // 'tutorConnect.html', // Now redirects to external MemberMojo
       'admin.html',
       'login.html'
       // Note: blog.html is generated dynamically, not a static file
