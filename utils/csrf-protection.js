@@ -1,34 +1,125 @@
 /**
  * CSRF Protection Middleware for TutorScotland
- * Implements comprehensive Cross-Site Request Forgery protection
- * 
+ * Implements comprehensive Cross-Site Request Forgery protection with dynamic origin support
+ *
  * Security Features:
  * - Origin validation for state-changing operations
+ * - Dynamic Vercel preview/production URL support
+ * - Environment-driven trusted domain configuration
  * - Referer header validation as fallback
- * - Trusted domain whitelist
  * - Development environment support
  * - Comprehensive security logging
  */
 
 const { SecurityLogger } = require('./security-logger');
 
-// Trusted domains for CSRF protection
-const TRUSTED_ORIGINS = [
+// Base trusted domains for CSRF protection (always trusted)
+const BASE_TRUSTED_ORIGINS = [
     'https://tutor-scotland.vercel.app',
     'https://www.tutor-scotland.vercel.app',
     'https://tutorsalliancescotland.co.uk',
     'https://www.tutorsalliancescotland.co.uk',
+    // Local development domains (always trusted)
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    // ✅ TEMPORARY: Add common development domains
     'http://localhost:8080',
     'http://localhost:5000',
     'http://localhost:4000',
     'http://127.0.0.1:8080',
     'http://127.0.0.1:5000',
     'http://127.0.0.1:4000',
-    // Add production domain when available
 ];
+
+/**
+ * Normalize a URL to a proper origin format
+ * @param {string} url - URL to normalize
+ * @returns {string|null} Normalized origin or null if invalid
+ */
+function normalizeOrigin(url) {
+    if (!url || typeof url !== 'string') return null;
+
+    try {
+        // Add https:// if no protocol specified
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            url = `https://${url}`;
+        }
+
+        const urlObj = new URL(url);
+        return urlObj.origin;
+    } catch (error) {
+        console.warn(`⚠️ CSRF: Invalid URL format: ${url}`);
+        return null;
+    }
+}
+
+/**
+ * Load dynamic trusted origins from environment variables
+ * This runs once at module load to build the complete trusted origins list
+ * @returns {string[]} Complete array of trusted origins
+ */
+function loadDynamicTrustedOrigins() {
+    const dynamicOrigins = [...BASE_TRUSTED_ORIGINS];
+    const addedOrigins = [];
+
+    // 1. VERCEL_URL - Automatically provided by Vercel for preview/production deployments
+    if (process.env.VERCEL_URL) {
+        const vercelOrigin = normalizeOrigin(process.env.VERCEL_URL);
+        if (vercelOrigin && !dynamicOrigins.includes(vercelOrigin)) {
+            dynamicOrigins.push(vercelOrigin);
+            addedOrigins.push(`VERCEL_URL: ${vercelOrigin}`);
+        }
+    }
+
+    // 2. PUBLIC_SITE_URL - Explicitly configured production domain
+    if (process.env.PUBLIC_SITE_URL) {
+        const publicOrigin = normalizeOrigin(process.env.PUBLIC_SITE_URL);
+        if (publicOrigin && !dynamicOrigins.includes(publicOrigin)) {
+            dynamicOrigins.push(publicOrigin);
+            addedOrigins.push(`PUBLIC_SITE_URL: ${publicOrigin}`);
+        }
+    }
+
+    // 3. ADDITIONAL_TRUSTED_ORIGINS - Comma-separated list for staging/custom domains
+    if (process.env.ADDITIONAL_TRUSTED_ORIGINS) {
+        const additionalOrigins = process.env.ADDITIONAL_TRUSTED_ORIGINS
+            .split(',')
+            .map(origin => normalizeOrigin(origin.trim()))
+            .filter(origin => origin && !dynamicOrigins.includes(origin));
+
+        dynamicOrigins.push(...additionalOrigins);
+        if (additionalOrigins.length > 0) {
+            addedOrigins.push(`ADDITIONAL: ${additionalOrigins.join(', ')}`);
+        }
+    }
+
+    // 4. Legacy CSRF_TRUSTED_ORIGINS support (for backward compatibility)
+    if (process.env.CSRF_TRUSTED_ORIGINS) {
+        const legacyOrigins = process.env.CSRF_TRUSTED_ORIGINS
+            .split(',')
+            .map(origin => normalizeOrigin(origin.trim()))
+            .filter(origin => origin && !dynamicOrigins.includes(origin));
+
+        dynamicOrigins.push(...legacyOrigins);
+        if (legacyOrigins.length > 0) {
+            addedOrigins.push(`LEGACY: ${legacyOrigins.join(', ')}`);
+        }
+    }
+
+    // Log configuration for debugging (but not in production)
+    if (process.env.NODE_ENV !== 'production' && addedOrigins.length > 0) {
+        console.log('🔒 CSRF Dynamic Origins Added:', {
+            base: BASE_TRUSTED_ORIGINS.length,
+            added: addedOrigins.length,
+            total: dynamicOrigins.length,
+            details: addedOrigins
+        });
+    }
+
+    return dynamicOrigins;
+}
+
+// Initialize trusted origins with dynamic support (runs once at module load)
+const TRUSTED_ORIGINS = loadDynamicTrustedOrigins();
 
 // Development environment detection
 const isDevelopment = process.env.NODE_ENV === 'development' ||
