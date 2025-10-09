@@ -228,10 +228,17 @@ module.exports = async (req, res) => {
 
         // Handle PUT request (update tutor)
         if (req.method === 'PUT') {
-            const tutorId = req.query.id;
+            // Extract tutorId from query parameter first, then fall back to request body
+            let tutorId = req.query.id;
+
+            // If no query ID, extract editId from request body as fallback
+            if (!tutorId) {
+                const { editId } = req.body;
+                tutorId = editId;
+            }
 
             if (!tutorId) {
-                console.log('Missing tutor ID for update');
+                console.log('Missing tutor ID for update (checked both query.id and body.editId)');
                 return res.status(400).json({
                     message: "Missing tutor ID for update"
                 });
@@ -248,9 +255,9 @@ module.exports = async (req, res) => {
                 contact,
                 description,
                 regions,
+                tutorType,
                 imagePath,
-                removeImage,
-                editId
+                removeImage
             } = req.body;
 
             // Validate required fields
@@ -270,6 +277,7 @@ module.exports = async (req, res) => {
                 contact,
                 description,
                 regions: canonicalizeRegionArray(regions),
+                tutorType: tutorType || '',
                 updatedAt: new Date()
             };
 
@@ -391,6 +399,7 @@ module.exports = async (req, res) => {
             contact,
             description,
             regions,
+            tutorType,
             imagePath = ''
         } = req.body;
 
@@ -492,6 +501,7 @@ module.exports = async (req, res) => {
             contact,
             description,
             regions: canonicalizeRegionArray(regions),
+            tutorType: tutorType || '',
             imagePath
         });
 

@@ -1116,6 +1116,32 @@ function initTutorManagement() {
         tutorForm.contact.value = tutor.contact || '';
         tutorForm.description.value = tutor.description || '';
 
+        // Handle tutor type selection
+        const tutorTypeRadios = document.querySelectorAll('input[name="tutorType"]');
+        const tutorTypeOtherText = document.getElementById('tutor-type-other-text');
+        const tutorTypeOtherRadio = document.getElementById('tutor-type-other-radio');
+
+        // Clear all radio buttons first
+        tutorTypeRadios.forEach(radio => {
+            radio.checked = false;
+        });
+        tutorTypeOtherText.value = '';
+
+        // Set the appropriate radio button
+        const tutorType = tutor.tutorType || '';
+        const predefinedTypes = ['Business', 'Tutor', 'Inspiring Tutor'];
+
+        if (predefinedTypes.includes(tutorType)) {
+            const matchingRadio = Array.from(tutorTypeRadios).find(radio => radio.value === tutorType);
+            if (matchingRadio) {
+                matchingRadio.checked = true;
+            }
+        } else if (tutorType) {
+            // Custom type - select "Other" radio and fill text field
+            tutorTypeOtherRadio.checked = true;
+            tutorTypeOtherText.value = tutorType;
+        }
+
         // Handle checkbox-based regions selection
         const regionsCheckboxes = document.querySelectorAll('input[name="regions"]');
         const regions = (tutor.regions || []);
@@ -1144,6 +1170,24 @@ function initTutorManagement() {
     cancelTutorEditBtn.addEventListener('click', () => {
         resetTutorForm();
     });
+
+    // Handle tutor type "Other" radio button interaction
+    const tutorTypeOtherRadio = document.getElementById('tutor-type-other-radio');
+    const tutorTypeOtherText = document.getElementById('tutor-type-other-text');
+
+    if (tutorTypeOtherRadio && tutorTypeOtherText) {
+        // When "Other" text field is clicked, select the "Other" radio button
+        tutorTypeOtherText.addEventListener('focus', function() {
+            tutorTypeOtherRadio.checked = true;
+        });
+
+        // When "Other" text field has content, ensure "Other" radio is selected
+        tutorTypeOtherText.addEventListener('input', function() {
+            if (this.value.trim()) {
+                tutorTypeOtherRadio.checked = true;
+            }
+        });
+    }
 
     // Handle tutor form submission
     tutorForm.addEventListener('submit', async function(e) {
@@ -1219,6 +1263,22 @@ function initTutorManagement() {
             return;
         }
 
+        // Handle tutor type selection
+        let tutorType = '';
+        const selectedTutorTypeRadio = document.querySelector('input[name="tutorType"]:checked');
+        if (selectedTutorTypeRadio) {
+            if (selectedTutorTypeRadio.value) {
+                // Predefined type selected
+                tutorType = selectedTutorTypeRadio.value;
+            } else {
+                // "Other" selected - get custom value
+                const otherTypeText = document.getElementById('tutor-type-other-text');
+                if (otherTypeText && otherTypeText.value.trim()) {
+                    tutorType = otherTypeText.value.trim();
+                }
+            }
+        }
+
         const payload = {
             name: fd.get('name').trim(),
             subjects: selectedSubjects,
@@ -1227,6 +1287,7 @@ function initTutorManagement() {
             contact: fd.get('contact').trim(),
             description: fd.get('description').trim(),
             regions: Array.from(document.querySelectorAll('input[name="regions"]:checked')).map(cb => cb.value),
+            tutorType: tutorType,
             imagePath: uploadedImagePath,
             removeImage: removeImageCheckbox ? removeImageCheckbox.checked : false
         };

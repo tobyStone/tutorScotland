@@ -31,7 +31,8 @@ const tutorSchema = new mongoose.Schema({
     imagePath: String,
     description: String,
     regions: [String], // e.g., "Highlands", "Edinburgh & Lothians", "Online"
-    contact: String       // NEW: a simple field for email/website address
+    contact: String,      // NEW: a simple field for email/website address
+    tutorType: String     // NEW: Type of tutor (Business, Tutor, Inspiring Tutor, or custom)
 });
 
 module.exports = mongoose.models.Tutor || mongoose.model('Tutor', tutorSchema);

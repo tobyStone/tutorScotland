@@ -409,6 +409,12 @@
                                 position: static !important;
                                 transform: none !important;
                             }
+                            .regions-container {
+                                max-height: 300px !important;
+                                overflow-y: scroll !important;
+                                -webkit-overflow-scrolling: touch !important;
+                                overscroll-behavior: contain !important;
+                            }
                             .regions-container label {
                                 display: block !important;
                                 margin-bottom: 15px !important;
@@ -439,6 +445,29 @@
                         <input type="text" name="badges">
                     </label>
 
+                    <label>Type of Tutor:
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="radio" id="tutor-type-business" name="tutorType" value="Business">
+                                <label for="tutor-type-business" style="cursor: pointer;">Business</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="radio" id="tutor-type-tutor" name="tutorType" value="Tutor">
+                                <label for="tutor-type-tutor" style="cursor: pointer;">Tutor</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="radio" id="tutor-type-inspiring" name="tutorType" value="Inspiring Tutor">
+                                <label for="tutor-type-inspiring" style="cursor: pointer;">Inspiring Tutor</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <input type="radio" id="tutor-type-other-radio" name="tutorType" value="">
+                                <label for="tutor-type-other-radio" style="cursor: pointer;">Other:</label>
+                                <input type="text" id="tutor-type-other-text" name="tutorTypeOther" placeholder="Enter custom type" style="padding: 5px; border: 1px solid #ccc; border-radius: 3px; width: 150px; margin-left: 5px;">
+                            </div>
+                        </div>
+                        <small style="color: #666; margin-top: 5px; display: block;">Select the type of tutor. This will appear as a tag on the tutor's profile.</small>
+                    </label>
+
                     <label>Tutor Image:
                         <input type="file" id="imageField" accept="image/*">
                     </label>
@@ -452,7 +481,7 @@
                     </label>
 
                     <label>Regions:
-                        <div id="regionsCheckboxes" class="regions-container" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 4px; background-color: #f9f9f9;">
+                        <div id="regionsCheckboxes" class="regions-container" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 4px; background-color: #f9f9f9; -webkit-overflow-scrolling: touch;">
                             <p style="margin: 0 0 10px 0; font-size: 0.9em; color: #666;">Select one or more regions (click to toggle):</p>
                             <label style="display: flex; align-items: baseline; margin-bottom: 5px; cursor: pointer;">
                                 <span style="width: 200px; display: inline-block;">Online</span>

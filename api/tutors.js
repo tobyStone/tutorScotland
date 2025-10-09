@@ -307,15 +307,21 @@ module.exports = async (req, res) => {
                 const safeImagePath = sanitizeString(tutor.imagePath || '', { maxLength: 500 });
                 const safeCostRange = sanitizeString(tutor.costRange || '', { maxLength: 50 });
 
+                // ✅ SECURITY FIX: Sanitize tutor type to prevent XSS
+                const safeTutorType = sanitizeString(tutor.tutorType || '', { maxLength: 50 });
+
                 return `
                 <section class="tutor-card">
-                    <img src="${safeImagePath || '/images/tutor0.jpg'}"
-                    alt="Tutor ${safeName}"
-                    onerror="this.src='/images/tutor0.jpg'"
-                    class="tutor-image" loading="lazy"
-                    decoding="async"
-                    width="300" height="200"
-                    style="object-fit:cover; object-position: center center; display: block;">
+                    <div class="tutor-image-container" style="position: relative;">
+                        <img src="${safeImagePath || '/images/tutor0.jpg'}"
+                        alt="Tutor ${safeName}"
+                        onerror="this.src='/images/tutor0.jpg'"
+                        class="tutor-image" loading="lazy"
+                        decoding="async"
+                        width="300" height="200"
+                        style="object-fit:cover; object-position: center center; display: block;">
+                        ${safeTutorType ? `<span class="tutor-type-tag">${safeTutorType}</span>` : ''}
+                    </div>
                     <h3>${safeName}</h3>
                     <p>Subjects: ${safeSubjects}</p>
                     <p>Cost: <span class="purple-pound">${safeCostRange.replace(/__P__/g, '&pound')} per hour</span></p>
@@ -553,6 +559,22 @@ module.exports = async (req, res) => {
                     .badge-tick {
                         color: green;
                         font-weight: bold;
+                    }
+
+                    /* Tutor type tags - similar to blog category tags */
+                    .tutor-type-tag {
+                        position: absolute;
+                        top: 1rem;
+                        right: 1rem;
+                        padding: 0.5rem 1rem;
+                        border-radius: 2rem;
+                        font-weight: 600;
+                        font-size: 0.85rem;
+                        color: white;
+                        background: linear-gradient(135deg, #800080 0%, #C8A2C8 100%);
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                        z-index: 2;
+                        text-transform: capitalize;
                     }
 
                     .pricing-key {
