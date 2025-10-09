@@ -267,6 +267,7 @@ module.exports = async (req, res) => {
             const input = subject.toLowerCase().trim();
             const synonym = subjectSynonyms[input] || input;   // fall back to itself for custom subjects
             query.subjects = { $regex: synonym, $options: 'i' };
+            console.log(`🔍 Subject search: input="${input}", synonym="${synonym}", regex="${synonym}"`);
         }
 
 
@@ -282,6 +283,11 @@ module.exports = async (req, res) => {
         }
 
         console.log("MongoDB Query:", JSON.stringify(query, null, 2));
+
+        // Debug: Show all tutors in database for comparison
+        const allTutors = await Tutor.find({}, 'name subjects').lean();
+        console.log("🔍 All tutors in database:", JSON.stringify(allTutors, null, 2));
+
         const tutors = await Tutor.find(query)
             .sort({ costRange: 1 })
             .lean(); // Use lean() for better performance

@@ -38,6 +38,8 @@ async function loadUploadHelper() {
 // Initialize upload helper
 loadUploadHelper();
 
+
+
 // Wait for DOM and required modules to be ready
 document.addEventListener('DOMContentLoaded', function() {
     console.log('[Admin Dashboard] Initializing...');

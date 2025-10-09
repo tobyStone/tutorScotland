@@ -90,6 +90,11 @@ export async function uploadImage(file, folder = 'content-images') {
                 const errorText = await r.text();
                 console.error('Upload failed:', r.status, errorText);
 
+                // Handle authentication errors specifically
+                if (r.status === 401) {
+                    throw new Error('Authentication required. Please log in as an admin and try again.');
+                }
+
                 // Don't retry on client errors (4xx), only server errors (5xx)
                 if (r.status >= 400 && r.status < 500 && r.status !== 429) {
                     throw new Error(`Upload failed: ${r.status} ${errorText}`);

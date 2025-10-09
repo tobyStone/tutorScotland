@@ -64,10 +64,15 @@
     const script = document.createElement('script');
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-    
+
+    console.log('📡 Loading Google Analytics script from:', script.src);
+
     // Add error handling
-    script.onerror = function() {
+    script.onerror = function(error) {
         console.error('❌ Failed to load Google Analytics script');
+        console.error('❌ Error details:', error);
+        console.error('❌ Script URL:', script.src);
+        console.error('❌ This might be due to ad blockers, network issues, or GDPR restrictions');
     };
     
     script.onload = function() {
