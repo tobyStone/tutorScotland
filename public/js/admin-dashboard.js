@@ -1114,7 +1114,36 @@ function initTutorManagement() {
 
         // Convert __P__ back to £ for display in the form
         tutorForm.costRange.value = (tutor.costRange || '').replace(/__P__/g, '£');
-        tutorForm.badges.value = (tutor.badges || []).join(', ');
+
+        // Handle badges checkboxes
+        const badgeCheckboxes = document.querySelectorAll('input[name="badges"]');
+        const badgeOtherText = document.getElementById('badge-other-text');
+        const badgeOtherCheck = document.getElementById('badge-other-check');
+
+        // Clear all badge checkboxes first
+        badgeCheckboxes.forEach(checkbox => checkbox.checked = false);
+        if (badgeOtherText) badgeOtherText.value = '';
+        if (badgeOtherCheck) badgeOtherCheck.value = '';
+
+        // Check the appropriate badges
+        const tutorBadges = tutor.badges || [];
+        const standardBadges = ['PVG registered', 'ICO registered', 'Fully Qualified'];
+
+        tutorBadges.forEach(badge => {
+            if (standardBadges.includes(badge)) {
+                // Check standard badge checkbox
+                const checkbox = document.querySelector(`input[name="badges"][value="${badge}"]`);
+                if (checkbox) checkbox.checked = true;
+            } else {
+                // Handle "other" badge
+                if (badgeOtherText && badgeOtherCheck) {
+                    badgeOtherText.value = badge;
+                    badgeOtherCheck.checked = true;
+                    badgeOtherCheck.value = badge;
+                }
+            }
+        });
+
         tutorForm.contact.value = tutor.contact || '';
         tutorForm.description.value = tutor.description || '';
 
@@ -1281,11 +1310,20 @@ function initTutorManagement() {
             }
         }
 
+        // Collect all checked badges (including "other" if specified)
+        const selectedBadges = [];
+        const badgeCheckboxes = document.querySelectorAll('input[name="badges"]:checked');
+        badgeCheckboxes.forEach(checkbox => {
+            if (checkbox.value) {
+                selectedBadges.push(checkbox.value);
+            }
+        });
+
         const payload = {
             name: fd.get('name').trim(),
             subjects: selectedSubjects,
             costRange: costRange,
-            badges: csv(fd.get('badges')),
+            badges: selectedBadges,
             contact: fd.get('contact').trim(),
             description: fd.get('description').trim(),
             regions: Array.from(document.querySelectorAll('input[name="regions"]:checked')).map(cb => cb.value),
