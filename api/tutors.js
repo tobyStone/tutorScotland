@@ -208,6 +208,7 @@ module.exports = async (req, res) => {
         let query = {};
 
         console.log("Received and validated query parameters:", { subject, mode, region, format });
+        console.log("Raw query parameters from request:", req.query);
 
         const subjectSynonyms = {
             // Mathematics variations
@@ -270,7 +271,6 @@ module.exports = async (req, res) => {
             console.log(`🔍 Subject search: input="${input}", synonym="${synonym}", regex="${synonym}"`);
         }
 
-
         if (modeLc === "online") {
             query.regions = { $regex: /^online$/i };
         } else if (modeLc === "in-person") {
@@ -293,6 +293,7 @@ module.exports = async (req, res) => {
             .lean(); // Use lean() for better performance
 
         console.log("Raw tutors result:", JSON.stringify(tutors, null, 2));
+        console.log(`🔍 Found ${tutors.length} tutors matching query`);
 
         // Generate HTML for tutors or show a message if none found
         let tutorsHtml = '';

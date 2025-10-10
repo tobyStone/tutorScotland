@@ -430,19 +430,40 @@
                 if (!otherValue) {
                     alert('Please enter a subject name.');
                     otherSubjectInput.focus();
-                    return;
+                    return false; // Stay on current page
                 }
                 subject = otherValue;
             } else if (!subject) {
                 alert('Please select a subject.');
                 subjectSelect.focus();
-                return;
+                return false; // Stay on current page
+            }
+
+            // Validate mode selection
+            if (!mode) {
+                alert('Please select a location type (Online or In Person).');
+                document.getElementById('mode').focus();
+                return false; // Stay on current page
+            }
+
+            // For in-person, check if region is selected
+            if (mode === "in-person") {
+                const regionSelect = document.getElementById('region');
+                if (!regionSelect || !regionSelect.value.trim()) {
+                    alert('Please select a region for in-person tutoring.');
+                    if (regionSelect) regionSelect.focus();
+                    return false; // Stay on current page
+                }
             }
 
             let queryParams = `?subject=${encodeURIComponent(subject)}&mode=${encodeURIComponent(mode)}`;
             if (mode === "in-person" && region.trim() !== "") {
                 queryParams += `&region=${encodeURIComponent(region)}`;
             }
+
+            console.log('🔍 Search parameters:', { subject, mode, region });
+            console.log('🔍 Search URL:', `/tutors/search${queryParams}`);
+
             window.location.href = `/tutors/search${queryParams}`;
         });
 

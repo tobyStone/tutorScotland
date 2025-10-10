@@ -59,9 +59,9 @@ function applySecurityHeaders(res, options = {}) {
         }
         
         if (allowInlineScripts) {
-            cspDirectives.push("script-src 'self' 'unsafe-inline'");
+            cspDirectives.push("script-src 'self' 'unsafe-inline' https://www.googletagmanager.com");
         } else {
-            cspDirectives.push("script-src 'self'");
+            cspDirectives.push("script-src 'self' https://www.googletagmanager.com");
         }
         
         // Add additional sources if provided
