@@ -441,8 +441,29 @@
                         </select>
                     </label>
 
-                    <label>Badges (comma-separated):
-                        <input type="text" name="badges">
+                    <label>Badges:
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9;">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <label for="badge-pvg" style="cursor: pointer; flex: 1;">PVG registered</label>
+                                <input type="checkbox" id="badge-pvg" name="badges" value="PVG registered">
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <label for="badge-ico" style="cursor: pointer; flex: 1;">ICO registered</label>
+                                <input type="checkbox" id="badge-ico" name="badges" value="ICO registered">
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <label for="badge-qualified" style="cursor: pointer; flex: 1;">Fully Qualified</label>
+                                <input type="checkbox" id="badge-qualified" name="badges" value="Fully Qualified">
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center; flex: 1;">
+                                    <label for="badge-other-check" style="cursor: pointer;">Other:</label>
+                                    <input type="text" id="badge-other-text" name="badgeOther" placeholder="Enter custom badge" style="padding: 5px; border: 1px solid #ccc; border-radius: 3px; width: 150px; margin-left: 8px;">
+                                </div>
+                                <input type="checkbox" id="badge-other-check" name="badges" value="">
+                            </div>
+                        </div>
+                        <small style="color: #666; margin-top: 5px; display: block;">Select applicable badges. These will appear as tags on the tutor's profile.</small>
                     </label>
 
                     <label>Type of Tutor:
@@ -459,9 +480,11 @@
                                 <label for="tutor-type-inspiring" style="cursor: pointer; flex: 1;">Inspiring Tutor</label>
                                 <input type="radio" id="tutor-type-inspiring" name="tutorType" value="Inspiring Tutor">
                             </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <label for="tutor-type-other-radio" style="cursor: pointer;">Other:</label>
-                                <input type="text" id="tutor-type-other-text" name="tutorTypeOther" placeholder="Enter custom type" style="padding: 5px; border: 1px solid #ccc; border-radius: 3px; width: 150px; flex: 1;">
+                            <div style="display: flex; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; align-items: center; flex: 1;">
+                                    <label for="tutor-type-other-radio" style="cursor: pointer;">Other:</label>
+                                    <input type="text" id="tutor-type-other-text" name="tutorTypeOther" placeholder="Enter custom type" style="padding: 5px; border: 1px solid #ccc; border-radius: 3px; width: 150px; margin-left: 8px;">
+                                </div>
                                 <input type="radio" id="tutor-type-other-radio" name="tutorType" value="">
                             </div>
                         </div>
@@ -488,7 +511,7 @@
                                 <input type="checkbox" name="regions" value="Online" style="margin-top: 0.1em; flex-shrink: 0;">
                             </label>
                             <label style="display: flex; align-items: baseline; margin-bottom: 5px; cursor: pointer;">
-                                <span style="width: 200px; display: inline-block;">Aberdeen & Aberdeenshire</span>
+                                <span style="width: 180px; display: inline-block;">Aberdeen & Aberdeenshire</span>
                                 <input type="checkbox" name="regions" value="Aberdeen & Aberdeenshire" style="margin-top: 0.1em; flex-shrink: 0;">
                             </label>
                             <label style="display: flex; align-items: baseline; margin-bottom: 5px; cursor: pointer;">
@@ -516,7 +539,7 @@
                                 <input type="checkbox" name="regions" value="Edinburgh & Lothians" style="margin-top: 0.1em; flex-shrink: 0;">
                             </label>
                             <label style="display: flex; align-items: baseline; margin-bottom: 5px; cursor: pointer;">
-                                <span style="width: 200px; display: inline-block;">Fife</span>
+                                <span style="width: 220px; display: inline-block;">Fife</span>
                                 <input type="checkbox" name="regions" value="Fife" style="margin-top: 0.1em; flex-shrink: 0;">
                             </label>
                             <label style="display: flex; align-items: baseline; margin-bottom: 5px; cursor: pointer;">
@@ -730,6 +753,60 @@
     <script type="module" src="/js/pages.js"></script>
     <!-- Upload Helper for Image Uploads -->
     <script type="module" src="/js/upload-helper.js"></script>
+
+    <!-- Badge and Tutor Type Handling -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle "Other" badge checkbox and text input
+            const badgeOtherCheck = document.getElementById('badge-other-check');
+            const badgeOtherText = document.getElementById('badge-other-text');
+
+            if (badgeOtherCheck && badgeOtherText) {
+                // When other text is entered, check the checkbox and set its value
+                badgeOtherText.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        badgeOtherCheck.checked = true;
+                        badgeOtherCheck.value = this.value.trim();
+                    } else {
+                        badgeOtherCheck.checked = false;
+                        badgeOtherCheck.value = '';
+                    }
+                });
+
+                // When checkbox is unchecked, clear the text
+                badgeOtherCheck.addEventListener('change', function() {
+                    if (!this.checked) {
+                        badgeOtherText.value = '';
+                        this.value = '';
+                    }
+                });
+            }
+
+            // Handle "Other" tutor type radio and text input
+            const tutorTypeOtherRadio = document.getElementById('tutor-type-other-radio');
+            const tutorTypeOtherText = document.getElementById('tutor-type-other-text');
+
+            if (tutorTypeOtherRadio && tutorTypeOtherText) {
+                // When other text is entered, select the radio and set its value
+                tutorTypeOtherText.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        tutorTypeOtherRadio.checked = true;
+                        tutorTypeOtherRadio.value = this.value.trim();
+                    } else {
+                        tutorTypeOtherRadio.value = '';
+                    }
+                });
+
+                // When radio is selected, focus the text input
+                tutorTypeOtherRadio.addEventListener('change', function() {
+                    if (this.checked) {
+                        tutorTypeOtherText.focus();
+                    }
+                });
+            }
+        });
+    </script>
+
     <!-- Admin Dashboard Interactive Functionality -->
     <script src="/js/admin-dashboard.js"></script>
     <!-- 🔒 SECURITY: Direct load visual editor for authenticated admin dashboard -->
