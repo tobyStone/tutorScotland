@@ -49,7 +49,7 @@ function applySecurityHeaders(res, options = {}) {
             "default-src 'self'",
             "img-src 'self' data: https: blob:",
             "font-src 'self' https://fonts.gstatic.com",
-            "connect-src 'self' https://api.vercel.com https://storage.googleapis.com"
+            "connect-src 'self' https://api.vercel.com https://storage.googleapis.com https://region1.google-analytics.com https://www.google-analytics.com"
         ];
         
         if (allowInlineStyles) {
