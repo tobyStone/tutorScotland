@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Integration tests for Scottish curriculum subjects API
+ * @description Tests CSRF protection and security headers for video management endpoints
+ */
+
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import mongoose from 'mongoose';
 import createVercelCompatibleResponse from '../../utils/createVercelCompatibleResponse.js';
@@ -150,7 +155,8 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find tutors by mathematics subject', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=mathematics&format=json'
+        url: '/api/tutors?subject=mathematics&format=json',
+        query: { subject: 'mathematics', format: 'json' }
       };
       const res = createMockResponse();
 
@@ -166,7 +172,8 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find tutors by sciences subject', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=sciences&format=json'
+        url: '/api/tutors?subject=sciences&format=json',
+        query: { subject: 'sciences', format: 'json' }
       };
       const res = createMockResponse();
 
@@ -181,7 +188,8 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find tutors by english subject', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=english&format=json'
+        url: '/api/tutors?subject=english&format=json',
+        query: { subject: 'english', format: 'json' }
       };
       const res = createMockResponse();
 
@@ -196,7 +204,8 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find tutors by technologies subject', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=technologies&format=json'
+        url: '/api/tutors?subject=technologies&format=json',
+        query: { subject: 'technologies', format: 'json' }
       };
       const res = createMockResponse();
 
@@ -211,7 +220,8 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find tutors by social studies subject', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=social studies&format=json'
+        url: '/api/tutors?subject=social studies&format=json',
+        query: { subject: 'social studies', format: 'json' }
       };
       const res = createMockResponse();
 
@@ -226,7 +236,8 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find tutors by languages subject', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=languages&format=json'
+        url: '/api/tutors?subject=languages&format=json',
+        query: { subject: 'languages', format: 'json' }
       };
       const res = createMockResponse();
 
@@ -241,7 +252,8 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find tutors by health and wellbeing subject', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=health and wellbeing&format=json'
+        url: '/api/tutors?subject=health and wellbeing&format=json',
+        query: { subject: 'health and wellbeing', format: 'json' }
       };
       const res = createMockResponse();
 
@@ -256,9 +268,10 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find tutors by religious and moral education subject', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=religious and moral education&format=json'
+        url: '/api/tutors?subject=religious and moral education&format=json',
+        query: { subject: 'religious and moral education', format: 'json' }
       };
-      const res = createVercelCompatibleResponse();
+      const res = createMockResponse();
 
       await tutorsHandler(req, res);
 
@@ -271,9 +284,10 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find tutors by expressive arts subject', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=expressive arts&format=json'
+        url: '/api/tutors?subject=expressive arts&format=json',
+        query: { subject: 'expressive arts', format: 'json' }
       };
-      const res = createVercelCompatibleResponse();
+      const res = createMockResponse();
 
       await tutorsHandler(req, res);
 
@@ -288,9 +302,10 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find mathematics tutors when searching for "maths"', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=maths&format=json'
+        url: '/api/tutors?subject=maths&format=json',
+        query: { subject: 'maths', format: 'json' }
       };
-      const res = createVercelCompatibleResponse();
+      const res = createMockResponse();
 
       await tutorsHandler(req, res);
 
@@ -303,9 +318,10 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find sciences tutors when searching for "biology"', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=biology&format=json'
+        url: '/api/tutors?subject=biology&format=json',
+        query: { subject: 'biology', format: 'json' }
       };
-      const res = createVercelCompatibleResponse();
+      const res = createMockResponse();
 
       await tutorsHandler(req, res);
 
@@ -318,9 +334,10 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find languages tutors when searching for "french"', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=french&format=json'
+        url: '/api/tutors?subject=french&format=json',
+        query: { subject: 'french', format: 'json' }
       };
-      const res = createVercelCompatibleResponse();
+      const res = createMockResponse();
 
       await tutorsHandler(req, res);
 
@@ -333,9 +350,10 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find technologies tutors when searching for "computing"', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=computing&format=json'
+        url: '/api/tutors?subject=computing&format=json',
+        query: { subject: 'computing', format: 'json' }
       };
-      const res = createVercelCompatibleResponse();
+      const res = createMockResponse();
 
       await tutorsHandler(req, res);
 
@@ -350,9 +368,10 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should find tutors with custom subjects', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=custom subject&format=json'
+        url: '/api/tutors?subject=custom subject&format=json',
+        query: { subject: 'custom subject', format: 'json' }
       };
-      const res = createVercelCompatibleResponse();
+      const res = createMockResponse();
 
       await tutorsHandler(req, res);
 
@@ -365,9 +384,10 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should handle case-insensitive custom subject search', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=CUSTOM SUBJECT&format=json'
+        url: '/api/tutors?subject=CUSTOM SUBJECT&format=json',
+        query: { subject: 'CUSTOM SUBJECT', format: 'json' }
       };
-      const res = createVercelCompatibleResponse();
+      const res = createMockResponse();
 
       await tutorsHandler(req, res);
 
@@ -382,9 +402,10 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should reject subjects with invalid characters', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=<script>alert("xss")</script>&format=json'
+        url: '/api/tutors?subject=<script>alert("xss")</script>&format=json',
+        query: { subject: '<script>alert("xss")</script>', format: 'json' }
       };
-      const res = createVercelCompatibleResponse();
+      const res = createMockResponse();
 
       await tutorsHandler(req, res);
 
@@ -395,9 +416,10 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
       const longSubject = 'a'.repeat(101);
       const req = {
         method: 'GET',
-        url: `/api/tutors?subject=${longSubject}&format=json`
+        url: `/api/tutors?subject=${longSubject}&format=json`,
+        query: { subject: longSubject, format: 'json' }
       };
-      const res = createVercelCompatibleResponse();
+      const res = createMockResponse();
 
       await tutorsHandler(req, res);
 
@@ -407,9 +429,10 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     it('should handle empty subject parameter gracefully', async () => {
       const req = {
         method: 'GET',
-        url: '/api/tutors?subject=&format=json'
+        url: '/api/tutors?subject=&format=json',
+        query: { subject: '', format: 'json' }
       };
-      const res = createVercelCompatibleResponse();
+      const res = createMockResponse();
 
       await tutorsHandler(req, res);
 

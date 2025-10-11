@@ -53,6 +53,16 @@ function createVercelCompatibleResponse(res) {
     };
   }
 
+  // Add removeHeader method if missing
+  if (typeof res.removeHeader !== 'function') {
+    res.removeHeader = function removeHeader(name) {
+      if (res.headers && typeof res.headers === 'object') {
+        delete res.headers[name];
+      }
+      return res;
+    };
+  }
+
   return res;
 }
 

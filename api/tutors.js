@@ -106,7 +106,7 @@ function validateTutorParams(query) {
     if (subject !== undefined) {
         if (typeof subject !== 'string' || subject.length > 100) {
             errors.push('Subject parameter must be a string with maximum 100 characters');
-        } else if (!/^[a-zA-Z\s\-&]+$/.test(subject)) {
+        } else if (subject.length > 0 && !/^[a-zA-Z\s\-&]+$/.test(subject)) {
             errors.push('Subject parameter contains invalid characters');
         }
     }
@@ -200,7 +200,97 @@ module.exports = async (req, res) => {
         if (format === 'json') {
             // Apply API security headers
             applyAPISecurityHeaders(res);
-            const tutors = await Tutor.find({}).lean();
+
+            // Build query with same filtering logic as HTML generation
+            let query = {};
+
+            const subjectSynonyms = {
+                // Mathematics variations
+                mathematics: 'mathematics',
+                maths: 'mathematics',
+                math: 'mathematics',
+
+                // English variations
+                english: 'english',
+
+                // Sciences variations
+                sciences: 'sciences',
+                science: 'sciences',
+                biology: 'sciences',
+                chemistry: 'sciences',
+                physics: 'sciences',
+
+                // Technologies variations
+                technologies: 'technologies',
+                technology: 'technologies',
+                computing: 'technologies',
+                'computer science': 'technologies',
+                ict: 'technologies',
+
+                // Social studies variations
+                'social studies': 'social studies',
+                history: 'social studies',
+                geography: 'social studies',
+                modern: 'social studies',
+
+                // Languages variations
+                languages: 'languages',
+                language: 'languages',
+                french: 'languages',
+                spanish: 'languages',
+                german: 'languages',
+                gaelic: 'languages',
+
+                // Health and wellbeing variations
+                'health and wellbeing': 'health and wellbeing',
+                'health & wellbeing': 'health and wellbeing',
+                pe: 'health and wellbeing',
+                'physical education': 'health and wellbeing',
+
+                // Expressive arts variations
+                'expressive arts': 'expressive arts',
+                art: 'expressive arts',
+                music: 'expressive arts',
+                drama: 'expressive arts',
+
+                // Religious and moral education variations
+                'religious and moral education': 'religious and moral education',
+                'religious & moral education': 'religious and moral education',
+                rme: 'religious and moral education'
+            };
+
+            if (subject) {
+                const input = subject.toLowerCase().trim();
+                const synonym = subjectSynonyms[input] || input;   // fall back to itself for custom subjects
+                query.subjects = { $regex: synonym, $options: 'i' };
+                console.log(`🔍 JSON Subject search: input="${input}", synonym="${synonym}", regex="${synonym}"`);
+            }
+
+            const modeLc = mode.toLowerCase().trim();
+            if (modeLc === "online") {
+                query.regions = { $regex: /^online$/i };
+            } else if (modeLc === "in-person") {
+                query.regions = { $not: { $regex: /^online$/i } };
+            } else if (region) {
+                const regionSynonyms = {
+                    'edinburgh': 'Edinburgh & Lothians',
+                    'glasgow': 'Glasgow & West',
+                    'aberdeen': 'Aberdeen & Aberdeenshire',
+                    'dundee': 'Dundee & Angus',
+                    'stirling': 'Stirling & Falkirk',
+                    'perth': 'Perth & Kinross',
+                    'inverness': 'Highlands & Islands',
+                    'dumfries': 'Dumfries & Galloway',
+                    'borders': 'Scottish Borders'
+                };
+                const regionInput = region.toLowerCase().trim();
+                const regionSynonym = regionSynonyms[regionInput] || region;
+                query.regions = { $regex: regionSynonym, $options: 'i' };
+            }
+
+            console.log("JSON MongoDB Query:", JSON.stringify(query, null, 2));
+
+            const tutors = await Tutor.find(query).lean();
             return res.status(200).json(tutors);
         }
 

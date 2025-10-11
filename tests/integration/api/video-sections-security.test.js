@@ -1,6 +1,6 @@
 /**
  * @fileoverview Integration tests for video-sections API security
- * @description Tests CSRF protection and security headers for video management endpoints
+ * @description Verifies CSRF enforcement and security headers for video section management.
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
