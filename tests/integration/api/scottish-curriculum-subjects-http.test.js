@@ -1,9 +1,9 @@
 /**
- * @fileoverview Integration tests for Scottish curriculum subjects API
- * @description Tests subject filtering and search functionality via HTTP requests
+ * @fileoverview HTTP-based integration tests for Scottish curriculum subjects API
+ * @description Tests subject filtering and search functionality via real HTTP requests
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
@@ -18,23 +18,28 @@ function createTestServer() {
   return createServer((req, res) => {
     // Add Vercel-compatible response helpers
     createVercelCompatibleResponse(res);
-
+    
     // Parse URL and query parameters
     const url = new URL(req.url, `http://${req.headers.host}`);
     req.query = Object.fromEntries(url.searchParams);
-
+    
     // Call the handler
     tutorsHandler(req, res);
   });
 }
 
-describe('Scottish Curriculum Subjects Integration Tests', () => {
+describe('Scottish Curriculum Subjects HTTP Integration Tests', () => {
   let mongoServer;
   let testTutors;
   let Tutor;
   let testServer;
 
   beforeAll(async () => {
+    // Disconnect any existing connection
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
+    }
+
     // Start in-memory MongoDB server
     mongoServer = await MongoMemoryServer.create();
     const mongoUri = mongoServer.getUri();
@@ -55,7 +60,6 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
   });
 
   beforeEach(async () => {
-
     // Get or create Tutor model
     try {
       Tutor = mongoose.model('Tutor');
@@ -202,243 +206,151 @@ describe('Scottish Curriculum Subjects Integration Tests', () => {
     });
 
     it('should find tutors by technologies subject', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=technologies&format=json',
-        query: { subject: 'technologies', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=technologies&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('technologies');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('technologies');
     });
 
     it('should find tutors by social studies subject', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=social studies&format=json',
-        query: { subject: 'social studies', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=social studies&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('social studies');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('social studies');
     });
 
     it('should find tutors by languages subject', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=languages&format=json',
-        query: { subject: 'languages', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=languages&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('languages');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('languages');
     });
 
     it('should find tutors by health and wellbeing subject', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=health and wellbeing&format=json',
-        query: { subject: 'health and wellbeing', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=health and wellbeing&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('health and wellbeing');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('health and wellbeing');
     });
 
     it('should find tutors by religious and moral education subject', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=religious and moral education&format=json',
-        query: { subject: 'religious and moral education', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=religious and moral education&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('religious and moral education');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('religious and moral education');
     });
 
     it('should find tutors by expressive arts subject', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=expressive arts&format=json',
-        query: { subject: 'expressive arts', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=expressive arts&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('expressive arts');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('expressive arts');
     });
   });
 
   describe('Subject Synonym Matching', () => {
     it('should find mathematics tutors when searching for "maths"', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=maths&format=json',
-        query: { subject: 'maths', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=maths&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('mathematics');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('mathematics');
     });
 
     it('should find sciences tutors when searching for "biology"', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=biology&format=json',
-        query: { subject: 'biology', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=biology&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('sciences');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('sciences');
     });
 
     it('should find languages tutors when searching for "french"', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=french&format=json',
-        query: { subject: 'french', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=french&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('languages');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('languages');
     });
 
     it('should find technologies tutors when searching for "computing"', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=computing&format=json',
-        query: { subject: 'computing', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=computing&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('technologies');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('technologies');
     });
   });
 
   describe('Custom "Other" Subject Search', () => {
     it('should find tutors with custom subjects', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=custom subject&format=json',
-        query: { subject: 'custom subject', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=custom subject&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('custom subject');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('custom subject');
     });
 
     it('should handle case-insensitive custom subject search', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=CUSTOM SUBJECT&format=json',
-        query: { subject: 'CUSTOM SUBJECT', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=CUSTOM SUBJECT&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(1);
-      expect(tutors[0].subjects).toContain('custom subject');
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(1);
+      expect(response.body[0].subjects).toContain('custom subject');
     });
   });
 
   describe('Input Validation and Security', () => {
     it('should reject subjects with invalid characters', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=<script>alert("xss")</script>&format=json',
-        query: { subject: '<script>alert("xss")</script>', format: 'json' }
-      };
-      const res = createMockResponse();
-
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(400);
+      await request(testServer)
+        .get('/api/tutors?subject=<script>alert("xss")</script>&format=json')
+        .expect(400);
     });
 
     it('should reject subjects that are too long', async () => {
       const longSubject = 'a'.repeat(101);
-      const req = {
-        method: 'GET',
-        url: `/api/tutors?subject=${longSubject}&format=json`,
-        query: { subject: longSubject, format: 'json' }
-      };
-      const res = createMockResponse();
-
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(400);
+      await request(testServer)
+        .get(`/api/tutors?subject=${longSubject}&format=json`)
+        .expect(400);
     });
 
     it('should handle empty subject parameter gracefully', async () => {
-      const req = {
-        method: 'GET',
-        url: '/api/tutors?subject=&format=json',
-        query: { subject: '', format: 'json' }
-      };
-      const res = createMockResponse();
+      const response = await request(testServer)
+        .get('/api/tutors?subject=&format=json')
+        .expect(200);
 
-      await tutorsHandler(req, res);
-
-      expect(res.statusCode).toBe(200);
-      const tutors = JSON.parse(res._getData());
-      expect(tutors).toHaveLength(8); // Should return all tutors
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveLength(8); // Should return all tutors
     });
   });
 });
