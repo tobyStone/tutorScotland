@@ -438,33 +438,15 @@ module.exports = async (req, res) => {
                         const link = buildContactLink(tutor.contact);
                         if (!link) return ''; // Exit if contact was empty string
 
-                        // If it's a website, show one button
-                        if (link.type === 'website') {
-                          return `
+                        // Single "Contact Tutor" button with intelligent fallback logic
+                        return `
                             <div class="tutor-contact">
-                              <a href="${link.href}"
-                                 class="contact-btn"
-                                 target="${link.target}"
-                                 rel="noopener noreferrer">
-                                 ${link.text}
-                              </a>
-                            </div>`;
-                        }
-
-                        // If it's an email, show BOTH buttons
-                        if (link.type === 'email') {
-                          return `
-                            <div class="tutor-contact is-email">
-                              <a href="${link.href}" class="contact-btn email-btn" title="Open in your default email app">
-                                ${link.text}
-                              </a>
-                              <button onclick="copyToClipboard(this, '${link.address}')" class="contact-btn copy-btn" title="Copy email address">
-                                Copy Email
+                              <button onclick="contactTutor('${link.type}', '${link.href}', '${link.address || ''}')"
+                                      class="contact-btn contact-tutor-btn"
+                                      title="Contact this tutor">
+                                Contact Tutor
                               </button>
                             </div>`;
-                        }
-
-                        return ''; // Fallback for any other case
                     })()}
                 </section>
                 `;
@@ -498,6 +480,54 @@ module.exports = async (req, res) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
                 <script>
+                    function contactTutor(type, href, emailAddress) {
+                        if (type === 'website') {
+                            // Scenario 3: Redirect to website
+                            window.open(href, '_blank', 'noopener,noreferrer');
+                            return;
+                        }
+
+                        if (type === 'email') {
+                            // Try to open email client first (Scenario 1)
+                            try {
+                                // Attempt to open email client
+                                window.location.href = href;
+
+                                // Set a short timeout to check if we're still on the page
+                                // If we are, it likely means the email client didn't open
+                                setTimeout(() => {
+                                    // Check if we're still on the same page (email client didn't open)
+                                    if (document.hasFocus()) {
+                                        // Scenario 2: Email client didn't open, copy to clipboard
+                                        copyEmailToClipboard(emailAddress);
+                                    }
+                                    // If we lost focus, assume email client opened successfully (Scenario 1)
+                                }, 500);
+
+                            } catch (error) {
+                                // Scenario 2: Error opening email, copy to clipboard
+                                console.log('Email client not available, copying to clipboard');
+                                copyEmailToClipboard(emailAddress);
+                            }
+                        }
+                    }
+
+                    function copyEmailToClipboard(emailAddress) {
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(emailAddress).then(() => {
+                                alert('Email address copied as your system doesn\\'t allow access from this website');
+                            }).catch(err => {
+                                console.error('Failed to copy email: ', err);
+                                // Fallback: show email in alert
+                                alert('Email address: ' + emailAddress + '\\n\\nPlease copy this manually as clipboard access is not available.');
+                            });
+                        } else {
+                            // Fallback for older browsers
+                            alert('Email address: ' + emailAddress + '\\n\\nPlease copy this manually as clipboard access is not available.');
+                        }
+                    }
+
+                    // Legacy function for backward compatibility (if needed elsewhere)
                     function copyToClipboard(buttonElement, textToCopy) {
                         navigator.clipboard.writeText(textToCopy).then(() => {
                             const originalText = buttonElement.textContent;
@@ -789,6 +819,14 @@ module.exports = async (req, res) => {
                     .contact-btn:focus-visible {
                         outline: 2px solid #0057B7;
                         outline-offset: 2px;
+                    }
+
+                    /* Streamlined single contact button */
+                    .contact-tutor-btn {
+                        width: 100%;
+                        max-width: 200px;
+                        font-weight: 600;
+                        padding: 10px 20px;
                     }
 
                     .tutor-contact.is-email {

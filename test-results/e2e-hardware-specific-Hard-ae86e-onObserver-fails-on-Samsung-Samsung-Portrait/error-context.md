@@ -22,14 +22,18 @@
   - paragraph: 🤝 We work with our partners to support all children across Scotland, ensuring that no learner is left behind.
   - img "Tutoring in action"
   - heading "👥 Meet the TAS Team" [level=2]
-  - heading "💛 Karen Simpson – Co-Founder & Director" [level=3]
+  - heading "💛 Karen Simpson – Co-Founder and President" [level=3]
   - img "Karen Simpson"
-  - paragraph: Karen has been in education for over 20 years, both in the classroom and as the founder of a thriving UK-wide tutoring business. A former primary teacher and tutor mentor, she is passionate about raising the profile of tutoring and building supportive pathways for teachers who want to step outside the classroom. She leads on the strategic vision for the organisation and tutor training.
-  - paragraph: "\"I believe tuition changes lives but we need to get it right and we need to make it fair.\""
-  - heading "💙 Martine Kelly – Co-Founder & Director" [level=3]
+  - paragraph: Karen has been in education for over 20 years, both in the classroom and as the founder of a thriving global tutoring business. A former primary teacher and tutor mentor, she is passionate about raising the profile of tutoring and building supportive pathways for teachers who want to step outside the classroom. In her role as president she oversees the strategic direction of TAS and leads on the strategic vision and tutor training.
+  - paragraph: "\"Tutoring has the power to change lives, not just for the pupils we support but for the educators who deliver it. Through Tutors Alliance Scotland, we're creating a community that values professionalism, quality and collaboration, ensuring every child in Scotland can access the support they deserve and every tutor is recognised for the vital role they play.\""
+  - heading "💙 Martine Kelly – Co-Founder & Website Manager" [level=3]
   - img "Martine Kelly"
-  - paragraph: Martine brings nearly two decades of educational leadership experience, having worked in schools as a teacher and senior leader. Her deep understanding of policy, ASN and equity in education drives TAS's mission to support all learners, especially those most often left behind. She leads on partnerships, inclusion and outreach.
+  - paragraph: Martine brings nearly two decades of educational leadership experience, having worked in schools as a teacher and senior leader. Her deep understanding of policy, ASN and equity in education drives TAS's mission to support all learners, especially those most often left behind. She leads the website management.
   - paragraph: "\"Our goal is simple: ensure every child can access high-quality tuition, no matter where they live or what they face.\""
+  - heading "💬 Jill McAlpine – Policy and Strategy Advisor" [level=3]
+  - img "Jill McAlpine"
+  - paragraph: Jill McAlpine is the founder of Inpurpose, a business optimisation agency based in Inverness, serving clients across the UK. She spent over a decade as Chief of Staff to a Member of Parliament, leading national campaigns, building coalitions, and delivering strategic projects across parliaments. With 20 years' experience leading teams, projects and campaigns, Jill now supports SMEs and organisations to build, grow and optimise their businesses. She is also an Associate Partner at Kane Partners, bringing expertise in strategy, policy and communications to the Tutors Alliance Scotland Board.
+  - paragraph: "\"I'm proud to be part of Tutors Alliance Scotland, an organisation committed to raising standards and creating meaningful impact across the tuition sector. By bringing together expertise from education, business and policy, we have a real opportunity to ensure every child in Scotland can access high-quality, trusted support that helps them thrive.\""
   - heading "🧮 Mairi Brindle – Finance and Accounts Manager" [level=3]
   - img "Mairi Brindle"
   - paragraph: Mairi is a secondary maths teacher and private tutor with a sharp eye for detail and a heart for making education accessible. She manages TAS finances, ensuring transparency and sustainability in all that we do.
@@ -48,8 +52,12 @@
   - paragraph: "\"As Social Media Manager for TAS, I'm passionate about using our platforms to amplify the voices of tutors and families, especially those in rural and underrepresented areas of Scotland. It's so important to me that everyone knows they're seen, heard and supported by our work.\""
   - heading "💬 Karen Laird – Admin and Communication Coordinator" [level=3]
   - img "Karen Laird"
-  - paragraph: Karen is a primary teacher who brings clarity, organisation and compassion to everything she does. She ensures smooth communication between members, families and partners, and keeps TAS running behind the scenes.
+  - paragraph: Karen is a primary teacher who brings clarity, organisation and compassion to everything she does. She ensures smooth communication between members, families and partners and keeps TAS running behind the scenes.
   - paragraph: "\"I love being part of a team that's making a real difference in Scottish education.\""
+  - heading "💬 Megan Boyle – Admin and Partnership Coordinator" [level=3]
+  - img "Megan Boyle"
+  - paragraph: With a strong background as a Children's Services Worker and now a qualified teacher, I bring a deep understanding of children's social, emotional, and educational development. My experience across both care and classroom settings allows me to support young people in a holistic and meaningful way. I'm currently working with Tutor Alliance Scotland in Administration and Partnerships, where we are focused on bridging the attainment gap by supporting tutors and expanding access to high-quality learning opportunities.
+  - paragraph: "\"I'm passionate about supporting Tutors Alliance Scotland's mission to bridge the attainment gap by building strong partnerships and ensuring every child has access to high-quality learning opportunities.\""
   - heading "🎉 Emma Glass – Events Coordinator" [level=3]
   - img "Emma Glass"
   - paragraph: Emma is a proposals and contracts administrator for a large organisation based in the Highlands. With a background in media and events, she brings a wealth of experience to TAS – including her time as President of Highland Business Women and her previous role planning major events for Highland News and Media. Organised, passionate and highly experienced, Emma will ensure that all TAS events, from webinars to conferences, are professional, purposeful and welcoming for all.
@@ -100,10 +108,14 @@
       - text: 👨‍👩‍👧‍👦
       - strong: Parents & Families
       - text: – Receive helpful tips on accessing safe, high-quality tuition and supporting your child's learning journey.
-  - link "Sign up - Tutors":
-    - /url: "#"
-  - link "Sign up - Parents":
-    - /url: "#"
+  - link "Tutor's Newsletter":
+    - /url: https://subscribepage.io/VutNA7
+  - link "Parent's Newsletter":
+    - /url: https://subscribepage.io/QkbWwE
+  - paragraph: "📬 Sign up for our newsletter and be part of the change:"
+  - link "Subscribe to our newsletter":
+    - /url: https://subscribepage.io/VutNA7
+    - img "Subscribe to our newsletter"
   - heading "🗞️ Our Latest News" [level=3]
   - paragraph: Keep up with our latest announcements, milestones and updates from across the TAS network.
   - list:
@@ -132,7 +144,6 @@
     - text: 👉 Contact us at
     - link "info@tutorsalliancescotland.co.uk":
       - /url: mailto:info@tutorsalliancescotland.co.uk
-  - img "News and Media"
 - contentinfo:
   - link "Instagram":
     - /url: https://www.instagram.com/tutorsalliancescotland/
@@ -152,9 +163,6 @@
     - listitem:
       - link "Privacy Policy":
         - /url: privacy-policy.html
-    - listitem:
-      - link "Safeguarding Policy":
-        - /url: safeguarding-policy.html
     - listitem:
       - link "Terms and Conditions":
         - /url: terms-and-conditions.html

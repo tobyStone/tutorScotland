@@ -6,23 +6,9 @@
   - link "Login":
     - /url: login.html?role=admin
 - navigation "Primary":
-  - list:
-    - listitem:
-      - link "For Tutors ▾":
-        - /url: /tutorMembership.html
-    - listitem:
-      - link "For Parents ▾":
-        - /url: /parents.html
-    - listitem:
-      - link "About TAS ▾":
-        - /url: /about-us.html
-    - listitem:
-      - link "Contact Us":
-        - /url: /contact.html
+  - button "☰ Toggle navigation"
 - text: Loading
 - main:
-  - img "Large TAS Shield"
-  - img "Banner Ribbon"
   - heading "Welcome to Tutors Alliance Scotland" [level=1]
   - link "Join as a Tutor":
     - /url: tutorMembership.html
@@ -39,8 +25,6 @@
   - heading "👨‍👩‍👧‍👦 For Parents – Helping You Choose the Right Tutor With Confidence" [level=2]
   - img "Question Mark Top"
   - img "Question Mark Bottom"
-  - img "Question Mark Top"
-  - img "Question Mark Bottom"
   - paragraph: "We understand how overwhelming it can be to find a tutor you can trust. That's why we're creating a national standard so parents know what to look for and who to trust. Here's how we help:"
   - list:
     - listitem: ✅ Signposting trusted, vetted tutors in your area or online
@@ -48,10 +32,10 @@
     - listitem: 🧠 Advice around learning needs, gaps and progress
     - listitem: 💬 Support with questions around learning and school challenges
     - listitem: 💡 Access to tips, tools and webinars for supporting your child at home
-  - link "Enter Parent Zone":
-    - /url: parents.html
-  - link "Tutor Directory":
+  - link "Find a Tutor":
     - /url: tutorDirectory.html
+  - link "Parent Resources":
+    - /url: parents.html
   - img "Lego Left"
   - heading "👩‍🏫 For Tutors – A Professional Home for Tutors in Scotland" [level=2]
   - paragraph: Join a growing network of tutors who are committed to high standards and continuous improvement. We support teachers tutoring in Scotland to develop their skills, grow their businesses and access opportunities that make a real difference.
@@ -63,8 +47,6 @@
     - listitem: 🎯 Opportunities to deliver funded or partnered tuition
     - listitem: 🔐 Guidance on safeguarding, standards and best practice
     - listitem: 🧾 Resources to help with contracts, policies and business growth
-  - link "Enter Tutor Zone":
-    - /url: tutorszone.html
   - link "Become a Member":
     - /url: tutorMembership.html
   - img "Lego Right"
@@ -150,9 +132,6 @@
     - listitem:
       - link "Privacy Policy":
         - /url: privacy-policy.html
-    - listitem:
-      - link "Safeguarding Policy":
-        - /url: safeguarding-policy.html
     - listitem:
       - link "Terms and Conditions":
         - /url: terms-and-conditions.html
