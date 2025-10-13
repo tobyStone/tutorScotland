@@ -405,7 +405,7 @@ module.exports = async (req, res) => {
                 const safeCostRange = sanitizeString(tutor.costRange || '', { maxLength: 50 });
 
                 // ✅ SECURITY FIX: Sanitize tutor type to prevent XSS
-                const safeTutorType = sanitizeString(tutor.tutorType || '', { maxLength: 50 });
+                const safeTutorType = sanitizeString(tutor.tutorType || '', { maxLength: 100 });
 
                 return `
                 <section class="tutor-card">
@@ -693,15 +693,20 @@ module.exports = async (req, res) => {
                         position: absolute;
                         top: 1rem;
                         right: 1rem;
-                        padding: 0.5rem 1rem;
-                        border-radius: 2rem;
+                        padding: 0.4rem 0.8rem;
+                        border-radius: 1.5rem;
                         font-weight: 600;
-                        font-size: 0.85rem;
+                        font-size: 0.75rem;
+                        line-height: 1.2;
                         color: white;
                         background: linear-gradient(135deg, #800080 0%, #C8A2C8 100%);
                         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
                         z-index: 2;
-                        text-transform: capitalize;
+                        text-transform: none;
+                        max-width: 140px;
+                        text-align: center;
+                        word-wrap: break-word;
+                        hyphens: auto;
                     }
 
                     .pricing-key {

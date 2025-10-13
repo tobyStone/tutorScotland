@@ -1160,7 +1160,14 @@ function initTutorManagement() {
 
         // Set the appropriate radio button
         const tutorType = tutor.tutorType || '';
-        const predefinedTypes = ['Business', 'Tutor', 'Inspiring Tutor'];
+
+        const predefinedTypes = [
+            'Inspiring Tutor (student teacher)',
+            'Newly Qualified Tutor (teacher up to 3 yrs)',
+            'Accredited Tutor (teacher over 3 years)',
+            'Tutoring Business',
+            'Tutoring Agency'
+        ];
 
         if (predefinedTypes.includes(tutorType)) {
             const matchingRadio = Array.from(tutorTypeRadios).find(radio => radio.value === tutorType);

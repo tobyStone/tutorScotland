@@ -21,6 +21,7 @@ const mongoose = require('mongoose');
  * @property {string} description - Detailed description of tutor's experience
  * @property {string[]} regions - Array of regions served (e.g., "Edinburgh & Lothians", "Online")
  * @property {string} contact - Contact information (email/website)
+ * @property {string} tutorType - Type of tutor: "Inspiring Tutor (student teacher)", "Newly Qualified Tutor (teacher up to 3 yrs)", "Accredited Tutor (teacher over 3 years)", "Tutoring Business", "Tutoring Agency", or custom
  */
 
 const tutorSchema = new mongoose.Schema({
@@ -32,7 +33,7 @@ const tutorSchema = new mongoose.Schema({
     description: String,
     regions: [String], // e.g., "Highlands", "Edinburgh & Lothians", "Online"
     contact: String,      // NEW: a simple field for email/website address
-    tutorType: String     // NEW: Type of tutor (Business, Tutor, Inspiring Tutor, or custom)
+    tutorType: String     // NEW: Type of tutor (Inspiring Tutor, Newly Qualified, Accredited, Business, Agency, or custom)
 });
 
 module.exports = mongoose.models.Tutor || mongoose.model('Tutor', tutorSchema);
