@@ -656,8 +656,19 @@ export class UIManager {
             const isDynamicContainer = section.matches('#dynamicSections1, #dynamicSections2, #dynamicSections3, #dynamicSections4, #dynamicSections5, #dynamicSections6, #dynamicSections7');
             const isEmpty = section.children.length === 0;
 
-            if (isDynamicContainer && isEmpty) {
-                emptyContainersFound++;
+            if (isDynamicContainer) {
+                if (isEmpty) {
+                    emptyContainersFound++;
+                    section.classList.add('ve-empty-dynamic-container');
+                } else {
+                    section.classList.remove('ve-empty-dynamic-container');
+
+                    // Remove any existing empty overlay if container now has content
+                    const existingEmptyOverlay = section.querySelector(':scope > .empty-container-overlay');
+                    if (existingEmptyOverlay) {
+                        existingEmptyOverlay.remove();
+                    }
+                }
             }
 
             if (isDynamicContainer && isEmpty) {

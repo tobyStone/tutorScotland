@@ -1303,6 +1303,18 @@ body.ve-edit-active .empty-container-overlay {
     opacity: 1;
 }
 
+/* Ensure empty containers reserve space only while edit mode is active */
+body.ve-edit-active .ve-empty-dynamic-container {
+    position: relative;
+    min-height: 160px;
+}
+
+body.ve-edit-active .ve-empty-dynamic-container .empty-container-overlay {
+    position: relative;
+    inset: auto;
+    width: 100%;
+}
+
 /* Responsive adjustments for empty container overlays */
 @media (max-width: 768px) {
     .empty-container-overlay {

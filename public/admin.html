@@ -52,8 +52,11 @@
 
     <script>
         // 🔒 SECURITY: Immediate redirect to server-side authenticated endpoint
-        // This ensures no sensitive admin content is ever served to unauthenticated users
-        window.location.href = '/admin';
+        // Preserve any query string parameters so deep links (e.g. editSection, position)
+        // from the visual editor continue to work after the redirect.
+        const { search, hash } = window.location;
+        const redirectUrl = `/admin${search || ''}${hash || ''}`;
+        window.location.replace(redirectUrl);
     </script>
 </body>
 </html>
