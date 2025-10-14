@@ -40,6 +40,54 @@ const DYNAMIC_POSITIONS = [
     'dynamicSections7'
 ];
 
+// ✅ POSITION NORMALIZATION MAP - Defensive frontend matching
+// Maps any legacy or lowercase position values to canonical camelCase format
+const POSITION_NORMALIZATION_MAP = {
+    'top': 'dynamicSections1',
+    'middle': 'dynamicSections3',
+    'bottom': 'dynamicSections7',
+    'dynamicsectionstop': 'dynamicSections1',
+    'dynamicsectionsmiddle': 'dynamicSections3',
+    'dynamicsections': 'dynamicSections7',
+    // Handle lowercase variants that may have been stored in database
+    'dynamicsections1': 'dynamicSections1',
+    'dynamicsections2': 'dynamicSections2',
+    'dynamicsections3': 'dynamicSections3',
+    'dynamicsections4': 'dynamicSections4',
+    'dynamicsections5': 'dynamicSections5',
+    'dynamicsections6': 'dynamicSections6',
+    'dynamicsections7': 'dynamicSections7'
+};
+
+/**
+ * Normalize position value to canonical camelCase format
+ * @param {string} position - Raw position value from API
+ * @returns {string} Canonical position name
+ */
+function normalizePosition(position) {
+    if (!position || typeof position !== 'string') {
+        return 'dynamicSections7'; // Default to position 7 (bottom)
+    }
+
+    const trimmed = position.trim();
+
+    // If it's already a valid canonical position, return as-is
+    if (DYNAMIC_POSITIONS.includes(trimmed)) {
+        return trimmed;
+    }
+
+    // Try case-insensitive lookup in normalization map
+    const lowercase = trimmed.toLowerCase();
+    if (POSITION_NORMALIZATION_MAP[lowercase]) {
+        console.log(`📍 [Frontend] Position normalization: "${position}" → "${POSITION_NORMALIZATION_MAP[lowercase]}"`);
+        return POSITION_NORMALIZATION_MAP[lowercase];
+    }
+
+    // If no match found, default to position 7
+    console.warn(`⚠️ [Frontend] Unknown position "${position}" - defaulting to dynamicSections7`);
+    return 'dynamicSections7';
+}
+
 // ✅ NEW: Add a UUID generator utility function
 function uuidv4() {
     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -108,8 +156,18 @@ function loadDynamicSections() {
         fetch(`/api/video-sections?page=${slug}`).then(r => r.json()).catch(() => [])
     ])
         .then(([regularSections, videoSections]) => {
+            // ✅ DEFENSIVE: Normalize all section positions before processing
+            const normalizedRegularSections = regularSections.map(s => ({
+                ...s,
+                position: normalizePosition(s.position)
+            }));
+            const normalizedVideoSections = videoSections.map(s => ({
+                ...s,
+                position: normalizePosition(s.position)
+            }));
+
             // Combine both types of sections and sort by position and creation order
-            const list = [...regularSections, ...videoSections].sort((a, b) => {
+            const list = [...normalizedRegularSections, ...normalizedVideoSections].sort((a, b) => {
                 // ✅ UPDATED: Support both old (top/middle/bottom) and new (dynamicSections1-7) position names
                 const posOrder = {
                     // New position names

@@ -27,6 +27,69 @@ const { validateText, validateURL } = require('../utils/input-validation');
 
 const MAX_UPLOAD = 4.5 * 1024 * 1024;  // 4.5 MB
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 📍 CANONICAL POSITION NAMES - Source of truth for dynamic section positions
+// ─────────────────────────────────────────────────────────────────────────────
+const VALID_POSITIONS = [
+    'dynamicSections1',
+    'dynamicSections2',
+    'dynamicSections3',
+    'dynamicSections4',
+    'dynamicSections5',
+    'dynamicSections6',
+    'dynamicSections7',
+    // Legacy positions for backward compatibility (will be normalized to new format)
+    'top',
+    'middle',
+    'bottom'
+];
+
+// Map legacy position names to new canonical names
+const POSITION_NORMALIZATION_MAP = {
+    'top': 'dynamicSections1',
+    'middle': 'dynamicSections3',
+    'bottom': 'dynamicSections7',
+    'dynamicsectionstop': 'dynamicSections1',
+    'dynamicsectionsmiddle': 'dynamicSections3',
+    'dynamicsections': 'dynamicSections7',
+    // Handle lowercase variants that may have been stored
+    'dynamicsections1': 'dynamicSections1',
+    'dynamicsections2': 'dynamicSections2',
+    'dynamicsections3': 'dynamicSections3',
+    'dynamicsections4': 'dynamicSections4',
+    'dynamicsections5': 'dynamicSections5',
+    'dynamicsections6': 'dynamicSections6',
+    'dynamicsections7': 'dynamicSections7'
+};
+
+/**
+ * Normalize position value to canonical camelCase format
+ * @param {string} position - Raw position value from form/API
+ * @returns {string} Canonical position name
+ */
+function normalizePosition(position) {
+    if (!position || typeof position !== 'string') {
+        return 'dynamicSections7'; // Default to position 7 (bottom)
+    }
+
+    const trimmed = position.trim();
+
+    // If it's already a valid canonical position, return as-is
+    if (VALID_POSITIONS.includes(trimmed)) {
+        return trimmed;
+    }
+
+    // Try case-insensitive lookup in normalization map
+    const lowercase = trimmed.toLowerCase();
+    if (POSITION_NORMALIZATION_MAP[lowercase]) {
+        return POSITION_NORMALIZATION_MAP[lowercase];
+    }
+
+    // If no match found, default to position 7
+    console.warn(`⚠️ Unknown position "${position}" - defaulting to dynamicSections7`);
+    return 'dynamicSections7';
+}
+
 // Response compatibility adapter for testing environment
 function createVercelCompatibleResponse(res) {
     if (!res.status) {
@@ -346,7 +409,9 @@ module.exports = async (req, res) => {
                     if (fields.position) {
                         const positionValue = getField('position');
                         if (positionValue && typeof positionValue === 'string') {
-                            updateData.position = positionValue.toLowerCase();
+                            const normalizedPosition = normalizePosition(positionValue);
+                            updateData.position = normalizedPosition;
+                            console.log(`📍 Position update normalization: "${positionValue}" → "${normalizedPosition}"`);
                         }
                     }
 
@@ -705,10 +770,12 @@ module.exports = async (req, res) => {
                     (Array.isArray(fields.isPublished) ? fields.isPublished[0] : fields.isPublished) === 'true'
                     : true;
 
-                // Get position (top, middle, bottom)
-                const position = fields.position ?
-                    (Array.isArray(fields.position) ? fields.position[0] : fields.position).toString().toLowerCase()
-                    : 'bottom';
+                // Get position and normalize to canonical camelCase format
+                const rawPosition = fields.position ?
+                    (Array.isArray(fields.position) ? fields.position[0] : fields.position).toString()
+                    : 'dynamicSections7';
+                const position = normalizePosition(rawPosition);
+                console.log(`📍 Position normalization: "${rawPosition}" → "${position}"`);
 
                 // 🔒 SECURITY FIX: Validate and sanitize button fields
                 let sanitizedButtonLabel = '';

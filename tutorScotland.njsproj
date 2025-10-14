@@ -187,6 +187,9 @@
     <Content Include="public\styles2.css">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\templates\admin-dashboard.html" />
+    <Content Include="public\templates\blog-writer-dashboard.html" />
+    <Content Include="public\templates\tutor-zone-dashboard.html" />
     <Content Include="public\tutorConnect.html">
       <SubType>Code</SubType>
     </Content>
@@ -255,6 +258,7 @@
     <Folder Include="public\js\" />
     <Folder Include="public\js\editor\" />
     <Folder Include="public\js\editor\features\" />
+    <Folder Include="public\templates\" />
     <Folder Include="public\videos\" />
     <Folder Include="public\partials\" />
     <Folder Include="tests\" />
