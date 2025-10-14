@@ -722,6 +722,33 @@ export class UIManager {
                 section.appendChild(overlay);
                 overlaysCreated++;
                 console.log(`✅ [VE] Created "Add Content" overlay for empty ${positionId}`);
+
+                // ✅ DIAGNOSTIC: Check if overlay is actually visible
+                setTimeout(() => {
+                    const rect = overlay.getBoundingClientRect();
+                    const isVisible = rect.height > 0 && rect.width > 0;
+                    const computedStyles = getComputedStyle(section);
+
+                    console.log(`🔍 [VE] Overlay visibility check for ${positionId}:`, {
+                        overlayHeight: rect.height,
+                        overlayWidth: rect.width,
+                        isVisible: isVisible,
+                        containerMinHeight: computedStyles.minHeight,
+                        containerDisplay: computedStyles.display,
+                        containerPosition: computedStyles.position,
+                        containerClasses: section.className,
+                        bodyHasEditClass: document.body.classList.contains('ve-edit-active'),
+                        inlineStyle: section.getAttribute('style')
+                    });
+
+                    if (!isVisible) {
+                        console.error(`❌ [VE] Overlay for ${positionId} is INVISIBLE!`, {
+                            reason: computedStyles.display === 'none' ? 'display: none' : 'unknown',
+                            inlineStyle: section.getAttribute('style')
+                        });
+                    }
+                }, 100);
+
                 return; // Don't process further for empty containers
             }
 

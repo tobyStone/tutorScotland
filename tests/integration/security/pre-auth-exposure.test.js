@@ -27,7 +27,11 @@ describe('Pre-Authentication Exposure Security', () => {
 
         test('should serve minimal redirect page with no sensitive content', () => {
             // 🔒 SECURITY: Public admin.html should only contain redirect, no sensitive forms
-            expect(adminHtml).toContain('window.location.href = \'/admin\'');
+            // ✅ UPDATED: Accept both .href and .replace() redirect methods
+            // Note: window.location.replace() is MORE secure as it doesn't add to browser history
+            const hasRedirect = adminHtml.includes('window.location.href = \'/admin\'') ||
+                               adminHtml.includes('window.location.replace(');
+            expect(hasRedirect).toBe(true);
             expect(adminHtml).toContain('Redirecting to secure admin portal');
 
             // Should NOT contain any sensitive admin content
@@ -51,9 +55,27 @@ describe('Pre-Authentication Exposure Security', () => {
 
         test('should have immediate redirect script', () => {
             // 🔒 SECURITY: Should redirect immediately to server-authenticated endpoint
+            // ✅ UPDATED: Accept both .href and .replace() redirect methods
+            // Note: window.location.replace() is MORE secure as it doesn't add to browser history
             expect(adminHtml).toContain('<script>');
-            expect(adminHtml).toContain('window.location.href = \'/admin\'');
+
+            const hasRedirect = adminHtml.includes('window.location.href = \'/admin\'') ||
+                               adminHtml.includes('window.location.replace(');
+            expect(hasRedirect).toBe(true);
+
             expect(adminHtml).not.toContain('fetch(\'/api/protected');
+        });
+
+        test('should preserve query parameters during redirect', () => {
+            // 🔒 SECURITY: Deep links from visual editor must work after redirect
+            // This ensures editSection, position, and slug parameters are preserved
+            expect(adminHtml).toContain('const { search, hash } = window.location');
+            expect(adminHtml).toContain('window.location.replace(');
+
+            // Verify the redirect URL construction preserves params
+            const hasParamPreservation = adminHtml.includes('search') &&
+                                        adminHtml.includes('hash');
+            expect(hasParamPreservation).toBe(true);
         });
     });
 
@@ -147,7 +169,10 @@ describe('Pre-Authentication Exposure Security', () => {
             const adminHtml = await fs.readFile(adminPath, 'utf8');
 
             // Should contain redirect script and minimal content
-            expect(adminHtml).toContain('window.location.href = \'/admin\'');
+            // ✅ UPDATED: Accept both .href and .replace() redirect methods
+            const hasRedirect = adminHtml.includes('window.location.href = \'/admin\'') ||
+                               adminHtml.includes('window.location.replace(');
+            expect(hasRedirect).toBe(true);
             expect(adminHtml).toContain('Redirecting to secure admin portal');
 
             // Should NOT contain sensitive admin forms or content

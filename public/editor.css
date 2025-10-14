@@ -1305,6 +1305,7 @@ body.ve-edit-active .empty-container-overlay {
 
 /* Ensure empty containers reserve space only while edit mode is active */
 body.ve-edit-active .ve-empty-dynamic-container {
+    display: block !important;  /* Override inline display: none from section ordering */
     position: relative;
     min-height: 160px;
 }
