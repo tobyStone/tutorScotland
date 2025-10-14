@@ -29,6 +29,17 @@ function buttonHtml(s) {
         : '';
 }
 
+// ✅ DYNAMIC POSITIONS CONFIGURATION
+const DYNAMIC_POSITIONS = [
+    'dynamicSections1',
+    'dynamicSections2',
+    'dynamicSections3',
+    'dynamicSections4',
+    'dynamicSections5',
+    'dynamicSections6',
+    'dynamicSections7'
+];
+
 // ✅ NEW: Add a UUID generator utility function
 function uuidv4() {
     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
@@ -99,9 +110,23 @@ function loadDynamicSections() {
         .then(([regularSections, videoSections]) => {
             // Combine both types of sections and sort by position and creation order
             const list = [...regularSections, ...videoSections].sort((a, b) => {
-                const posOrder = { top: 0, middle: 1, bottom: 2 };
-                const aPos = posOrder[a.position || 'bottom'];
-                const bPos = posOrder[b.position || 'bottom'];
+                // ✅ UPDATED: Support both old (top/middle/bottom) and new (dynamicSections1-7) position names
+                const posOrder = {
+                    // New position names
+                    'dynamicSections1': 0,
+                    'dynamicSections2': 1,
+                    'dynamicSections3': 2,
+                    'dynamicSections4': 3,
+                    'dynamicSections5': 4,
+                    'dynamicSections6': 5,
+                    'dynamicSections7': 6,
+                    // Legacy support (will be removed after migration)
+                    'top': 0,
+                    'middle': 3,
+                    'bottom': 6
+                };
+                const aPos = posOrder[a.position] ?? 999; // Unknown positions go to end
+                const bPos = posOrder[b.position] ?? 999;
                 if (aPos !== bPos) return aPos - bPos;
                 return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
             });
@@ -113,101 +138,59 @@ function loadDynamicSections() {
                 // Create containers if they don't exist
                 createPositionContainer('all');
 
-                // Get containers for different positions
-                const topContainer = document.getElementById('dynamicSectionsTop');
-                const middleContainer = document.getElementById('dynamicSectionsMiddle');
-                const bottomContainer = document.getElementById('dynamicSections');
+                // ✅ REFACTORED: Get all position containers dynamically
+                const containers = {};
+                DYNAMIC_POSITIONS.forEach(posId => {
+                    containers[posId] = document.getElementById(posId);
+                });
 
-                // Verify all containers exist
-                if (!topContainer || !middleContainer || !bottomContainer) {
-                    console.error('One or more dynamic section containers not found');
-                    return;
-                }
+                // Clear existing content from all containers
+                Object.values(containers).forEach(container => {
+                    if (container) container.innerHTML = '';
+                });
 
-                // Clear existing content
-                topContainer.innerHTML = '';
-                middleContainer.innerHTML = '';
-                bottomContainer.innerHTML = '';
+                // ✅ REFACTORED: Group sections by position
+                const sectionsByPosition = {};
+                DYNAMIC_POSITIONS.forEach(posId => {
+                    sectionsByPosition[posId] = list.filter(s => s.position === posId);
+                });
 
-                // Group sections by position
-                const topSections = list.filter(s => s.position === 'top');
-                const middleSections = list.filter(s => s.position === 'middle');
-                const bottomSections = list.filter(s => s.position === 'bottom' || !s.position);
+                // Log section distribution
+                const positionCounts = DYNAMIC_POSITIONS.map(posId =>
+                    `${posId}: ${sectionsByPosition[posId].length}`
+                ).join(', ');
+                console.log(`[DynSec] Section distribution - ${positionCounts}`);
 
-                console.log(`Found ${topSections.length} top sections, ${middleSections.length} middle sections, ${bottomSections.length} bottom sections`);
+                // ✅ REFACTORED: Render sections to their respective containers using loop
+                DYNAMIC_POSITIONS.forEach(posId => {
+                    const container = containers[posId];
+                    const sections = sectionsByPosition[posId];
 
-                // Add sections to their respective containers
-                if (topSections.length > 0) {
-                    topSections.forEach((s, index) => {
-                        const sectionElement = createDynamicSectionElement(s, index);
-                        // Only wrap standard text/image sections in dyn-block
-                        // Team and list sections have their own styling containers
-                        // Testimonial and video sections now use standard dyn-block wrapper for consistency
-                        if (s.layout === 'team' || s.layout === 'list') {
-                            topContainer.appendChild(sectionElement);
-                        } else {
-                            const wrapper = document.createElement('div');
-                            wrapper.className = 'dyn-block fade-in-on-scroll';
-                            wrapper.appendChild(sectionElement);
-                            topContainer.appendChild(wrapper);
-                        }
-                    });
-                    topContainer.style.display = 'block';
-                    const topSeparator = document.querySelector('.dynamic-sections-separator-top');
-                    if (topSeparator) topSeparator.style.display = 'block';
-                } else {
-                    topContainer.style.display = 'none';
-                    const topSeparator = document.querySelector('.dynamic-sections-separator-top');
-                    if (topSeparator) topSeparator.style.display = 'none';
-                }
+                    if (!container) {
+                        console.warn(`[DynSec] Container ${posId} not found on this page`);
+                        return;
+                    }
 
-                if (middleSections.length > 0) {
-                    middleSections.forEach((s, index) => {
-                        const sectionElement = createDynamicSectionElement(s, index);
-                        // Only wrap standard text/image sections in dyn-block
-                        // Team and list sections have their own styling containers
-                        // Testimonial and video sections now use standard dyn-block wrapper for consistency
-                        if (s.layout === 'team' || s.layout === 'list') {
-                            middleContainer.appendChild(sectionElement);
-                        } else {
-                            const wrapper = document.createElement('div');
-                            wrapper.className = 'dyn-block fade-in-on-scroll';
-                            wrapper.appendChild(sectionElement);
-                            middleContainer.appendChild(wrapper);
-                        }
-                    });
-                    middleContainer.style.display = 'block';
-                    const middleSeparator = document.querySelector('.dynamic-sections-separator-middle');
-                    if (middleSeparator) middleSeparator.style.display = 'block';
-                } else {
-                    middleContainer.style.display = 'none';
-                    const middleSeparator = document.querySelector('.dynamic-sections-separator-middle');
-                    if (middleSeparator) middleSeparator.style.display = 'none';
-                }
-
-                if (bottomSections.length > 0) {
-                    bottomSections.forEach((s, index) => {
-                        const sectionElement = createDynamicSectionElement(s, index);
-                        // Only wrap standard text/image sections in dyn-block
-                        // Team and list sections have their own styling containers
-                        // Testimonial and video sections now use standard dyn-block wrapper for consistency
-                        if (s.layout === 'team' || s.layout === 'list') {
-                            bottomContainer.appendChild(sectionElement);
-                        } else {
-                            const wrapper = document.createElement('div');
-                            wrapper.className = 'dyn-block fade-in-on-scroll';
-                            wrapper.appendChild(sectionElement);
-                            bottomContainer.appendChild(wrapper);
-                        }
-                    });
-                    bottomContainer.style.display = 'block';
-                    const bottomSeparator = document.querySelector('.dynamic-sections-separator');
-                    if (bottomSeparator) bottomSeparator.style.display = 'block';
-                } else {
-                    bottomContainer.style.display = 'none';
-                    const bottomSeparator = document.querySelector('.dynamic-sections-separator');
-                    if (bottomSeparator) bottomSeparator.style.display = 'none';
-                }
+                    if (sections && sections.length > 0) {
+                        sections.forEach((s, index) => {
+                            const sectionElement = createDynamicSectionElement(s, index);
+                            // Only wrap standard text/image sections in dyn-block
+                            // Team and list sections have their own styling containers
+                            // Testimonial and video sections now use standard dyn-block wrapper for consistency
+                            if (s.layout === 'team' || s.layout === 'list') {
+                                container.appendChild(sectionElement);
+                            } else {
+                                const wrapper = document.createElement('div');
+                                wrapper.className = 'dyn-block fade-in-on-scroll';
+                                wrapper.appendChild(sectionElement);
+                                container.appendChild(wrapper);
+                            }
+                        });
+                        container.style.display = 'block';
+                    } else {
+                        container.style.display = 'none';
+                    }
+                });
 
                 // Add a class to the body to indicate dynamic sections are present
                 document.body.classList.add('has-dynamic-sections');
@@ -252,7 +235,7 @@ function loadDynamicSections() {
 
 /**
  * Create containers for all positions if they don't exist
- * This function creates all three containers at once to ensure proper positioning
+ * ✅ REFACTORED: Now supports 7 positions and primarily uses HTML-defined containers
  */
 function createPositionContainer(position) {
 
@@ -261,6 +244,7 @@ function createPositionContainer(position) {
         console.log('[DynSec] Manual placement – using containers provided in HTML');
         return;
     }
+
     // Only create containers if they don't already exist
     const main = document.querySelector('main');
     if (!main) {
@@ -268,123 +252,72 @@ function createPositionContainer(position) {
         return;
     }
 
-    // Check for existing containers
-    const existingTop = document.getElementById('dynamicSectionsTop');
-    const existingMiddle = document.getElementById('dynamicSectionsMiddle');
-    const existingBottom = document.getElementById('dynamicSections');
+    // ✅ REFACTORED: Check for all 7 position containers
+    let allExist = true;
+    const existingContainers = {};
 
-    // If all containers already exist, just use them
-    if (existingTop && existingMiddle && existingBottom) {
-        console.log('All dynamic section containers already exist in the page');
+    DYNAMIC_POSITIONS.forEach(posId => {
+        const container = document.getElementById(posId);
+        existingContainers[posId] = container;
+        if (!container) allExist = false;
+    });
 
-        // Make sure they have the correct class
-        existingTop.classList.add('dynamic-section-container');
-        existingMiddle.classList.add('dynamic-section-container');
-        existingBottom.classList.add('dynamic-section-container');
-
+    // If all containers already exist, just ensure they have the correct class
+    if (allExist) {
+        console.log('[DynSec] All 7 dynamic section containers already exist in the page');
+        Object.values(existingContainers).forEach(container => {
+            if (container) container.classList.add('dynamic-section-container');
+        });
         return;
     }
 
-    // Get all children of main
+    // ✅ REFACTORED: Create any missing containers dynamically
+    // Since we now define containers in HTML, this is mainly a fallback for pages without them
+    console.warn('[DynSec] Some containers are missing. Creating them dynamically (this should not happen if HTML is properly configured)');
+
     const mainChildren = Array.from(main.children);
+    const numPositions = DYNAMIC_POSITIONS.length;
 
-    // Create any missing containers
-
-    // 1. TOP CONTAINER - Create if it doesn't exist
-    if (!existingTop) {
-        const topSeparator = document.createElement('div');
-        topSeparator.className = 'dynamic-sections-separator-top';
-        topSeparator.style.display = 'none';
-
-        const topContainer = document.createElement('section');
-        topContainer.id = 'dynamicSectionsTop';
-        topContainer.className = 'dynamic-section-container';
-        topContainer.style.display = 'none';
-
-        // Insert at the beginning of main
-        if (mainChildren.length > 0) {
-            main.insertBefore(topSeparator, mainChildren[0]);
-            main.insertBefore(topContainer, mainChildren[0]);
-        } else {
-            main.appendChild(topSeparator);
-            main.appendChild(topContainer);
+    DYNAMIC_POSITIONS.forEach((posId, index) => {
+        if (existingContainers[posId]) {
+            console.log(`[DynSec] Using existing container: ${posId}`);
+            existingContainers[posId].classList.add('dynamic-section-container');
+            return;
         }
 
-        console.log('Top container created at the beginning of main');
-    } else {
-        console.log('Using existing top container');
-    }
+        // Create missing container
+        const container = document.createElement('section');
+        container.id = posId;
+        container.className = 'dynamic-section-container';
+        container.dataset.veSectionId = posId;
+        container.style.display = 'none';
 
-    // 2. MIDDLE CONTAINER - Create if it doesn't exist
-    if (!existingMiddle) {
-        const middleSeparator = document.createElement('div');
-        middleSeparator.className = 'dynamic-sections-separator-middle';
-        middleSeparator.style.display = 'none';
-
-        const middleContainer = document.createElement('section');
-        middleContainer.id = 'dynamicSectionsMiddle';
-        middleContainer.className = 'dynamic-section-container';
-        middleContainer.style.display = 'none';
-
-        // Get updated children list
-        const updatedChildren = Array.from(main.children);
-
-        // Find a good middle point - try to find after the first content section
-        const twoColContent = main.querySelector('.two-col-content');
-
-        if (twoColContent) {
-            // Insert after the two-column content section
-            twoColContent.after(middleSeparator);
-            middleSeparator.after(middleContainer);
-            console.log('Middle container created after two-column content');
-        } else if (updatedChildren.length >= 4) {
-            // Insert roughly in the middle
-            const middleIndex = Math.floor(updatedChildren.length / 2);
-            const middleElement = updatedChildren[middleIndex];
-
-            // Insert after the middle element
-            middleElement.after(middleSeparator);
-            middleSeparator.after(middleContainer);
-            console.log('Middle container created at calculated middle point');
+        // Determine insertion point based on position index
+        if (index === 0) {
+            // First position: insert at beginning
+            if (mainChildren.length > 0) {
+                main.insertBefore(container, mainChildren[0]);
+            } else {
+                main.appendChild(container);
+            }
+        } else if (index === numPositions - 1) {
+            // Last position: append to end
+            main.appendChild(container);
         } else {
-            // If not enough children, insert after the first third
-            const insertIndex = Math.max(1, Math.floor(updatedChildren.length / 3));
+            // Middle positions: distribute evenly
+            const updatedChildren = Array.from(main.children);
+            const insertIndex = Math.floor((updatedChildren.length * (index + 1)) / (numPositions + 1));
             const insertElement = updatedChildren[insertIndex];
 
             if (insertElement) {
-                insertElement.after(middleSeparator);
-                middleSeparator.after(middleContainer);
+                insertElement.after(container);
             } else {
-                main.appendChild(middleSeparator);
-                main.appendChild(middleContainer);
+                main.appendChild(container);
             }
-            console.log('Middle container created at fallback position');
         }
-    } else {
-        console.log('Using existing middle container');
-    }
 
-    // 3. BOTTOM CONTAINER - Create if it doesn't exist
-    if (!existingBottom) {
-        const bottomSeparator = document.createElement('div');
-        bottomSeparator.className = 'dynamic-sections-separator';
-        bottomSeparator.style.display = 'none';
-
-        const bottomContainer = document.createElement('section');
-        bottomContainer.id = 'dynamicSections';
-        bottomContainer.className = 'dynamic-section-container';
-        bottomContainer.style.display = 'none';
-
-        // Append to the end of main
-        main.appendChild(bottomSeparator);
-        main.appendChild(bottomContainer);
-
-        console.log('Bottom container created at the end of main content');
-    } else {
-        // Add the dynamic-section-container class to the existing bottom container
-        existingBottom.classList.add('dynamic-section-container');
-        console.log('Using existing bottom container');
-    }
+        console.log(`[DynSec] Created container: ${posId}`);
+    });
 }
 
 /**
@@ -1100,22 +1033,14 @@ function createVideoSectionElement(section, index) {
  * Hide all dynamic section containers and separators
  */
 function hideAllContainers() {
-    const containers = [
-        document.getElementById('dynamicSectionsTop'),
-        document.getElementById('dynamicSectionsMiddle'),
-        document.getElementById('dynamicSections')
-    ];
-
-    const separators = [
-        document.querySelector('.dynamic-sections-separator-top'),
-        document.querySelector('.dynamic-sections-separator-middle'),
-        document.querySelector('.dynamic-sections-separator')
-    ];
-
-    containers.forEach(container => {
+    // ✅ REFACTORED: Hide all position containers dynamically
+    DYNAMIC_POSITIONS.forEach(posId => {
+        const container = document.getElementById(posId);
         if (container) container.style.display = 'none';
     });
 
+    // Hide any separator elements
+    const separators = document.querySelectorAll('.dynamic-sections-separator, .dynamic-sections-separator-top, .dynamic-sections-separator-middle');
     separators.forEach(separator => {
         if (separator) separator.style.display = 'none';
     });

@@ -1202,3 +1202,128 @@ body.ve-edit-active .fade-in-section:nth-child(4),
 body.ve-edit-active .fade-in-section:nth-child(5) {
     transition-delay: 0s !important;
 }
+
+/* ===================================================================
+   EMPTY CONTAINER OVERLAYS (Phase 5)
+   =================================================================== */
+
+/**
+ * Empty Container Overlay System
+ *
+ * @description Visual indicators for empty dynamic content positions
+ * @usage Shows "Add Content" buttons for empty dynamicSections1-7 containers
+ * @styling Distinct green theme to differentiate from regular edit overlays
+ * @interaction Click to open admin dashboard with pre-selected page and position
+ */
+
+/* Empty container overlay - distinct styling from regular overlays */
+.empty-container-overlay {
+    background: rgba(139, 195, 74, 0.08) !important; /* Light green tint */
+    border: 2px dashed rgba(139, 195, 74, 0.6) !important;
+    min-height: 120px; /* Ensure visibility even for empty containers */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+body.ve-edit-active .empty-container-overlay {
+    opacity: 1 !important;
+}
+
+.empty-container-overlay:hover {
+    background: rgba(139, 195, 74, 0.15) !important;
+    border-color: rgba(139, 195, 74, 0.9) !important;
+    box-shadow: 0 4px 12px rgba(139, 195, 74, 0.3);
+}
+
+/* Empty container controls - centered layout */
+.empty-container-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+}
+
+/* Empty container message */
+.empty-container-message {
+    text-align: center;
+    color: #558b2f;
+}
+
+.empty-container-message .empty-icon {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.empty-container-message p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #558b2f;
+}
+
+/* Add content button - green theme */
+.add-content-btn {
+    background: #8bc34a !important;
+    color: white !important;
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(139, 195, 74, 0.3);
+}
+
+.add-content-btn:hover {
+    background: #7cb342 !important;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 16px rgba(139, 195, 74, 0.4);
+}
+
+/* Context label for empty containers */
+.empty-container-overlay::before {
+    content: "EMPTY POSITION";
+    position: absolute;
+    top: -24px;
+    left: 0;
+    background: rgba(139, 195, 74, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: 10000;
+}
+
+.empty-container-overlay:hover::before {
+    opacity: 1;
+}
+
+/* Responsive adjustments for empty container overlays */
+@media (max-width: 768px) {
+    .empty-container-overlay {
+        min-height: 100px;
+    }
+
+    .empty-container-controls {
+        padding: 15px;
+        gap: 8px;
+    }
+
+    .empty-container-message .empty-icon {
+        font-size: 24px;
+    }
+
+    .empty-container-message p {
+        font-size: 12px;
+    }
+
+    .add-content-btn {
+        padding: 8px 16px !important;
+        font-size: 12px !important;
+    }
+}

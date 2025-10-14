@@ -640,6 +640,61 @@ export class UIManager {
                 return; // Already has overlay
             }
 
+            // ✅ NEW: Check if this is an empty dynamic container (show "Add Content" overlay)
+            const isDynamicContainer = section.matches('#dynamicSections1, #dynamicSections2, #dynamicSections3, #dynamicSections4, #dynamicSections5, #dynamicSections6, #dynamicSections7');
+            const isEmpty = section.children.length === 0;
+
+            if (isDynamicContainer && isEmpty) {
+                // ✅ NEW: Show "Add Content" overlay for empty containers
+                const overlay = document.createElement('div');
+                overlay.className = 'dyn-edit-overlay empty-container-overlay';
+
+                const positionId = section.id;
+                const positionNumber = positionId.replace('dynamicSections', '');
+                const currentPage = editorState.currentPage;
+
+                overlay.innerHTML = `
+                    <div class="dyn-edit-controls empty-container-controls">
+                        <div class="empty-container-message">
+                            <span class="empty-icon">📝</span>
+                            <p>Position ${positionNumber} is empty</p>
+                        </div>
+                        <button class="dyn-edit-btn primary add-content-btn"
+                                data-action="add-content"
+                                data-position="${positionId}"
+                                data-page="${currentPage}"
+                                title="Add content to this position">
+                            ➕ Add Content
+                        </button>
+                    </div>
+                `;
+
+                // ✅ NEW: Attach click handler for "Add Content" button
+                const addContentBtn = overlay.querySelector('[data-action="add-content"]');
+                addContentBtn.addEventListener('click', e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const position = e.currentTarget.dataset.position;
+                    const page = e.currentTarget.dataset.page;
+
+                    let adminUrl = `/admin-dashboard.html?slug=${encodeURIComponent(page)}`;
+                    adminUrl += `&position=${encodeURIComponent(position)}`;
+
+                    console.log(`[VE] Opening admin panel to add content at position: ${position} on page: ${page}`);
+                    this.showNotification(`Opening admin panel to add content to Position ${positionNumber}...`, 'info');
+                    window.open(adminUrl, '_blank');
+                });
+
+                // Ensure section is positioned for overlay
+                if (getComputedStyle(section).position === 'static') {
+                    section.style.position = 'relative';
+                }
+
+                section.appendChild(overlay);
+                return; // Don't process further for empty containers
+            }
+
             // ✅ RESTRICTION: Only add overlays to dynamic sections (not static sections)
             // Dynamic sections are inside dynamic-section-container elements
             const isDynamicSection = section.closest('.dynamic-section-container');
@@ -647,11 +702,9 @@ export class UIManager {
                 return; // Static section
             }
 
-            // ✅ NEW: Skip empty container elements - only add overlays to sections with actual content
-            const hasContent = section.children.length > 0 &&
-                              !section.matches('#dynamicSectionsTop, #dynamicSectionsMiddle, #dynamicSections');
-            if (!hasContent) {
-                return; // Empty container
+            // ✅ Skip containers themselves (only process actual content sections)
+            if (isDynamicContainer) {
+                return; // This is a container, not content
             }
 
             // ✅ SAFETY: Skip sections that are currently being edited in visual editor

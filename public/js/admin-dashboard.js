@@ -2954,8 +2954,9 @@ function initURLParameterHandling() {
     const editSectionParam = params.get('editSection');
     const addAfterParam = params.get('addAfter');
     const editPageParam = params.get('editPage');
+    const positionParam = params.get('position'); // ✅ NEW: Position parameter for pre-selection
 
-    console.log('[Admin Dashboard] URL parameters:', { slugParam, editSectionParam, addAfterParam, editPageParam });
+    console.log('[Admin Dashboard] URL parameters:', { slugParam, editSectionParam, addAfterParam, editPageParam, positionParam });
 
     // Handle slug parameter - preselect page
     if (slugParam) {
@@ -2967,9 +2968,33 @@ function initURLParameterHandling() {
         }
     }
 
-    // Update view page link styling when coming from visual editor
+    // ✅ NEW: Handle position parameter - preselect section position
+    if (positionParam) {
+        const positionSelect = document.getElementById('sectionPosition');
+        if (positionSelect) {
+            // Validate that the position is one of the valid options
+            const validPositions = ['dynamicSections1', 'dynamicSections2', 'dynamicSections3', 'dynamicSections4', 'dynamicSections5', 'dynamicSections6', 'dynamicSections7'];
+            if (validPositions.includes(positionParam)) {
+                positionSelect.value = positionParam;
+                console.log('[Admin Dashboard] Position preselected from URL:', positionParam);
+
+                // Focus on the heading field to start adding content
+                setTimeout(() => {
+                    const headingField = document.querySelector('[name="heading"]');
+                    if (headingField) {
+                        headingField.focus();
+                        headingField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 300);
+            } else {
+                console.warn('[Admin Dashboard] Invalid position parameter:', positionParam);
+            }
+        }
+    }
+
+    // ✅ UPDATED: Update view page link styling when coming from visual editor (including position parameter)
     const viewPageLink = document.getElementById('viewPageLink');
-    if (viewPageLink && (editSectionParam || addAfterParam || editPageParam)) {
+    if (viewPageLink && (editSectionParam || addAfterParam || editPageParam || positionParam)) {
         viewPageLink.textContent = '↩ Return to Page';
         viewPageLink.style.background = '#e3f2fd';
         viewPageLink.style.padding = '6px 12px';
