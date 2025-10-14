@@ -191,6 +191,9 @@ function initSectionManagement() {
     // Store all sections for editing
     let allSections = [];
 
+    // ✅ EXPOSE: Make sections accessible to URL parameter handlers
+    window.adminSections = allSections;
+
     // Helper: Reset form to create mode but keep page selection
     function resetSectionForm() {
         const currentPage = pageSelect.value; // Remember current page
@@ -438,10 +441,18 @@ function initSectionManagement() {
             // Combine and sort sections
             allSections = [...sections, ...videoSections].sort((a, b) => (a.order || 0) - (b.order || 0));
 
+            // ✅ SYNC: Keep window.adminSections in sync with local allSections
+            window.adminSections = allSections;
+
             // Populate table
             populateSectionsTable(allSections);
 
             console.log(`[Admin Dashboard] Loaded ${allSections.length} sections for page: ${currentPage}`);
+
+            // ✅ DISPATCH: Fire event so URL handlers can run deterministically
+            window.dispatchEvent(new CustomEvent('admin-sections-loaded', {
+                detail: { sections: allSections, page: currentPage }
+            }));
 
         } catch (error) {
             console.error('[Admin Dashboard] Error loading sections:', error);
@@ -3007,68 +3018,81 @@ function initURLParameterHandling() {
 
     /**
      * Handle auto-edit section functionality
+     * ✅ IMPROVED: Uses window.adminSections and event-based triggering (no race conditions)
      */
     function handleAutoEditSection() {
         if (!editSectionParam) return;
 
         console.log('[Admin Dashboard] Auto-editing section:', editSectionParam);
 
-        // Wait for sections to be loaded, then find and edit the section
-        setTimeout(() => {
-            const editBtn = document.querySelector(`button.edit-section[data-id="${editSectionParam}"]`);
-            if (editBtn) {
-                editBtn.click();
-                console.log('[Admin Dashboard] Auto-clicked edit button for section:', editSectionParam);
-            } else {
-                console.warn('[Admin Dashboard] Section not found for auto-edit:', editSectionParam);
-                // Try to find section in current sections array
-                if (typeof currentSections !== 'undefined' && currentSections) {
-                    const section = currentSections.find(s => s._id === editSectionParam);
-                    if (section) {
-                        // Manually trigger edit mode
-                        if (typeof populateSectionForm === 'function') {
-                            populateSectionForm(section);
-                        }
-                    }
+        // Try clicking edit button first (if table already rendered)
+        const editBtn = document.querySelector(`button.edit-section[data-id="${editSectionParam}"]`);
+        if (editBtn) {
+            editBtn.click();
+            console.log('✅ [Admin Dashboard] Auto-clicked edit button for section:', editSectionParam);
+            return;
+        }
+
+        // Fallback: Use window.adminSections directly (populated by loadSections)
+        if (window.adminSections && window.adminSections.length > 0) {
+            const section = window.adminSections.find(s => s._id === editSectionParam);
+            if (section) {
+                populateSectionForm(section);
+
+                // Visual feedback: scroll form into view and highlight briefly
+                const sectionForm = document.getElementById('sectionForm');
+                if (sectionForm) {
+                    sectionForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    sectionForm.style.transition = 'background-color 0.3s';
+                    sectionForm.style.backgroundColor = '#e3f2fd';
+                    setTimeout(() => {
+                        sectionForm.style.backgroundColor = '';
+                    }, 1500);
                 }
+
+                console.log('✅ [Admin Dashboard] Auto-populated form from adminSections:', section.heading);
+            } else {
+                console.error('❌ [Admin Dashboard] Section not found in adminSections:', editSectionParam);
+                alert('Section not found. It may have been deleted. Please select a section from the list or create a new one.');
             }
-        }, 500); // Give time for sections to load
+        } else {
+            console.warn('⚠️ [Admin Dashboard] adminSections not yet loaded, waiting for event...');
+        }
     }
 
     /**
      * Handle auto-add-after functionality
+     * ✅ IMPROVED: Uses window.adminSections (no race conditions)
      */
     function handleAutoAddAfter() {
         if (!addAfterParam) return;
 
         console.log('[Admin Dashboard] Pre-configuring new section after:', addAfterParam);
 
-        // Wait for sections to be loaded, then configure position
-        setTimeout(() => {
-            if (typeof currentSections !== 'undefined' && currentSections) {
-                const afterSection = currentSections.find(s => s._id === addAfterParam);
-                if (afterSection) {
-                    // Set the position based on the after section's position
-                    const positionSelect = document.querySelector('[name="position"]');
-                    if (positionSelect && afterSection.position) {
-                        positionSelect.value = afterSection.position;
-                    }
-
-                    // Focus on the heading field to start adding
-                    setTimeout(() => {
-                        const headingField = document.querySelector('[name="heading"]');
-                        if (headingField) {
-                            headingField.focus();
-                            headingField.scrollIntoView({ behavior: 'smooth' });
-                        }
-                    }, 100);
-
-                    console.log('[Admin Dashboard] New section configured to be added after:', afterSection.heading);
-                } else {
-                    console.warn('[Admin Dashboard] After section not found:', addAfterParam);
+        // Use window.adminSections directly
+        if (window.adminSections && window.adminSections.length > 0) {
+            const afterSection = window.adminSections.find(s => s._id === addAfterParam);
+            if (afterSection) {
+                // Set the position based on the after section's position
+                const positionSelect = document.querySelector('[name="position"]');
+                if (positionSelect && afterSection.position) {
+                    positionSelect.value = afterSection.position;
                 }
+
+                // Focus on the heading field to start adding
+                setTimeout(() => {
+                    const headingField = document.querySelector('[name="heading"]');
+                    if (headingField) {
+                        headingField.focus();
+                        headingField.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }, 100);
+
+                console.log('✅ [Admin Dashboard] New section configured to be added after:', afterSection.heading);
+            } else {
+                console.warn('⚠️ [Admin Dashboard] After section not found:', addAfterParam);
             }
-        }, 500);
+        }
     }
 
     /**
@@ -3105,12 +3129,25 @@ function initURLParameterHandling() {
         }, 200);
     }
 
-    // Execute URL parameter handlers after a delay to ensure everything is loaded
-    setTimeout(() => {
+    // ✅ IMPROVED: Execute URL parameter handlers deterministically after sections load
+    // Listen for the 'admin-sections-loaded' event dispatched by loadSections()
+    window.addEventListener('admin-sections-loaded', () => {
+        console.log('[Admin Dashboard] Sections loaded event received, executing URL handlers...');
         handleAutoEditSection();
         handleAutoAddAfter();
         handleAutoEditPage();
-    }, 1000);
+    }, { once: true }); // Only fire once
+
+    // Also execute immediately in case sections already loaded (e.g., page refresh)
+    // This handles the case where loadSections() completes before this listener is attached
+    if (window.adminSections && window.adminSections.length > 0) {
+        console.log('[Admin Dashboard] Sections already loaded, executing URL handlers immediately...');
+        setTimeout(() => {
+            handleAutoEditSection();
+            handleAutoAddAfter();
+            handleAutoEditPage();
+        }, 100);
+    }
 
     console.log('[Admin Dashboard] URL parameter handling initialized');
 }

@@ -233,6 +233,10 @@ export class UIManager {
             const elements = this.scanEditableElements();
             console.log(`[VE] Found ${elements.length} editable elements:`, elements);
             this.addOverlays(elements);
+
+            // ✅ FIX: Add dynamic section overlays when edit mode activates
+            this.addDynamicSectionOverlays();
+
             this.disableLinks();
         } else {
             // When exiting, remove all UI.
@@ -635,14 +639,26 @@ export class UIManager {
 
     addDynamicSectionOverlays() {
         console.log('[VE] Adding dynamic section overlays...');
+
+        // ✅ DIAGNOSTIC: Track overlay creation statistics
+        let emptyContainersFound = 0;
+        let overlaysCreated = 0;
+        let overlaysSkipped = 0;
+        let missingDataAttribute = 0;
+
         document.querySelectorAll('[data-ve-section-id]').forEach(section => {
             if (section.querySelector(':scope > .dyn-edit-overlay')) {
+                overlaysSkipped++;
                 return; // Already has overlay
             }
 
             // ✅ NEW: Check if this is an empty dynamic container (show "Add Content" overlay)
             const isDynamicContainer = section.matches('#dynamicSections1, #dynamicSections2, #dynamicSections3, #dynamicSections4, #dynamicSections5, #dynamicSections6, #dynamicSections7');
             const isEmpty = section.children.length === 0;
+
+            if (isDynamicContainer && isEmpty) {
+                emptyContainersFound++;
+            }
 
             if (isDynamicContainer && isEmpty) {
                 // ✅ NEW: Show "Add Content" overlay for empty containers
@@ -678,7 +694,8 @@ export class UIManager {
                     const position = e.currentTarget.dataset.position;
                     const page = e.currentTarget.dataset.page;
 
-                    let adminUrl = `/admin-dashboard.html?slug=${encodeURIComponent(page)}`;
+                    // ✅ FIX: Use /admin.html to match edit-content route convention
+                    let adminUrl = `/admin.html?slug=${encodeURIComponent(page)}`;
                     adminUrl += `&position=${encodeURIComponent(position)}`;
 
                     console.log(`[VE] Opening admin panel to add content at position: ${position} on page: ${page}`);
@@ -692,6 +709,8 @@ export class UIManager {
                 }
 
                 section.appendChild(overlay);
+                overlaysCreated++;
+                console.log(`✅ [VE] Created "Add Content" overlay for empty ${positionId}`);
                 return; // Don't process further for empty containers
             }
 
@@ -720,6 +739,7 @@ export class UIManager {
 
             const overlay = document.createElement('div');
             overlay.className = 'dyn-edit-overlay';
+            overlaysCreated++;
 
             // Enhanced contextual buttons
             const sectionId = section.dataset.veSectionId;
@@ -769,6 +789,26 @@ export class UIManager {
 
             section.appendChild(overlay);
         });
+
+        // ✅ DIAGNOSTIC: Log summary statistics
+        console.log(`[VE] Dynamic section overlay summary:
+  - Empty containers found: ${emptyContainersFound}
+  - Overlays created: ${overlaysCreated}
+  - Overlays skipped (already exist): ${overlaysSkipped}
+  - Total sections scanned: ${document.querySelectorAll('[data-ve-section-id]').length}`);
+
+        // ✅ DIAGNOSTIC: Flag any containers missing data-ve-section-id
+        const allDynamicContainers = document.querySelectorAll('#dynamicSections1, #dynamicSections2, #dynamicSections3, #dynamicSections4, #dynamicSections5, #dynamicSections6, #dynamicSections7');
+        allDynamicContainers.forEach(container => {
+            if (!container.hasAttribute('data-ve-section-id')) {
+                console.warn(`⚠️ [VE] Container ${container.id} is missing data-ve-section-id attribute!`);
+                missingDataAttribute++;
+            }
+        });
+
+        if (missingDataAttribute > 0) {
+            console.error(`❌ [VE] ${missingDataAttribute} containers missing data-ve-section-id - overlays cannot be created!`);
+        }
     }
 
     removeDynamicPageOverlay() {
