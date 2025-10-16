@@ -218,7 +218,10 @@
             .then(r => (r.ok ? r.json() : []))
             .then(list => {
                 if (list && list.length) {
-                    return list.map(s => s.text).join(" | ");
+                    const bannerText = list.map(s => s.text).filter(t => t && t.trim()).join(" | ");
+                    if (bannerText.trim()) {
+                        return bannerText;
+                    }
                 }
                 // fallback: tutors
                 return fetch("/api/tutors?format=json")

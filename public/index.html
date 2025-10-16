@@ -333,25 +333,36 @@
             window.location.href = `login.html?role=${encodeURIComponent(role)}`;
         }
 
-        // Rolling banner fetch - try news first, fallback to tutors
+        // Rolling banner fetch - try news first, fallback to tutors, then default message
         fetch('/api/sections?page=rolling-banner')
             .then(res => res.json())
             .then(sections => {
                 if (sections && sections.length > 0) {
-                    // Format news information - join all text content with separator
-                    const text = sections.map(s => s.text).join(' | ');
-                    document.getElementById('tutorBanner').innerText = text;
-                } else {
-                    // Fallback to tutors if no news sections are found
-                    return fetch('/api/tutors?format=json')
-                        .then(res => res.json())
-                        .then(tutors => {
+                    // Format news information - join all text content with separator, filtering empty values
+                    const text = sections.map(s => s.text).filter(t => t && t.trim()).join(' | ');
+                    if (text.trim()) {
+                        document.getElementById('tutorBanner').innerText = text;
+                        return;
+                    }
+                }
+                // Fallback to tutors if no news sections are found
+                return fetch('/api/tutors?format=json')
+                    .then(res => res.json())
+                    .then(tutors => {
+                        if (tutors && tutors.length > 0) {
                             const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
                             document.getElementById('tutorBanner').innerText = text;
-                        });
-                }
+                        } else {
+                            // Default message when no tutors or news available
+                            document.getElementById('tutorBanner').innerText = 'Welcome to Tutors Alliance Scotland';
+                        }
+                    });
             })
-            .catch(err => console.error('Error in fetching banner content:', err));
+            .catch(err => {
+                console.error('Error in fetching banner content:', err);
+                // Default message on error
+                document.getElementById('tutorBanner').innerText = 'Welcome to Tutors Alliance Scotland';
+            });
 
 
         window.addEventListener('DOMContentLoaded', () => {
