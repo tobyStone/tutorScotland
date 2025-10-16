@@ -444,9 +444,33 @@ module.exports = async (req, res) => {
                 }
             }
 
-            // Return all blogs, sorted by newest first
-            const blogs = await Blog.find().sort({ createdAt: -1 }).lean();
-            return res.status(200).json(blogs);
+            // ✅ PAGINATION: Support paginated blog listing for admin dashboard
+            const page = parseInt(req.query.page) || null;
+            const limit = parseInt(req.query.limit) || 20;
+
+            // If no page parameter, return all blogs (backward compatibility)
+            if (!page) {
+                const blogs = await Blog.find().sort({ createdAt: -1 }).lean();
+                return res.status(200).json(blogs);
+            }
+
+            // Paginated response for admin dashboard
+            const skip = (page - 1) * limit;
+            const blogs = await Blog.find()
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .lean();
+
+            const total = await Blog.countDocuments();
+
+            return res.status(200).json({
+                data: blogs,
+                page: page,
+                limit: limit,
+                total: total,
+                totalPages: Math.ceil(total / limit)
+            });
         }
 
         // Handle DELETE request - Delete a blog post

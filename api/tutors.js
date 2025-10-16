@@ -200,6 +200,10 @@ module.exports = async (req, res) => {
             // Apply API security headers
             applyAPISecurityHeaders(res);
 
+            // ✅ PAGINATION: Support paginated tutor listing for admin dashboard
+            const page = parseInt(req.query.page) || null;
+            const limit = parseInt(req.query.limit) || 20;
+
             // Build query with same filtering logic as HTML generation
             let query = {};
 
@@ -287,8 +291,28 @@ module.exports = async (req, res) => {
                 query.regions = { $regex: regionSynonym, $options: 'i' };
             }
 
-            const tutors = await Tutor.find(query).lean();
-            return res.status(200).json(tutors);
+            // If no page parameter, return all tutors (backward compatibility)
+            if (!page) {
+                const tutors = await Tutor.find(query).lean();
+                return res.status(200).json(tutors);
+            }
+
+            // Paginated response for admin dashboard
+            const skip = (page - 1) * limit;
+            const tutors = await Tutor.find(query)
+                .skip(skip)
+                .limit(limit)
+                .lean();
+
+            const total = await Tutor.countDocuments(query);
+
+            return res.status(200).json({
+                data: tutors,
+                page: page,
+                limit: limit,
+                total: total,
+                totalPages: Math.ceil(total / limit)
+            });
         }
 
         const modeLc = mode.toLowerCase().trim();

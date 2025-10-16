@@ -9,6 +9,11 @@ import { uploadImage } from '/js/upload-helper.js';
 let allBlogs = [];
 let handlersInitialized = false;
 
+// ✅ PAGINATION: State variables
+let currentBlogPage = 1;
+let totalBlogPages = 1;
+const blogsPerPage = 10;
+
 // DOM element references
 let createTabBtn, manageTabBtn, newBlogSection, manageBlogSection;
 let blogForm, formHeading, submitBtn, cancelEditBtn, currentImagePreview, removeImageCheckbox;
@@ -325,14 +330,15 @@ function populateBlogForm(blog) {
 }
 
 /**
- * Load blogs from the server
+ * Load blogs from the server with pagination
  */
-async function loadBlogs(category = 'all') {
+async function loadBlogs(category = 'all', page = 1) {
     const blogListBody = document.getElementById('blogListBody');
     blogListBody.innerHTML = '<tr><td colspan="5" class="loading-message">Loading blog posts...</td></tr>';
 
     try {
-        const response = await fetch('/api/blog-writer', {
+        // ✅ PAGINATION: Fetch paginated blogs
+        const response = await fetch(`/api/blog-writer?page=${page}&limit=${blogsPerPage}`, {
             credentials: 'include', // Include cookies for authentication
             headers: {
                 'Accept': 'application/json' // Explicitly request JSON
@@ -343,8 +349,17 @@ async function loadBlogs(category = 'all') {
             throw new Error(`Failed to fetch blogs: ${response.status} ${response.statusText}`);
         }
 
-        const blogs = await response.json();
+        const result = await response.json();
+
+        // Handle paginated response
+        const blogs = result.data || result; // Backward compatibility
         allBlogs = blogs; // Store for editing
+
+        // Update pagination state
+        if (result.totalPages) {
+            currentBlogPage = result.page;
+            totalBlogPages = result.totalPages;
+        }
 
         // Filter blogs by category if needed
         let filteredBlogs = blogs;
@@ -365,6 +380,7 @@ async function loadBlogs(category = 'all') {
 
         if (filteredBlogs.length === 0) {
             blogListBody.innerHTML = '<tr><td colspan="5" class="loading-message">No blog posts found</td></tr>';
+            updateBlogPaginationControls();
             return;
         }
 
@@ -399,10 +415,60 @@ async function loadBlogs(category = 'all') {
 
             blogListBody.appendChild(row);
         });
+
+        // ✅ PAGINATION: Update pagination controls
+        updateBlogPaginationControls();
     } catch (error) {
         console.error('[Blog Writer] Error loading blogs:', error);
         blogListBody.innerHTML = `<tr><td colspan="5" class="loading-message">Error: ${error.message}</td></tr>`;
     }
+}
+
+/**
+ * Update blog pagination controls
+ */
+function updateBlogPaginationControls() {
+    const paginationContainer = document.getElementById('blogPaginationControls');
+    if (!paginationContainer) return;
+
+    paginationContainer.innerHTML = '';
+
+    if (totalBlogPages <= 1) {
+        paginationContainer.style.display = 'none';
+        return;
+    }
+
+    paginationContainer.style.display = 'flex';
+
+    // Previous button
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = '← Previous';
+    prevBtn.className = 'pagination-btn';
+    prevBtn.disabled = currentBlogPage === 1;
+    prevBtn.onclick = () => {
+        if (currentBlogPage > 1) {
+            loadBlogs(document.getElementById('blogCategoryFilter').value, currentBlogPage - 1);
+        }
+    };
+    paginationContainer.appendChild(prevBtn);
+
+    // Page info
+    const pageInfo = document.createElement('span');
+    pageInfo.className = 'pagination-info';
+    pageInfo.textContent = `Page ${currentBlogPage} of ${totalBlogPages}`;
+    paginationContainer.appendChild(pageInfo);
+
+    // Next button
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Next →';
+    nextBtn.className = 'pagination-btn';
+    nextBtn.disabled = currentBlogPage === totalBlogPages;
+    nextBtn.onclick = () => {
+        if (currentBlogPage < totalBlogPages) {
+            loadBlogs(document.getElementById('blogCategoryFilter').value, currentBlogPage + 1);
+        }
+    };
+    paginationContainer.appendChild(nextBtn);
 }
 
 /**

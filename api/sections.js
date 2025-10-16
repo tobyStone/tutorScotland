@@ -1042,17 +1042,50 @@ module.exports = async (req, res) => {
                         query.isPublished = true;
                     }
 
-                    const pages = await Section.find(query).sort({ createdAt: -1 }).lean();
+                    // ✅ PAGINATION: Support paginated page listing for admin dashboard
+                    const page = parseInt(req.query.page) || null;
+                    const limit = parseInt(req.query.limit) || 20;
+
+                    // If no page parameter, return all pages (backward compatibility)
+                    if (!page) {
+                        const pages = await Section.find(query).sort({ createdAt: -1 }).lean();
+
+                        // ✅ BACKWARD COMPATIBILITY: Normalize layout field
+                        const normalizedPages = pages.map(page => {
+                            if (!page.layout || page.layout === null) {
+                                page.layout = 'standard';
+                            }
+                            return page;
+                        });
+
+                        return res.status(200).json(normalizedPages);
+                    }
+
+                    // Paginated response for admin dashboard
+                    const skip = (page - 1) * limit;
+                    const pages = await Section.find(query)
+                        .sort({ createdAt: -1 })
+                        .skip(skip)
+                        .limit(limit)
+                        .lean();
+
+                    const total = await Section.countDocuments(query);
 
                     // ✅ BACKWARD COMPATIBILITY: Normalize layout field
-                    const normalizedPages = pages.map(page => {
-                        if (!page.layout || page.layout === null) {
-                            page.layout = 'standard';
+                    const normalizedPages = pages.map(p => {
+                        if (!p.layout || p.layout === null) {
+                            p.layout = 'standard';
                         }
-                        return page;
+                        return p;
                     });
 
-                    return res.status(200).json(normalizedPages);
+                    return res.status(200).json({
+                        data: normalizedPages,
+                        page: page,
+                        limit: limit,
+                        total: total,
+                        totalPages: Math.ceil(total / limit)
+                    });
                 } catch (e) {
                     console.error('SECTION_GET_PAGES error', e);
                     return res.status(500).json({

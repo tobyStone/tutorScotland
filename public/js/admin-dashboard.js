@@ -20,6 +20,15 @@
 let uploadImage;
 let uploadHelperLoaded = false;
 
+// ✅ PAGINATION: State variables for tutors and pages
+let currentTutorPage = 1;
+let totalTutorPages = 1;
+const tutorsPerPage = 20;
+
+let currentPageListPage = 1;
+let totalPageListPages = 1;
+const pagesPerPage = 20;
+
 // Load upload helper
 async function loadUploadHelper() {
     try {
@@ -1416,16 +1425,27 @@ function initTutorManagement() {
         });
     }
 
-    // Load and display tutors
-    async function loadTutors() {
+    // Load and display tutors with pagination
+    async function loadTutors(page = 1) {
         try {
-            const response = await fetch('/api/tutors?format=json');
+            // ✅ PAGINATION: Fetch paginated tutors
+            const response = await fetch(`/api/tutors?format=json&page=${page}&limit=${tutorsPerPage}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch tutors');
             }
 
-            const tutors = await response.json();
+            const result = await response.json();
+
+            // Handle paginated response
+            const tutors = result.data || result; // Backward compatibility
             allTutors = tutors; // Store for editing
+
+            // Update pagination state
+            if (result.totalPages) {
+                currentTutorPage = result.page;
+                totalTutorPages = result.totalPages;
+            }
+
             const tutorTableBody = document.querySelector('#tutorTable tbody');
             tutorTableBody.innerHTML = '';
 
@@ -1483,10 +1503,58 @@ function initTutorManagement() {
                 row.appendChild(actionsCell);
                 tutorTableBody.appendChild(row);
             });
+
+            // ✅ PAGINATION: Update pagination controls
+            updateTutorPaginationControls();
         } catch (error) {
             console.error('Error loading tutors:', error);
             alert('Failed to load tutors. Please try again.');
         }
+    }
+
+    // Update tutor pagination controls
+    function updateTutorPaginationControls() {
+        const paginationContainer = document.getElementById('tutorPaginationControls');
+        if (!paginationContainer) return;
+
+        paginationContainer.innerHTML = '';
+
+        if (totalTutorPages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+        }
+
+        paginationContainer.style.display = 'flex';
+
+        // Previous button
+        const prevBtn = document.createElement('button');
+        prevBtn.textContent = '← Previous';
+        prevBtn.className = 'pagination-btn';
+        prevBtn.disabled = currentTutorPage === 1;
+        prevBtn.onclick = () => {
+            if (currentTutorPage > 1) {
+                loadTutors(currentTutorPage - 1);
+            }
+        };
+        paginationContainer.appendChild(prevBtn);
+
+        // Page info
+        const pageInfo = document.createElement('span');
+        pageInfo.className = 'pagination-info';
+        pageInfo.textContent = `Page ${currentTutorPage} of ${totalTutorPages}`;
+        paginationContainer.appendChild(pageInfo);
+
+        // Next button
+        const nextBtn = document.createElement('button');
+        nextBtn.textContent = 'Next →';
+        nextBtn.className = 'pagination-btn';
+        nextBtn.disabled = currentTutorPage === totalTutorPages;
+        nextBtn.onclick = () => {
+            if (currentTutorPage < totalTutorPages) {
+                loadTutors(currentTutorPage + 1);
+            }
+        };
+        paginationContainer.appendChild(nextBtn);
     }
 
     // Handle edit and delete actions with event delegation
@@ -1590,16 +1658,26 @@ function initPageManagement() {
         cancelPageEditBtn.addEventListener('click', resetPageForm);
     }
 
-    // Load and display pages
-    async function loadPages() {
+    // Load and display pages with pagination
+    async function loadPages(page = 1) {
         try {
-            const response = await fetch('/api/sections?isFullPage=true');
+            // ✅ PAGINATION: Fetch paginated pages
+            const response = await fetch(`/api/sections?isFullPage=true&page=${page}&limit=${pagesPerPage}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch pages');
             }
 
-            const pages = await response.json();
+            const result = await response.json();
+
+            // Handle paginated response
+            const pages = result.data || result; // Backward compatibility
             allPages = pages; // Store for editing
+
+            // Update pagination state
+            if (result.totalPages) {
+                currentPageListPage = result.page;
+                totalPageListPages = result.totalPages;
+            }
 
             if (!pagesTbody) return;
 
@@ -1607,6 +1685,7 @@ function initPageManagement() {
 
             if (pages.length === 0) {
                 pagesTbody.innerHTML = '<tr><td colspan="4">No pages found</td></tr>';
+                updatePageListPaginationControls();
                 return;
             }
 
@@ -1674,12 +1753,60 @@ function initPageManagement() {
 
             console.log(`[Admin Dashboard] Loaded ${pages.length} pages`);
 
+            // ✅ PAGINATION: Update pagination controls
+            updatePageListPaginationControls();
+
         } catch (error) {
             console.error('[Admin Dashboard] Error loading pages:', error);
             if (pagesTbody) {
                 pagesTbody.innerHTML = '<tr><td colspan="4">Error loading pages</td></tr>';
             }
         }
+    }
+
+    // Update page list pagination controls
+    function updatePageListPaginationControls() {
+        const paginationContainer = document.getElementById('pageListPaginationControls');
+        if (!paginationContainer) return;
+
+        paginationContainer.innerHTML = '';
+
+        if (totalPageListPages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+        }
+
+        paginationContainer.style.display = 'flex';
+
+        // Previous button
+        const prevBtn = document.createElement('button');
+        prevBtn.textContent = '← Previous';
+        prevBtn.className = 'pagination-btn';
+        prevBtn.disabled = currentPageListPage === 1;
+        prevBtn.onclick = () => {
+            if (currentPageListPage > 1) {
+                loadPages(currentPageListPage - 1);
+            }
+        };
+        paginationContainer.appendChild(prevBtn);
+
+        // Page info
+        const pageInfo = document.createElement('span');
+        pageInfo.className = 'pagination-info';
+        pageInfo.textContent = `Page ${currentPageListPage} of ${totalPageListPages}`;
+        paginationContainer.appendChild(pageInfo);
+
+        // Next button
+        const nextBtn = document.createElement('button');
+        nextBtn.textContent = 'Next →';
+        nextBtn.className = 'pagination-btn';
+        nextBtn.disabled = currentPageListPage === totalPageListPages;
+        nextBtn.onclick = () => {
+            if (currentPageListPage < totalPageListPages) {
+                loadPages(currentPageListPage + 1);
+            }
+        };
+        paginationContainer.appendChild(nextBtn);
     }
 
     // Handle form submission
