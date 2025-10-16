@@ -182,7 +182,6 @@ module.exports = async (req, res) => {
 
         // Connect to the database with better error handling
         await connectToDatabase();
-        console.log('Database connected successfully');
 
         // Use sanitized parameters
         const { subject, mode = '', region, format } = validation.sanitized;
@@ -288,17 +287,12 @@ module.exports = async (req, res) => {
                 query.regions = { $regex: regionSynonym, $options: 'i' };
             }
 
-            console.log("JSON MongoDB Query:", JSON.stringify(query, null, 2));
-
             const tutors = await Tutor.find(query).lean();
             return res.status(200).json(tutors);
         }
 
         const modeLc = mode.toLowerCase().trim();
         let query = {};
-
-        console.log("Received and validated query parameters:", { subject, mode, region, format });
-        console.log("Raw query parameters from request:", req.query);
 
         const subjectSynonyms = {
             // Mathematics variations
@@ -372,18 +366,9 @@ module.exports = async (req, res) => {
             }
         }
 
-        console.log("MongoDB Query:", JSON.stringify(query, null, 2));
-
-        // Debug: Show all tutors in database for comparison
-        const allTutors = await Tutor.find({}, 'name subjects').lean();
-        console.log("🔍 All tutors in database:", JSON.stringify(allTutors, null, 2));
-
         const tutors = await Tutor.find(query)
             .sort({ costRange: 1 })
             .lean(); // Use lean() for better performance
-
-        console.log("Raw tutors result:", JSON.stringify(tutors, null, 2));
-        console.log(`🔍 Found ${tutors.length} tutors matching query`);
 
         // Generate HTML for tutors or show a message if none found
         let tutorsHtml = '';

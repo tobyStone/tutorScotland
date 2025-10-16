@@ -104,14 +104,6 @@ module.exports = async (req, res) => {
         const operation = query.operation || (body && body.operation);
         const { page, selector, type, id } = query;
 
-        // Debug logging while testing
-        console.log('Content Manager Request:', {
-            method,
-            operation,
-            query,
-            bodyKeys: body ? Object.keys(body) : 'no body'
-        });
-
         // 🔒 SECURITY FIX: Add authentication for write operations and sensitive read operations
         const writeOperations = ['set-order', 'remove-from-order', 'override', 'backup'];
         const sensitiveReadOperations = ['debug-sections', 'list-images']; // Operations that expose sensitive data
@@ -121,23 +113,8 @@ module.exports = async (req, res) => {
         const isSensitiveReadOperation = sensitiveReadOperations.includes(operation);
 
         if (isWriteOperation || isSensitiveReadOperation) {
-            // ✅ TEMPORARY DEBUG: Log authentication attempt
-            console.log('🔍 Content Manager Auth Debug:', {
-                operation,
-                method,
-                isWriteOperation,
-                isSensitiveReadOperation,
-                cookies: req.headers?.cookie ? 'present' : 'missing',
-                userAgent: req.headers?.['user-agent']?.substring(0, 50)
-            });
-
             const { verify } = require('./protected');
             const [ok, payload] = verify(req, res);
-
-            console.log('🔍 Auth Verification Result:', {
-                ok,
-                payload: payload ? { id: payload.id, role: payload.role, email: payload.email } : null
-            });
 
             if (!ok) {
                 console.error('❌ Authentication failed for content management');

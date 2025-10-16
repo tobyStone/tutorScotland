@@ -352,18 +352,15 @@ module.exports = async (req, res) => {
 
         // Handle GET request - List all blogs or get a specific blog
         if (req.method === 'GET') {
-            console.log('Processing GET request');
-
             // Guard against missing req.query
             const query = req.query ?? {};
 
             // Check if a specific blog ID is requested
             if (query.id) {
                 const blogId = query.id;
-                console.log(`Fetching blog with ID: ${blogId}`);
 
                 try {
-                    const blog = await Blog.findById(blogId);
+                    const blog = await Blog.findById(blogId).lean();
                     if (!blog) {
                         return res.status(404).json({ message: 'Blog post not found' });
                     }
@@ -379,7 +376,6 @@ module.exports = async (req, res) => {
 
             // Check if migration is requested
             if (query.migrate === 'true') {
-                console.log('Running migration to add default values to existing blogs');
                 try {
                     const blogsToUpdate = await Blog.find({
                         $or: [
@@ -392,8 +388,6 @@ module.exports = async (req, res) => {
                             { readingTime: { $exists: false } }
                         ]
                     });
-
-                    console.log(`Found ${blogsToUpdate.length} blogs to migrate`);
 
                     for (const blog of blogsToUpdate) {
                         const updateData = {};
@@ -434,7 +428,6 @@ module.exports = async (req, res) => {
 
                         if (Object.keys(updateData).length > 0) {
                             await Blog.findByIdAndUpdate(blog._id, updateData);
-                            console.log(`Updated blog: ${blog.title}`);
                         }
                     }
 
@@ -452,14 +445,12 @@ module.exports = async (req, res) => {
             }
 
             // Return all blogs, sorted by newest first
-            console.log('Fetching all blog posts');
-            const blogs = await Blog.find().sort({ createdAt: -1 });
+            const blogs = await Blog.find().sort({ createdAt: -1 }).lean();
             return res.status(200).json(blogs);
         }
 
         // Handle DELETE request - Delete a blog post
         if (req.method === 'DELETE') {
-            console.log('Processing DELETE request');
 
             // Guard against missing req.query
             const query = req.query ?? {};

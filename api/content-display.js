@@ -174,7 +174,7 @@ async function handleBlogOperation(req, res) {
         }
 
         // Fetch posts from DB with the optional filter, sorted by newest first
-        const posts = await Blog.find(query).sort({ createdAt: -1 });
+        const posts = await Blog.find(query).sort({ createdAt: -1 }).lean();
 
         // Group posts into pairs for the grid layout
         const postPairs = [];
