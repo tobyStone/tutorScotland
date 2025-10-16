@@ -333,7 +333,7 @@
             window.location.href = `login.html?role=${encodeURIComponent(role)}`;
         }
 
-        // Rolling banner fetch - try news first, fallback to tutors, then default message
+        // Rolling banner fetch - show banner content or default message
         fetch('/api/sections?page=rolling-banner')
             .then(res => res.json())
             .then(sections => {
@@ -345,18 +345,8 @@
                         return;
                     }
                 }
-                // Fallback to tutors if no news sections are found
-                return fetch('/api/tutors?format=json')
-                    .then(res => res.json())
-                    .then(tutors => {
-                        if (tutors && tutors.length > 0) {
-                            const text = tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(' | ');
-                            document.getElementById('tutorBanner').innerText = text;
-                        } else {
-                            // Default message when no tutors or news available
-                            document.getElementById('tutorBanner').innerText = 'Welcome to Tutors Alliance Scotland';
-                        }
-                    });
+                // If no banner content, show default message
+                document.getElementById('tutorBanner').innerText = 'Welcome to Tutors Alliance Scotland';
             })
             .catch(err => {
                 console.error('Error in fetching banner content:', err);

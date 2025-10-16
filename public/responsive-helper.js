@@ -223,12 +223,8 @@
                         return bannerText;
                     }
                 }
-                // fallback: tutors
-                return fetch("/api/tutors?format=json")
-                    .then(r => (r.ok ? r.json() : []))
-                    .then(tutors => tutors.length
-                        ? tutors.map(t => `${t.name} (${t.subjects.join(', ')})`).join(" | ")
-                        : "Welcome to Tutors Alliance Scotland");
+                // If no banner content, show default message
+                return "Welcome to Tutors Alliance Scotland";
             })
             .catch(() => "Welcome to Tutors Alliance Scotland");
     }
