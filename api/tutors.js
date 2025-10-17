@@ -20,6 +20,7 @@ const mongoose = require('mongoose');
 const { applyAPISecurityHeaders, applyHTMLSecurityHeaders } = require('../utils/security-headers');
 const { handleAPIError, handleValidationError } = require('../utils/error-handler');
 const { sanitizeString } = require('../utils/input-validation');
+const queryCache = require('../utils/query-cache');
 
 function escapeRegExp(str = '') {
   return String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -190,8 +191,18 @@ module.exports = async (req, res) => {
         if (req.url === '/api/tutorlist') {
             // Apply API security headers
             applyAPISecurityHeaders(res);
-            // For the rolling banner, we don't need the _id field
-            const tutors = await Tutor.find({}, 'name subjects -_id').lean();
+
+            // ✅ QUERY CACHING: Cache tutor list for rolling banner
+            const cacheKey = queryCache.generateKey('tutors', {}, { select: 'name subjects -_id' });
+            let tutors = queryCache.get(cacheKey);
+
+            if (!tutors) {
+                // Cache miss - query database
+                tutors = await Tutor.find({}, 'name subjects -_id').lean();
+                // Cache for 5 minutes (tutor list changes infrequently)
+                queryCache.set(cacheKey, tutors, 5 * 60 * 1000);
+            }
+
             return res.status(200).json(tutors);
         }
 
@@ -295,18 +306,40 @@ module.exports = async (req, res) => {
 
             // If no page parameter, return all tutors (backward compatibility)
             if (!page) {
-                const tutors = await Tutor.find(query).lean();
+                // ✅ QUERY CACHING: Cache all tutors query
+                const cacheKey = queryCache.generateKey('tutors', query, {});
+                let tutors = queryCache.get(cacheKey);
+
+                if (!tutors) {
+                    tutors = await Tutor.find(query).lean();
+                    queryCache.set(cacheKey, tutors, 5 * 60 * 1000);
+                }
+
                 return res.status(200).json(tutors);
             }
 
             // Paginated response for admin dashboard
+            // ✅ QUERY CACHING: Cache paginated results
             const skip = (page - 1) * limit;
-            const tutors = await Tutor.find(query)
-                .skip(skip)
-                .limit(limit)
-                .lean();
+            const cacheKey = queryCache.generateKey('tutors', query, { page, limit, skip });
+            let tutors = queryCache.get(cacheKey);
+            let total;
 
-            const total = await Tutor.countDocuments(query);
+            if (!tutors) {
+                tutors = await Tutor.find(query)
+                    .skip(skip)
+                    .limit(limit)
+                    .lean();
+                total = await Tutor.countDocuments(query);
+
+                // Cache both tutors and total count together
+                const cachedData = { tutors, total };
+                queryCache.set(cacheKey, cachedData, 5 * 60 * 1000);
+            } else {
+                // Extract from cached data
+                total = tutors.total;
+                tutors = tutors.tutors;
+            }
 
             return res.status(200).json({
                 data: tutors,
@@ -392,9 +425,17 @@ module.exports = async (req, res) => {
             }
         }
 
-        const tutors = await Tutor.find(query)
-            .sort({ costRange: 1 })
-            .lean(); // Use lean() for better performance
+        // ✅ QUERY CACHING: Cache public tutor search results
+        const cacheKey = queryCache.generateKey('tutors', query, { sort: { costRange: 1 } });
+        let tutors = queryCache.get(cacheKey);
+
+        if (!tutors) {
+            tutors = await Tutor.find(query)
+                .sort({ costRange: 1 })
+                .lean(); // Use lean() for better performance
+            // Cache for 5 minutes
+            queryCache.set(cacheKey, tutors, 5 * 60 * 1000);
+        }
 
         // Generate HTML for tutors or show a message if none found
         let tutorsHtml = '';

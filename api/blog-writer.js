@@ -19,6 +19,7 @@ const jwt = require('jsonwebtoken');
 const { validateText, validateObjectId } = require('../utils/input-validation');
 const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
 const { csrfProtection } = require('../utils/csrf-protection');
+const queryCache = require('../utils/query-cache');
 const fs = require('fs');
 const path = require('path');
 
@@ -452,19 +453,40 @@ module.exports = async (req, res) => {
 
             // If no page parameter, return all blogs (backward compatibility)
             if (!page) {
-                const blogs = await Blog.find().sort({ createdAt: -1 }).lean();
+                // ✅ QUERY CACHING: Cache all blogs query
+                const cacheKey = queryCache.generateKey('blogs', {}, { sort: { createdAt: -1 } });
+                let blogs = queryCache.get(cacheKey);
+
+                if (!blogs) {
+                    blogs = await Blog.find().sort({ createdAt: -1 }).lean();
+                    queryCache.set(cacheKey, blogs, 5 * 60 * 1000);
+                }
+
                 return res.status(200).json(blogs);
             }
 
             // Paginated response for admin dashboard
+            // ✅ QUERY CACHING: Cache paginated blog results
             const skip = (page - 1) * limit;
-            const blogs = await Blog.find()
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(limit)
-                .lean();
+            const cacheKey = queryCache.generateKey('blogs', {}, { page, limit, skip, sort: { createdAt: -1 } });
+            let cachedData = queryCache.get(cacheKey);
+            let blogs, total;
 
-            const total = await Blog.countDocuments();
+            if (!cachedData) {
+                blogs = await Blog.find()
+                    .sort({ createdAt: -1 })
+                    .skip(skip)
+                    .limit(limit)
+                    .lean();
+                total = await Blog.countDocuments();
+
+                // Cache both blogs and total count together
+                cachedData = { blogs, total };
+                queryCache.set(cacheKey, cachedData, 5 * 60 * 1000);
+            } else {
+                blogs = cachedData.blogs;
+                total = cachedData.total;
+            }
 
             return res.status(200).json({
                 data: blogs,
@@ -491,6 +513,10 @@ module.exports = async (req, res) => {
 
             try {
                 const result = await Blog.findByIdAndDelete(blogId);
+
+                // ✅ CACHE INVALIDATION: Clear blog cache after deletion
+                queryCache.invalidate('blogs');
+
                 if (!result) {
                     return res.status(404).json({ message: 'Blog post not found' });
                 }
@@ -522,6 +548,9 @@ module.exports = async (req, res) => {
             try {
                 const updatedBlog = await Blog.findByIdAndUpdate(id, updateData, { new: true });
 
+                // ✅ CACHE INVALIDATION: Clear blog cache after update
+                queryCache.invalidate('blogs');
+
                 if (!updatedBlog) {
                     return res.status(404).json({ message: 'Blog post not found for update.' });
                 }
@@ -551,6 +580,9 @@ module.exports = async (req, res) => {
 
             try {
                 const updatedBlog = await Blog.findByIdAndUpdate(editId, updateData, { new: true });
+
+                // ✅ CACHE INVALIDATION: Clear blog cache after update
+                queryCache.invalidate('blogs');
 
                 if (!updatedBlog) {
                     return res.status(404).json({ message: 'Blog post not found for update.' });
@@ -698,6 +730,9 @@ module.exports = async (req, res) => {
         console.log('Saving blog post to database...');
         const savedBlog = await newBlog.save();
         console.log('Blog post saved successfully:', savedBlog);
+
+        // ✅ CACHE INVALIDATION: Clear blog cache after creation
+        queryCache.invalidate('blogs');
 
         // Generate SEO-friendly metadata for the response
         const seoMetadata = {

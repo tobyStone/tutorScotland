@@ -18,6 +18,7 @@ const Tutor = require('../models/Tutor');
 const { validateText, validateEmail } = require('../utils/input-validation');
 const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
 const { csrfProtection } = require('../utils/csrf-protection');
+const queryCache = require('../utils/query-cache');
 
 // Canonical region labels used across the app
 const CANONICAL_REGIONS = [
@@ -205,6 +206,9 @@ module.exports = async (req, res) => {
             try {
                 const deletedTutor = await Tutor.findByIdAndDelete(tutorId);
 
+                // ✅ CACHE INVALIDATION: Clear tutor cache after deletion
+                queryCache.invalidate('tutors');
+
                 if (!deletedTutor) {
                     console.log(`Tutor with ID ${tutorId} not found`);
                     return res.status(404).json({
@@ -294,6 +298,9 @@ module.exports = async (req, res) => {
             try {
                 const updatedTutor = await Tutor.findByIdAndUpdate(tutorId, updateData, { new: true });
 
+                // ✅ CACHE INVALIDATION: Clear tutor cache after update
+                queryCache.invalidate('tutors');
+
                 if (!updatedTutor) {
                     console.log(`Tutor with ID ${tutorId} not found for update`);
                     return res.status(404).json({
@@ -368,6 +375,9 @@ module.exports = async (req, res) => {
 
             try {
                 const updatedTutor = await Tutor.findByIdAndUpdate(editId, updateData, { new: true });
+
+                // ✅ CACHE INVALIDATION: Clear tutor cache after update
+                queryCache.invalidate('tutors');
 
                 if (!updatedTutor) {
                     console.log(`Tutor with ID ${editId} not found for update`);
@@ -509,6 +519,9 @@ module.exports = async (req, res) => {
         console.log('Saving tutor to database...');
         const savedTutor = await newTutor.save();
         console.log('Tutor saved successfully:', savedTutor);
+
+        // ✅ CACHE INVALIDATION: Clear tutor cache after creation
+        queryCache.invalidate('tutors');
 
         return res.status(201).json({
             message: "Tutor added successfully",

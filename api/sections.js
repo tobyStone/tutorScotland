@@ -24,6 +24,7 @@ const connectDB = require('./connectToDatabase');
 const { csrfProtection } = require('../utils/csrf-protection');
 const { applyComprehensiveSecurityHeaders } = require('../utils/security-headers');
 const { validateText, validateURL } = require('../utils/input-validation');
+const queryCache = require('../utils/query-cache');
 
 const MAX_UPLOAD = 4.5 * 1024 * 1024;  // 4.5 MB
 
@@ -534,6 +535,10 @@ module.exports = async (req, res) => {
                     let updatedDoc;
                     try {
                         updatedDoc = await Section.findByIdAndUpdate(editId, updateData, { new: true });
+
+                        // ✅ CACHE INVALIDATION: Clear section cache after update
+                        queryCache.invalidate('sections');
+
                         if (!updatedDoc) {
                             console.error('Section not found for update, editId:', editId);
                             return res.status(404).json({ message: 'Section not found for update' });
@@ -951,6 +956,10 @@ module.exports = async (req, res) => {
 
                 const doc = await Section.create(docData);
                 console.log('Section created:', doc);
+
+                // ✅ CACHE INVALIDATION: Clear section cache after creation
+                queryCache.invalidate('sections');
+
                 return res.status(201).json(doc);
             } catch (e) {
                 console.error('SECTION_POST error:', e);
@@ -1050,7 +1059,14 @@ module.exports = async (req, res) => {
 
                     // If no page parameter, return all pages (backward compatibility)
                     if (!page) {
-                        const pages = await Section.find(query).sort({ createdAt: -1 }).lean();
+                        // ✅ QUERY CACHING: Cache all pages query
+                        const cacheKey = queryCache.generateKey('sections-pages', query, { sort: { createdAt: -1 } });
+                        let pages = queryCache.get(cacheKey);
+
+                        if (!pages) {
+                            pages = await Section.find(query).sort({ createdAt: -1 }).lean();
+                            queryCache.set(cacheKey, pages, 5 * 60 * 1000);
+                        }
 
                         // ✅ BACKWARD COMPATIBILITY: Normalize layout field
                         const normalizedPages = pages.map(page => {
@@ -1064,14 +1080,26 @@ module.exports = async (req, res) => {
                     }
 
                     // Paginated response for admin dashboard
+                    // ✅ QUERY CACHING: Cache paginated pages
                     const skip = (page - 1) * limit;
-                    const pages = await Section.find(query)
-                        .sort({ createdAt: -1 })
-                        .skip(skip)
-                        .limit(limit)
-                        .lean();
+                    const cacheKey = queryCache.generateKey('sections-pages', query, { page, limit, skip, sort: { createdAt: -1 } });
+                    let cachedData = queryCache.get(cacheKey);
+                    let pages, total;
 
-                    const total = await Section.countDocuments(query);
+                    if (!cachedData) {
+                        pages = await Section.find(query)
+                            .sort({ createdAt: -1 })
+                            .skip(skip)
+                            .limit(limit)
+                            .lean();
+                        total = await Section.countDocuments(query);
+
+                        cachedData = { pages, total };
+                        queryCache.set(cacheKey, cachedData, 5 * 60 * 1000);
+                    } else {
+                        pages = cachedData.pages;
+                        total = cachedData.total;
+                    }
 
                     // ✅ BACKWARD COMPATIBILITY: Normalize layout field
                     const normalizedPages = pages.map(p => {
@@ -1116,7 +1144,14 @@ module.exports = async (req, res) => {
                     query.isPublished = true;
                 }
 
-                const list = await Section.find(query).sort({ position: 1, createdAt: 1 }).lean();
+                // ✅ QUERY CACHING: Cache sections for each page
+                const cacheKey = queryCache.generateKey('sections', query, { sort: { position: 1, createdAt: 1 } });
+                let list = queryCache.get(cacheKey);
+
+                if (!list) {
+                    list = await Section.find(query).sort({ position: 1, createdAt: 1 }).lean();
+                    queryCache.set(cacheKey, list, 5 * 60 * 1000);
+                }
 
                 // ✅ BACKWARD COMPATIBILITY: Normalize layout field for existing records
                 const normalizedList = list.map(section => {
@@ -1173,6 +1208,10 @@ module.exports = async (req, res) => {
 
             try {
                 const gone = await Section.findByIdAndDelete(id);
+
+                // ✅ CACHE INVALIDATION: Clear section cache after deletion
+                queryCache.invalidate('sections');
+
                 if (!gone) {
                     return res.status(404).json({ message: 'Section not found' });
                 }

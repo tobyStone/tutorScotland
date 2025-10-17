@@ -1,0 +1,188 @@
+/**
+ * Cookie Consent Banner Styles
+ * Sympathetic to TutorScotland design system
+ * Uses brand colors: #0057B7 (primary blue), #001B44 (navy), #B8D4FF (light blue)
+ */
+
+#cookie-consent-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    display: none; /* Hidden by default, shown by JS */
+    
+    /* Flexbox for centering */
+    justify-content: center;
+    align-items: flex-end;
+    padding: 1rem;
+    
+    /* Animation */
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#cookie-consent-banner.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cookie-consent-container {
+    background: linear-gradient(135deg, #001B44 0%, #0057B7 100%);
+    color: white;
+    border-radius: 1rem 1rem 0 0;
+    padding: 1.5rem 2rem;
+    max-width: 900px;
+    width: 100%;
+    box-shadow: 0 -4px 20px rgba(0, 27, 68, 0.3);
+    
+    /* Flexbox layout */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cookie-consent-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.cookie-consent-text {
+    flex: 1;
+    min-width: 250px;
+}
+
+.cookie-consent-text p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #E6F0FF;
+}
+
+.cookie-consent-text a {
+    color: #B8D4FF;
+    text-decoration: underline;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.cookie-consent-text a:hover {
+    color: #ffffff;
+}
+
+.cookie-consent-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.cookie-consent-btn {
+    padding: 0.7rem 1.8rem;
+    border: none;
+    border-radius: 2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    white-space: nowrap;
+}
+
+#cookie-accept-btn {
+    background: linear-gradient(90deg, #B8D4FF 0%, #ffffff 100%);
+    color: #001B44;
+    box-shadow: 0 2px 8px rgba(184, 212, 255, 0.3);
+}
+
+#cookie-accept-btn:hover {
+    background: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(184, 212, 255, 0.5);
+}
+
+#cookie-reject-btn {
+    background: transparent;
+    color: #B8D4FF;
+    border: 2px solid #B8D4FF;
+}
+
+#cookie-reject-btn:hover {
+    background: rgba(184, 212, 255, 0.1);
+    color: #ffffff;
+    border-color: #ffffff;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .cookie-consent-container {
+        padding: 1.25rem 1.5rem;
+        border-radius: 1rem 1rem 0 0;
+    }
+    
+    .cookie-consent-content {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .cookie-consent-text {
+        text-align: center;
+    }
+    
+    .cookie-consent-buttons {
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .cookie-consent-btn {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    #cookie-consent-banner {
+        padding: 0;
+    }
+    
+    .cookie-consent-container {
+        border-radius: 0;
+        padding: 1rem;
+    }
+    
+    .cookie-consent-text p {
+        font-size: 0.85rem;
+    }
+    
+    .cookie-consent-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .cookie-consent-btn {
+        width: 100%;
+        padding: 0.8rem 1.5rem;
+    }
+}
+
+/* Accessibility: Focus states */
+.cookie-consent-btn:focus {
+    outline: 3px solid #B8D4FF;
+    outline-offset: 2px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    #cookie-consent-banner {
+        transition: none;
+    }
+    
+    .cookie-consent-btn {
+        transition: none;
+    }
+}
+
