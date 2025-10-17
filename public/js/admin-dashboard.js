@@ -336,6 +336,23 @@ function initSectionManagement() {
             const sharedFields = document.getElementById('sharedFields');
             if (sharedFields) sharedFields.style.display = 'block';
 
+            // Hide image field for team, testimonial, and video sections (they use their own image/video systems)
+            const sectionImageInput = document.getElementById('sectionImage');
+            const sectionImageLabel = sectionImageInput ? sectionImageInput.closest('label') : null;
+            const currentImagePreview = document.getElementById('currentImagePreview');
+
+            if (layout === 'team' || layout === 'testimonial' || layout === 'video') {
+                // Hide the image upload field and preview for team/testimonial/video sections
+                if (sectionImageLabel) sectionImageLabel.style.display = 'none';
+                if (currentImagePreview) currentImagePreview.style.display = 'none';
+                console.log('[Admin Dashboard] Image field hidden for', layout, 'section');
+            } else {
+                // Show the image upload field for other section types
+                if (sectionImageLabel) sectionImageLabel.style.display = 'block';
+                // currentImagePreview visibility is managed by populateSectionForm
+                console.log('[Admin Dashboard] Image field shown for', layout, 'section');
+            }
+
             // Show standard fields for regular sections
             if (standardFields) standardFields.style.display = 'block';
 
