@@ -343,16 +343,36 @@ function initSectionManagement() {
             const sectionImageLabel = document.getElementById('sectionImageLabel');
             const currentImagePreview = document.getElementById('currentImagePreview');
 
+            console.log('[DEBUG] toggleLayoutFields - layout value:', layout);
+            console.log('[DEBUG] sectionImageLabel element:', sectionImageLabel);
+            console.log('[DEBUG] currentImagePreview element:', currentImagePreview);
+            console.log('[DEBUG] Checking condition: layout === team?', layout === 'team');
+            console.log('[DEBUG] Checking condition: layout === testimonial?', layout === 'testimonial');
+            console.log('[DEBUG] Checking condition: layout === video?', layout === 'video');
+
             if (layout === 'team' || layout === 'testimonial' || layout === 'video') {
                 // Hide the image upload field and preview for team/testimonial/video sections
-                if (sectionImageLabel) sectionImageLabel.style.display = 'none';
-                if (currentImagePreview) currentImagePreview.style.display = 'none';
-                console.log('[Admin Dashboard] Image field hidden for', layout, 'section');
+                console.log('[Admin Dashboard] ✅ HIDING image field for', layout, 'section');
+                if (sectionImageLabel) {
+                    sectionImageLabel.style.display = 'none';
+                    console.log('[DEBUG] sectionImageLabel.style.display set to:', sectionImageLabel.style.display);
+                } else {
+                    console.error('[DEBUG] ❌ sectionImageLabel element NOT FOUND!');
+                }
+                if (currentImagePreview) {
+                    currentImagePreview.style.display = 'none';
+                    console.log('[DEBUG] currentImagePreview.style.display set to:', currentImagePreview.style.display);
+                } else {
+                    console.log('[DEBUG] currentImagePreview element not found (this is OK if not editing)');
+                }
             } else {
                 // Show the image upload field for other section types
-                if (sectionImageLabel) sectionImageLabel.style.display = 'block';
+                console.log('[Admin Dashboard] ✅ SHOWING image field for', layout, 'section');
+                if (sectionImageLabel) {
+                    sectionImageLabel.style.display = 'block';
+                    console.log('[DEBUG] sectionImageLabel.style.display set to:', sectionImageLabel.style.display);
+                }
                 // currentImagePreview visibility is managed by populateSectionForm
-                console.log('[Admin Dashboard] Image field shown for', layout, 'section');
             }
 
             // Show standard fields for regular sections
