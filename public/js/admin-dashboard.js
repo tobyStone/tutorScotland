@@ -950,41 +950,67 @@ function initSectionManagement() {
                     }
                 }, 100);
             } else if (section.layout === 'list' && section.text) {
-                // Populate list builder with existing list data
-                try {
-                    const listData = JSON.parse(section.text);
-                    if (typeof populateListBuilder === 'function') {
-                        populateListBuilder(listData);
-                    }
-                    console.log('[Admin Dashboard] Populated list builder with', listData.items?.length || 0, 'items');
-                } catch (e) {
-                    console.log('[Admin Dashboard] Could not parse list data:', e);
-                    // Try to handle legacy format
-                    if (typeof populateListBuilder === 'function') {
-                        populateListBuilder({ items: [], listType: 'unordered', description: '' });
-                    }
+                // Ensure list builder is visible first
+                const listBuilder = document.getElementById('listBuilder');
+                if (listBuilder) {
+                    listBuilder.style.display = 'block';
                 }
+
+                // Add a small delay to ensure DOM elements are ready
+                setTimeout(() => {
+                    // Populate list builder with existing list data
+                    try {
+                        const listData = JSON.parse(section.text);
+                        console.log('[Admin Dashboard] About to populate list builder with data:', listData);
+                        if (typeof populateListBuilder === 'function') {
+                            populateListBuilder(listData);
+                            console.log('[Admin Dashboard] List builder populated with', listData.items?.length || 0, 'items');
+                        } else {
+                            console.error('[Admin Dashboard] populateListBuilder function not found');
+                        }
+                    } catch (e) {
+                        console.error('[Admin Dashboard] Could not parse list data:', e);
+                        console.error('[Admin Dashboard] Raw text value:', section.text);
+                        // Try to handle legacy format
+                        if (typeof populateListBuilder === 'function') {
+                            populateListBuilder({ items: [], listType: 'unordered', description: '' });
+                        }
+                    }
+                }, 100);
             } else if (section.layout === 'testimonial' && section.text) {
-                // Populate testimonial builder with existing testimonial data
-                try {
-                    let testimonialData = JSON.parse(section.text);
-
-                    // Convert old single testimonial format to array format
-                    if (testimonialData.quote && !Array.isArray(testimonialData)) {
-                        testimonialData = [testimonialData];
-                    }
-
-                    if (typeof populateTestimonialBuilder === 'function') {
-                        populateTestimonialBuilder(testimonialData);
-                    }
-                    console.log('[Admin Dashboard] Populated testimonial builder with', testimonialData.length, 'testimonials');
-                } catch (e) {
-                    console.log('[Admin Dashboard] Could not parse testimonial data:', e);
-                    // Add one empty testimonial for editing
-                    if (typeof populateTestimonialBuilder === 'function') {
-                        populateTestimonialBuilder([]);
-                    }
+                // Ensure testimonial builder is visible first
+                const testimonialBuilder = document.getElementById('testimonialBuilder');
+                if (testimonialBuilder) {
+                    testimonialBuilder.style.display = 'block';
                 }
+
+                // Add a small delay to ensure DOM elements are ready
+                setTimeout(() => {
+                    // Populate testimonial builder with existing testimonial data
+                    try {
+                        let testimonialData = JSON.parse(section.text);
+                        console.log('[Admin Dashboard] About to populate testimonial builder with data:', testimonialData);
+
+                        // Convert old single testimonial format to array format
+                        if (testimonialData.quote && !Array.isArray(testimonialData)) {
+                            testimonialData = [testimonialData];
+                        }
+
+                        if (typeof populateTestimonialBuilder === 'function') {
+                            populateTestimonialBuilder(testimonialData);
+                            console.log('[Admin Dashboard] Testimonial builder populated with', testimonialData.length, 'testimonials');
+                        } else {
+                            console.error('[Admin Dashboard] populateTestimonialBuilder function not found');
+                        }
+                    } catch (e) {
+                        console.error('[Admin Dashboard] Could not parse testimonial data:', e);
+                        console.error('[Admin Dashboard] Raw text value:', section.text);
+                        // Add one empty testimonial for editing
+                        if (typeof populateTestimonialBuilder === 'function') {
+                            populateTestimonialBuilder([]);
+                        }
+                    }
+                }, 100);
             } else if (section.layout === 'video' && section.videoUrl) {
                 // Populate video URL field
                 const videoUrlField = sectionForm.querySelector('[name="videoUrl"]');

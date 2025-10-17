@@ -104,6 +104,7 @@
     <Content Include="public\css\admin-tables.css" />
     <Content Include="public\css\animation-module.css" />
     <Content Include="public\css\button-module.css" />
+    <Content Include="public\css\cookie-consent.css" />
     <Content Include="public\css\footer-module.css" />
     <Content Include="public\css\layout-module.css" />
     <Content Include="public\css\nav.css" />
@@ -168,6 +169,7 @@
     <Content Include="public\parents.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="public\partials\cookie-consent-banner.html" />
     <Content Include="public\partials\main-nav.html" />
     <Content Include="public\publicConnect.html">
       <SubType>Code</SubType>
@@ -206,6 +208,9 @@
     </Content>
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="templates\admin-dashboard.html" />
+    <Content Include="templates\blog-writer-dashboard.html" />
+    <Content Include="templates\tutor-zone-dashboard.html" />
     <Content Include="tests\config\mocks.js" />
     <Content Include="tests\config\setup.js" />
     <Content Include="tests\config\test-db.js" />
@@ -240,6 +245,7 @@
     <Content Include="utils\csrf-protection.js" />
     <Content Include="utils\error-handler.js" />
     <Content Include="utils\input-validation.js" />
+    <Content Include="utils\query-cache.js" />
     <Content Include="utils\security-headers.js" />
     <Content Include="utils\security-logger.js" />
     <Content Include="utils\sentry-integration.js" />
@@ -263,6 +269,7 @@
     <Folder Include="public\templates\" />
     <Folder Include="public\videos\" />
     <Folder Include="public\partials\" />
+    <Folder Include="templates\" />
     <Folder Include="tests\" />
     <Folder Include="tests\config\" />
     <Folder Include="tests\e2e\" />
