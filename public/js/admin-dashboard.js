@@ -2465,14 +2465,21 @@ function initAdvancedSectionBuilders() {
                 const imagePreview = document.getElementById('currentImagePreview');
 
                 if (imageField && imageField.querySelector('input[name="image"]')) {
-                    // Hide shared image field for team sections since images are handled per team member
-                    imageField.style.display = isTeam ? 'none' : 'block';
+                    // ✅ FIX: Hide shared image field for team, testimonial, and video sections
+                    // Team sections handle images per team member
+                    // Testimonial sections handle images per testimonial
+                    // Video sections use video upload instead of image upload
+                    const shouldHideImage = isTeam || isTestimonial || isVideo;
+                    imageField.style.display = shouldHideImage ? 'none' : 'block';
+                    console.log('[DEBUG] Layout change handler - imageField.style.display set to:', imageField.style.display, 'for layout:', layoutValue);
                 }
 
                 if (imagePreview) {
-                    // Hide image preview for team sections
-                    if (isTeam) {
+                    // Hide image preview for team, testimonial, and video sections
+                    const shouldHidePreview = isTeam || isTestimonial || isVideo;
+                    if (shouldHidePreview) {
                         imagePreview.style.display = 'none';
+                        console.log('[DEBUG] Layout change handler - imagePreview.style.display set to: none for layout:', layoutValue);
                     }
                 }
             }
