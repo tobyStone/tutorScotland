@@ -2513,7 +2513,7 @@ function initAdvancedSectionBuilders() {
      * Populate list builder with existing data (for editing)
      * @param {Object} existingListData - List data object with items, listType, description
      */
-    function populateListBuilder(existingListData) {
+    window.populateListBuilder = function(existingListData) {
         if (!existingListData) return;
 
         // Clear existing items
@@ -2711,7 +2711,7 @@ function initAdvancedSectionBuilders() {
      * Populate testimonial builder with existing data (for editing)
      * @param {Array} existingTestimonials - Array of testimonial objects
      */
-    function populateTestimonialBuilder(existingTestimonials) {
+    window.populateTestimonialBuilder = function(existingTestimonials) {
         if (!existingTestimonials || !Array.isArray(existingTestimonials)) return;
 
         // Clear existing testimonials
