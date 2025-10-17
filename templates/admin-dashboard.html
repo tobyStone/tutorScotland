@@ -199,9 +199,27 @@
                     <!-- ░░░░░░  VIDEO BUILDER FIELDS  ░░░░░░ -->
                     <div id="videoBuilder" style="display:none; margin-top:15px;">
                         <h4 style="margin-bottom: 10px; color: #4a90e2;">Video Section</h4>
+
+                        <!-- Video Upload -->
+                        <label>Upload New Video:
+                            <input type="file" id="videoFileInput" accept="video/*" style="width: 100%; margin-bottom: 10px;">
+                        </label>
+                        <button type="button" id="uploadVideoBtn" style="display: none; background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-bottom: 10px;">
+                            ⬆️ Upload Video
+                        </button>
+                        <div id="videoUploadProgress" style="display: none; margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                            <div style="margin-bottom: 5px;" id="videoProgressText">Uploading...</div>
+                            <div style="width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden;">
+                                <div id="videoProgressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #28a745, #20c997); transition: width 0.3s;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Video URL (manual entry or populated by upload/browse) -->
                         <label>Video URL:
                             <input type="url" name="videoUrl" id="videoUrl" placeholder="https://example.com/video.mp4">
                         </label>
+
+                        <!-- Browse Existing Videos -->
                         <button type="button" id="browseVideosBtn" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
                             📹 Browse Available Videos
                         </button>
@@ -827,6 +845,15 @@
                 });
             }
         });
+    </script>
+
+    <!-- Google Cloud Upload Helper (for large video uploads) -->
+    <script type="module">
+        import { uploadLargeVideo, shouldUseDirectUpload, validateVideoFile } from '/js/google-cloud-upload.js';
+        // Make functions globally available for admin-dashboard.js
+        window.uploadLargeVideo = uploadLargeVideo;
+        window.shouldUseDirectUpload = shouldUseDirectUpload;
+        window.validateVideoFile = validateVideoFile;
     </script>
 
     <!-- Admin Dashboard Interactive Functionality -->

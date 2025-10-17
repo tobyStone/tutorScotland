@@ -2901,6 +2901,13 @@ function initVideoManagement() {
     const noVideosMsg = document.getElementById('noVideosMsg');
     const videoUrlInput = document.getElementById('videoUrl');
 
+    // Video upload elements
+    const videoFileInput = document.getElementById('videoFileInput');
+    const uploadVideoBtn = document.getElementById('uploadVideoBtn');
+    const videoUploadProgress = document.getElementById('videoUploadProgress');
+    const videoProgressBar = document.getElementById('videoProgressBar');
+    const videoProgressText = document.getElementById('videoProgressText');
+
     if (!browseVideosBtn || !videoBrowser) {
         console.log('[Admin Dashboard] Video management elements not found, skipping init');
         return;
@@ -2911,6 +2918,215 @@ function initVideoManagement() {
         blobVideos: [],
         googleCloudVideos: []
     };
+
+    /**
+     * Show upload button when video file is selected
+     */
+    if (videoFileInput && uploadVideoBtn) {
+        videoFileInput.addEventListener('change', () => {
+            if (videoFileInput.files.length > 0) {
+                uploadVideoBtn.style.display = 'block';
+            } else {
+                uploadVideoBtn.style.display = 'none';
+            }
+        });
+    }
+
+    /**
+     * Handle video upload
+     */
+    if (uploadVideoBtn) {
+        uploadVideoBtn.addEventListener('click', async () => {
+            const file = videoFileInput.files[0];
+            if (!file) return;
+
+            console.log(`[Admin Dashboard] Video upload: ${file.name} (${formatFileSize(file.size)})`);
+
+            // Determine upload method based on file size
+            const VERCEL_LIMIT = 4.5 * 1024 * 1024; // 4.5MB
+
+            if (file.size <= VERCEL_LIMIT) {
+                console.log('[Admin Dashboard] Using Vercel serverless function for small video');
+                await handleSmallVideoUpload(file);
+            } else {
+                console.log('[Admin Dashboard] Using Google Cloud upload for large video');
+                await handleLargeVideoUpload(file);
+            }
+        });
+    }
+
+    /**
+     * Handle small video upload via Vercel serverless function
+     */
+    async function handleSmallVideoUpload(file) {
+        // Show progress
+        if (videoUploadProgress) videoUploadProgress.style.display = 'block';
+        if (uploadVideoBtn) uploadVideoBtn.disabled = true;
+        if (videoProgressBar) videoProgressBar.style.width = '0%';
+        if (videoProgressText) videoProgressText.textContent = 'Uploading via Vercel...';
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', 'video-content');
+
+            // Upload with progress tracking
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable && videoProgressBar && videoProgressText) {
+                    const percentComplete = Math.round((e.loaded / e.total) * 100);
+                    videoProgressBar.style.width = percentComplete + '%';
+                    videoProgressText.textContent = `Uploading... ${percentComplete}%`;
+                }
+            });
+
+            xhr.addEventListener('load', () => {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    handleUploadSuccess(response.url, file.name);
+                } else {
+                    throw new Error(`Upload failed: ${xhr.status}`);
+                }
+            });
+
+            xhr.addEventListener('error', () => {
+                throw new Error('Upload failed due to network error');
+            });
+
+            xhr.open('POST', '/api/upload-image');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.withCredentials = true; // Include cookies for JWT authentication
+            xhr.send(formData);
+
+        } catch (error) {
+            handleUploadError(error);
+        }
+    }
+
+    /**
+     * Handle large video upload via Google Cloud
+     */
+    async function handleLargeVideoUpload(file) {
+        // Show progress
+        if (videoUploadProgress) videoUploadProgress.style.display = 'block';
+        if (uploadVideoBtn) uploadVideoBtn.disabled = true;
+        if (videoProgressBar) videoProgressBar.style.width = '0%';
+        if (videoProgressText) videoProgressText.textContent = 'Uploading to Google Cloud...';
+
+        try {
+            // Check if Google Cloud upload helper is available
+            if (typeof uploadLargeVideo !== 'function') {
+                console.warn('[Admin Dashboard] Google Cloud upload helper not available, falling back to server upload');
+                await handleServerVideoUpload(file);
+                return;
+            }
+
+            await uploadLargeVideo(
+                file,
+                // Progress callback
+                (percent) => {
+                    if (videoProgressBar) videoProgressBar.style.width = percent + '%';
+                    if (videoProgressText) videoProgressText.textContent = `Uploading... ${percent}%`;
+                },
+                // Success callback
+                (url, filename) => {
+                    handleUploadSuccess(url, filename);
+                },
+                // Error callback
+                (error) => {
+                    handleUploadError(error);
+                }
+            );
+        } catch (error) {
+            handleUploadError(error);
+        }
+    }
+
+    /**
+     * Fallback: Upload video via server (for large files when direct upload fails)
+     */
+    async function handleServerVideoUpload(file) {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('folder', 'video-content');
+            formData.append('forceGoogleCloud', 'true');
+
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('progress', (e) => {
+                if (e.lengthComputable && videoProgressBar && videoProgressText) {
+                    const percentComplete = Math.round((e.loaded / e.total) * 100);
+                    videoProgressBar.style.width = percentComplete + '%';
+                    videoProgressText.textContent = `Uploading to server... ${percentComplete}%`;
+                }
+            });
+
+            xhr.addEventListener('load', () => {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+                    handleUploadSuccess(response.url, file.name);
+                } else {
+                    throw new Error(`Server upload failed: ${xhr.status}`);
+                }
+            });
+
+            xhr.addEventListener('error', () => {
+                throw new Error('Server upload failed due to network error');
+            });
+
+            xhr.open('POST', '/api/upload-image');
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.withCredentials = true;
+            xhr.send(formData);
+
+        } catch (error) {
+            handleUploadError(error);
+        }
+    }
+
+    /**
+     * Handle successful video upload
+     */
+    function handleUploadSuccess(url, filename) {
+        console.log('[Admin Dashboard] Video upload successful:', url);
+
+        if (videoUrlInput) videoUrlInput.value = url;
+        if (videoProgressText) videoProgressText.textContent = 'Upload complete!';
+
+        // Auto-populate heading if it's empty
+        const headingInput = document.querySelector('#addSectionForm [name="heading"]');
+        if (headingInput && !headingInput.value.trim()) {
+            const fileName = filename.replace(/\.[^/.]+$/, ''); // Remove extension
+            headingInput.value = fileName;
+        }
+
+        // Refresh video browser if it's open
+        if (videoBrowser && videoBrowser.style.display !== 'none') {
+            loadAvailableVideos();
+        }
+
+        // Hide progress after 2 seconds
+        setTimeout(() => {
+            if (videoUploadProgress) videoUploadProgress.style.display = 'none';
+            if (uploadVideoBtn) {
+                uploadVideoBtn.disabled = false;
+                uploadVideoBtn.style.display = 'none';
+            }
+            if (videoFileInput) videoFileInput.value = '';
+        }, 2000);
+    }
+
+    /**
+     * Handle video upload error
+     */
+    function handleUploadError(error) {
+        console.error('[Admin Dashboard] Video upload error:', error);
+        alert('Video upload failed: ' + error.message);
+        if (videoUploadProgress) videoUploadProgress.style.display = 'none';
+        if (uploadVideoBtn) uploadVideoBtn.disabled = false;
+    }
 
     /**
      * Toggle video browser visibility and load videos
