@@ -584,6 +584,62 @@ function initSectionManagement() {
         try {
             const formData = new FormData(sectionForm);
 
+            // Handle image upload if a new image is selected
+            const sectionImageInput = document.getElementById('sectionImage');
+            if (sectionImageInput && sectionImageInput.files[0]) {
+                const imageFile = sectionImageInput.files[0];
+                if (imageFile.size > 2 * 1024 * 1024) {
+                    alert('Image file is too large (max 2MB)');
+                    return;
+                }
+
+                try {
+                    let imageUrl;
+
+                    // Try to use upload helper first, with fallback
+                    if (uploadHelperLoaded && typeof uploadImage === 'function') {
+                        console.log('[Section Management] Using upload helper for image upload');
+                        imageUrl = await uploadImage(imageFile, 'content-images');
+                    } else {
+                        console.log('[Section Management] Using fallback upload method');
+                        // Fallback upload method with improved error handling
+                        const uploadFormData = new FormData();
+                        uploadFormData.append('file', imageFile);
+                        uploadFormData.append('folder', 'content-images');
+
+                        const uploadResponse = await fetch('/api/upload-image', {
+                            method: 'POST',
+                            body: uploadFormData,
+                            credentials: 'include'
+                        });
+
+                        if (!uploadResponse.ok) {
+                            const errorText = await uploadResponse.text();
+                            console.error('Upload failed:', uploadResponse.status, errorText);
+                            throw new Error(`Image upload failed: ${uploadResponse.status} - ${errorText}`);
+                        }
+
+                        const uploadResult = await uploadResponse.json();
+                        imageUrl = uploadResult.url;
+                    }
+
+                    if (imageUrl) {
+                        formData.set('imagePath', imageUrl);
+                        console.log('[Section Management] Image uploaded successfully:', imageUrl);
+                    } else {
+                        throw new Error('Upload succeeded but no URL returned');
+                    }
+
+                } catch (uploadError) {
+                    console.error('[Section Management] Image upload error:', uploadError);
+                    alert('Image upload failed: ' + uploadError.message);
+                    return;
+                }
+            }
+
+            // Remove the file input from form data to avoid sending it
+            formData.delete('image');
+
             // Special handling for rolling-banner sections
             if (isRollingBanner) {
                 const rollingText = formData.get('rollingText')?.trim();
