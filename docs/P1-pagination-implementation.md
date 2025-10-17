@@ -140,14 +140,35 @@ const blogs = result.data || result; // Works with both formats!
 
 ## Testing Results
 
+### **Initial Implementation:**
 ```
 ✅ Test Files: 25 passed
 ✅ Tests: 313 passed (out of 314)
-❌ 1 test failed: Pre-existing blog-writer CSRF test (unrelated to pagination)
+❌ 1 test failed: blog-writer-security GET request test (caused by pagination bug)
 ❌ 3 Playwright smoke tests failed: Pre-existing configuration issue (unrelated to pagination)
 ```
 
-**All functional tests passed!** No functionality was broken by pagination implementation.
+### **Bug Fix Applied:**
+**Issue:** `req.query` was undefined in test environment, causing `TypeError: Cannot read properties of undefined (reading 'page')`
+
+**Fix:** Added null-coalescing guards in all three API files:
+```javascript
+// Before (caused crash when req.query undefined)
+const page = parseInt(req.query.page) || null;
+
+// After (safe fallback)
+const queryParams = req.query ?? {};
+const page = parseInt(queryParams.page) || null;
+```
+
+### **Final Test Results:**
+```
+✅ Test Files: 26 passed
+✅ Tests: 314 passed (ALL TESTS PASSING!)
+❌ 3 Playwright smoke tests failed: Pre-existing configuration issue (unrelated to pagination)
+```
+
+**All functional tests passed!** Bug was identified and fixed within 10 minutes.
 
 ---
 

@@ -180,9 +180,6 @@ function initBlogListHandlers() {
     document.getElementById('refreshBlogsBtn').addEventListener('click', () => {
         loadBlogs(document.getElementById('blogCategoryFilter').value);
     });
-    
-    // Migration button
-    document.getElementById('migrateBlogsBtn').addEventListener('click', handleBlogMigration);
 }
 
 /**
@@ -650,43 +647,6 @@ async function handleFormSubmission(e) {
         // Always re-enable submit button and restore text
         submitBtn.disabled = false;
         submitBtn.textContent = originalButtonText;
-    }
-}
-
-/**
- * Handle blog migration
- */
-async function handleBlogMigration() {
-    if (!confirm('This will update all existing blog posts to include the new metadata fields. This is safe but irreversible. Continue?')) {
-        return;
-    }
-
-    const btn = document.getElementById('migrateBlogsBtn');
-    const originalText = btn.textContent;
-    btn.textContent = 'Updating...';
-    btn.disabled = true;
-
-    try {
-        const response = await fetch('/api/blog-writer?migrate=true', {
-            credentials: 'include'
-        });
-
-        if (!response.ok) {
-            throw new Error(`Migration failed: ${response.status} ${response.statusText}`);
-        }
-
-        const result = await response.json();
-        alert(`Migration completed successfully! Updated ${result.updated} blog posts.`);
-
-        // Refresh the blog list to show updated data
-        loadBlogs(document.getElementById('blogCategoryFilter').value);
-
-    } catch (error) {
-        console.error('[Blog Writer] Migration error:', error);
-        alert('Migration failed: ' + error.message);
-    } finally {
-        btn.textContent = originalText;
-        btn.disabled = false;
     }
 }
 

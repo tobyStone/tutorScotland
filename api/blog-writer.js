@@ -445,8 +445,10 @@ module.exports = async (req, res) => {
             }
 
             // ✅ PAGINATION: Support paginated blog listing for admin dashboard
-            const page = parseInt(req.query.page) || null;
-            const limit = parseInt(req.query.limit) || 20;
+            // Guard against missing req.query
+            const queryParams = req.query ?? {};
+            const page = parseInt(queryParams.page) || null;
+            const limit = parseInt(queryParams.limit) || 20;
 
             // If no page parameter, return all blogs (backward compatibility)
             if (!page) {

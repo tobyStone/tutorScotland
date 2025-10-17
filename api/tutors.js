@@ -201,8 +201,10 @@ module.exports = async (req, res) => {
             applyAPISecurityHeaders(res);
 
             // ✅ PAGINATION: Support paginated tutor listing for admin dashboard
-            const page = parseInt(req.query.page) || null;
-            const limit = parseInt(req.query.limit) || 20;
+            // Guard against missing req.query
+            const queryParams = req.query ?? {};
+            const page = parseInt(queryParams.page) || null;
+            const limit = parseInt(queryParams.limit) || 20;
 
             // Build query with same filtering logic as HTML generation
             let query = {};

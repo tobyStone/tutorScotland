@@ -138,6 +138,8 @@
     <Content Include="public\images\tutor1.jpg" />
     <Content Include="public\images\tutor2.jpg" />
     <Content Include="public\images\weAreTheFuture.PNG" />
+    <Content Include="public\js\admin-dashboard.js" />
+    <Content Include="public\js\blog-writer-dashboard.js" />
     <Content Include="public\js\dynamic-nav.js" />
     <Content Include="public\js\dynamic-page.js" />
     <Content Include="public\js\dynamic-sections-template.html" />
