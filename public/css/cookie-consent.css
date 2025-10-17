@@ -9,14 +9,14 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 9999;
+    z-index: 10001; /* Higher than footer (10000) to prevent click-through issues */
     display: none; /* Hidden by default, shown by JS */
-    
+
     /* Flexbox for centering */
     justify-content: center;
     align-items: flex-end;
     padding: 1rem;
-    
+
     /* Animation */
     opacity: 0;
     transform: translateY(100%);
@@ -99,9 +99,10 @@
 }
 
 #cookie-accept-btn:hover {
-    background: #ffffff;
+    background: #b37cb3; /* Lilac hover - matches website button style */
+    color: #ffffff;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(184, 212, 255, 0.5);
+    box-shadow: 0 4px 12px rgba(179, 124, 179, 0.5);
 }
 
 #cookie-reject-btn {
@@ -111,9 +112,18 @@
 }
 
 #cookie-reject-btn:hover {
-    background: rgba(184, 212, 255, 0.1);
+    background: #b37cb3; /* Lilac hover - matches website button style */
     color: #ffffff;
-    border-color: #ffffff;
+    border-color: #b37cb3;
+}
+
+/* Active states for button press feedback */
+#cookie-accept-btn:active,
+#cookie-reject-btn:active {
+    background: #9a5f9a; /* Darker lilac for active state */
+    color: #ffffff;
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(154, 95, 154, 0.4);
 }
 
 /* Mobile responsiveness */

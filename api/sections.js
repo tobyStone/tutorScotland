@@ -402,9 +402,92 @@ module.exports = async (req, res) => {
                         }
                     }
                     if (fields.text) {
-                        const textValue = getField('text');
-                        if (textValue && typeof textValue === 'string') {
-                            updateData.text = textValue.trim();
+                        try {
+                            const textValue = getField('text');
+                            if (textValue && typeof textValue === 'string') {
+                                const trimmedText = textValue.trim();
+
+                                // Validate text content based on layout (current or new)
+                                // Use the new layout if provided, otherwise use the current document's layout
+                                const finalLayout = fields.layout ? getField('layout').toLowerCase() : (currentDoc.layout || 'standard');
+                                console.log(`📝 Text update validation - Layout: ${finalLayout}, Text length: ${trimmedText.length}`);
+
+                                // For list sections, validate JSON structure
+                                if (finalLayout === 'list') {
+                                    console.log('🔍 Validating list section JSON structure...');
+                                    try {
+                                        const listData = JSON.parse(trimmedText);
+                                        console.log('📊 Parsed list data:', JSON.stringify(listData, null, 2));
+
+                                        if (!listData || typeof listData !== 'object') {
+                                            console.error('❌ List data validation failed: not an object');
+                                            return res.status(400).json({ message: 'List data must be an object' });
+                                        }
+                                        if (!listData.items || !Array.isArray(listData.items)) {
+                                            console.error('❌ List data validation failed: items not an array');
+                                            return res.status(400).json({ message: 'List data must contain an "items" array' });
+                                        }
+                                        if (listData.items.length === 0) {
+                                            console.error('❌ List data validation failed: no items');
+                                            return res.status(400).json({ message: 'List must contain at least one item' });
+                                        }
+                                        // Validate each list item is a string
+                                        for (let i = 0; i < listData.items.length; i++) {
+                                            if (typeof listData.items[i] !== 'string') {
+                                                console.error(`❌ List item ${i + 1} validation failed: not a string`);
+                                                return res.status(400).json({ message: `List item ${i + 1} must be a string` });
+                                            }
+                                            if (listData.items[i].trim().length === 0) {
+                                                console.error(`❌ List item ${i + 1} validation failed: empty`);
+                                                return res.status(400).json({ message: `List item ${i + 1} cannot be empty` });
+                                            }
+                                        }
+                                        // Validate listType if present
+                                        if (listData.listType && !['ordered', 'unordered'].includes(listData.listType)) {
+                                            console.error('❌ List type validation failed:', listData.listType);
+                                            return res.status(400).json({ message: 'List type must be "ordered" or "unordered"' });
+                                        }
+                                        console.log('✅ List JSON validation passed for update:', listData.items.length, 'items');
+                                    } catch (e) {
+                                        console.error('❌ Invalid list JSON in update:', e.message);
+                                        console.error('Raw text that failed to parse:', trimmedText.substring(0, 200));
+                                        return res.status(400).json({ message: 'Invalid list JSON format: ' + e.message });
+                                    }
+                                }
+
+                                // For testimonial sections, validate JSON structure
+                                if (finalLayout === 'testimonial') {
+                                    try {
+                                        const testimonialData = JSON.parse(trimmedText);
+                                        if (!Array.isArray(testimonialData)) {
+                                            return res.status(400).json({ message: 'Testimonial data must be an array' });
+                                        }
+                                        // Validate each testimonial has required fields
+                                        for (let i = 0; i < testimonialData.length; i++) {
+                                            const testimonial = testimonialData[i];
+                                            if (!testimonial.quote || typeof testimonial.quote !== 'string') {
+                                                return res.status(400).json({ message: `Testimonial ${i + 1} missing required quote field` });
+                                            }
+                                            if (!testimonial.author || typeof testimonial.author !== 'string') {
+                                                return res.status(400).json({ message: `Testimonial ${i + 1} missing required author field` });
+                                            }
+                                        }
+                                        console.log('✅ Testimonial JSON validation passed for update:', testimonialData.length, 'testimonials');
+                                    } catch (e) {
+                                        console.error('❌ Invalid testimonial JSON in update:', e.message);
+                                        return res.status(400).json({ message: 'Invalid testimonial JSON format: ' + e.message });
+                                    }
+                                }
+
+                                updateData.text = trimmedText;
+                            }
+                        } catch (textValidationError) {
+                            console.error('❌ Unexpected error during text validation:', textValidationError);
+                            console.error('Stack trace:', textValidationError.stack);
+                            return res.status(500).json({
+                                message: 'Error validating section content',
+                                error: textValidationError.message
+                            });
                         }
                     }
                     if (fields.position) {
@@ -695,6 +778,39 @@ module.exports = async (req, res) => {
                         return res.status(400).json({ message: textValidation.error });
                     }
                     sanitizedText = textValidation.sanitized;
+                }
+
+                // ✅ NEW: Validate list JSON format
+                if (layout === 'list' && text) {
+                    try {
+                        const listData = JSON.parse(text);
+                        if (!listData || typeof listData !== 'object') {
+                            return res.status(400).json({ message: 'List data must be an object' });
+                        }
+                        if (!listData.items || !Array.isArray(listData.items)) {
+                            return res.status(400).json({ message: 'List data must contain an "items" array' });
+                        }
+                        if (listData.items.length === 0) {
+                            return res.status(400).json({ message: 'List must contain at least one item' });
+                        }
+                        // Validate each list item is a string
+                        for (let i = 0; i < listData.items.length; i++) {
+                            if (typeof listData.items[i] !== 'string') {
+                                return res.status(400).json({ message: `List item ${i + 1} must be a string` });
+                            }
+                            if (listData.items[i].trim().length === 0) {
+                                return res.status(400).json({ message: `List item ${i + 1} cannot be empty` });
+                            }
+                        }
+                        // Validate listType if present
+                        if (listData.listType && !['ordered', 'unordered'].includes(listData.listType)) {
+                            return res.status(400).json({ message: 'List type must be "ordered" or "unordered"' });
+                        }
+                        console.log('✅ List JSON validation passed:', listData.items.length, 'items');
+                    } catch (e) {
+                        console.error('❌ Invalid list JSON:', e.message, 'Raw text:', text);
+                        return res.status(400).json({ message: 'Invalid list JSON format: ' + e.message });
+                    }
                 }
 
                 // ✅ NEW: Validate testimonial JSON format
