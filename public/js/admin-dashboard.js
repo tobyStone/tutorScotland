@@ -337,8 +337,7 @@ function initSectionManagement() {
             if (sharedFields) sharedFields.style.display = 'block';
 
             // Hide image field for team, testimonial, and video sections (they use their own image/video systems)
-            const sectionImageInput = document.getElementById('sectionImage');
-            const sectionImageLabel = sectionImageInput ? sectionImageInput.closest('label') : null;
+            const sectionImageLabel = document.getElementById('sectionImageLabel');
             const currentImagePreview = document.getElementById('currentImagePreview');
 
             if (layout === 'team' || layout === 'testimonial' || layout === 'video') {
