@@ -241,6 +241,9 @@ function initSectionManagement() {
             window.clearTeamBuilder();
         }
 
+        // ✅ TECH TEAM FIX: Call toggleLayoutFields() to ensure image field visibility is correct after reset
+        toggleLayoutFields();
+
         console.log('[Admin Dashboard] Section form reset to create mode');
     }
 
